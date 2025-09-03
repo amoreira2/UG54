@@ -476,7 +476,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">5.1. Libraries and Auxiliary Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#towards-a-factor-model">5.2. Towards a factor Model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-models-come-in-two-flavors">5.3. Factor Models come in two flavors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-models-vs-expected-returns-models">5.3. Risk Models vs Expected Returns Models</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-s">5.4. Alpha and Beta(s)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focus-on-your-skill-hedge-all-the-residual-risk">5.5. Focus on your skill, hedge all the residual risk</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tacking-hedging-and-hedged-portfolios">5.6. Tacking, Hedging and Hedged portfolios</a></li>
@@ -754,11 +754,24 @@ Done
 <p>14079 rows × 3 columns</p>
 </div></div></div>
 </div>
-<p>How do we estimate this model?</p>
+<blockquote>
+<div><p>🤝⏱️ <strong>Think and Code</strong></p>
+<ol class="arabic simple">
+<li><p>How do we estimate this model?</p></li>
+</ol>
 <div class="math notranslate nohighlight">
 \[(excess~return)=(intercept)+(stock~beta)*(SPY~excess~return)+ (idio~risk)\]</div>
-<p>What should we plot against our factor excess returns to see if it “worked”?</p>
-<p>What do you expect to see?</p>
+<ol class="arabic simple">
+<li><p>What should we plot against our factor excess returns to see if it “worked”?</p></li>
+<li><p>What do you expect to see?</p></li>
+<li><p>What does your estimation says about the relationship between the stock specific component and the factor excess return?</p>
+<ul class="simple">
+<li><p>Does this condition always hold?</p></li>
+</ul>
+</li>
+<li><p>How do we construct the stock specific component using your estimation?</p></li>
+</ol>
+</div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
@@ -777,13 +790,6 @@ Done
 </div>
 </div>
 </div>
-<p>Did it work?</p>
-<ul class="simple">
-<li><p>What the regression guarantees about the relationship between the stock specific component and the factor excess return?</p></li>
-<li><p>Does this condition always hold?</p></li>
-</ul>
-<div class="math notranslate nohighlight">
-\[stock~specific~component=(excess~return)-(stock~beta)*(factor~excess~return)\]</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">df_re</span><span class="p">[[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">corrwith</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
@@ -800,24 +806,27 @@ dtype: float64
 </div>
 </div>
 <blockquote>
-<div><p>How do we estimate the amount of idiosyncratic risk?</p>
+<div><p>🤝⏱️ <strong>Think and Code</strong></p>
+<p>How do we estimate the amount of idiosyncratic risk?</p>
 <p>How do we estimate the amount of systematic risk?</p>
 </div></blockquote>
 </section>
-<section id="factor-models-come-in-two-flavors">
-<h2><span class="section-number">5.3. </span>Factor Models come in two flavors<a class="headerlink" href="#factor-models-come-in-two-flavors" title="Link to this heading">#</a></h2>
+<section id="risk-models-vs-expected-returns-models">
+<h2><span class="section-number">5.3. </span>Risk Models vs Expected Returns Models<a class="headerlink" href="#risk-models-vs-expected-returns-models" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p>It can be useful for measuring risk if</p>
+<li><p>👉 <strong>Risk</strong> Models</p>
 <ul class="simple">
-<li><p>The risk <span class="math notranslate nohighlight">\(\epsilon\)</span> is specific to asset <span class="math notranslate nohighlight">\(i\)</span> and only weakly correlated with other assets (ideally completely)</p></li>
-<li><p>i.e if the factor explains lots of the common variation in stock returns</p></li>
-<li><p>You don’t really care whether the factors face premia, but only if they explain variation in returns</p></li>
+<li><p>The risk <span class="math notranslate nohighlight">\(\epsilon\)</span> is specific to asset <span class="math notranslate nohighlight">\(i\)</span> and uncorrelated with other assets</p></li>
+<li><p>You don’t really care whether the factors have premia, but only if they explain variation in returns</p></li>
+<li><p>It is essentially a model for the covariance matrix of returns</p></li>
+<li><p>Sounds boring–but extremely used in the industry</p></li>
 </ul>
 </li>
-<li><p>It can be useful for measuring expected returns if</p>
+<li><p>👉<strong>Expected Return</strong> Models</p>
 <ul class="simple">
 <li><p>The premium on the factor f, <span class="math notranslate nohighlight">\(E[f]\)</span> summarize well the known “priced” systematic risk factors</p></li>
-<li><p>By “priced” we mean risk-factors that earn a risk premium  <span class="math notranslate nohighlight">\(E[f]&gt;0\)</span></p></li>
+<li><p>By “priced” we mean risk-factors that earn a risk premium  <span class="math notranslate nohighlight">\(E[f]&gt;0\)</span> of <span class="math notranslate nohighlight">\(E[f]&lt;0\)</span></p></li>
+<li><p>Because factors are long shorts we typically normalize so that the premium is positive</p></li>
 <li><p>A model can be a good model of expected returns, but not explain much of realized returns</p></li>
 <li><p>Such model is useful for performance evaluation</p></li>
 </ul>
@@ -826,16 +835,17 @@ dtype: float64
 <blockquote>
 <div><p>We will call the first a factor model of risk, and the second a factor model of expected returns.</p>
 <p>However, this distinction is often blurry.</p>
-<p>Arbitrage logic tells us that if we have a really good model of risk, we should also have a good model of expected returns</p>
-<p>But in practice for stocks, there is lots and lots of unexplained variation</p>
+<p>Arbitrage logic tells us that if we have a really good model of risk, we should also have a good model of expected returns ( Who remembers this from Foundations? It is an a three letter acronym)</p>
+<p>But in practice for stocks, there is <strong>lots and lots</strong> of unexplained variation, so you explain a lot of return variation but still don’t get a firm grip on expected returns</p>
 </div></blockquote>
 <p>People start with a factor model with “priced” factors and then add additional factors to explain risk.</p>
 <blockquote>
 <div><p>what does priced means in this context?</p>
 </div></blockquote>
 <hr class="docutils" />
+<p><strong>More Precisely</strong></p>
 <p>Let <span class="math notranslate nohighlight">\(r^e\)</span> be an asset excess return over the risk-free rate</p>
-<p>Let <span class="math notranslate nohighlight">\(f\)</span> be a traded factor, for now  the excess returns on SPY ETF (that holds a basket that replicates the S&amp;P 500 index)</p>
+<p>Let <span class="math notranslate nohighlight">\(f\)</span> be a traded factor, for now  the <strong>excess returns</strong> on SPY ETF (that holds a basket that replicates the S&amp;P 500 index)</p>
 <p>Then we can write</p>
 <div class="math notranslate nohighlight">
 \[r^e=\alpha + b*f+\epsilon\]</div>
@@ -845,17 +855,21 @@ dtype: float64
 </div></blockquote>
 <p>Whether we are working with a “Risk Model” or an “Expected Return” model will come down to the following</p>
 <ol class="arabic simple">
-<li><p>For risk model we assume <span class="math notranslate nohighlight">\(\epsilon\)</span> uncorrelated across stocks</p></li>
-<li><p>For Expected return model, we assume <span class="math notranslate nohighlight">\(\alpha=0\)</span> for all stocks/strategies</p></li>
+<li><p>For risk model we assume <span class="math notranslate nohighlight">\(\epsilon\)</span> uncorrelated across stocks
+👉 To explain risk , factors must capture all co-movement in REALIZED returns</p></li>
+<li><p>For Expected return model, we assume <span class="math notranslate nohighlight">\(\alpha=0\)</span> for all stocks/strategies
+👉 to explain risk premia, model needs to explain all variation in EXPECTED returns.</p></li>
 </ol>
-<p>What use is a factor model?</p>
+<hr class="docutils" />
+<p><strong>To what end?</strong></p>
 <ul class="simple">
 <li><p>the alpha/Beta decomposition is how the money management industry is organized.</p>
 <ul>
-<li><p>Big pay days only if people think you have alpha</p></li>
-<li><p>Getting exposure to the factor is a commodity. Anyone can buy SPY or many other funds that track the market very well</p></li>
-<li><p>In most funds, specially for portfolio managers working a pod shops like Citadel (<a class="reference external" href="https://www.wsj.com/finance/investing/citadel-ken-griffin-hedge-funds-c9ddf51d">https://www.wsj.com/finance/investing/citadel-ken-griffin-hedge-funds-c9ddf51d</a>) and Millenium (<a class="reference external" href="https://www.wsj.com/finance/investing/the-giant-hedge-fund-that-hates-risk-and-still-wins-1110e90a">https://www.wsj.com/finance/investing/the-giant-hedge-fund-that-hates-risk-and-still-wins-1110e90a</a>), a portfolio manager mandate is to take no factor risk–or at least aim to be close to factor neutral.</p></li>
-<li><p>It is all about the alpha</p></li>
+<li><p>Big bonuses only if people think you have <strong>alpha</strong></p></li>
+<li><p>Getting exposure to the factor is a commodity. Anyone can buy SPY or many other indexes that track the market very well</p></li>
+<li><p>In many funds a portfolio manager mandate is to take no factor risk–or at least aim to be close to factor neutral.
+👉  specially true for portfolio managers working a pod shops like Citadel (<a class="reference external" href="https://www.wsj.com/finance/investing/citadel-ken-griffin-hedge-funds-c9ddf51d">https://www.wsj.com/finance/investing/citadel-ken-griffin-hedge-funds-c9ddf51d</a>) and Millenium (<a class="reference external" href="https://www.wsj.com/finance/investing/the-giant-hedge-fund-that-hates-risk-and-still-wins-1110e90a">https://www.wsj.com/finance/investing/the-giant-hedge-fund-that-hates-risk-and-still-wins-1110e90a</a>),tt is all about the alpha in these funds</p></li>
+<li><p>In mutual funds it is still about the alpha–but the factor models are simpler (1 to 3 factors), so lots of factor exposure ends up counted as alpha when these factors have premia</p></li>
 </ul>
 </li>
 <li><p>factor models allow you to understand and hedge risk</p>
@@ -1624,7 +1638,7 @@ Throughout the notebook “Stop and Think” prompts remind you to check data fr
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">5.1. Libraries and Auxiliary Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#towards-a-factor-model">5.2. Towards a factor Model</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-models-come-in-two-flavors">5.3. Factor Models come in two flavors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-models-vs-expected-returns-models">5.3. Risk Models vs Expected Returns Models</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-s">5.4. Alpha and Beta(s)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focus-on-your-skill-hedge-all-the-residual-risk">5.5. Focus on your skill, hedge all the residual risk</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tacking-hedging-and-hedged-portfolios">5.6. Tacking, Hedging and Hedged portfolios</a></li>
