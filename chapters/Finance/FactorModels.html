@@ -480,10 +480,11 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-s">5.4. Alpha and Beta(s)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focus-on-your-skill-hedge-all-the-residual-risk">5.5. Focus on your skill, hedge all the residual risk</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tacking-hedging-and-hedged-portfolios">5.6. Tacking, Hedging and Hedged portfolios</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-decomposition">5.7. Variance Decomposition</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hitting-factor-target">5.7.1. Hitting Factor target</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-models-and-risk-budgets">5.7. Factor Models and Risk Budgets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio">5.8. Sharpe Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-ratio">5.9. Appraisal Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-decomposition">5.10. Variance Decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-limits">5.11. Factor risk Limits</a></li>
 </ul>
             </nav>
         </div>
@@ -868,7 +869,10 @@ dtype: float64
 <li><p>Big bonuses only if people think you have <strong>alpha</strong></p></li>
 <li><p>Getting exposure to the factor is a commodity. Anyone can buy SPY or many other indexes that track the market very well</p></li>
 <li><p>In many funds a portfolio manager mandate is to take no factor risk–or at least aim to be close to factor neutral.
-👉  specially true for portfolio managers working a pod shops like Citadel (<a class="reference external" href="https://www.wsj.com/finance/investing/citadel-ken-griffin-hedge-funds-c9ddf51d">https://www.wsj.com/finance/investing/citadel-ken-griffin-hedge-funds-c9ddf51d</a>) and Millenium (<a class="reference external" href="https://www.wsj.com/finance/investing/the-giant-hedge-fund-that-hates-risk-and-still-wins-1110e90a">https://www.wsj.com/finance/investing/the-giant-hedge-fund-that-hates-risk-and-still-wins-1110e90a</a>),tt is all about the alpha in these funds</p></li>
+👉  specially true for portfolio managers working a pod shops
+-  Citadel (<a class="reference external" href="https://www.wsj.com/finance/investing/citadel-ken-griffin-hedge-funds-c9ddf51d">https://www.wsj.com/finance/investing/citadel-ken-griffin-hedge-funds-c9ddf51d</a>)
+-   Millenium (<a class="reference external" href="https://www.wsj.com/finance/investing-the-giant-hedge-fund-that-hates-risk-and-still-wins-1110e90a">https://www.wsj.com/finance/investing-the-giant-hedge-fund-that-hates-risk-and-still-wins-1110e90a</a>)
+-   Balyasny (<a class="reference external" href="https://www.bamfunds.com/">https://www.bamfunds.com/</a>)</p></li>
 <li><p>In mutual funds it is still about the alpha–but the factor models are simpler (1 to 3 factors), so lots of factor exposure ends up counted as alpha when these factors have premia</p></li>
 </ul>
 </li>
@@ -890,14 +894,15 @@ dtype: float64
 <li><p>Using that <span class="math notranslate nohighlight">\(E[\epsilon]=0\)</span> we have
 $<span class="math notranslate nohighlight">\(E[r]=rf+\alpha+b*E[f]\)</span>$</p></li>
 <li><p>Thus, just like the risk of our asset could be attributed to the factor and it’s component, the same model also allow us to decompose the expected return in terms of the risk-free rate, the premium coming from the common factor exposure <span class="math notranslate nohighlight">\(b*E[f]\)</span> and the risk-premium specific to the asset, the ALPHA.</p></li>
-<li><p>The alpha does not need to be in a specific asset, can be o a combination of them</p></li>
+<li><p>The alpha does not need to be in a specific asset, can be in a combination of them</p></li>
 <li><p>The decomposition works the same for portfolio of assets</p></li>
-<li><p>For now we have a single factor, but you will see that as you have more factors, everything is pretty much the same</p></li>
+<li><p>For now we have a single factor, but you will see that as you have more factors, everything is exactly the same</p></li>
 </ul>
 </section>
 <section id="focus-on-your-skill-hedge-all-the-residual-risk">
 <h2><span class="section-number">5.5. </span>Focus on your skill, hedge all the residual risk<a class="headerlink" href="#focus-on-your-skill-hedge-all-the-residual-risk" title="Link to this heading">#</a></h2>
 <p>No matter who you are, you will face dollar risk limits</p>
+<p>(We will discuss this in depth in out capital allocation lecture)</p>
 <p>So it is essential that you deploy risk wisely</p>
 <p>The key use of the factor model is to give you discipline to separate your edge from the rest</p>
 <p>How to use the factor model?</p>
@@ -911,69 +916,13 @@ $<span class="math notranslate nohighlight">\(E[r]=rf+\alpha+b*E[f]\)</span>$</p
 <li><p>The strategy/asset specific alpha</p></li>
 <li><p>The strategy/asset specific variance</p></li>
 </ol>
-<p>For now we will assume we know each of these.</p>
-<p>if you have an asset that has alpha, says, you are confident that APPLE will beat expectations and you expect a 5% appreciation in the next 12 months beyond any factor exposure that Apple might had, what do you do?</p>
-<ol class="arabic simple">
-<li><p>Buy apple!</p></li>
-</ol>
-<p>But what if the market crashes? Why bear that risk?<br />
-Portfolio allocators look for managers with alpha, not beta.
-What if the market crashes before apple surprises and your investors pull out?</p>
-<ol class="arabic simple" start="2">
-<li><p>Hedge the market</p>
-<ul class="simple">
-<li><p>How do you do that?</p></li>
-<li><p>Short it!</p></li>
-<li><p>How much?</p></li>
-<li><p>the strategy beta!</p></li>
-</ul>
-</li>
-</ol>
-<p>Example:</p>
-<ol class="arabic simple">
-<li><p>You buy 1M in Apple stock, so your portfolio PnL is 1M*<span class="math notranslate nohighlight">\(r^{apple}\)</span></p></li>
-<li><p>Your portfolio PnL in excess what you would earn in treasuries is 1M*<span class="math notranslate nohighlight">\((r^{apple}-rf)\)</span></p></li>
-<li><p>Sell (short) 1M*<span class="math notranslate nohighlight">\(beta_{apple,f}\)</span> of the factor</p></li>
-<li><p>Now your portfolio PnL above the risk-free rate is</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[1M*(r^{apple}-rf-\beta*r^{SPY}+\beta*rf)\]</div>
-<p>When you sell SPY short you get the money and here I am “investing” it in the risk-free rate</p>
-<p>Alternatively you can think of it as using to fund the apple buy</p>
-<p>it does not matter, because we are accounting for the time-value of money</p>
-<p>We certainly don’t want to invest any other risk assets as it would just add noise to our trade</p>
-<div class="math notranslate nohighlight">
-\[1M*(r^{apple}-\beta*r^{SPY}-(1-\beta)*rf)\]</div>
-<p>For a high beta stock your trade generates extra cash!</p>
-<p>If <span class="math notranslate nohighlight">\(\beta&gt;1\)</span>, <span class="math notranslate nohighlight">\(-(1-\beta)*rf&gt;0\)</span></p>
-<p>This happens because you are selling more than you are buying</p>
-<p>If we substitute our factor model in our trade PnL and take expectations what do we get?</p>
-<div class="math notranslate nohighlight">
-\[1M*E[r^{apple}-rf-\beta*r^{SPY}+\beta*rf)]\]</div>
-<div class="math notranslate nohighlight">
-\[1M*E[\alpha_i+rf+beta*(r^{SPY}-rf)+u_i-rf-\beta*r^{SPY}+\beta*rf)]\]</div>
-<p>A pure play portfolio!</p>
-<div class="math notranslate nohighlight">
-\[1M*E[\alpha_i]\]</div>
-<p>And what is the portfolio risk?</p>
-<div class="math notranslate nohighlight">
-\[std(1M*(r^{apple}-rf-\beta*r^{SPY}+\beta*rf))=1M*std(u_i)\]</div>
-<ul class="simple">
-<li><p>We refer to portfolio <span class="math notranslate nohighlight">\((1,-\beta)\times(AAPL,SPY)\)</span> as the Apple-factor hedged portfolio, or simply the “hedged-portfolio”</p></li>
-<li><p>and refer to <span class="math notranslate nohighlight">\(-\beta \times \)</span> (SPY) as the “Hedging Portfolio”</p></li>
-</ul>
+<p><strong>For now we will assume we know each of these</strong></p>
+<p>If you have an asset that has alpha, says, you are confident that Microsoft will beat expectations and you expect a 5% appreciation in the next 12 months beyond any factor exposure that Microsoft might had</p>
+<p><strong>What should you do?</strong></p>
 <p><strong>Implementing</strong></p>
 <p>Lets do this!</p>
 <p>I will use a regression to get some numbers for us to do this strategy</p>
 <p>but for now, just think those as numbers I am giving you <strong>and don’t think of the regression as giving the right numbers necessarily.</strong></p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install wrds
-<span class="kn">import</span><span class="w"> </span><span class="nn">wrds</span>
-</pre></div>
-</div>
-</div>
-</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
@@ -1143,11 +1092,10 @@ Date
 </table>
 </div></div></div>
 </div>
+<p>What do you notice about these two data sets?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># I will align the two dataframes to ensure that the dates are the same</span>
-
-<span class="n">df_return</span><span class="p">,</span> <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df_returns</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">df_factor</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_return</span><span class="p">,</span> <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df_returns</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">df_factor</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1225,9 +1173,9 @@ Mean of market factor (mu_f): 0.00035668848435262666
 </div>
 </div>
 <blockquote>
-<div><h4 class="rubric" id="stop-and-think">Stop and Think</h4>
+<div><p>🤝⏱️<strong>Stop and Think</strong></p>
 <ul class="simple">
-<li><p>What frequency are these parameters?</p></li>
+<li><p>What frequency are these parameters? Does it matter?</p></li>
 <li><p>How to I make it comparable say with the annual risk-free rate?</p></li>
 <li><p>What does the alpha mean? How should you think about it? Do you think is informative about future MSFT alpha? Why? Why not?</p></li>
 <li><p>What about the variance terms? And the covariance terms?</p></li>
@@ -1240,7 +1188,7 @@ Mean of market factor (mu_f): 0.00035668848435262666
 <p>We also refer to it as “hedging portfolios” or “mimicking portfolios”</p>
 <p>Tracking portfolios are the portfolios that use a set of factors to track the returns on an asset.</p>
 <ul>
-<li><p>It can be used as a way to construct hedges for corporations, hedges for trading strategies, or a way to define a benchmark for an active management.</p></li>
+<li><p>It can be used as a way to construct hedges for corporations, hedges for trading strategies, or a way to define a benchmark for an active manager</p></li>
 <li><p>It is used to construct what people in the industry calls “portable alpha”, because it allows one to separate the alpha of a trading strategy’s factor exposure</p></li>
 <li><p>The idea of the tracking portfolio is to track the component of an asset return that can be obtained by investing in a simple traded factor (or combos of traded factors). For now, this means the market portfolio.</p></li>
 <li><p>For a given factor model representation of a trading strategy</p>
@@ -1248,8 +1196,8 @@ Mean of market factor (mu_f): 0.00035668848435262666
 \[r^e_i=\alpha_i+\beta_if+\epsilon_i, \]</div>
 <p>with <span class="math notranslate nohighlight">\(var(\epsilon_i)=\sigma_e^2\)</span></p>
 </li>
-<li><p>the <span class="math notranslate nohighlight">\(i^{th}\)</span> Tracking portfolio is <span class="math notranslate nohighlight">\(\beta_iW^{MKT}\)</span>, where <span class="math notranslate nohighlight">\(W^{MKT}\)</span> is the vector of weights of the market portfolio.</p></li>
-<li><p>or if one is trading directly on the total market portfolio as an asset, the tracking portfolio weight on the market portfolio asset is simply <span class="math notranslate nohighlight">\(\beta_i\)</span></p></li>
+<li><p>the asset <span class="math notranslate nohighlight">\(i\)</span> Tracking portfolio is <span class="math notranslate nohighlight">\(\beta_i\times W^{MKT}\)</span>, where <span class="math notranslate nohighlight">\(W^{MKT}\)</span> is the vector of weights of the market portfolio.</p></li>
+<li><p>or if one is trading directly on the total market portfolio as an asset, the tracking portfolio weight on the market portfolio asset is simply <span class="math notranslate nohighlight">\(\beta_i\)</span> on the ETF that holds the market portfolio</p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">
@@ -1275,7 +1223,8 @@ Mean of market factor (mu_f): 0.00035668848435262666
 </div>
 </div>
 <ul class="simple">
-<li><p>We see here the obvious fact that we cannot track at all variation in the market with the market portfolio so they capture  different risks</p></li>
+<li><p>We see here the obvious fact that we cannot track at all variation in the stock with the market portfolio</p></li>
+<li><p>they have some co-movement but also capture  different risks</p></li>
 <li><p>Another way of looking at it is to put the factor returns on the x-axis</p></li>
 <li><p>The tracking is a perfect straight line where the slope is the beta of the asset</p></li>
 </ul>
@@ -1301,14 +1250,19 @@ Mean of market factor (mu_f): 0.00035668848435262666
 \[r^{hedged}_i=r^e_i-\beta_ir^{MKT}\]</div>
 <ul class="simple">
 <li><p>This portfolio can be constructed simply by <span class="math notranslate nohighlight">\(W^i-\beta^iW^{MKT}\)</span>, the weights of the trading strategy minus the tracking portfolio weights.</p></li>
-<li><p>The excess returns take out risk-free rate effects, and the hedged portfolio takes out market factor effects</p></li>
+<li><p>The excess returns take out risk-free rate effects</p></li>
+<li><p>the hedged portfolio takes out market factor effects</p></li>
 </ul>
-<p>A few observations</p>
+<p>👉 <strong>Insight</strong></p>
 <ul class="simple">
-<li><p>The mean return of the hedged portfolio is just the time series alpha!</p></li>
+<li><p>The mean return of the hedged portfolio is just the time series alpha of the unhedged portfolio</p>
+<ul>
+<li><p>Intuition: The hedged portfolio has mechanically zero beta (in-sample) so it’s excess return is “pure” alpha</p></li>
+</ul>
+</li>
 <li><p>The volatility of the strategy is the vol of the residuals of the time series regression</p></li>
 <li><p>If you run a regression on the market you will see that the hedged portfolios have <span class="math notranslate nohighlight">\(\beta=0\)</span>, which is by construction.</p></li>
-<li><p>This is the reason why sometimes people call these portfolios “Pure Alpha”, or as Bridgwater calls it, “Portable Alpha”</p></li>
+<li><p>This is the reason why sometimes people call these portfolios “Pure Alpha”, or as Bridgewater calls it, “Portable Alpha”</p></li>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1325,11 +1279,6 @@ Mean of market factor (mu_f): 0.00035668848435262666
 <img alt="../../_images/fd2e14200957ae30c823a81e42f72cd6cad0c658ee685fff86c01f37a7424e3d.png" src="../../_images/fd2e14200957ae30c823a81e42f72cd6cad0c658ee685fff86c01f37a7424e3d.png" />
 </div>
 </div>
-<blockquote>
-<div><h4 class="rubric" id="insight">Insight</h4>
-<p>The average excess return on the hedged portfolio is the alpha of the unhedged portfolio!
-Intuition: The hedged portfolio has mechanically zero beta (in-sample) so it’s excess return is “pure” alpha</p>
-</div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;hedge portfolio excess returns&#39;</span><span class="p">)</span>
@@ -1348,47 +1297,40 @@ alpha of unhedge portfolio
 </div>
 </div>
 </div>
-<p><strong>Factor Models and Risk Budgets</strong></p>
+</section>
+<section id="factor-models-and-risk-budgets">
+<h2><span class="section-number">5.7. </span>Factor Models and Risk Budgets<a class="headerlink" href="#factor-models-and-risk-budgets" title="Link to this heading">#</a></h2>
 <p>Lets say we have 1 million dollar per month volatility (i.e. standard deviation) budget</p>
 <p>What that means?</p>
-<p>Means that the size of my position times the monthly volatility of my position must be less than 1 million dollars?</p>
-<blockquote>
-<div><p>Why you might impose such a cap?</p>
-</div></blockquote>
+<p>Means that the size of my position times the monthly volatility of my position must be less than 1 million dollars</p>
 <p>How much o MSFT can I own?</p>
 <ul class="simple">
 <li><p>If I invest one dollar in MSFT I get: <span class="math notranslate nohighlight">\(1*\sqrt(var_r*252)\)</span> standard deviation for 1 year</p></li>
 <li><p>If I invest one dollar in MSFT I get: <span class="math notranslate nohighlight">\(1*\sqrt(var_r*21)\)</span> standard deviation for 1 month</p></li>
 </ul>
-<p>To get 1M per month I invest <span class="math notranslate nohighlight">\(\frac{1M}{\sqrt(var_r*21)}\)</span></p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">var_r</span><span class="o">*</span><span class="mi">21</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-<span class="n">x</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10.384121419128503
-</pre></div>
-</div>
-</div>
-</div>
+<p>What is the most I can buy from MSFT stock?</p>
 <blockquote>
-<div><p>What does that mean? How many million dollars I can buy of the stock?</p>
+<div><p>What if the budget was for 1 year? How do I adjust my calculation?</p>
+<p>Can I buy more or less?</p>
 </div></blockquote>
-<p>What if the budget was for 1 year? How many would I be able to buy?</p>
 <ol class="arabic simple">
 <li><p>What is your expected PnL in the end of the year?</p>
 <ul class="simple">
-<li><p>Here we will subtract you funding costs, which I will assume is also rf so it will be a wash</p></li>
+<li><p>Here we will subtract your funding costs, which I will assume is also rf so it will be a wash</p></li>
+<li><p><span class="math notranslate nohighlight">\(rf+\beta*\mu_f+\alpha\)</span> is your expected return</p></li>
+<li><p><span class="math notranslate nohighlight">\(rf\)</span> is your funding cost</p></li>
 </ul>
 </li>
 </ol>
-<div class="math notranslate nohighlight">
-\[x*(rf+\beta*\mu_f+\alpha-rf)*252\]</div>
+<p>Net of direct funding costs
+$<span class="math notranslate nohighlight">\(x*(rf+\beta*\mu_f+\alpha-rf)*252\)</span>$</p>
+<ul class="simple">
+<li><p>Often shops have risk-adjusted PnL. So while you might expect to make <code class="docutils literal notranslate"><span class="pre">x*(beta*mu_f+alpha)*252</span></code> for the fund, they only comp you based on <code class="docutils literal notranslate"><span class="pre">x*(alpha)*252</span></code></p></li>
+</ul>
+<p>Net of direct funding costs  and factor exposures
+$<span class="math notranslate nohighlight">\(x*(rf+\beta*\mu_f+\alpha-rf-\beta*\mu_f)*252\)</span>$</p>
 <ol class="arabic simple" start="2">
-<li><p>What is your Expected PnL after your market exposure is subtracted</p></li>
+<li><p>What is your risk-adjusted Expected PnL after your market exposure is subtracted</p></li>
 </ol>
 <div class="math notranslate nohighlight">
 \[x*(\alpha)*252\]</div>
@@ -1406,36 +1348,13 @@ alpha of unhedge portfolio
 </div>
 </div>
 </div>
-<p>Often shops have risk-adjusted PnL. So while you might expect to make <code class="docutils literal notranslate"><span class="pre">x*(beta*mu_f+alpha)*252</span></code> for the fund, they only comp you based on <code class="docutils literal notranslate"><span class="pre">x*(alpha)*252</span></code></p>
 <p><strong>Focusing on your edge</strong></p>
 <p>Now suppose you focus your edge–i.e. investing in MSFT but hedging the market risk</p>
 <ol class="arabic simple">
 <li><p>How much of the market do I need to short per dollar invested in MSFT?</p></li>
-</ol>
-<p>you short exactly it’s beta</p>
-<div class="math notranslate nohighlight">
-\[x_h=-\beta\]</div>
-<p>So your portfolio is</p>
-<div class="math notranslate nohighlight">
-\[x*(stock:1,market:-\beta)\]</div>
-<ol class="arabic simple" start="2">
+<li><p>What your portfolio looks like?</p></li>
 <li><p>How many dollars in MSFT can I buy? (lets say for a yearly budget)</p></li>
 </ol>
-<div class="math notranslate nohighlight">
-\[\frac{1M}{\sqrt(var_e*252)}\]</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xe</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">var_e</span><span class="o">*</span><span class="mi">252</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
-<span class="n">xe</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3.8831665045807324
-</pre></div>
-</div>
-</div>
-</div>
 <p>Why <span class="math notranslate nohighlight">\(var_e\)</span> is the volatility of the hedge portfolio?</p>
 <p>Note that the hedged portfolio return is</p>
 <div class="math notranslate nohighlight">
@@ -1462,16 +1381,28 @@ alpha of unhedge portfolio
 </div>
 </div>
 </div>
-<ul class="simple">
-<li><p>What is your portfolio Sharpe Ratio? what is Sharpe Ratio anyways?</p></li>
-<li><p>What is you portfolio Sharpe with the hedge and without the hedge?</p></li>
-</ul>
+</section>
+<section id="sharpe-ratio">
+<h2><span class="section-number">5.8. </span>Sharpe Ratio<a class="headerlink" href="#sharpe-ratio" title="Link to this heading">#</a></h2>
+<p>Sharpe ratio is one of the most important metrics in the industry</p>
+<p>It measures how much extra return you are expected to earn per unit of risk</p>
+<div class="math notranslate nohighlight">
+\[\frac{E[r]-rf}{\sigma(r)}\]</div>
+<p>What is you portfolio Sharpe with the hedge and without the hedge?</p>
+</section>
+<section id="appraisal-ratio">
+<h2><span class="section-number">5.9. </span>Appraisal Ratio<a class="headerlink" href="#appraisal-ratio" title="Link to this heading">#</a></h2>
+<p>Appraisal ratio is the the most important metrics in the industry</p>
+<p>It measures how much extra return you are expected to earn per unit of risk after your strip out all factor premia</p>
+<div class="math notranslate nohighlight">
+\[\frac{E[r-bf-rf]}{\sigma(r-bf)}=\frac{\alpha}{\sigma(\epsilon)}\]</div>
+<p>Often people with just call this the  Sharpe Ratio of the factor neutral portfolio, i.e. the Sharpe ratio of hedged portfolio</p>
 </section>
 <section id="variance-decomposition">
-<h2><span class="section-number">5.7. </span>Variance Decomposition<a class="headerlink" href="#variance-decomposition" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">5.10. </span>Variance Decomposition<a class="headerlink" href="#variance-decomposition" title="Link to this heading">#</a></h2>
 <p>Factor models are essential to manage risk</p>
 <p>A pod shop manager , a manager in a mutual fund in a large mutual fund company, a hedge fund trader in a large hedge fund,…all of those will typically have tight limits on the TOTAL risk of their portfolio, i.e. <span class="math notranslate nohighlight">\(var(r)\)</span> but also on the factor component of their portfolio</p>
-<p>But even if you don’t, and you are an active manager with freedom of trading, you still want to control quite carefully how much non-essential risks you are taking in your portfolio</p>
+<p>But even if you don’t, and you are an active manager with freedom of trading, you still want to control quite carefully which  risks you are taking in your portfolio</p>
 <p>The decomposition here with single factor is really easy, but once you understand it, the multi-factor decomposition will be also easy to understand ( even it a little more involved)</p>
 <ol class="arabic simple">
 <li><p>The total variance of your strategy/asset is</p></li>
@@ -1489,8 +1420,8 @@ alpha of unhedge portfolio
 <li><p>on your factor beta–this might grow in a market turmoil for example</p></li>
 <li><p>on the factor variance–also might grow when markets are choppy</p></li>
 </ul>
-<p>The factor risk-share also depend on the idio vol. During a market turmoil all vols tend to go up, but factor vols tend to go up more
-So both your total risk grows as the share of factor risk</p>
+<p>The factor risk-share also depend on the idio vol. During a market turmoil all vols tend to go up, but factor vols tend to go up more</p>
+<p>So both your total risk grows as the share of factor risk</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">beta</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">var_f</span><span class="o">/</span><span class="n">var_r</span>
@@ -1503,35 +1434,29 @@ So both your total risk grows as the share of factor risk</p>
 </div>
 </div>
 </div>
-<section id="hitting-factor-target">
-<h3><span class="section-number">5.7.1. </span>Hitting Factor target<a class="headerlink" href="#hitting-factor-target" title="Link to this heading">#</a></h3>
-<p>Suppose I want to get this to the 20% limit. What do I do?</p>
-<p>Lets say xh is your position on the market, then your portfolio is</p>
+</section>
+<section id="factor-risk-limits">
+<h2><span class="section-number">5.11. </span>Factor risk Limits<a class="headerlink" href="#factor-risk-limits" title="Link to this heading">#</a></h2>
+<p>Suppose I have a limit on how much of my portfolio variance can be driven by the factor</p>
+<p>How much do you need to hold from the factor to hit a particular target?</p>
 <div class="math notranslate nohighlight">
-\[rp=x(1*re+xh*f)\]</div>
+\[rp=x*re+xh*f\]</div>
 <p>You want the factor piece to be less than vbar=20%</p>
 <div class="math notranslate nohighlight">
-\[Var(rp)=Var(x(1*re+xh*f))=Var(x(1*(\alpha+\beta*f+\epsilon)+xh*f))=Var(x(\beta+xh)*f)+x^2Var(\epsilon)\]</div>
+\[Var(rp)=Var(x*re+xh*f)=Var(x(1*(\alpha+\beta*f+\epsilon))+xh*f)=Var((x\beta+xh)*f)+x^2Var(\epsilon)\]</div>
 <div class="math notranslate nohighlight">
-\[Var(rp)=x^2(\beta+xh)^2*Var(f)+x^2Var(\epsilon)\]</div>
+\[Var(rp)=(x\beta+xh)^2*Var(f)+x^2Var(\epsilon)\]</div>
 <p>so we need</p>
 <div class="math notranslate nohighlight">
-\[\frac{x^2(\beta+xh)^2*Var(f)}{x^2(\beta+xh)^2*Var(f)+x^2Var(\epsilon)}=vbar\]</div>
+\[\frac{(x\beta+xh)^2*Var(f)}{(x\beta+xh)^2*Var(f)+x^2Var(\epsilon)}=vbar\]</div>
 <p>Note that your size of your overall portfolio cancels out.</p>
 <p>What matters for the share is your hedge per unit of position</p>
 <div class="math notranslate nohighlight">
-\[\frac{(\beta+xh)^2*Var(f)}{(\beta+xh)^2*Var(f)+Var(\epsilon)}=vbar\]</div>
+\[\frac{(\beta+\frac{xh}{x})^2*Var(f)}{(\beta+\frac{xh}{x})^2*Var(f)+Var(\epsilon)}=vbar\]</div>
+<p>How do I set it to exactly zero?</p>
 <p>reorganizing</p>
 <div class="math notranslate nohighlight">
-\[(\beta+xh)^2*Var(f)=vbar*((\beta+xh)^2*Var(f)+Var(\epsilon))\]</div>
-<div class="math notranslate nohighlight">
-\[(1-vbar)(\beta+xh)^2*Var(f)=vbar*Var(\epsilon)\]</div>
-<div class="math notranslate nohighlight">
-\[(\beta+xh)^2=\frac{vbar*Var(\epsilon)}{(1-vbar)Var(f)}\]</div>
-<div class="math notranslate nohighlight">
-\[(\beta+xh)=\sqrt{vbar\frac{Var(\epsilon)}{(1-vbar)Var(f)}}\]</div>
-<div class="math notranslate nohighlight">
-\[xh=\sqrt{\frac{vbar*Var(\epsilon)}{(1-vbar)Var(f)}}-\beta\]</div>
+\[\frac{xh}{x}=\sqrt{\frac{vbar*Var(\epsilon)}{(1-vbar)Var(f)}}-\beta\]</div>
 <p>What is the hedge portfolio if you want zero factor risk?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1547,6 +1472,7 @@ So both your total risk grows as the share of factor risk</p>
 </div>
 </div>
 </div>
+<p>For each dollar invested in the strategy you need to short 50 cents of the market</p>
 <hr class="docutils" />
 <p><strong>📝 Key Takeaways</strong></p>
 <ul class="simple">
@@ -1564,11 +1490,8 @@ By explicitly matching the factor component, you can assess whether a manager’
 Estimating only N betas, N idiosyncratic variances, and one factor variance yields a workable covariance estimate even when the full N × N matrix is unmanageable.</p></li>
 <li><p><strong>All numbers are frequency-specific.</strong><br />
 Alpha, variances, co-variances and Sharpe ratios must be annualized (or otherwise scaled) consistently before comparison or budgeting.  Beta is the only one that is theoretically invariant</p></li>
-<li><p><strong>Good questions drive good models.</strong><br />
-Throughout the notebook “Stop and Think” prompts remind you to check data frequency, interpret α’s forecasting value, and judge whether the single-factor assumption is adequate for your application.</p></li>
 </ul>
 <hr class="docutils" />
-</section>
 </section>
 </section>
 
@@ -1642,10 +1565,11 @@ Throughout the notebook “Stop and Think” prompts remind you to check data fr
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-s">5.4. Alpha and Beta(s)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focus-on-your-skill-hedge-all-the-residual-risk">5.5. Focus on your skill, hedge all the residual risk</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tacking-hedging-and-hedged-portfolios">5.6. Tacking, Hedging and Hedged portfolios</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-decomposition">5.7. Variance Decomposition</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hitting-factor-target">5.7.1. Hitting Factor target</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-models-and-risk-budgets">5.7. Factor Models and Risk Budgets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio">5.8. Sharpe Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-ratio">5.9. Appraisal Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-decomposition">5.10. Variance Decomposition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-limits">5.11. Factor risk Limits</a></li>
 </ul>
   </nav></div>
 
