@@ -485,7 +485,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio">5.8. Sharpe Ratio</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-ratio">5.9. Appraisal Ratio</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-decomposition">5.10. Variance Decomposition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-limits">5.11. Factor risk Limits</a></li>
 </ul>
             </nav>
         </div>
@@ -635,11 +634,11 @@ Understand why asset managers, pod shops, and risk desks rely on factor models t
 <span class="n">df_rf</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;DGS3MO&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
 <span class="n">df_rf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">df_rf</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;rf&quot;</span><span class="p">]</span>
-<span class="n">df_rf</span><span class="o">.</span><span class="n">rf</span><span class="o">=</span><span class="n">df_rf</span><span class="o">.</span><span class="n">rf</span><span class="o">/</span><span class="mi">100</span>
+<span class="n">df_rf</span><span class="o">.</span><span class="n">rf</span><span class="o">=</span><span class="p">(</span><span class="n">df_rf</span><span class="o">.</span><span class="n">rf</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">/</span><span class="mi">252</span>  <span class="c1"># convert to daily</span>
 <span class="n">df_rf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># merge with the risk-free rate</span>
-<span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_rf</span><span class="o">/</span><span class="mi">252</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_rf</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
 <span class="c1">#</span>
 <span class="n">df_re</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;rf&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;rf&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">df_re</span>
@@ -655,6 +654,118 @@ Done
 [47896, 55976, 84398]
 </pre></div>
 </div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>SPY</th>
+      <th>WMT</th>
+      <th>JPM</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1969-03-05</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1969-03-06</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1969-03-07</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1969-03-10</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1969-03-11</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2024-12-24</th>
+      <td>0.010940</td>
+      <td>0.025614</td>
+      <td>0.016269</td>
+    </tr>
+    <tr>
+      <th>2024-12-26</th>
+      <td>-0.000106</td>
+      <td>0.001014</td>
+      <td>0.003252</td>
+    </tr>
+    <tr>
+      <th>2024-12-27</th>
+      <td>-0.010698</td>
+      <td>-0.012349</td>
+      <td>-0.008273</td>
+    </tr>
+    <tr>
+      <th>2024-12-30</th>
+      <td>-0.011585</td>
+      <td>-0.012065</td>
+      <td>-0.007844</td>
+    </tr>
+    <tr>
+      <th>2024-12-31</th>
+      <td>-0.003811</td>
+      <td>-0.002602</td>
+      <td>0.001457</td>
+    </tr>
+  </tbody>
+</table>
+<p>14079 rows × 3 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#df_re.to_csv(&#39;../../assets/data/FactorModels_data1.csv&#39;)</span>
+<span class="n">df_re</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModels_data1.csv&#39;</span><span class="p">)</span>
+<span class="n">df_re</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_re</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+<span class="n">df_re</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_re</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
 <div class="output text_html"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -943,11 +1054,11 @@ Done
 [10107]
 ticker          MSFT
 date                
+1986-03-13       NaN
 1986-03-14  0.035714
 1986-03-17  0.017241
 1986-03-18 -0.025424
 1986-03-19 -0.017391
-1986-03-20 -0.026549
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1006,6 +1117,92 @@ date
     </tr>
   </tbody>
 </table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#df_returns.to_csv(&#39;../../assets/data/FactorModels_data2.csv&#39;)</span>
+<span class="n">df_returns</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModels_data2.csv&#39;</span><span class="p">)</span>
+<span class="n">df_returns</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_returns</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+<span class="n">df_returns</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_returns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MSFT</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1986-03-13</th>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1986-03-14</th>
+      <td>0.035714</td>
+    </tr>
+    <tr>
+      <th>1986-03-17</th>
+      <td>0.017241</td>
+    </tr>
+    <tr>
+      <th>1986-03-18</th>
+      <td>-0.025424</td>
+    </tr>
+    <tr>
+      <th>1986-03-19</th>
+      <td>-0.017391</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2024-12-24</th>
+      <td>0.009374</td>
+    </tr>
+    <tr>
+      <th>2024-12-26</th>
+      <td>-0.002777</td>
+    </tr>
+    <tr>
+      <th>2024-12-27</th>
+      <td>-0.017302</td>
+    </tr>
+    <tr>
+      <th>2024-12-30</th>
+      <td>-0.013240</td>
+    </tr>
+    <tr>
+      <th>2024-12-31</th>
+      <td>-0.007838</td>
+    </tr>
+  </tbody>
+</table>
+<p>9779 rows × 1 columns</p>
 </div></div></div>
 </div>
 <div class="cell docutils container">
@@ -1301,21 +1498,17 @@ alpha of unhedge portfolio
 </section>
 <section id="factor-models-and-risk-budgets">
 <h2><span class="section-number">5.7. </span>Factor Models and Risk Budgets<a class="headerlink" href="#factor-models-and-risk-budgets" title="Link to this heading">#</a></h2>
-<p>Lets say we have 1 million dollar per month volatility (i.e. standard deviation) budget</p>
-<p>What that means?</p>
-<p>Means that the size of my position times the monthly volatility of my position must be less than 1 million dollars</p>
-<p>How much o MSFT can I own?</p>
-<ul class="simple">
-<li><p>If I invest one dollar in MSFT I get: <span class="math notranslate nohighlight">\(1*\sqrt(var_r*252)\)</span> standard deviation for 1 year</p></li>
-<li><p>If I invest one dollar in MSFT I get: <span class="math notranslate nohighlight">\(1*\sqrt(var_r*21)\)</span> standard deviation for 1 month</p></li>
-</ul>
-<p>What is the most I can buy from MSFT stock?</p>
 <blockquote>
-<div><p>What if the budget was for 1 year? How do I adjust my calculation?</p>
+<div><p><strong>🔧 Try it out</strong></p>
+</div></blockquote>
+<blockquote>
+<div><p>Lets say we have 1 million dollar per month volatility (i.e. standard deviation) budget</p>
+<p>What that means? How much can I buy of MSFT?</p>
+<p>What if the budget was for 1 year? How do I adjust my calculation?</p>
 <p>Can I buy more or less?</p>
 </div></blockquote>
 <ol class="arabic simple">
-<li><p>What is your expected PnL in the end of the year?</p>
+<li><p>What is your <strong>expected</strong> PnL in the end of the year?</p>
 <ul class="simple">
 <li><p>Here we will subtract your funding costs, which I will assume is also rf so it will be a wash</p></li>
 <li><p><span class="math notranslate nohighlight">\(rf+\beta*\mu_f+\alpha\)</span> is your expected return</p></li>
@@ -1390,6 +1583,7 @@ $<span class="math notranslate nohighlight">\(x*(rf+\beta*\mu_f+\alpha-rf-\beta*
 <div class="math notranslate nohighlight">
 \[\frac{E[r]-rf}{\sigma(r)}\]</div>
 <p>What is you portfolio Sharpe with the hedge and without the hedge?</p>
+<p>Do you always come ahead by hedging it out?</p>
 </section>
 <section id="appraisal-ratio">
 <h2><span class="section-number">5.9. </span>Appraisal Ratio<a class="headerlink" href="#appraisal-ratio" title="Link to this heading">#</a></h2>
@@ -1398,6 +1592,7 @@ $<span class="math notranslate nohighlight">\(x*(rf+\beta*\mu_f+\alpha-rf-\beta*
 <div class="math notranslate nohighlight">
 \[\frac{E[r-bf-rf]}{\sigma(r-bf)}=\frac{\alpha}{\sigma(\epsilon)}\]</div>
 <p>Often people with just call this the  Sharpe Ratio of the factor neutral portfolio, i.e. the Sharpe ratio of hedged portfolio</p>
+<p>Do you always come ahead by hedging it out?</p>
 </section>
 <section id="variance-decomposition">
 <h2><span class="section-number">5.10. </span>Variance Decomposition<a class="headerlink" href="#variance-decomposition" title="Link to this heading">#</a></h2>
@@ -1435,45 +1630,6 @@ $<span class="math notranslate nohighlight">\(x*(rf+\beta*\mu_f+\alpha-rf-\beta*
 </div>
 </div>
 </div>
-</section>
-<section id="factor-risk-limits">
-<h2><span class="section-number">5.11. </span>Factor risk Limits<a class="headerlink" href="#factor-risk-limits" title="Link to this heading">#</a></h2>
-<p>Suppose I have a limit on how much of my portfolio variance can be driven by the factor</p>
-<p>How much do you need to hold from the factor to hit a particular target?</p>
-<div class="math notranslate nohighlight">
-\[rp=x*re+xh*f\]</div>
-<p>You want the factor piece to be less than vbar=20%</p>
-<div class="math notranslate nohighlight">
-\[Var(rp)=Var(x*re+xh*f)=Var(x(1*(\alpha+\beta*f+\epsilon))+xh*f)=Var((x\beta+xh)*f)+x^2Var(\epsilon)\]</div>
-<div class="math notranslate nohighlight">
-\[Var(rp)=(x\beta+xh)^2*Var(f)+x^2Var(\epsilon)\]</div>
-<p>so we need</p>
-<div class="math notranslate nohighlight">
-\[\frac{(x\beta+xh)^2*Var(f)}{(x\beta+xh)^2*Var(f)+x^2Var(\epsilon)}=vbar\]</div>
-<p>Note that your size of your overall portfolio cancels out.</p>
-<p>What matters for the share is your hedge per unit of position</p>
-<div class="math notranslate nohighlight">
-\[\frac{(\beta+\frac{xh}{x})^2*Var(f)}{(\beta+\frac{xh}{x})^2*Var(f)+Var(\epsilon)}=vbar\]</div>
-<p>How do I set it to exactly zero?</p>
-<p>reorganizing</p>
-<div class="math notranslate nohighlight">
-\[\frac{xh}{x}=\sqrt{\frac{vbar*Var(\epsilon)}{(1-vbar)Var(f)}}-\beta\]</div>
-<p>What is the hedge portfolio if you want zero factor risk?</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vbar</span><span class="o">=</span><span class="mf">0.2</span>
-<span class="n">xh20</span><span class="o">=</span><span class="p">((</span><span class="n">vbar</span><span class="o">*</span><span class="n">var_e</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">vbar</span><span class="p">)</span><span class="o">*</span><span class="n">var_f</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span><span class="o">-</span><span class="n">beta</span>
-<span class="n">xh20</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>-0.4816910986685352
-</pre></div>
-</div>
-</div>
-</div>
-<p>For each dollar invested in the strategy you need to short 50 cents of the market</p>
 <hr class="docutils" />
 <p><strong>📝 Key Takeaways</strong></p>
 <ul class="simple">
@@ -1570,7 +1726,6 @@ Alpha, variances, co-variances and Sharpe ratios must be annualized (or otherwis
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio">5.8. Sharpe Ratio</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-ratio">5.9. Appraisal Ratio</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-decomposition">5.10. Variance Decomposition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-limits">5.11. Factor risk Limits</a></li>
 </ul>
   </nav></div>
 
