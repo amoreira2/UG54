@@ -483,14 +483,15 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-factor-risk">15.2. Managing Factor Risk</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-covariance-matrix-estimation">15.3. Variance-Covariance Matrix Estimation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-based-covariance-estimation">15.3.1. Factor-Based Covariance Estimation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shrinkage-methods">15.3.2. Shrinkage methods</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-will-your-portfolio-risk-change-as-you-add-positions">15.3.3. How will your portfolio risk change as you add positions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-limits">15.3. Factor risk Limits</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-covariance-matrix-estimation">15.4. Variance-Covariance Matrix Estimation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-based-covariance-estimation">15.4.1. Factor-Based Covariance Estimation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shrinkage-methods">15.4.2. Shrinkage methods</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-will-your-portfolio-risk-change-as-you-add-positions">15.4.3. How will your portfolio risk change as you add positions</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-risk-management">15.4. Dynamic Risk Management</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-error-mandates">15.5. Tracking Error Mandates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-risk-management">15.5. Dynamic Risk Management</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-error-mandates">15.6. Tracking Error Mandates</a></li>
 </ul>
             </nav>
         </div>
@@ -974,8 +975,48 @@ Because delegates often face external constraints and career risks. Their incent
 </ul>
 <p>What are the benefits and drawbacks of each?</p>
 </section>
+<section id="factor-risk-limits">
+<h2><span class="section-number">15.3. </span>Factor risk Limits<a class="headerlink" href="#factor-risk-limits" title="Link to this heading">#</a></h2>
+<p>Needs to be integrated</p>
+<p>Suppose I have a limit on how much of my portfolio variance can be driven by the factor</p>
+<p>How much do you need to hold from the factor to hit a particular target?</p>
+<div class="math notranslate nohighlight">
+\[rp=x*re+xh*f\]</div>
+<p>You want the factor piece to be less than vbar=20%</p>
+<div class="math notranslate nohighlight">
+\[Var(rp)=Var(x*re+xh*f)=Var(x(1*(\alpha+\beta*f+\epsilon))+xh*f)=Var((x\beta+xh)*f)+x^2Var(\epsilon)\]</div>
+<div class="math notranslate nohighlight">
+\[Var(rp)=(x\beta+xh)^2*Var(f)+x^2Var(\epsilon)\]</div>
+<p>so we need</p>
+<div class="math notranslate nohighlight">
+\[\frac{(x\beta+xh)^2*Var(f)}{(x\beta+xh)^2*Var(f)+x^2Var(\epsilon)}=vbar\]</div>
+<p>Note that your size of your overall portfolio cancels out.</p>
+<p>What matters for the share is your hedge per unit of position</p>
+<div class="math notranslate nohighlight">
+\[\frac{(\beta+\frac{xh}{x})^2*Var(f)}{(\beta+\frac{xh}{x})^2*Var(f)+Var(\epsilon)}=vbar\]</div>
+<p>How do I set it to exactly zero?</p>
+<p>reorganizing</p>
+<div class="math notranslate nohighlight">
+\[\frac{xh}{x}=\sqrt{\frac{vbar*Var(\epsilon)}{(1-vbar)Var(f)}}-\beta\]</div>
+<p>What is the hedge portfolio if you want zero factor risk?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vbar</span><span class="o">=</span><span class="mf">0.2</span>
+<span class="n">xh20</span><span class="o">=</span><span class="p">((</span><span class="n">vbar</span><span class="o">*</span><span class="n">var_e</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">vbar</span><span class="p">)</span><span class="o">*</span><span class="n">var_f</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span><span class="o">-</span><span class="n">beta</span>
+<span class="n">xh20</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>-0.4816910986685352
+</pre></div>
+</div>
+</div>
+</div>
+<p>For each dollar invested in the strategy you need to short 50 cents of the market</p>
+</section>
 <section id="variance-covariance-matrix-estimation">
-<h2><span class="section-number">15.3. </span>Variance-Covariance Matrix Estimation<a class="headerlink" href="#variance-covariance-matrix-estimation" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">15.4. </span>Variance-Covariance Matrix Estimation<a class="headerlink" href="#variance-covariance-matrix-estimation" title="Link to this heading">#</a></h2>
 <p>A key step in measuring risk well is to have a good estimate of the covariance-matrix</p>
 <p>The covariance matrixes can be thought as two pieces</p>
 <ul class="simple">
@@ -1026,7 +1067,7 @@ Because delegates often face external constraints and career risks. Their incent
 </li>
 </ol>
 <section id="factor-based-covariance-estimation">
-<h3><span class="section-number">15.3.1. </span>Factor-Based Covariance Estimation<a class="headerlink" href="#factor-based-covariance-estimation" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">15.4.1. </span>Factor-Based Covariance Estimation<a class="headerlink" href="#factor-based-covariance-estimation" title="Link to this heading">#</a></h3>
 <p>Notation</p>
 <div class="math notranslate nohighlight">
 \[R_t=B&#64;F_t+u_t\]</div>
@@ -1240,7 +1281,7 @@ Because delegates often face external constraints and career risks. Their incent
 </div>
 </section>
 <section id="shrinkage-methods">
-<h3><span class="section-number">15.3.2. </span>Shrinkage methods<a class="headerlink" href="#shrinkage-methods" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">15.4.2. </span>Shrinkage methods<a class="headerlink" href="#shrinkage-methods" title="Link to this heading">#</a></h3>
 <p>Say our covariance in the data is <span class="math notranslate nohighlight">\(Var(R)\)</span></p>
 <p>We will then construct our estimator as</p>
 <div class="math notranslate nohighlight">
@@ -1286,7 +1327,7 @@ Because delegates often face external constraints and career risks. Their incent
 </ul>
 </section>
 <section id="how-will-your-portfolio-risk-change-as-you-add-positions">
-<h3><span class="section-number">15.3.3. </span>How will your portfolio risk change as you add positions<a class="headerlink" href="#how-will-your-portfolio-risk-change-as-you-add-positions" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">15.4.3. </span>How will your portfolio risk change as you add positions<a class="headerlink" href="#how-will-your-portfolio-risk-change-as-you-add-positions" title="Link to this heading">#</a></h3>
 <p>You have portfolio <span class="math notranslate nohighlight">\(X_0\)</span> and you want to sell w of your positions to invest in a fund with portfolio <span class="math notranslate nohighlight">\(X_1\)</span>. How your portfolio variance will change as a function of you reallocation?</p>
 <ul class="simple">
 <li><p>The answer is simple</p></li>
@@ -1486,7 +1527,7 @@ Sigma_e:
 </section>
 </section>
 <section id="dynamic-risk-management">
-<h2><span class="section-number">15.4. </span>Dynamic Risk Management<a class="headerlink" href="#dynamic-risk-management" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">15.5. </span>Dynamic Risk Management<a class="headerlink" href="#dynamic-risk-management" title="Link to this heading">#</a></h2>
 <p>The variance of a portfolio is</p>
 <div class="math notranslate nohighlight">
 \[Var_t(X_tR^e_{t+1})\]</div>
@@ -1543,7 +1584,7 @@ Whatever works best out of sample</p>
 <p>Below we will do an example where we build a covariance matrix using this “mixed frequency” approach</p>
 </section>
 <section id="tracking-error-mandates">
-<h2><span class="section-number">15.5. </span>Tracking Error Mandates<a class="headerlink" href="#tracking-error-mandates" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">15.6. </span>Tracking Error Mandates<a class="headerlink" href="#tracking-error-mandates" title="Link to this heading">#</a></h2>
 <p>Active managers operating in a  mutual often have limits on how much they can deviate from their benchmark</p>
 <p>This happens at the same time that they have incentives to beat it , i.e. their value added is <span class="math notranslate nohighlight">\(E[R-R^b]\)</span></p>
 <blockquote>
@@ -1658,14 +1699,15 @@ Whatever works best out of sample</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-factor-risk">15.2. Managing Factor Risk</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-covariance-matrix-estimation">15.3. Variance-Covariance Matrix Estimation</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-based-covariance-estimation">15.3.1. Factor-Based Covariance Estimation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shrinkage-methods">15.3.2. Shrinkage methods</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-will-your-portfolio-risk-change-as-you-add-positions">15.3.3. How will your portfolio risk change as you add positions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-limits">15.3. Factor risk Limits</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-covariance-matrix-estimation">15.4. Variance-Covariance Matrix Estimation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-based-covariance-estimation">15.4.1. Factor-Based Covariance Estimation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shrinkage-methods">15.4.2. Shrinkage methods</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-will-your-portfolio-risk-change-as-you-add-positions">15.4.3. How will your portfolio risk change as you add positions</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-risk-management">15.4. Dynamic Risk Management</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-error-mandates">15.5. Tracking Error Mandates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-risk-management">15.5. Dynamic Risk Management</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-error-mandates">15.6. Tracking Error Mandates</a></li>
 </ul>
   </nav></div>
 
