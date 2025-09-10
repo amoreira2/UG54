@@ -478,7 +478,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">5.1. Libraries and Auxiliary Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#towards-a-factor-model">5.2. Towards a factor Model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-models-vs-expected-returns-models">5.3. Risk Models vs Expected Returns Models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-s">5.4. Alpha and Beta(s)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-s">5.4. Alpha and Beta(s):</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focus-on-your-skill-hedge-all-the-residual-risk">5.5. Focus on your skill, hedge all the residual risk</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tacking-hedging-and-hedged-portfolios">5.6. Tacking, Hedging and Hedged portfolios</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-models-and-risk-budgets">5.7. Factor Models and Risk Budgets</a></li>
@@ -949,6 +949,7 @@ dtype: float64
 </ul>
 </li>
 </ol>
+<p><strong>A blurry distinction</strong></p>
 <blockquote>
 <div><p>We will call the first a factor model of risk, and the second a factor model of expected returns.</p>
 <p>However, this distinction is often blurry.</p>
@@ -957,9 +958,8 @@ dtype: float64
 </div></blockquote>
 <p>People start with a factor model with “priced” factors and then add additional factors to explain risk.</p>
 <blockquote>
-<div><p>what does priced means in this context?</p>
+<div><p>what does “priced” means in this context? What are examples of priced factors and unpriced factors?</p>
 </div></blockquote>
-<hr class="docutils" />
 <p><strong>More Precisely</strong></p>
 <p>Let <span class="math notranslate nohighlight">\(r^e\)</span> be an asset excess return over the risk-free rate</p>
 <p>Let <span class="math notranslate nohighlight">\(f\)</span> be a traded factor, for now  the <strong>excess returns</strong> on SPY ETF (that holds a basket that replicates the S&amp;P 500 index)</p>
@@ -1008,15 +1008,18 @@ dtype: float64
 </ul>
 </section>
 <section id="alpha-and-beta-s">
-<h2><span class="section-number">5.4. </span>Alpha and Beta(s)<a class="headerlink" href="#alpha-and-beta-s" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">5.4. </span>Alpha and Beta(s):<a class="headerlink" href="#alpha-and-beta-s" title="Link to this heading">#</a></h2>
 <p>Note that</p>
 <div class="math notranslate nohighlight">
 \[E[r]=E[rf+r^{e}]=rf+E[\alpha_i + b*f+\epsilon]\]</div>
 <div class="math notranslate nohighlight">
 \[E[r]=rf+\alpha+b*E[f]+E[\epsilon]\]</div>
 <ul class="simple">
-<li><p>Using that <span class="math notranslate nohighlight">\(E[\epsilon]=0\)</span> we have
-$<span class="math notranslate nohighlight">\(E[r]=rf+\alpha+b*E[f]\)</span>$</p></li>
+<li><p>Using that <span class="math notranslate nohighlight">\(E[\epsilon]=0\)</span> we have</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[E[r]=rf+\alpha+b*E[f]\]</div>
+<ul class="simple">
 <li><p>Thus, just like the risk of our asset could be attributed to the factor and it’s component, the same model also allow us to decompose the expected return in terms of the risk-free rate, the premium coming from the common factor exposure <span class="math notranslate nohighlight">\(b*E[f]\)</span> and the risk-premium specific to the asset, the ALPHA.</p></li>
 <li><p>The alpha does not need to be in a specific asset, can be in a combination of them</p></li>
 <li><p>The decomposition works the same for portfolio of assets</p></li>
@@ -1025,19 +1028,31 @@ $<span class="math notranslate nohighlight">\(E[r]=rf+\alpha+b*E[f]\)</span>$</p
 </section>
 <section id="focus-on-your-skill-hedge-all-the-residual-risk">
 <h2><span class="section-number">5.5. </span>Focus on your skill, hedge all the residual risk<a class="headerlink" href="#focus-on-your-skill-hedge-all-the-residual-risk" title="Link to this heading">#</a></h2>
-<p>(Q3) If you have an asset that has alpha, says, you are confident that Microsoft will beat expectations and you expect a 5% appreciation in the next 12 months beyond any factor exposure that Microsoft might had</p>
-<p><strong>What should you do?</strong></p>
+<p>If you have an asset that has alpha, says, you are confident that Microsoft will beat expectations and you expect a 5% appreciation in the next 12 months beyond any factor exposure that Microsoft might had</p>
+<p><strong>(Q3)  What should you do?</strong></p>
+<p>Describe how would you implement this trade</p>
 <p><strong>Implementing</strong></p>
 <p>Lets do this!</p>
 <p>I will use a regression to get some numbers for us to do this strategy</p>
 <p>but for now, just think those as numbers I am giving you <strong>and don’t think of the regression as giving the right numbers necessarily.</strong></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">ticker</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MSFT&#39;</span><span class="p">]</span>
-<span class="n">df_returns</span> <span class="o">=</span> <span class="n">get_daily_wrds</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="n">tickers</span><span class="o">=</span><span class="n">ticker</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_returns</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
-<span class="n">df_returns</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># that is the code to get data from WRDS</span>
+<span class="c1"># you need to have an account with WRDS and the wrds package installed</span>
+<span class="c1"># uncomment the code below to get data from WRDS</span>
+
+<span class="c1"># conn = wrds.Connection()</span>
+<span class="c1"># ticker=[&#39;MSFT&#39;]</span>
+<span class="c1"># df_returns = get_daily_wrds(conn,tickers=ticker)</span>
+<span class="c1"># print(df_returns.head())</span>
+<span class="c1"># df_returns.describe()</span>
+<span class="c1"># I used this to save the data to a csv file and then load it from there</span>
+<span class="c1">#df_returns.to_csv(&#39;../../assets/data/FactorModels_data2.csv&#39;)</span>
+
+<span class="n">df_returns</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModels_data2.csv&#39;</span><span class="p">)</span>
+<span class="n">df_returns</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_returns</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+<span class="n">df_returns</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_returns</span>
 </pre></div>
 </div>
 </div>
@@ -1117,93 +1132,11 @@ date
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#df_returns.to_csv(&#39;../../assets/data/FactorModels_data2.csv&#39;)</span>
-<span class="n">df_returns</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModels_data2.csv&#39;</span><span class="p">)</span>
-<span class="n">df_returns</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_returns</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
-<span class="n">df_returns</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">df_returns</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>MSFT</th>
-    </tr>
-    <tr>
-      <th>date</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1986-03-13</th>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>1986-03-14</th>
-      <td>0.035714</td>
-    </tr>
-    <tr>
-      <th>1986-03-17</th>
-      <td>0.017241</td>
-    </tr>
-    <tr>
-      <th>1986-03-18</th>
-      <td>-0.025424</td>
-    </tr>
-    <tr>
-      <th>1986-03-19</th>
-      <td>-0.017391</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>2024-12-24</th>
-      <td>0.009374</td>
-    </tr>
-    <tr>
-      <th>2024-12-26</th>
-      <td>-0.002777</td>
-    </tr>
-    <tr>
-      <th>2024-12-27</th>
-      <td>-0.017302</td>
-    </tr>
-    <tr>
-      <th>2024-12-30</th>
-      <td>-0.013240</td>
-    </tr>
-    <tr>
-      <th>2024-12-31</th>
-      <td>-0.007838</td>
-    </tr>
-  </tbody>
-</table>
-<p>9779 rows × 1 columns</p>
-</div></div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this gets daily data on multiple factors plust the risk-free rate</span>
+<span class="c1"># you can think of these factors as returns on funds that hold certain assets</span>
+<span class="c1"># but the portfolios are constructed using a predefined rule</span>
+<span class="c1"># for now we will use only the market factor and the risk-free rate</span>
+<span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 <span class="n">df_factor</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </pre></div>
@@ -1714,7 +1647,7 @@ Alpha, variances, co-variances and Sharpe ratios must be annualized (or otherwis
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">5.1. Libraries and Auxiliary Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#towards-a-factor-model">5.2. Towards a factor Model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-models-vs-expected-returns-models">5.3. Risk Models vs Expected Returns Models</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-s">5.4. Alpha and Beta(s)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-s">5.4. Alpha and Beta(s):</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#focus-on-your-skill-hedge-all-the-residual-risk">5.5. Focus on your skill, hedge all the residual risk</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tacking-hedging-and-hedged-portfolios">5.6. Tacking, Hedging and Hedged portfolios</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-models-and-risk-budgets">5.7. Factor Models and Risk Budgets</a></li>
