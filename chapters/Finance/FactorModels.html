@@ -888,25 +888,27 @@ Done
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
-
-<span class="n">_temp</span><span class="o">=</span> <span class="n">df_re</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="s1">&#39;WMT&#39;</span><span class="p">])</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.formula.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">smf</span>
-<span class="n">model</span> <span class="o">=</span> <span class="o">?</span>
+<span class="n">_temp</span><span class="o">=</span> <span class="n">df_re</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="s1">&#39;WMT&#39;</span><span class="p">])</span>
+
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;WMT~SPY&#39;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">_temp</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 <span class="n">intercept_wmt</span><span class="p">,</span> <span class="n">beta_wmt</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;beta of asset WMT is </span><span class="si">{</span><span class="n">beta_wmt</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;SPY vs ?&#39;</span><span class="p">)</span>
 
-<span class="c1"># now do for JPM</span>
-<span class="n">_temp</span><span class="o">=</span> <span class="n">df_re</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="s1">&#39;JPM&#39;</span><span class="p">])</span>
+
+
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">(</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;WMT&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">beta_wmt</span><span class="o">*</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;SPY vs WMT Residuals&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">df_re</span><span class="p">[[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">corrwith</span><span class="p">(</span><span class="err">?</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df_re</span><span class="p">[[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">corrwith</span><span class="p">(</span><span class="err">?</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">df_re</span><span class="p">[[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">corrwith</span><span class="p">(</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">beta_jpm</span><span class="o">*</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_re</span><span class="p">[[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">corrwith</span><span class="p">(</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;WMT&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">beta_jpm</span><span class="o">*</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]))</span>
 </pre></div>
 </div>
 </div>
@@ -932,7 +934,8 @@ dtype: float64
 <li><p>The risk <span class="math notranslate nohighlight">\(\epsilon\)</span> is specific to asset <span class="math notranslate nohighlight">\(i\)</span> and uncorrelated with other assets</p></li>
 <li><p>You don’t really care whether the factors have premia, but only if they explain variation in returns</p></li>
 <li><p>It is essentially a model for the covariance matrix of returns</p></li>
-<li><p>Sounds boring–but extremely used in the industry</p></li>
+<li><p>Extremely used in the industry</p></li>
+<li><p><strong>(Q1) What it the key metric for whether a factor model is a good risk model?</strong></p></li>
 </ul>
 </li>
 <li><p>👉<strong>Expected Return</strong> Models</p>
@@ -942,6 +945,7 @@ dtype: float64
 <li><p>Because factors are long shorts we typically normalize so that the premium is positive</p></li>
 <li><p>A model can be a good model of expected returns, but not explain much of realized returns</p></li>
 <li><p>Such model is useful for performance evaluation</p></li>
+<li><p><strong>(Q2)What is the key metric whether a factor model is a good expected return model?</strong></p></li>
 </ul>
 </li>
 </ol>
@@ -969,9 +973,17 @@ dtype: float64
 <p>Whether we are working with a “Risk Model” or an “Expected Return” model will come down to the following</p>
 <ol class="arabic simple">
 <li><p>For risk model we assume <span class="math notranslate nohighlight">\(\epsilon\)</span> uncorrelated across stocks
-👉 To explain risk , factors must capture all co-movement in REALIZED returns</p></li>
+👉 To explain risk , factors must capture all co-movement in REALIZED returns</p>
+<ul class="simple">
+<li><p>(Q1) What does that mean?</p></li>
+</ul>
+</li>
 <li><p>For Expected return model, we assume <span class="math notranslate nohighlight">\(\alpha=0\)</span> for all stocks/strategies
-👉 to explain risk premia, model needs to explain all variation in EXPECTED returns.</p></li>
+👉 to explain risk premia, model needs to explain all variation in EXPECTED returns.</p>
+<ul class="simple">
+<li><p>(Q2) What does that mean?</p></li>
+</ul>
+</li>
 </ol>
 <hr class="docutils" />
 <p><strong>To what end?</strong></p>
@@ -1013,23 +1025,7 @@ $<span class="math notranslate nohighlight">\(E[r]=rf+\alpha+b*E[f]\)</span>$</p
 </section>
 <section id="focus-on-your-skill-hedge-all-the-residual-risk">
 <h2><span class="section-number">5.5. </span>Focus on your skill, hedge all the residual risk<a class="headerlink" href="#focus-on-your-skill-hedge-all-the-residual-risk" title="Link to this heading">#</a></h2>
-<p>No matter who you are, you will face dollar risk limits</p>
-<p>(We will discuss this in depth in out capital allocation lecture)</p>
-<p>So it is essential that you deploy risk wisely</p>
-<p>The key use of the factor model is to give you discipline to separate your edge from the rest</p>
-<p>How to use the factor model?</p>
-<p>First , realize that each piece of the factor model will require very thoughtful estimation</p>
-<p>Even here with only one asset and one factor we already need to know many things</p>
-<ol class="arabic simple">
-<li><p>The risk-free rate</p></li>
-<li><p>The strategy/asset factor beta</p></li>
-<li><p>The factor risk-premia</p></li>
-<li><p>The factor variance</p></li>
-<li><p>The strategy/asset specific alpha</p></li>
-<li><p>The strategy/asset specific variance</p></li>
-</ol>
-<p><strong>For now we will assume we know each of these</strong></p>
-<p>If you have an asset that has alpha, says, you are confident that Microsoft will beat expectations and you expect a 5% appreciation in the next 12 months beyond any factor exposure that Microsoft might had</p>
+<p>(Q3) If you have an asset that has alpha, says, you are confident that Microsoft will beat expectations and you expect a 5% appreciation in the next 12 months beyond any factor exposure that Microsoft might had</p>
 <p><strong>What should you do?</strong></p>
 <p><strong>Implementing</strong></p>
 <p>Lets do this!</p>
@@ -1542,7 +1538,7 @@ $<span class="math notranslate nohighlight">\(x*(rf+\beta*\mu_f+\alpha-rf-\beta*
 </div>
 </div>
 <p><strong>Focusing on your edge</strong></p>
-<p>Now suppose you focus your edge–i.e. investing in MSFT but hedging the market risk</p>
+<p>(Q4) Now suppose you focus your edge–i.e. investing in MSFT but hedging the market risk</p>
 <ol class="arabic simple">
 <li><p>How much of the market do I need to short per dollar invested in MSFT?</p></li>
 <li><p>What your portfolio looks like?</p></li>
