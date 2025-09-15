@@ -477,7 +477,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">7.1. Table of Contents</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">7.2. Libraries and Auxiliary Functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data">7.3. Our Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data-for-today">7.3. Our Data for today</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fundamental-capital-allocation-problem">7.4. The Fundamental Capital Allocation Problem</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#who-decides-how-much-risk-to-take">7.4.1. Who Decides How Much Risk to Take?</a></li>
 </ul>
@@ -494,7 +494,10 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-fund-separation">7.11. Two fund Separation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">7.12. ### ⚡ ⏰ Question: G1 ⚡</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-investment-frontier-now-including-a-risk-free-asset">7.13. The investment frontier (now including a risk-free asset)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-bets">7.14. Alpha bets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-bets">7.14. Alpha bets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">7.14.1. Implementation</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-combine-the-hedged-portfolio-alpha-and-the-market-beta">7.15. How to Combine the  Hedged portfolio (alpha) and the Market (beta)</a></li>
 </ul>
             </nav>
@@ -609,20 +612,134 @@ Learn the mechanics of combining a hedged long-short (zero-beta) strategy with a
 </details>
 </div>
 </section>
-<section id="our-data">
-<h2><span class="section-number">7.3. </span>Our Data<a class="headerlink" href="#our-data" title="Link to this heading">#</a></h2>
+<section id="our-data-for-today">
+<h2><span class="section-number">7.3. </span>Our Data for today<a class="headerlink" href="#our-data-for-today" title="Link to this heading">#</a></h2>
+<p>Today we will work with a new data set.We will work with 6 portfolios</p>
+<ul class="simple">
+<li><p>Mkt-RF: Buy all US stocks, short the risk-free rate</p></li>
+<li><p>SmB, Small-minus-Big: Buy the smallest stocks by market cap, short the largest</p></li>
+<li><p>Hml, High-minus-Los: Buy the stocks with the highest Book-to-Market, short the ones with the lowest Book-to-Market</p></li>
+<li><p>RmW, Robust-minus-Weak: Buy stocks with the highest profitability over assets, short the ones with the lowest</p></li>
+<li><p>CMA, Conservative-minus-Aggressive: Buy the stock that have the lowest CAPEX over assets, short the ones with the highest</p></li>
+<li><p>MOM, Momentum: Buy the stocks that performed the best in the last 12 months, sell the stocks that performed the worst</p></li>
+<li><p>All these portfolio are “market-cap-weighted”.</p></li>
+<li><p>once we isolate the stocks we like and dislike  we weight them by market cap</p></li>
+<li><p>We make the lon and short side same size, so all these portfolio are “excess returns”</p></li>
+<li><p>Putting aside (very important) frictions in taking leverage, these portfolios are “costless to implement” as the have zero cost</p></li>
+<li><p>You fund your longs with your shorts</p></li>
+<li><p>Except the market where the short side is risk-free, all the others are designed to be “market-neutral” cross-sectional bets</p></li>
+<li><p>You are not taking a view on the market as a whole, but only in one segment against the other</p></li>
+<li><p>These portfolios are the core of the “smart beta” industry. And it is often  called systematic investing</p></li>
+<li><p>Their construction has many details, which we will did into chapter 10</p></li>
+<li><p>They are called factors because we tend to use these trading strategies as factors.</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://raw.githubusercontent.com/amoreira2/Lectures/main/assets/data/GlobalFinMonthly.csv&quot;</span>
-<span class="n">Data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">na_values</span><span class="o">=-</span><span class="mi">99</span><span class="p">)</span>
-<span class="n">Data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">Data</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span>
-<span class="n">Data</span><span class="o">=</span><span class="n">Data</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span>
-<span class="n">Rf</span><span class="o">=</span><span class="n">Data</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
-<span class="n">Data</span><span class="o">=</span><span class="n">Data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">Data</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">Data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># url=&quot;https://raw.githubusercontent.com/amoreira2/Lectures/main/assets/data/GlobalFinMonthly.csv&quot;</span>
+<span class="c1"># Data = pd.read_csv(url,na_values=-99)</span>
+<span class="c1"># Data[&#39;Date&#39;]=pd.to_datetime(Data[&#39;Date&#39;])</span>
+<span class="c1"># Data=Data.set_index([&#39;Date&#39;])</span>
+<span class="c1"># Rf=Data[&#39;RF&#39;]</span>
+<span class="c1"># Data=Data.drop(columns=[&#39;RF&#39;]).subtract(Data[&#39;RF&#39;],axis=0)</span>
+<span class="c1"># Data.head()</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;FF6&#39;</span><span class="p">,</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;monthly&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>RF</th>
+      <th>Mkt-RF</th>
+      <th>SMB</th>
+      <th>HML</th>
+      <th>RMW</th>
+      <th>CMA</th>
+      <th>MOM</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1963-07-01</th>
+      <td>0.0027</td>
+      <td>-0.0039</td>
+      <td>-0.0057</td>
+      <td>-0.0081</td>
+      <td>0.0064</td>
+      <td>-0.0115</td>
+      <td>0.0101</td>
+    </tr>
+    <tr>
+      <th>1963-08-01</th>
+      <td>0.0025</td>
+      <td>0.0508</td>
+      <td>-0.0095</td>
+      <td>0.0170</td>
+      <td>0.0040</td>
+      <td>-0.0038</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <th>1963-09-01</th>
+      <td>0.0027</td>
+      <td>-0.0157</td>
+      <td>-0.0025</td>
+      <td>0.0000</td>
+      <td>-0.0078</td>
+      <td>0.0015</td>
+      <td>0.0012</td>
+    </tr>
+    <tr>
+      <th>1963-10-01</th>
+      <td>0.0029</td>
+      <td>0.0254</td>
+      <td>-0.0057</td>
+      <td>-0.0004</td>
+      <td>0.0279</td>
+      <td>-0.0225</td>
+      <td>0.0313</td>
+    </tr>
+    <tr>
+      <th>1963-11-01</th>
+      <td>0.0027</td>
+      <td>-0.0086</td>
+      <td>-0.0116</td>
+      <td>0.0173</td>
+      <td>-0.0043</td>
+      <td>0.0227</td>
+      <td>-0.0078</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 </section>
 <section id="the-fundamental-capital-allocation-problem">
@@ -812,7 +929,7 @@ $<span class="math notranslate nohighlight">\( W=\frac{1}{\gamma}Var(R^e_T)^{-1}
 <h2><span class="section-number">7.12. </span>### ⚡ ⏰ Question: G1 ⚡<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>For example, suppose I want to hit an expected excess return target of 5% per year, What is my optimal portfolio?</p>
 <hr class="docutils" />
-<p>Lets apply this to  an international portfolio allocation problem</p>
+<p>Lets apply this to  the problem of allocating across these factors</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># lets assume the sample moments are the true moments of the distribution</span>
@@ -910,23 +1027,18 @@ $<span class="math notranslate nohighlight">\(A\Sigma_{\epsilon}^{-1}=\left[\alp
 \[r^e_i-h^if=\alpha_i+\epsilon_i\]</div>
 <p>HERE</p>
 <p>and follows that <span class="math notranslate nohighlight">\(E[r^e_i-h^if]=\alpha_i\)</span> and <span class="math notranslate nohighlight">\(Var(r^e_i-h^if)=\sigma_{\epsilon,i}^2\)</span></p>
-<blockquote>
-<div><p>How do we do this for this international allocation problem using the US market as the common factor?</p>
-</div></blockquote>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ADJUST</span> <span class="o">!</span>!!
-</pre></div>
-</div>
-</div>
-</div>
+<section id="implementation">
+<h3><span class="section-number">7.14.1. </span>Implementation<a class="headerlink" href="#implementation" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Need to estimate factor model</p></li>
+</ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
 
 <span class="c1"># Define the factors and the market factor</span>
-<span class="n">factors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span> <span class="s1">&#39;HML&#39;</span><span class="p">,</span> <span class="s1">&#39;RMW&#39;</span><span class="p">,</span> <span class="s1">&#39;CMA&#39;</span><span class="p">,</span> <span class="s1">&#39;MOM&#39;</span><span class="p">]</span>
-<span class="n">market_factor</span> <span class="o">=</span> <span class="s1">&#39;Mkt-RF&#39;</span>
+<span class="n">assets</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span> <span class="s1">&#39;HML&#39;</span><span class="p">,</span> <span class="s1">&#39;RMW&#39;</span><span class="p">,</span> <span class="s1">&#39;CMA&#39;</span><span class="p">,</span> <span class="s1">&#39;MOM&#39;</span><span class="p">]</span>
+<span class="n">factor</span> <span class="o">=</span> <span class="s1">&#39;Mkt-RF&#39;</span>
 
 <span class="c1"># Initialize lists to store the results</span>
 <span class="n">Alpha</span> <span class="o">=</span> <span class="p">[]</span>
@@ -935,13 +1047,13 @@ $<span class="math notranslate nohighlight">\(A\Sigma_{\epsilon}^{-1}=\left[\alp
 <span class="n">Alpha_se</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">Hedged_factors</span><span class="o">=</span><span class="p">[]</span>
 <span class="c1"># Run univariate regressions with the market as the factor</span>
-<span class="n">df_sample</span><span class="o">=</span><span class="n">df_ff6</span><span class="p">[</span><span class="s1">&#39;1970&#39;</span><span class="p">:</span><span class="s1">&#39;2000&#39;</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">factor</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">:</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">df_ff6</span><span class="p">[</span><span class="n">market_factor</span><span class="p">])</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">df_ff6</span><span class="p">[</span><span class="n">factor</span><span class="p">]</span>
+<span class="n">df_sample</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">asset</span> <span class="ow">in</span> <span class="n">assets</span><span class="p">:</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">asset</span><span class="p">]</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
     <span class="n">Alpha</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">])</span>
-    <span class="n">Beta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">market_factor</span><span class="p">])</span>
+    <span class="n">Beta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">factor</span><span class="p">])</span>
     <span class="n">residuals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
     <span class="n">Hedged_factors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">model</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
     <span class="c1"># What is an alternative approach to construct the hedged factor?</span>
@@ -953,7 +1065,7 @@ $<span class="math notranslate nohighlight">\(A\Sigma_{\epsilon}^{-1}=\left[\alp
 
 <span class="c1"># Calculate the variance-covariance matrix of the residuals</span>
 <span class="n">Hedged_factors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">Hedged_factors</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-<span class="n">Hedged_factors</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">factors</span>
+<span class="n">Hedged_factors</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">assets</span>
 <span class="n">residuals_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">residuals</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 <span class="n">Sigma_e</span> <span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">residuals_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
 
@@ -961,6 +1073,13 @@ $<span class="math notranslate nohighlight">\(A\Sigma_{\epsilon}^{-1}=\left[\alp
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Alpha:&quot;</span><span class="p">,</span> <span class="n">Alpha</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Beta:&quot;</span><span class="p">,</span> <span class="n">Beta</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sigma_e:&quot;</span><span class="p">,</span> <span class="n">Sigma_e</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Alpha: [0.00324195 0.04349594 0.03955175 0.04143328 0.08341451]
+Beta: [ 0.19954208 -0.13719646 -0.09352601 -0.16246303 -0.16205943]
+Sigma_e: [0.01005633 0.01014849 0.00570013 0.00446193 0.0203163 ]
 </pre></div>
 </div>
 </div>
@@ -979,6 +1098,7 @@ $<span class="math notranslate nohighlight">\(A\Sigma_{\epsilon}^{-1}=\left[\alp
 </div>
 </div>
 </div>
+</section>
 </section>
 <section id="how-to-combine-the-hedged-portfolio-alpha-and-the-market-beta">
 <h2><span class="section-number">7.15. </span>How to Combine the  Hedged portfolio (alpha) and the Market (beta)<a class="headerlink" href="#how-to-combine-the-hedged-portfolio-alpha-and-the-market-beta" title="Link to this heading">#</a></h2>
@@ -1112,7 +1232,7 @@ You care about the appraisal ratio of the strategy relative to your portfolio</p
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">7.1. Table of Contents</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">7.2. Libraries and Auxiliary Functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data">7.3. Our Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data-for-today">7.3. Our Data for today</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fundamental-capital-allocation-problem">7.4. The Fundamental Capital Allocation Problem</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#who-decides-how-much-risk-to-take">7.4.1. Who Decides How Much Risk to Take?</a></li>
 </ul>
@@ -1129,7 +1249,10 @@ You care about the appraisal ratio of the strategy relative to your portfolio</p
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-fund-separation">7.11. Two fund Separation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">7.12. ### ⚡ ⏰ Question: G1 ⚡</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-investment-frontier-now-including-a-risk-free-asset">7.13. The investment frontier (now including a risk-free asset)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-bets">7.14. Alpha bets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-bets">7.14. Alpha bets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">7.14.1. Implementation</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-combine-the-hedged-portfolio-alpha-and-the-market-beta">7.15. How to Combine the  Hedged portfolio (alpha) and the Market (beta)</a></li>
 </ul>
   </nav></div>
