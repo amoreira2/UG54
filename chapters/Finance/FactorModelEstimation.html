@@ -475,21 +475,26 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-do-we-need-to-know-to-invest">8.1. What do we need to know to invest?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#betas">8.2. Betas</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-decay-models">8.2.1. Exponential decay models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">8.1. Libraries and Auxiliary Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-model-recap">8.2. Factor Model recap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-estimation-problem-that-we-need-to-solve">8.3. What is the estimation problem that we need to solve?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#betas-factor-loadings">8.4. Betas (Factor Loadings)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data">8.5. Our Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-we-estimate-betas">8.5.1. How do we estimate betas?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#is-this-too-good-to-be-true">8.5.2. Is this too Good to be true?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-decay-models">8.5.3. Exponential decay models</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variances">8.3. Variances</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indio-vol">8.3.1. Indio Vol</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-section-vs-time-series">8.3.2. Cross-Section vs Time-series</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variances">8.6. Variances</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indio-vol">8.6.1. Indio Vol</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-section-vs-time-series">8.6.2. Cross-Section vs Time-series</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-returns">8.4. Expected returns</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-premia">8.4.1. Factor Risk-Premia</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-is-all-you-need">8.4.2. Alpha is all you need</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-quantification-procedure">8.4.2.1. Alpha Quantification Procedure</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">8.4.2.2. Real Alpha is unique and cannot be driven by broad macro factors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-returns">8.7. Expected returns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-premia">8.7.1. Factor Risk-Premia</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-is-all-you-need">8.7.2. Alpha is all you need</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-quantification-procedure">8.7.2.1. Alpha Quantification Procedure</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">8.7.2.2. Real Alpha is unique and cannot be driven by broad macro factors</a></li>
 </ul>
 </li>
 </ul>
@@ -505,19 +510,62 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="cell tag_hide-cell docutils container">
-<details class="admonition hide above-input">
-<summary aria-label="Toggle hidden content">
-<p class="collapsed admonition-title">Show code cell content</p>
-<p class="expanded admonition-title">Hide code cell content</p>
-</summary>
+  <section class="tex2jax_ignore mathjax_ignore" id="estimation-from-historical-data-to-the-future-dynamics-of-returns">
+<h1><span class="section-number">8. </span>Estimation: From historical data to the future dynamics of returns<a class="headerlink" href="#estimation-from-historical-data-to-the-future-dynamics-of-returns" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p>“It is a capital mistake to theorize before one has data”</p>
+</div></blockquote>
+<hr class="docutils" />
+<p><strong>🎯 Learning Objectives</strong></p>
+<p>By the end of this chapter, you should be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>The six inputs to a factor model</strong><br />
+List exactly what must be estimated to forecast an asset’s distribution—risk-free rate, beta, factor risk-premium, alpha, factor variance, idiosyncratic variance.</p></li>
+<li><p><strong>Estimate β accurately.</strong><br />
+Practice running rolling regressions and understand when a cross-section or a time-series approach delivers a more reliable exposure.</p></li>
+<li><p><strong>Measure variances two ways.</strong><br />
+Compare cross-sectional dispersion in a single month with time-series volatility of one asset; recognize when each view is informative.</p></li>
+<li><p><strong>Form expectations for factor risk-premia.</strong><br />
+Use long‐sample averages when premia are thought to be stable, and learn warning signs that the mean may have shifted.</p></li>
+<li><p><strong>Appreciate why “alpha is all you need”—and why it’s elusive.</strong><br />
+Recognize that true alpha is scarce, tends to decay quickly, and often disappears once too much capital piles in.</p></li>
+<li><p><strong>Identify practical paths to alpha.</strong><br />
+Examine valuation edge, liquidity-provision trades, and alternative data as real-world ways investors create forecastable idiosyncratic returns.</p></li>
+<li><p><strong>Standardize alpha across horizons.</strong><br />
+Convert any price target or event view into a monthly (or other chosen) alpha so different ideas can be compared on the same scale.</p></li>
+<li><p><strong>Guard against hidden macro bets.</strong><br />
+Test that a proposed alpha is not simply a disguised market or sector exposure; if it is, rethink whether hedging or a broader position is more efficient.</p></li>
+</ol>
+<hr class="docutils" />
+<section id="libraries-and-auxiliary-functions">
+<h2><span class="section-number">8.1. </span>Libraries and Auxiliary Functions<a class="headerlink" href="#libraries-and-auxiliary-functions" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## Every time we start a new colab we need to install and import WRDS (if we are goign to use it)</span>
+<span class="c1">## The way it works is that you click install and then an error is returned and you click &quot;RESTART&quot;</span>
+<span class="c1">## Once you do that you can import it (i.e. run the next cell)</span>
+<span class="c1">#%pip install wrds</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## for this to work you first need to install it</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">wrds</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load libraries</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">DataReader</span>
+
 <span class="c1"># define functions  </span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_daily_wrds</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="n">tickers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
   
@@ -548,58 +596,36 @@ document.write(`
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;CAPM&#39;</span><span class="p">):</span>   
     <span class="k">if</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;CAPM&#39;</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">daily_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">daily_data</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span> 
     <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF3&#39;</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">daily_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">daily_data</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
     <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF5&#39;</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">daily_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">daily_data</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">daily_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">daily_data</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Momentum_Factor_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Momentum_Factor_daily&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>    
 
     <span class="k">return</span> <span class="n">df_factor</span><span class="o">/</span><span class="mi">100</span>
 </pre></div>
 </div>
 </div>
-</details>
 </div>
-<section class="tex2jax_ignore mathjax_ignore" id="estimation-from-historical-data-to-the-future-dynamics-of-returns">
-<h1><span class="section-number">8. </span>Estimation: From historical data to the future dynamics of returns<a class="headerlink" href="#estimation-from-historical-data-to-the-future-dynamics-of-returns" title="Link to this heading">#</a></h1>
-<hr class="docutils" />
-<p><strong>🎯 Learning Objectives</strong></p>
-<p>By the end of this chapter, you should be able to:</p>
-<ol class="arabic simple">
-<li><p><strong>The six inputs to a factor model</strong><br />
-List exactly what must be estimated to forecast an asset’s distribution—risk-free rate, beta, factor risk-premium, alpha, factor variance, idiosyncratic variance.</p></li>
-<li><p><strong>Estimate β accurately.</strong><br />
-Practice running rolling regressions and understand when a cross-section or a time-series approach delivers a more reliable exposure.</p></li>
-<li><p><strong>Measure variances two ways.</strong><br />
-Compare cross-sectional dispersion in a single month with time-series volatility of one asset; recognize when each view is informative.</p></li>
-<li><p><strong>Form expectations for factor risk-premia.</strong><br />
-Use long‐sample averages when premia are thought to be stable, and learn warning signs that the mean may have shifted.</p></li>
-<li><p><strong>Appreciate why “alpha is all you need”—and why it’s elusive.</strong><br />
-Recognize that true alpha is scarce, tends to decay quickly, and often disappears once too much capital piles in.</p></li>
-<li><p><strong>Identify practical paths to alpha.</strong><br />
-Examine valuation edge, liquidity-provision trades, and alternative data as real-world ways investors create forecastable idiosyncratic returns.</p></li>
-<li><p><strong>Standardize alpha across horizons.</strong><br />
-Convert any price target or event view into a monthly (or other chosen) alpha so different ideas can be compared on the same scale.</p></li>
-<li><p><strong>Guard against hidden macro bets.</strong><br />
-Test that a proposed alpha is not simply a disguised market or sector exposure; if it is, rethink whether hedging or a broader position is more efficient.</p></li>
-</ol>
-<hr class="docutils" />
+</section>
+<section id="factor-model-recap">
+<h2><span class="section-number">8.2. </span>Factor Model recap<a class="headerlink" href="#factor-model-recap" title="Link to this heading">#</a></h2>
 <p>We have been working with a single asset, since factor model</p>
 <p>Realized returns:</p>
 <div class="math notranslate nohighlight">
@@ -625,20 +651,27 @@ Test that a proposed alpha is not simply a disguised market or sector exposure; 
 <li><p>The factor variance</p></li>
 <li><p>The asset specific variance</p></li>
 </ol>
-<section id="what-do-we-need-to-know-to-invest">
-<h2><span class="section-number">8.1. </span>What do we need to know to invest?<a class="headerlink" href="#what-do-we-need-to-know-to-invest" title="Link to this heading">#</a></h2>
-<p>Do you want to know how this stock behaved in the past?</p>
-<p>Do we want to know how it behaved in the recent past?</p>
-<p>When should we care about historical data?</p>
-<p>We need to know these parameters for our investment period, say next month or next year</p>
-<p>Some of those we observe directly in financial markets like the risk-free rate–financial markets tell you exactly how much your will ear goign forward</p>
-<p>others we need to use some data to form our views</p>
-<p>I will discuss each one by one</p>
 </section>
-<section id="betas">
-<h2><span class="section-number">8.2. </span>Betas<a class="headerlink" href="#betas" title="Link to this heading">#</a></h2>
+<section id="what-is-the-estimation-problem-that-we-need-to-solve">
+<h2><span class="section-number">8.3. </span>What is the estimation problem that we need to solve?<a class="headerlink" href="#what-is-the-estimation-problem-that-we-need-to-solve" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Do you want to know how this stock behaved in the past? ❌</p></li>
+<li><p>Do we want to know how it behaved in the recent past?❌</p></li>
+<li><p>So why should we care about historical data?</p></li>
+</ul>
+<p><strong>It is about the future, Watson ✅</strong></p>
+<ul class="simple">
+<li><p>We need to estimate these moments for our investment period, say next minute, day, month or year</p></li>
+<li><p>Some of those we observe directly in financial markets like the risk-free rate–financial markets tell you exactly how much your will earn going forward–just look at government bonds</p></li>
+<li><p>Others we need to use  data to form our views</p></li>
+<li><p>None of this specific to factor models. But factor models are helpful in stripping the estimation problem in different pieces</p></li>
+<li><p>We discuss below one-by-one</p></li>
+</ul>
+</section>
+<section id="betas-factor-loadings">
+<h2><span class="section-number">8.4. </span>Betas (Factor Loadings)<a class="headerlink" href="#betas-factor-loadings" title="Link to this heading">#</a></h2>
 <p>Factors models are all about the time-series co-movement between assets and some common factors. For now we are focused on single factors models, but we will soon be thinking about multiple-factors at the same time.</p>
-<p>For now we will focus on factors that can be expressed in excess returns, like the returns on the market portfolio. Practicioners often use characteristics as direct proxys for beta–we will see that later. This is useful when we have many factors…but does not work to the most important factor of all–the market factor.</p>
+<p>We will focus on factors that can be expressed in excess returns, like the returns on the market portfolio. Practicioners often use characteristics as direct proxys for betas–we will see that later. This is useful when we have many factors…but does not work to the most important factor of all–the market factor.</p>
 <p>Fundamentally any risk-factor can be represented in terms of a return of a specific portfolio.</p>
 <p>The beta that we are interested is the forward-looking degree of co-movement between the asset and the factor</p>
 <p>Specifically it is</p>
@@ -649,381 +682,241 @@ Test that a proposed alpha is not simply a disguised market or sector exposure; 
 <li><p>It is asking to what extent the asset returns are above it’s expected values when the factor is above it’s expected value</p></li>
 <li><p>It normalizes everything by the variance of the factor</p></li>
 <li><p>So a beta of 1 means that the asset is EXPECTED to move 1 for 1 with the factor</p></li>
-<li><p>But of course it can have some additional idio risk on top</p></li>
-<li><p>The subscripts in the covariance and variance means that it is these moments from the perspective of someone that has all the informationup to  date <span class="math notranslate nohighlight">\(t\)</span></p></li>
-<li><p>That is, you don’t know the particular realization of the variables</p></li>
+<li><p>But of course it can have some additional indio risk on top</p></li>
+<li><p>The subscripts in the covariance and variance means that it is these moments from the perspective of someone that has all the information up to  date <span class="math notranslate nohighlight">\(t\)</span></p></li>
+<li><p>That is, you don’t know the particular realization of the variables–you do not have a crystal ball</p></li>
 </ul>
-<p>How do we estimate betas?</p>
+</section>
+<section id="our-data">
+<h2><span class="section-number">8.5. </span>Our Data<a class="headerlink" href="#our-data" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Pick your favorite stock, construct excess returns</p></li>
+<li><p>Use returns on the market as a factor</p></li>
+<li></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## uncomment to use WRDS to get data</span>
+<span class="c1">######################################</span>
+<span class="c1"># conn = wrds.Connection()</span>
+<span class="c1"># tickers=[&#39;GE&#39;]</span>
+<span class="c1"># df = get_daily_wrds(conn,tickers)</span>
+<span class="c1"># df.to_csv(&#39;../../assets/data/FactorModelsEstimation_data1.csv&#39;)</span>
+<span class="c1">#######################################</span>
+<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModelsEstimation_data1.csv&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+
+<span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">()</span>
+<span class="n">df</span><span class="p">,</span> <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">join</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">df_re</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">tickers</span><span class="p">]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># why not the simpler code below? Which one is more robust?</span>
+<span class="c1">#df_re=df[tickers]-df_factor[&#39;RF&#39;]</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_re</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_re</span><span class="o">.</span><span class="n">tail</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>GE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1926-07-01</th>
+      <td>-0.000090</td>
+    </tr>
+    <tr>
+      <th>1926-07-02</th>
+      <td>-0.000090</td>
+    </tr>
+    <tr>
+      <th>1926-07-06</th>
+      <td>0.007220</td>
+    </tr>
+    <tr>
+      <th>1926-07-07</th>
+      <td>-0.000090</td>
+    </tr>
+    <tr>
+      <th>1926-07-08</th>
+      <td>0.004264</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>GE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2024-12-24</th>
+      <td>0.014444</td>
+    </tr>
+    <tr>
+      <th>2024-12-26</th>
+      <td>0.003679</td>
+    </tr>
+    <tr>
+      <th>2024-12-27</th>
+      <td>-0.010568</td>
+    </tr>
+    <tr>
+      <th>2024-12-30</th>
+      <td>-0.011812</td>
+    </tr>
+    <tr>
+      <th>2024-12-31</th>
+      <td>-0.007963</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<section id="how-do-we-estimate-betas">
+<h3><span class="section-number">8.5.1. </span>How do we estimate betas?<a class="headerlink" href="#how-do-we-estimate-betas" title="Link to this heading">#</a></h3>
 <p>We run a regression!</p>
-<p>We typically do not use the whole sample when using individual stocks–stocks behavior change. So we want the most up to date behavior–but cannot be too short otherwise you cannot say anything as estimation uncertainty will be very high!</p>
-<p>Academic literature likes to use between 1 year to 2 years if using daily data</p>
-<p>(when working with illiquid stocks daily data might be problematic and weekly or monthly might be more advisable, but the sample period will have to be increased. For example, for monthly people use 5 years)</p>
+<ul class="simple">
+<li><p>if we include a constant (as we should), the the regression slope of the asset on the factor is our beta</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\beta=\frac{Cov(r,f)}{Var(f)}\]</div>
+<ul class="simple">
+<li><p>We typically do not use the whole sample when using individual stocks–stocks behavior change. So we want the most up to date behavior</p></li>
+<li><p>but cannot be too short otherwise you cannot say anything as estimation uncertainty will be very high!</p></li>
+<li><p>Optimal look-back window will trade-off these forces and might vary according the asset/strategy</p></li>
+<li><p>Academic literature likes to use between 1 year to 2 years if using daily data for stocks. Longer if betas of systematic trading strategies</p></li>
+</ul>
+<p>👉 when working with illiquid stocks daily data might be problematic and weekly or monthly might be more advisable, but the sample period will have to be increased. For example, for monthly people use 5 years)</p>
 <p>We will focus on simple regressions, and briefly discuss alternatives</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># In colab you always need to install wrds each time you start a notebook</span>
-<span class="c1">#%pip install wrds</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">wrds</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">ticker</span><span class="o">=</span><span class="s1">&#39;GE&#39;</span>
-<span class="n">df_returns</span> <span class="o">=</span> <span class="n">get_daily_wrds</span><span class="p">(</span><span class="n">conn</span><span class="p">,[</span><span class="n">ticker</span><span class="p">])</span>
-<span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">()</span>
-<span class="n">df_return</span><span class="p">,</span> <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df_returns</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">df_factor</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#instead of using the smf api that uses formulas we will use the sm api that uses matrices</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">])</span>  <span class="c1"># Adds a constant term to the predictor</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;GE&#39;</span><span class="p">]</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 
-<span class="n">df_eret</span><span class="o">=</span><span class="n">df_return</span><span class="p">[</span><span class="n">ticker</span><span class="p">]</span><span class="o">-</span><span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
-<span class="n">df_eret</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="c1">#1. How well is estimated? What is the interpretation of the t-statistic?</span>
+<span class="c1">#2. How confident we are that the beta is less  than 1? </span>
+<span class="c1">#3. How much uncertainty do we have about it? what is the 95% confidence interval?</span>
+<span class="c1">#4. How do I adjust the t-statistic to test if beta is greater than 1 (or any other number)?</span>
+<span class="c1">#5. Given this t-statistic what is the probability that beta is greater than 1?</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">OperationalError</span><span class="g g-Whitespace">                          </span>Traceback (most recent call last)
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\base.py:145,</span> in <span class="ni">Connection.__init__</span><span class="nt">(self, engine, connection, _has_events, _allow_revalidate, _allow_autobegin)</span>
-<span class="g g-Whitespace">    </span><span class="mi">144</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">145</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_dbapi_connection</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">raw_connection</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">146</span> <span class="k">except</span> <span class="n">dialect</span><span class="o">.</span><span class="n">loaded_dbapi</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\base.py:3293,</span> in <span class="ni">Engine.raw_connection</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">3272</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Return a &quot;raw&quot; DBAPI connection from the connection pool.</span>
-<span class="g g-Whitespace">   </span><span class="mi">3273</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">3274</span><span class="sd"> The returned object is a proxied version of the DBAPI</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">3291</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">3292</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">3293</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:452,</span> in <span class="ni">Pool.connect</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">445</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Return a DBAPI connection from the pool.</span>
-<span class="g g-Whitespace">    </span><span class="mi">446</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">447</span><span class="sd"> The connection is instrumented such that when its</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">450</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">451</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">452</span> <span class="k">return</span> <span class="n">_ConnectionFairy</span><span class="o">.</span><span class="n">_checkout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:1269,</span> in <span class="ni">_ConnectionFairy._checkout</span><span class="nt">(cls, pool, threadconns, fairy)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1268</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">fairy</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1269</span>     <span class="n">fairy</span> <span class="o">=</span> <span class="n">_ConnectionRecord</span><span class="o">.</span><span class="n">checkout</span><span class="p">(</span><span class="n">pool</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1271</span>     <span class="k">if</span> <span class="n">threadconns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:716,</span> in <span class="ni">_ConnectionRecord.checkout</span><span class="nt">(cls, pool)</span>
-<span class="g g-Whitespace">    </span><span class="mi">715</span> <span class="k">else</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">716</span>     <span class="n">rec</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">_do_get</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">718</span> <span class="k">try</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\impl.py:170,</span> in <span class="ni">QueuePool._do_get</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">169</span> <span class="k">with</span> <span class="n">util</span><span class="o">.</span><span class="n">safe_reraise</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">170</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_dec_overflow</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">171</span> <span class="k">raise</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\util\langhelpers.py:146,</span> in <span class="ni">safe_reraise.__exit__</span><span class="nt">(self, type_, value, traceback)</span>
-<span class="g g-Whitespace">    </span><span class="mi">145</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_exc_info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># remove potential circular references</span>
-<span class="ne">--&gt; </span><span class="mi">146</span>     <span class="k">raise</span> <span class="n">exc_value</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">exc_tb</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">147</span> <span class="k">else</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\impl.py:167,</span> in <span class="ni">QueuePool._do_get</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">166</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">167</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_connection</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">168</span> <span class="k">except</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:393,</span> in <span class="ni">Pool._create_connection</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">391</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Called by subclasses to create a new ConnectionRecord.&quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">393</span> <span class="k">return</span> <span class="n">_ConnectionRecord</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:678,</span> in <span class="ni">_ConnectionRecord.__init__</span><span class="nt">(self, pool, connect)</span>
-<span class="g g-Whitespace">    </span><span class="mi">677</span> <span class="k">if</span> <span class="n">connect</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">678</span>     <span class="bp">self</span><span class="o">.</span><span class="n">__connect</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">679</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalize_callback</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:903,</span> in <span class="ni">_ConnectionRecord.__connect</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">902</span>     <span class="k">with</span> <span class="n">util</span><span class="o">.</span><span class="n">safe_reraise</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">903</span>         <span class="n">pool</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Error on connect(): </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">904</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">905</span>     <span class="c1"># in SQLAlchemy 1.4 the first_connect event is not used by</span>
-<span class="g g-Whitespace">    </span><span class="mi">906</span>     <span class="c1"># the engine, so this will usually not be set</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\util\langhelpers.py:146,</span> in <span class="ni">safe_reraise.__exit__</span><span class="nt">(self, type_, value, traceback)</span>
-<span class="g g-Whitespace">    </span><span class="mi">145</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_exc_info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># remove potential circular references</span>
-<span class="ne">--&gt; </span><span class="mi">146</span>     <span class="k">raise</span> <span class="n">exc_value</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">exc_tb</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">147</span> <span class="k">else</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:898,</span> in <span class="ni">_ConnectionRecord.__connect</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">897</span> <span class="bp">self</span><span class="o">.</span><span class="n">starttime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">898</span> <span class="bp">self</span><span class="o">.</span><span class="n">dbapi_connection</span> <span class="o">=</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">_invoke_creator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">899</span> <span class="n">pool</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Created new connection </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\create.py:645,</span> in <span class="ni">create_engine.&lt;locals&gt;.connect</span><span class="nt">(connection_record)</span>
-<span class="g g-Whitespace">    </span><span class="mi">643</span>             <span class="k">return</span> <span class="n">connection</span>
-<span class="ne">--&gt; </span><span class="mi">645</span> <span class="k">return</span> <span class="n">dialect</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">*</span><span class="n">cargs</span><span class="p">,</span> <span class="o">**</span><span class="n">cparams</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\default.py:616,</span> in <span class="ni">DefaultDialect.connect</span><span class="nt">(self, *cargs, **cparams)</span>
-<span class="g g-Whitespace">    </span><span class="mi">614</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">cargs</span><span class="p">,</span> <span class="o">**</span><span class="n">cparams</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">615</span>     <span class="c1"># inherits the docstring from interfaces.Dialect.connect</span>
-<span class="ne">--&gt; </span><span class="mi">616</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded_dbapi</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">*</span><span class="n">cargs</span><span class="p">,</span> <span class="o">**</span><span class="n">cparams</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\psycopg2\__init__.py:122,</span> in <span class="ni">connect</span><span class="nt">(dsn, connection_factory, cursor_factory, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">121</span> <span class="n">dsn</span> <span class="o">=</span> <span class="n">_ext</span><span class="o">.</span><span class="n">make_dsn</span><span class="p">(</span><span class="n">dsn</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">122</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">_connect</span><span class="p">(</span><span class="n">dsn</span><span class="p">,</span> <span class="n">connection_factory</span><span class="o">=</span><span class="n">connection_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">kwasync</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">123</span> <span class="k">if</span> <span class="n">cursor_factory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
-<span class="ne">OperationalError</span>: connection to server at &quot;wrds-pgdata.wharton.upenn.edu&quot; (165.123.60.118), port 9737 failed: Connection refused (0x0000274D/10061)
-	<span class="n">Is</span> <span class="n">the</span> <span class="n">server</span> <span class="n">running</span> <span class="n">on</span> <span class="n">that</span> <span class="n">host</span> <span class="ow">and</span> <span class="n">accepting</span> <span class="n">TCP</span><span class="o">/</span><span class="n">IP</span> connections<span class="o">?</span>
-
-
-<span class="n">The</span> <span class="n">above</span> <span class="n">exception</span> <span class="n">was</span> <span class="n">the</span> <span class="n">direct</span> <span class="n">cause</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="n">exception</span><span class="p">:</span>
-
-<span class="ne">OperationalError</span><span class="g g-Whitespace">                          </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">ticker</span><span class="o">=</span><span class="s1">&#39;GE&#39;</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">df_returns</span> <span class="o">=</span> <span class="n">get_daily_wrds</span><span class="p">(</span><span class="n">conn</span><span class="p">,[</span><span class="n">ticker</span><span class="p">])</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\wrds\sql.py:75,</span> in <span class="ni">Connection.__init__</span><span class="nt">(self, autoconnect, verbose, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">72</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connect_args</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;wrds_connect_args&quot;</span><span class="p">,</span> <span class="n">WRDS_CONNECT_ARGS</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">74</span> <span class="k">if</span> <span class="n">autoconnect</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">75</span>     <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">76</span>     <span class="bp">self</span><span class="o">.</span><span class="n">load_library_list</span><span class="p">()</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\wrds\sql.py:116,</span> in <span class="ni">Connection.connect</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">114</span> <span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_user_credentials</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">115</span> <span class="c1"># Last attempt, raise error if Exception encountered</span>
-<span class="ne">--&gt; </span><span class="mi">116</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_sa_engine_conn</span><span class="p">(</span><span class="n">raise_err</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">118</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">119</span>     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to connect </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_username</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_hostname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\wrds\sql.py:99,</span> in <span class="ni">Connection.__make_sa_engine_conn</span><span class="nt">(self, raise_err)</span>
-<span class="g g-Whitespace">     </span><span class="mi">97</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="g g-Whitespace">     </span><span class="mi">98</span> <span class="k">if</span> <span class="n">raise_err</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">99</span>     <span class="k">raise</span> <span class="n">err</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\wrds\sql.py:93,</span> in <span class="ni">Connection.__make_sa_engine_conn</span><span class="nt">(self, raise_err)</span>
-<span class="g g-Whitespace">     </span><span class="mi">87</span> <span class="k">try</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">88</span>     <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">create_engine</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">89</span>         <span class="n">pguri</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">90</span>         <span class="n">isolation_level</span><span class="o">=</span><span class="s2">&quot;AUTOCOMMIT&quot;</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">91</span>         <span class="n">connect_args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_connect_args</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">92</span>     <span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">93</span>     <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">94</span> <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">95</span>     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\base.py:3269,</span> in <span class="ni">Engine.connect</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">3246</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Connection</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">3247</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Return a new :class:`_engine.Connection` object.</span>
-<span class="g g-Whitespace">   </span><span class="mi">3248</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">3249</span><span class="sd">     The :class:`_engine.Connection` acts as a Python context manager, so</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">3266</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">3267</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">3269</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection_cls</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\base.py:147,</span> in <span class="ni">Connection.__init__</span><span class="nt">(self, engine, connection, _has_events, _allow_revalidate, _allow_autobegin)</span>
-<span class="g g-Whitespace">    </span><span class="mi">145</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_dbapi_connection</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">raw_connection</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">146</span>     <span class="k">except</span> <span class="n">dialect</span><span class="o">.</span><span class="n">loaded_dbapi</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">147</span>         <span class="n">Connection</span><span class="o">.</span><span class="n">_handle_dbapi_exception_noconnection</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">148</span>             <span class="n">err</span><span class="p">,</span> <span class="n">dialect</span><span class="p">,</span> <span class="n">engine</span>
-<span class="g g-Whitespace">    </span><span class="mi">149</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">150</span>         <span class="k">raise</span>
-<span class="g g-Whitespace">    </span><span class="mi">151</span> <span class="k">else</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\base.py:2431,</span> in <span class="ni">Connection._handle_dbapi_exception_noconnection</span><span class="nt">(cls, e, dialect, engine, is_disconnect, invalidate_pool_on_disconnect, is_pre_ping)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2429</span> <span class="k">elif</span> <span class="n">should_wrap</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">2430</span>     <span class="k">assert</span> <span class="n">sqlalchemy_exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-<span class="ne">-&gt; </span><span class="mi">2431</span>     <span class="k">raise</span> <span class="n">sqlalchemy_exception</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">exc_info</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
-<span class="g g-Whitespace">   </span><span class="mi">2432</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">2433</span>     <span class="k">assert</span> <span class="n">exc_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\base.py:145,</span> in <span class="ni">Connection.__init__</span><span class="nt">(self, engine, connection, _has_events, _allow_revalidate, _allow_autobegin)</span>
-<span class="g g-Whitespace">    </span><span class="mi">143</span> <span class="k">if</span> <span class="n">connection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">144</span>     <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">145</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_dbapi_connection</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">raw_connection</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">146</span>     <span class="k">except</span> <span class="n">dialect</span><span class="o">.</span><span class="n">loaded_dbapi</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">147</span>         <span class="n">Connection</span><span class="o">.</span><span class="n">_handle_dbapi_exception_noconnection</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">148</span>             <span class="n">err</span><span class="p">,</span> <span class="n">dialect</span><span class="p">,</span> <span class="n">engine</span>
-<span class="g g-Whitespace">    </span><span class="mi">149</span>         <span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\base.py:3293,</span> in <span class="ni">Engine.raw_connection</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">3271</span> <span class="k">def</span><span class="w"> </span><span class="nf">raw_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PoolProxiedConnection</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">3272</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Return a &quot;raw&quot; DBAPI connection from the connection pool.</span>
-<span class="g g-Whitespace">   </span><span class="mi">3273</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">3274</span><span class="sd">     The returned object is a proxied version of the DBAPI</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">3291</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">3292</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">3293</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:452,</span> in <span class="ni">Pool.connect</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">444</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PoolProxiedConnection</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">445</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Return a DBAPI connection from the pool.</span>
-<span class="g g-Whitespace">    </span><span class="mi">446</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">447</span><span class="sd">     The connection is instrumented such that when its</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">450</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">451</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">452</span>     <span class="k">return</span> <span class="n">_ConnectionFairy</span><span class="o">.</span><span class="n">_checkout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:1269,</span> in <span class="ni">_ConnectionFairy._checkout</span><span class="nt">(cls, pool, threadconns, fairy)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1261</span> <span class="nd">@classmethod</span>
-<span class="g g-Whitespace">   </span><span class="mi">1262</span> <span class="k">def</span><span class="w"> </span><span class="nf">_checkout</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1263</span>     <span class="bp">cls</span><span class="p">,</span>
-   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1266</span>     <span class="n">fairy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_ConnectionFairy</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1267</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ConnectionFairy</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1268</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">fairy</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1269</span>         <span class="n">fairy</span> <span class="o">=</span> <span class="n">_ConnectionRecord</span><span class="o">.</span><span class="n">checkout</span><span class="p">(</span><span class="n">pool</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1271</span>         <span class="k">if</span> <span class="n">threadconns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1272</span>             <span class="n">threadconns</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">fairy</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:716,</span> in <span class="ni">_ConnectionRecord.checkout</span><span class="nt">(cls, pool)</span>
-<span class="g g-Whitespace">    </span><span class="mi">714</span>     <span class="n">rec</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">_ConnectionRecord</span><span class="p">,</span> <span class="n">pool</span><span class="o">.</span><span class="n">_do_get</span><span class="p">())</span>
-<span class="g g-Whitespace">    </span><span class="mi">715</span> <span class="k">else</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">716</span>     <span class="n">rec</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">_do_get</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">718</span> <span class="k">try</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">719</span>     <span class="n">dbapi_connection</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\impl.py:170,</span> in <span class="ni">QueuePool._do_get</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">168</span>     <span class="k">except</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">169</span>         <span class="k">with</span> <span class="n">util</span><span class="o">.</span><span class="n">safe_reraise</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">170</span>             <span class="bp">self</span><span class="o">.</span><span class="n">_dec_overflow</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">171</span>         <span class="k">raise</span>
-<span class="g g-Whitespace">    </span><span class="mi">172</span> <span class="k">else</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\util\langhelpers.py:146,</span> in <span class="ni">safe_reraise.__exit__</span><span class="nt">(self, type_, value, traceback)</span>
-<span class="g g-Whitespace">    </span><span class="mi">144</span>     <span class="k">assert</span> <span class="n">exc_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-<span class="g g-Whitespace">    </span><span class="mi">145</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_exc_info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># remove potential circular references</span>
-<span class="ne">--&gt; </span><span class="mi">146</span>     <span class="k">raise</span> <span class="n">exc_value</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">exc_tb</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">147</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">148</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_exc_info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># remove potential circular references</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\impl.py:167,</span> in <span class="ni">QueuePool._do_get</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">165</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inc_overflow</span><span class="p">():</span>
-<span class="g g-Whitespace">    </span><span class="mi">166</span>     <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">167</span>         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_connection</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">168</span>     <span class="k">except</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">169</span>         <span class="k">with</span> <span class="n">util</span><span class="o">.</span><span class="n">safe_reraise</span><span class="p">():</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:393,</span> in <span class="ni">Pool._create_connection</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">390</span> <span class="k">def</span><span class="w"> </span><span class="nf">_create_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConnectionPoolEntry</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">391</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Called by subclasses to create a new ConnectionRecord.&quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">393</span>     <span class="k">return</span> <span class="n">_ConnectionRecord</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:678,</span> in <span class="ni">_ConnectionRecord.__init__</span><span class="nt">(self, pool, connect)</span>
-<span class="g g-Whitespace">    </span><span class="mi">676</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pool</span> <span class="o">=</span> <span class="n">pool</span>
-<span class="g g-Whitespace">    </span><span class="mi">677</span> <span class="k">if</span> <span class="n">connect</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">678</span>     <span class="bp">self</span><span class="o">.</span><span class="n">__connect</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">679</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalize_callback</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:903,</span> in <span class="ni">_ConnectionRecord.__connect</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">901</span> <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">902</span>     <span class="k">with</span> <span class="n">util</span><span class="o">.</span><span class="n">safe_reraise</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">903</span>         <span class="n">pool</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Error on connect(): </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">904</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">905</span>     <span class="c1"># in SQLAlchemy 1.4 the first_connect event is not used by</span>
-<span class="g g-Whitespace">    </span><span class="mi">906</span>     <span class="c1"># the engine, so this will usually not be set</span>
-<span class="g g-Whitespace">    </span><span class="mi">907</span>     <span class="k">if</span> <span class="n">pool</span><span class="o">.</span><span class="n">dispatch</span><span class="o">.</span><span class="n">first_connect</span><span class="p">:</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\util\langhelpers.py:146,</span> in <span class="ni">safe_reraise.__exit__</span><span class="nt">(self, type_, value, traceback)</span>
-<span class="g g-Whitespace">    </span><span class="mi">144</span>     <span class="k">assert</span> <span class="n">exc_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-<span class="g g-Whitespace">    </span><span class="mi">145</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_exc_info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># remove potential circular references</span>
-<span class="ne">--&gt; </span><span class="mi">146</span>     <span class="k">raise</span> <span class="n">exc_value</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">exc_tb</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">147</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">148</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_exc_info</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># remove potential circular references</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\pool\base.py:898,</span> in <span class="ni">_ConnectionRecord.__connect</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">896</span> <span class="k">try</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">897</span>     <span class="bp">self</span><span class="o">.</span><span class="n">starttime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">898</span>     <span class="bp">self</span><span class="o">.</span><span class="n">dbapi_connection</span> <span class="o">=</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">_invoke_creator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">899</span>     <span class="n">pool</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Created new connection </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">900</span>     <span class="bp">self</span><span class="o">.</span><span class="n">fresh</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\create.py:645,</span> in <span class="ni">create_engine.&lt;locals&gt;.connect</span><span class="nt">(connection_record)</span>
-<span class="g g-Whitespace">    </span><span class="mi">642</span>         <span class="k">if</span> <span class="n">connection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">643</span>             <span class="k">return</span> <span class="n">connection</span>
-<span class="ne">--&gt; </span><span class="mi">645</span> <span class="k">return</span> <span class="n">dialect</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">*</span><span class="n">cargs</span><span class="p">,</span> <span class="o">**</span><span class="n">cparams</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\sqlalchemy\engine\default.py:616,</span> in <span class="ni">DefaultDialect.connect</span><span class="nt">(self, *cargs, **cparams)</span>
-<span class="g g-Whitespace">    </span><span class="mi">614</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">cargs</span><span class="p">,</span> <span class="o">**</span><span class="n">cparams</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">615</span>     <span class="c1"># inherits the docstring from interfaces.Dialect.connect</span>
-<span class="ne">--&gt; </span><span class="mi">616</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded_dbapi</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">*</span><span class="n">cargs</span><span class="p">,</span> <span class="o">**</span><span class="n">cparams</span><span class="p">)</span>
-
-<span class="nn">File c:\Users\alan.moreira\Anaconda3\lib\site-packages\psycopg2\__init__.py:122,</span> in <span class="ni">connect</span><span class="nt">(dsn, connection_factory, cursor_factory, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">119</span>     <span class="n">kwasync</span><span class="p">[</span><span class="s1">&#39;async_&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;async_&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">121</span> <span class="n">dsn</span> <span class="o">=</span> <span class="n">_ext</span><span class="o">.</span><span class="n">make_dsn</span><span class="p">(</span><span class="n">dsn</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">122</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">_connect</span><span class="p">(</span><span class="n">dsn</span><span class="p">,</span> <span class="n">connection_factory</span><span class="o">=</span><span class="n">connection_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">kwasync</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">123</span> <span class="k">if</span> <span class="n">cursor_factory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">124</span>     <span class="n">conn</span><span class="o">.</span><span class="n">cursor_factory</span> <span class="o">=</span> <span class="n">cursor_factory</span>
-
-<span class="ne">OperationalError</span>: (psycopg2.OperationalError) connection to server at &quot;wrds-pgdata.wharton.upenn.edu&quot; (165.123.60.118), port 9737 failed: Connection refused (0x0000274D/10061)
-	<span class="n">Is</span> <span class="n">the</span> <span class="n">server</span> <span class="n">running</span> <span class="n">on</span> <span class="n">that</span> <span class="n">host</span> <span class="ow">and</span> <span class="n">accepting</span> <span class="n">TCP</span><span class="o">/</span><span class="n">IP</span> connections<span class="o">?</span>
-
-<span class="p">(</span><span class="n">Background</span> <span class="n">on</span> <span class="n">this</span> <span class="n">error</span> <span class="n">at</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">sqlalche</span><span class="o">.</span><span class="n">me</span><span class="o">/</span><span class="n">e</span><span class="o">/</span><span class="mi">20</span><span class="o">/</span><span class="n">e3q8</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>           <td>GE</td>        <th>  R-squared:         </th>  <td>   0.546</td> 
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th>  <td>   0.546</td> 
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th>  <td>3.119e+04</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Mon, 15 Sep 2025</td> <th>  Prob (F-statistic):</th>   <td>  0.00</td>  
+</tr>
+<tr>
+  <th>Time:</th>                 <td>17:29:08</td>     <th>  Log-Likelihood:    </th>  <td>  77611.</td> 
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td> 25898</td>      <th>  AIC:               </th> <td>-1.552e+05</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td> 25896</td>      <th>  BIC:               </th> <td>-1.552e+05</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>      <td> </td>    
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>      <td> </td>    
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+     <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th>  <td> 2.159e-05</td> <td> 7.51e-05</td> <td>    0.287</td> <td> 0.774</td> <td>   -0.000</td> <td>    0.000</td>
+</tr>
+<tr>
+  <th>Mkt-RF</th> <td>    1.2313</td> <td>    0.007</td> <td>  176.612</td> <td> 0.000</td> <td>    1.218</td> <td>    1.245</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td>5524.438</td> <th>  Durbin-Watson:     </th>  <td>   2.092</td> 
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th>  <td> 0.000</td>  <th>  Jarque-Bera (JB):  </th> <td>136801.661</td>
+</tr>
+<tr>
+  <th>Skew:</th>           <td> 0.427</td>  <th>  Prob(JB):          </th>  <td>    0.00</td> 
+</tr>
+<tr>
+  <th>Kurtosis:</th>       <td>14.227</td>  <th>  Cond. No.          </th>  <td>    92.8</td> 
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># to recover the standard errors of the coefficients</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">bse</span><span class="p">)</span>
 
-<span class="n">X</span> <span class="o">=</span> <span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>  <span class="c1"># Adds a constant term to the predictor</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">df_eret</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
-==============================================================================
-Dep. Variable:                      y   R-squared:                       0.549
-Model:                            OLS   Adj. R-squared:                  0.549
-Method:                 Least Squares   F-statistic:                 3.124e+04
-Date:                Sat, 14 Dec 2024   Prob (F-statistic):               0.00
-Time:                        23:39:22   Log-Likelihood:                 76954.
-No. Observations:               25646   AIC:                        -1.539e+05
-Df Residuals:                   25644   BIC:                        -1.539e+05
-Df Model:                           1                                         
-Covariance Type:            nonrobust                                         
-==============================================================================
-                 coef    std err          t      P&gt;|t|      [0.025      0.975]
-------------------------------------------------------------------------------
-const       1.323e-05   7.52e-05      0.176      0.860      -0.000       0.000
-Mkt-RF         1.2295      0.007    176.755      0.000       1.216       1.243
-==============================================================================
-Omnibus:                     5510.702   Durbin-Watson:                   2.089
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):           137521.972
-Skew:                           0.434   Prob(JB):                         0.00
-Kurtosis:                      14.311   Cond. No.                         92.5
-==============================================================================
+<span class="c1"># confidence intervals</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+<span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.95</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+<span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">],</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">-</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span>
 
-Notes:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-</pre></div>
-</div>
-</div>
-</div>
-<p>Lets focus on the beta</p>
-<ol class="arabic simple">
-<li><p>What frequency is it? Do we need to multiply to make it yearly?</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[\beta=\frac{Cov(r,f)}{Var(f)}\]</div>
-<ol class="arabic simple" start="2">
-<li><p>How well estimated?</p></li>
-<li><p>How confident we are that the beta is less  than 1?</p></li>
-<li><p>How much uncertainty do we have about it?</p></li>
-<li><p>Say, what is the 95% confidence interval?</p></li>
-</ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">bse</span>
+<span class="n">tstat</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">tstat</span><span class="p">)</span>
+
+<span class="n">problessthan1</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">tstat</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1035,63 +928,46 @@ dtype: float64
 </div>
 </div>
 </div>
+</section>
+<section id="is-this-too-good-to-be-true">
+<h3><span class="section-number">8.5.2. </span>Is this too Good to be true?<a class="headerlink" href="#is-this-too-good-to-be-true" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>But is beta really constant?</p></li>
+<li><p>Should we be using such a long sample?</p></li>
+<li><p>Lets look at at 2 year periods</p></li>
+<li><p>To do this efficiently we will use the groupby method</p></li>
+<li><p>We will first create a function that does the regression and returns the beta</p></li>
+</ul>
+<p><strong>Groupby</strong></p>
+<p>this is the first time we see the groupby method in pandas</p>
+<ul class="simple">
+<li><p>Groupby is a method in pandas that allows you to group data based on some criteria (e.g., a column or a function applied to the index).</p></li>
+<li><p>Once grouped, you can apply aggregation or transformation functions (e.g., mean, sum, or custom functions) to each group independently.</p></li>
+<li><p>The grouping can be based on labels, index levels, or a custom function applied to the index or columns.</p></li>
+<li><p>After applying the function, the results are combined into a new DataFrame or Series.</p></li>
+</ul>
+<p>Here the line that will estimate the rolling betas for us</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">((</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">regression_beta</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>now there is a lot going on in this line, so let’s break it down step by step:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">df.groupby((df.index.year</span> <span class="pre">//</span> <span class="pre">2)</span> <span class="pre">*</span> <span class="pre">2)</span></code>: The data is grouped by two-year periods.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">df.index.year</span></code> extracts the year from the index (assumed to be a datetime index).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">df.index.year</span> <span class="pre">//</span> <span class="pre">2</span></code> divides the year by 2 (integer division) to group years into two-year blocks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">*</span> <span class="pre">2</span></code> converts the two-year blocks back to the starting year of the block (e.g., 2020 and 2021 are grouped as 2020).</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.apply(regression_beta)</span></code>: For each two-year group, the regression_beta function is applied which must return the beta for the sample period</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.plot()</span></code>: The extracted beta values for each two-year period are plotted to visualize how the beta changes over time.</p></li>
+</ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
-<span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mf">0.95</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
-<span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">+</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">],</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">-</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1.2158455647969004, 1.2431118925672446]
-</pre></div>
-</div>
-</div>
-</div>
-<p>barely any uncertainty and we are quite sure it is above 1.</p>
-<p>How sure?</p>
-<p>Note that the null in the table is for the null hypothesis that beta=0</p>
-<div class="math notranslate nohighlight">
-\[t=\frac{\beta-1}{se(\beta)}\]</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tstat</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
-<span class="n">tstat</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>32.99087777592763
-</pre></div>
-</div>
-</div>
-</div>
-<p>What is the probability that beta is lower than 1?</p>
-<div class="math notranslate nohighlight">
-\[Prob(z&gt;tstat)=1-Prob(z&lt;tstat)=1-F(tstat)\]</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="mi">1</span><span class="o">-</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">t_test1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.0
-</pre></div>
-</div>
-</div>
-</div>
-<p>But is beta really constant?</p>
-<p>Should we be using such a long sample?</p>
-<p>Lets look at at 2 year periods</p>
-<p>We will first create a function that does the regression and returns the beta</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We start by putting the factor and the excess return series together in a DataFrame called `df`.</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We start by putting the factor and the excess return series together in a DataFrame called `df_merged`.</span>
 
-<span class="n">df</span><span class="o">=</span><span class="n">df_factor</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;re&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df_eret</span>
+<span class="n">df_merged</span><span class="o">=</span><span class="n">df_factor</span>
+<span class="n">df_merged</span><span class="p">[</span><span class="s1">&#39;re&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;GE&#39;</span><span class="p">]</span>
 
 <span class="c1"># now we define a function that does the regression and returns the beta</span>
 
@@ -1105,33 +981,350 @@ dtype: float64
     <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
 
-<span class="n">regression_beta</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="c1"># check it simply returns a number</span>
+<span class="n">regression_beta</span><span class="p">(</span><span class="n">df_merged</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.2312638549327573
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this is the first time we see the groupby method in pandas</span>
-<span class="c1"># Groupby is a powerful feature in pandas that allows you to group data based on some criteria</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># the group</span>
+<span class="n">_temp</span><span class="o">=</span><span class="n">df_merged</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">_temp</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="n">_temp</span><span class="p">[</span><span class="s1">&#39;12-2001&#39;</span><span class="p">:</span><span class="s1">&#39;1-2002&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="c1"># Groupby is a method in pandas that allows you to group data based on some criteria (e.g., a column or a function applied to the index).</span>
-<span class="c1"># Once grouped, you can apply aggregation or transformation functions (e.g., mean, sum, or custom functions) to each group independently.</span>
-<span class="c1"># The grouping can be based on labels, index levels, or a custom function applied to the index or columns.</span>
-<span class="c1"># After applying the function, the results are combined into a new DataFrame or Series.</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-
-
-<span class="c1"># now there is a lot going on in this line, so let&#39;s break it down step by step:</span>
-<span class="c1"># 1. `df.groupby((df.index.year // 2) * 2)`: The data is grouped by two-year periods. </span>
-<span class="c1">#    - `df.index.year` extracts the year from the index (assumed to be a datetime index).</span>
-<span class="c1">#    - `df.index.year // 2` divides the year by 2 (integer division) to group years into two-year blocks.</span>
-<span class="c1">#    - `* 2` converts the two-year blocks back to the starting year of the block (e.g., 2020 and 2021 are grouped as 2020).</span>
-<span class="c1"># 2. `.apply(regression_beta)`: For each two-year group, the regression_beta function is applied:</span>
-<span class="c1"># 3. `.plot()`: The extracted beta values for each two-year period are plotted to visualize how the beta changes over time.</span>
-
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>RF</th>
+      <th>Mkt-RF</th>
+      <th>re</th>
+      <th>group</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2001-12-03</th>
+      <td>0.00007</td>
+      <td>-0.0086</td>
+      <td>-0.041109</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-04</th>
+      <td>0.00007</td>
+      <td>0.0144</td>
+      <td>0.011577</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-05</th>
+      <td>0.00007</td>
+      <td>0.0231</td>
+      <td>0.005285</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-06</th>
+      <td>0.00007</td>
+      <td>-0.0012</td>
+      <td>0.005256</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-07</th>
+      <td>0.00007</td>
+      <td>-0.0074</td>
+      <td>-0.015964</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-10</th>
+      <td>0.00007</td>
+      <td>-0.0152</td>
+      <td>-0.009491</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-11</th>
+      <td>0.00007</td>
+      <td>-0.0020</td>
+      <td>-0.000342</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-12</th>
+      <td>0.00007</td>
+      <td>0.0004</td>
+      <td>0.006997</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-13</th>
+      <td>0.00007</td>
+      <td>-0.0151</td>
+      <td>-0.000070</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-14</th>
+      <td>0.00007</td>
+      <td>0.0031</td>
+      <td>0.016124</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-17</th>
+      <td>0.00007</td>
+      <td>0.0105</td>
+      <td>0.017194</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-18</th>
+      <td>0.00007</td>
+      <td>0.0084</td>
+      <td>0.037006</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-19</th>
+      <td>0.00007</td>
+      <td>0.0043</td>
+      <td>0.026617</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-20</th>
+      <td>0.00007</td>
+      <td>-0.0093</td>
+      <td>0.001401</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-21</th>
+      <td>0.00007</td>
+      <td>0.0057</td>
+      <td>0.012418</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-24</th>
+      <td>0.00007</td>
+      <td>0.0002</td>
+      <td>-0.005390</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-26</th>
+      <td>0.00007</td>
+      <td>0.0049</td>
+      <td>-0.014172</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-27</th>
+      <td>0.00007</td>
+      <td>0.0069</td>
+      <td>0.014233</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-28</th>
+      <td>0.00007</td>
+      <td>0.0041</td>
+      <td>-0.005442</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2001-12-31</th>
+      <td>0.00007</td>
+      <td>-0.0104</td>
+      <td>-0.016029</td>
+      <td>2000</td>
+    </tr>
+    <tr>
+      <th>2002-01-02</th>
+      <td>0.00007</td>
+      <td>0.0043</td>
+      <td>0.021637</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-03</th>
+      <td>0.00007</td>
+      <td>0.0099</td>
+      <td>-0.008373</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-04</th>
+      <td>0.00007</td>
+      <td>0.0070</td>
+      <td>0.008302</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-07</th>
+      <td>0.00007</td>
+      <td>-0.0069</td>
+      <td>-0.038898</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-08</th>
+      <td>0.00007</td>
+      <td>-0.0023</td>
+      <td>-0.010487</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-09</th>
+      <td>0.00007</td>
+      <td>-0.0045</td>
+      <td>-0.010340</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-10</th>
+      <td>0.00007</td>
+      <td>0.0008</td>
+      <td>0.001486</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-11</th>
+      <td>0.00007</td>
+      <td>-0.0086</td>
+      <td>-0.009912</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-14</th>
+      <td>0.00007</td>
+      <td>-0.0085</td>
+      <td>-0.008702</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-15</th>
+      <td>0.00007</td>
+      <td>0.0067</td>
+      <td>0.021302</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-16</th>
+      <td>0.00007</td>
+      <td>-0.0163</td>
+      <td>-0.025645</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-17</th>
+      <td>0.00007</td>
+      <td>0.0107</td>
+      <td>0.027236</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-18</th>
+      <td>0.00007</td>
+      <td>-0.0108</td>
+      <td>-0.001876</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-22</th>
+      <td>0.00007</td>
+      <td>-0.0081</td>
+      <td>-0.009894</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-23</th>
+      <td>0.00007</td>
+      <td>0.0092</td>
+      <td>-0.017041</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-24</th>
+      <td>0.00007</td>
+      <td>0.0040</td>
+      <td>-0.002726</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-25</th>
+      <td>0.00007</td>
+      <td>0.0009</td>
+      <td>0.018838</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-28</th>
+      <td>0.00007</td>
+      <td>0.0005</td>
+      <td>-0.002945</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-29</th>
+      <td>0.00007</td>
+      <td>-0.0254</td>
+      <td>-0.044369</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-30</th>
+      <td>0.00007</td>
+      <td>0.0105</td>
+      <td>0.011450</td>
+      <td>2002</td>
+    </tr>
+    <tr>
+      <th>2002-01-31</th>
+      <td>0.00007</td>
+      <td>0.0135</td>
+      <td>0.007251</td>
+      <td>2002</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># the Betas for each 2 year period</span>
 
 <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">((</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">regression_beta</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="c1"># how do I change to have 1 year periods? and 6 month periods?</span>
 </pre></div>
 </div>
 </div>
@@ -1272,8 +1465,9 @@ dtype: float64
 </table><br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</div></div>
 </div>
 <p>How do we interpret these coefficients?</p>
+</section>
 <section id="exponential-decay-models">
-<h3><span class="section-number">8.2.1. </span>Exponential decay models<a class="headerlink" href="#exponential-decay-models" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">8.5.3. </span>Exponential decay models<a class="headerlink" href="#exponential-decay-models" title="Link to this heading">#</a></h3>
 <p>People in the industry also like exponential decay models</p>
 <p>Instead of simply ignoring past observations, you instead put less weight on them</p>
 <p>Instead of OLS you do GLS with weights given by</p>
@@ -1347,7 +1541,7 @@ Notes:
 </section>
 </section>
 <section id="variances">
-<h2><span class="section-number">8.3. </span>Variances<a class="headerlink" href="#variances" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">8.6. </span>Variances<a class="headerlink" href="#variances" title="Link to this heading">#</a></h2>
 <p>Variances come in two flavors. Factor variance and idiosyncratic variance.</p>
 <p>Both tend to move together at high frequencies (days, weeks, a few months)</p>
 <p>At horizons longer than 1 year, you are better off with low frequency estimates of variances–say use a two year-five year sample of daily returns</p>
@@ -1521,7 +1715,7 @@ Notes:
 <li><p>you see we can forecast quite a bit of variation even with a only using the last month variance</p></li>
 </ul>
 <section id="indio-vol">
-<h3><span class="section-number">8.3.1. </span>Indio Vol<a class="headerlink" href="#indio-vol" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">8.6.1. </span>Indio Vol<a class="headerlink" href="#indio-vol" title="Link to this heading">#</a></h3>
 <p>Lets look now at the idiosyncratic component</p>
 <p>Recall that</p>
 <div class="math notranslate nohighlight">
@@ -1584,7 +1778,7 @@ Notes:
 <p>You see a very similar picture</p>
 </section>
 <section id="cross-section-vs-time-series">
-<h3><span class="section-number">8.3.2. </span>Cross-Section vs Time-series<a class="headerlink" href="#cross-section-vs-time-series" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">8.6.2. </span>Cross-Section vs Time-series<a class="headerlink" href="#cross-section-vs-time-series" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Variances tend to move up and down together</p></li>
 <li><p>you can repeat the forecasting exercise we did for the market variance to check out degree of  variation</p></li>
@@ -1596,7 +1790,7 @@ Notes:
 </section>
 </section>
 <section id="expected-returns">
-<h2><span class="section-number">8.4. </span>Expected returns<a class="headerlink" href="#expected-returns" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">8.7. </span>Expected returns<a class="headerlink" href="#expected-returns" title="Link to this heading">#</a></h2>
 <p>Expected returns have three components</p>
 <div class="math notranslate nohighlight">
 \[E[r]=rf+\alpha + b*E[f]\]</div>
@@ -1606,7 +1800,7 @@ Notes:
 <li><p>The alpha</p></li>
 </ul>
 <section id="factor-risk-premia">
-<h3><span class="section-number">8.4.1. </span>Factor Risk-Premia<a class="headerlink" href="#factor-risk-premia" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">8.7.1. </span>Factor Risk-Premia<a class="headerlink" href="#factor-risk-premia" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>While conceptually both alpha and risk premia are both expected excess returns, in practice our approach is very different</p></li>
 <li><p>Factor risk-premia likely move around, but we think of then as a more stable features of the economic environment</p></li>
@@ -1798,7 +1992,7 @@ t-stat relative to zero null: 4.47195671186148
 <p>We will look at this in our timing lecture</p>
 </section>
 <section id="alpha-is-all-you-need">
-<h3><span class="section-number">8.4.2. </span>Alpha is all you need<a class="headerlink" href="#alpha-is-all-you-need" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">8.7.2. </span>Alpha is all you need<a class="headerlink" href="#alpha-is-all-you-need" title="Link to this heading">#</a></h3>
 <p>In one way estimating an alpha is similar to estimating factor risk-premia</p>
 <ul class="simple">
 <li><p>Both are expected values of the excess returns</p></li>
@@ -2017,7 +2211,7 @@ t-stat relative to zero null: 4.47195671186148
 </ul>
 <p><img alt="Alternative Data" src="../../_images/alternativedata.png" /></p>
 <section id="alpha-quantification-procedure">
-<h4><span class="section-number">8.4.2.1. </span>Alpha Quantification Procedure<a class="headerlink" href="#alpha-quantification-procedure" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">8.7.2.1. </span>Alpha Quantification Procedure<a class="headerlink" href="#alpha-quantification-procedure" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>Regardless how you get to you alpha, in the end you have to put your trading insights in the same playing field</p></li>
 <li><p>Need to choose an horizon, say a month, and put all your alpha in that frequency.</p></li>
@@ -2031,7 +2225,7 @@ t-stat relative to zero null: 4.47195671186148
 </ul>
 </section>
 <section id="real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">
-<h4><span class="section-number">8.4.2.2. </span>Real Alpha is unique and cannot be driven by broad macro factors<a class="headerlink" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">8.7.2.2. </span>Real Alpha is unique and cannot be driven by broad macro factors<a class="headerlink" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>It is useful to develop views for a range of firms/ industries to check that you are not implicitly making a market-wide bet</p></li>
 <li><p>if that is your bet, it is silly to hedge market risk–and it is very inefficient  to buy a single stock to trade this view</p></li>
@@ -2177,21 +2371,26 @@ t-stat relative to zero null: 4.47195671186148
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-do-we-need-to-know-to-invest">8.1. What do we need to know to invest?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#betas">8.2. Betas</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-decay-models">8.2.1. Exponential decay models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">8.1. Libraries and Auxiliary Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-model-recap">8.2. Factor Model recap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-estimation-problem-that-we-need-to-solve">8.3. What is the estimation problem that we need to solve?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#betas-factor-loadings">8.4. Betas (Factor Loadings)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data">8.5. Our Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-we-estimate-betas">8.5.1. How do we estimate betas?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#is-this-too-good-to-be-true">8.5.2. Is this too Good to be true?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exponential-decay-models">8.5.3. Exponential decay models</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variances">8.3. Variances</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indio-vol">8.3.1. Indio Vol</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-section-vs-time-series">8.3.2. Cross-Section vs Time-series</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variances">8.6. Variances</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indio-vol">8.6.1. Indio Vol</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-section-vs-time-series">8.6.2. Cross-Section vs Time-series</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-returns">8.4. Expected returns</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-premia">8.4.1. Factor Risk-Premia</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-is-all-you-need">8.4.2. Alpha is all you need</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-quantification-procedure">8.4.2.1. Alpha Quantification Procedure</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">8.4.2.2. Real Alpha is unique and cannot be driven by broad macro factors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-returns">8.7. Expected returns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#factor-risk-premia">8.7.1. Factor Risk-Premia</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-is-all-you-need">8.7.2. Alpha is all you need</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-quantification-procedure">8.7.2.1. Alpha Quantification Procedure</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">8.7.2.2. Real Alpha is unique and cannot be driven by broad macro factors</a></li>
 </ul>
 </li>
 </ul>
