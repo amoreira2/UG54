@@ -513,10 +513,15 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-is-all-you-need">8.9. Alpha is all you need</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-quantification-procedure">8.9.1. Alpha Quantification Procedure</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">8.9.2. Real Alpha is unique and cannot be driven by broad macro factors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#note-stacked-data-sets">8.9.1. 🐍 Note : Stacked data sets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-you-find-alpha">8.9.2. How do you find alpha?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#if-not-estimation-then-what">8.9.3. If not estimation then what?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-quantification-procedure">8.9.4. Alpha Quantification Procedure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">8.9.5. Real Alpha is unique and cannot be driven by broad macro factors</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">8.10. 📝 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extra-material-the-normal-distribution">8.11. Extra Material: The Normal distribution</a></li>
 </ul>
             </nav>
         </div>
@@ -2145,44 +2150,53 @@ t-stat relative to zero null: 4.589572952976444
 <li><p>What happens with the asset actual long-term value?</p></li>
 <li><p>What happens with the alpha?</p></li>
 </ul>
-<p>So lets first get a few stocks and compare their alphas. I will focus on one sector</p>
+<p>So lets first get a few stocks and compare their alphas.</p>
+<ul class="simple">
+<li><p>I will estimate for each stock their alpha in a 1-year sample and compare with the alpha the following 1 year</p></li>
+<li><p>But you should free to be creative here. You could use 1 year to predict a month and so on</p></li>
+<li><p>The goal here is to show one way of doing things–but there are many other similar ways</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
-<span class="n">tickers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;MSFT&#39;</span><span class="p">,</span><span class="s1">&#39;AAPL&#39;</span><span class="p">,</span><span class="s1">&#39;CSCO&#39;</span><span class="p">,</span><span class="s1">&#39;ORCL&#39;</span><span class="p">,</span><span class="s1">&#39;GOOGL&#39;</span><span class="p">]</span>
-<span class="n">df</span><span class="o">=</span> <span class="n">get_daily_wrds</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="n">tickers</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;../../assets/data/FactorModelsEstimation_data2.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">## uncomment to use WRDS to get data</span>
+<span class="c1"># conn = wrds.Connection()</span>
+<span class="c1"># tickers=[&#39;MSFT&#39;,&#39;AAPL&#39;,&#39;CSCO&#39;,&#39;ORCL&#39;,&#39;GOOGL&#39;]</span>
+<span class="c1"># df= get_daily_wrds(conn,tickers).dropna()</span>
+<span class="c1"># df.to_csv(&#39;../../assets/data/FactorModelsEstimation_data2.csv&#39;)</span>
 <span class="c1">#######################################</span>
-<span class="c1"># df=pd.read_csv(&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModelsEstimation_data2.csv&#39;)</span>
-<span class="c1"># df.date=pd.to_datetime(df.date)</span>
-<span class="c1"># df.set_index(&#39;date&#39;,inplace=True)</span>
 
-<span class="c1"># df_factor = get_factors()</span>
-<span class="c1"># df_return, df_factor = df_returns.align(df_factor, join=&#39;inner&#39;, axis=0)</span>
+<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModelsEstimation_data2.csv&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># df_re=df_return.subtract(df_factor[&#39;RF&#39;],axis=0)</span>
+<span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">()</span>
+<span class="n">df</span><span class="p">,</span> <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">df_factor</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="c1"># print(df_re.head())</span>
-<span class="c1"># (1+df_re).cumprod().plot()</span>
+<span class="n">df_re</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">df_re</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">df_re</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WRDS recommends setting up a .pgpass file.
-Created .pgpass file successfully.
-You can create this file yourself at any time with the create_pgpass_file() function.
-Loading library list...
-Done
-[10104, 10107, 14593, 76076, 90319]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                MSFT      AAPL      CSCO      ORCL     GOOGL
+2004-08-20  0.002900  0.002881 -0.011568 -0.010607  0.079434
+2004-08-23  0.004362  0.009041  0.015840 -0.001020  0.010014
+2004-08-24 -0.000050  0.027942 -0.010999  0.002863 -0.041458
+2004-08-25  0.011330  0.034379  0.018400  0.006726  0.010725
+2004-08-26 -0.004043  0.048664 -0.007814 -0.016396  0.017969
 </pre></div>
 </div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:&gt;
+</pre></div>
+</div>
+<img alt="../../_images/7d08c44862a01c20dc36f69a18d4d834074d580107693fee91947a48434d15a6.png" src="../../_images/7d08c44862a01c20dc36f69a18d4d834074d580107693fee91947a48434d15a6.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
-
-<span class="c1"># Define the period length</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the period length</span>
 <span class="n">period_length</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="c1"># Create a dictionary to store the results</span>
@@ -2193,7 +2207,7 @@ Done
     <span class="n">end_year</span> <span class="o">=</span> <span class="n">start_year</span> <span class="o">+</span> <span class="n">period_length</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="n">period_label</span> <span class="o">=</span> <span class="n">end_year</span>
     
-    <span class="c1"># Filter the data for the current period</span>
+    <span class="c1"># What these three lines are doing?</span>
     <span class="n">period_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_re</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">&gt;=</span> <span class="n">start_year</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_re</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">&lt;=</span> <span class="n">end_year</span><span class="p">)</span>
     <span class="n">df_re_period</span> <span class="o">=</span> <span class="n">df_re</span><span class="p">[</span><span class="n">period_mask</span><span class="p">]</span>
     <span class="n">df_factor_period</span> <span class="o">=</span> <span class="n">df_factor</span><span class="p">[</span><span class="n">period_mask</span><span class="p">]</span>
@@ -2203,10 +2217,7 @@ Done
         <span class="k">try</span><span class="p">:</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">df_re_period</span><span class="p">[</span><span class="n">ticker</span><span class="p">]</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">df_factor_period</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">])</span>
-            
-            <span class="c1"># Perform the regression</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-            
             <span class="c1"># Store the results</span>
             <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;Ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ticker</span><span class="p">)</span>
             <span class="n">results_dict</span><span class="p">[</span><span class="s1">&#39;Period&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">period_label</span><span class="p">)</span>
@@ -2227,53 +2238,59 @@ Done
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Ticker  Period     Alpha  Alpha_SE  Alpha_Tstat
-0    MSFT    2004 -0.024613  0.173236    -0.142075
-1    AAPL    2004  1.815150  0.695334     2.610472
-2    CSCO    2004 -0.452826  0.381418    -1.187216
-3    ORCL    2004  0.339126  0.490395     0.691537
-4   GOOGL    2004  1.875807  0.880467     2.130469
+0    MSFT    2004 -0.024998  0.173270    -0.144270
+1    AAPL    2004  1.813820  0.695292     2.608718
+2    CSCO    2004 -0.453783  0.381393    -1.189802
+3    ORCL    2004  0.337930  0.490314     0.689211
+4   GOOGL    2004  1.875742  0.880526     2.130251
 ..    ...     ...       ...       ...          ...
-90   MSFT    2022 -0.028199  0.174405    -0.161688
-91   AAPL    2022  0.000443  0.170943     0.002591
-92   CSCO    2022 -0.062703  0.216968    -0.288997
-93   ORCL    2022  0.160281  0.219380     0.730607
-94  GOOGL    2022 -0.170152  0.212610    -0.800300
+95   MSFT    2023  0.231046  0.205052     1.126763
+96   AAPL    2023  0.167875  0.146782     1.143703
+97   CSCO    2023 -0.080818  0.180123    -0.448682
+98   ORCL    2023  0.075019  0.273346     0.274449
+99  GOOGL    2023  0.202679  0.248743     0.814816
 
-[95 rows x 5 columns]
+[100 rows x 5 columns]
 </pre></div>
 </div>
 </div>
 </div>
+<section id="note-stacked-data-sets">
+<h3><span class="section-number">8.9.1. </span>🐍 Note : Stacked data sets<a class="headerlink" href="#note-stacked-data-sets" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Note that we know need two coordinates to identify one observation: Ticker and Period</p></li>
+<li><p>To visualize this we want to plot the alpha of company A in year Y against the same company alpha in year Y+1</p></li>
+<li><p>Can we simply use the shift operator like this?</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">results_df</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;Alpha&#39;</span><span class="p">],</span><span class="n">results_df</span><span class="o">.</span><span class="n">Alpha</span> <span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>if yes, why it works?</p></li>
+<li><p>If not, how do we fix it?</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">results_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Ticker&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;Alpha&#39;</span><span class="p">],</span><span class="n">results_df</span><span class="o">.</span><span class="n">Alpha</span> <span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">results_df</span><span class="p">[</span><span class="s1">&#39;Alpha&#39;</span><span class="p">],</span><span class="n">results_df</span><span class="o">.</span><span class="n">Alpha</span> <span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Alpha (t-1)&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Alpha (t)&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="c1"># Plot Alpha(t-1) vs Alpha(t)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">results_df</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;Alpha&#39;</span><span class="p">],</span> <span class="n">results_df</span><span class="p">[</span><span class="s1">&#39;Alpha&#39;</span><span class="p">],</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">results_df</span><span class="p">[</span><span class="s1">&#39;Alpha&#39;</span><span class="p">],</span> <span class="n">results_df</span><span class="p">[</span><span class="s1">&#39;Alpha&#39;</span><span class="p">],</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Alpha (t-1)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Alpha (t)&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot Alpha_Tstat(t-1) vs Alpha(t)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">results_df</span><span class="o">.</span><span class="n">_</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;Alpha_Tstat&#39;</span><span class="p">],</span> <span class="n">results_df</span><span class="p">[</span><span class="s1">&#39;Alpha&#39;</span><span class="p">],</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Alpha_Tstat (t-1)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Alpha (t)&#39;</span><span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>  <span class="c1"># Adjust layout to prevent overlapping titles/labels</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Alpha (t)&#39;)
-</pre></div>
-</div>
-<img alt="../../_images/c20f0adba542d362d5c17c94e3f7b8f92beced5c2d565867e9af6f775166ea20.png" src="../../_images/c20f0adba542d362d5c17c94e3f7b8f92beced5c2d565867e9af6f775166ea20.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">results_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Ticker&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="s1">&#39;Alpha_Tstat&#39;</span><span class="p">],</span><span class="n">results_df</span><span class="o">.</span><span class="n">Alpha</span> <span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Alpha_Tstat (t-1)&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Alpha (t)&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Alpha (t)&#39;)
-</pre></div>
-</div>
-<img alt="../../_images/a3f16296c2abe4f917dc8e01f7eb156c7e6f7e259fca675a010f15fb130b9699.png" src="../../_images/a3f16296c2abe4f917dc8e01f7eb156c7e6f7e259fca675a010f15fb130b9699.png" />
+<img alt="../../_images/24bf285d13b54e68bc59ec3e1b2e8fe9d006e74f4b00cea4b410482b6c95d3d5.png" src="../../_images/24bf285d13b54e68bc59ec3e1b2e8fe9d006e74f4b00cea4b410482b6c95d3d5.png" />
 </div>
 </div>
 <ul class="simple">
@@ -2282,28 +2299,31 @@ Done
 <li><p>Even quite high T-stats are not associated with higher future alphas</p></li>
 <li><p>This is not surprising!</p></li>
 <li><p>Alpha is all you want and all you need. So everyone is chasing it</p></li>
-</ul>
-<ul class="simple">
 <li><p>So you expect that alpha of an asset or a trading strategy should be very transient– it will quickly disappears as people learn about it</p></li>
 <li><p>This will pose a challenge for you</p></li>
 </ul>
-<p><strong>How do you find alpha?</strong></p>
+</section>
+<section id="how-do-you-find-alpha">
+<h3><span class="section-number">8.9.2. </span>How do you find alpha?<a class="headerlink" href="#how-do-you-find-alpha" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Estimating Alpha is hard!</p></li>
-<li><p>Every one in the business in searching for alpha</p></li>
+<li><p>Every one in the business is searching for alpha</p></li>
 <li><p>So true alpha is</p>
 <ul>
 <li><p>hard to find</p></li>
 <li><p>disappears quickly</p></li>
 <li><p>if the data was clear, people would already jumped at it</p></li>
 <li><p>Once too much capital is in the trade we say that the trade is “crowded”</p></li>
-<li><p>A Crowded trade can yield NEGATIVE alpha, even if the original idea was right!</p></li>
+<li><p>A crowded trade can yield NEGATIVE alpha, even if the original idea was right!</p></li>
 <li><p>You have to be right, but also early.</p></li>
 <li><p>If the trade gets crowded after you already in, is that good or bad? What do you do?</p></li>
+<li><p>Can you be too early?</p></li>
 </ul>
 </li>
 </ul>
-<p><strong>If not estimation then what?</strong></p>
+</section>
+<section id="if-not-estimation-then-what">
+<h3><span class="section-number">8.9.3. </span>If not estimation then what?<a class="headerlink" href="#if-not-estimation-then-what" title="Link to this heading">#</a></h3>
 <p>You need to think!</p>
 <ul class="simple">
 <li><p>Valuation. You understand a business/market and think the market is not seeing what you are seeing. IT can be short-term insight, like a big client will cancel their services, or long-term prospects for the company business.</p>
@@ -2315,6 +2335,8 @@ Done
 <li><p>IT is good discipline to think why people are thinking the wrong thing–you need to understand why the opportunity is there in the first place</p></li>
 </ul>
 </li>
+</ul>
+<ul class="simple">
 <li><p>Liquidity provision</p>
 <ul>
 <li><p>When firms are downgraded some fund are forced to sell, this often creates reversals</p></li>
@@ -2325,6 +2347,8 @@ Done
 <li><p>So you bet the price movements triggered by them will ultimate revert, so you take the other side of the trade–i.e. provide liquidity (at a sweet premium of course)</p></li>
 </ul>
 </li>
+</ul>
+<ul class="simple">
 <li><p>Data that other people don’t have.</p>
 <ul>
 <li><p>Famous example are satellite pictures of parking lots of retail stores–might allow you to predict sales better which hopefully translates into predictions about prices once the market becomes aware of the sales</p></li>
@@ -2336,8 +2360,9 @@ Done
 </li>
 </ul>
 <p><img alt="Alternative Data" src="../../_images/alternativedata.png" /></p>
+</section>
 <section id="alpha-quantification-procedure">
-<h3><span class="section-number">8.9.1. </span>Alpha Quantification Procedure<a class="headerlink" href="#alpha-quantification-procedure" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">8.9.4. </span>Alpha Quantification Procedure<a class="headerlink" href="#alpha-quantification-procedure" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Regardless how you get to you alpha, in the end you have to put your trading insights in the same playing field</p></li>
 <li><p>Need to choose an horizon, say a month, and put all your alpha in that frequency.</p></li>
@@ -2351,7 +2376,7 @@ Done
 </ul>
 </section>
 <section id="real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">
-<h3><span class="section-number">8.9.2. </span>Real Alpha is unique and cannot be driven by broad macro factors<a class="headerlink" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">8.9.5. </span>Real Alpha is unique and cannot be driven by broad macro factors<a class="headerlink" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>It is useful to develop views for a range of firms/ industries to check that you are not implicitly making a market-wide bet</p></li>
 <li><p>if that is your bet, it is silly to hedge market risk–and it is very inefficient  to buy a single stock to trade this view</p></li>
@@ -2361,8 +2386,10 @@ Done
 <li><p>While it is ok to make a bet on an industry, it is important to know exactly what your trade is</p></li>
 <li><p>Buying NVDIA because your bullish on the tech sector is not efficient–you should buy the whole tech sector in that case–much less risk per unit of exposure- as it is not exposed to NVDIA specific factors?</p></li>
 </ul>
-<hr class="docutils" />
-<p><strong>📝 Key Takeaways</strong></p>
+</section>
+</section>
+<section id="key-takeaways">
+<h2><span class="section-number">8.10. </span>📝 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>Risk parameters are tractable; alpha is the bottleneck.</strong>  Betas, variances, and even risk-premia can be estimated with historical data, but forecasting alpha requires scarce information or insight.</p></li>
 <li><p><strong>Cross-section vs time-series is a trade-off.</strong>  Cross-sectional snapshots use many assets in one period, while time-series exploits one asset’s history; choose based on data depth and stationarity.</p></li>
@@ -2372,10 +2399,10 @@ Done
 <li><p><strong>Put every idea on the same timeline.</strong>  Converting a one-year price target into a monthly alpha ensures consistent sizing and portfolio aggregation.</p></li>
 <li><p><strong>Test for hidden factor exposure before acting.</strong>  If the bulk of expected return comes from market or sector movements, a hedged or broader trade is usually superior.</p></li>
 </ul>
+</section>
 <hr class="docutils" />
-<blockquote>
-<div><h4 class="rubric" id="extra-material-the-normal-distribution">Extra Material: The Normal distribution</h4>
-</div></blockquote>
+<section id="extra-material-the-normal-distribution">
+<h2><span class="section-number">8.11. </span>Extra Material: The Normal distribution<a class="headerlink" href="#extra-material-the-normal-distribution" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Most of what we do does not depend on the assumption of normality</p></li>
 <li><p>But normal distributions are very useful in statistical tests</p></li>
@@ -2428,7 +2455,6 @@ Done
 </div>
 </div>
 </div>
-</section>
 </section>
 </section>
 
@@ -2534,10 +2560,15 @@ Done
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-is-all-you-need">8.9. Alpha is all you need</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-quantification-procedure">8.9.1. Alpha Quantification Procedure</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">8.9.2. Real Alpha is unique and cannot be driven by broad macro factors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#note-stacked-data-sets">8.9.1. 🐍 Note : Stacked data sets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-you-find-alpha">8.9.2. How do you find alpha?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#if-not-estimation-then-what">8.9.3. If not estimation then what?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-quantification-procedure">8.9.4. Alpha Quantification Procedure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#real-alpha-is-unique-and-cannot-be-driven-by-broad-macro-factors">8.9.5. Real Alpha is unique and cannot be driven by broad macro factors</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">8.10. 📝 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extra-material-the-normal-distribution">8.11. Extra Material: The Normal distribution</a></li>
 </ul>
   </nav></div>
 
