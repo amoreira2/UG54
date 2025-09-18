@@ -715,24 +715,28 @@ respect to the choice variable to zero:</p>
 </section>
 <section id="our-data-for-today">
 <h2><span class="section-number">7.7. </span>Our Data for today<a class="headerlink" href="#our-data-for-today" title="Link to this heading">#</a></h2>
-<p>Today we will work with a new data set.We will work with 6 portfolios</p>
+<p>Today we will work with a new data set.</p>
+<p>We will work with 6 portfolios</p>
 <ul class="simple">
-<li><p>Mkt-RF: Buy all US stocks, short the risk-free rate</p></li>
-<li><p>SmB, Small-minus-Big: Buy the smallest stocks by market cap, short the largest</p></li>
-<li><p>Hml, High-minus-Los: Buy the stocks with the highest Book-to-Market, short the ones with the lowest Book-to-Market</p></li>
-<li><p>RmW, Robust-minus-Weak: Buy stocks with the highest profitability over assets, short the ones with the lowest</p></li>
-<li><p>CMA, Conservative-minus-Aggressive: Buy the stock that have the lowest CAPEX over assets, short the ones with the highest</p></li>
-<li><p>MOM, Momentum: Buy the stocks that performed the best in the last 12 months, sell the stocks that performed the worst</p></li>
+<li><p><strong>Mkt-RF</strong>: Buy all US stocks, short the risk-free rate</p></li>
+<li><p><strong>SmB</strong>, Small-minus-Big: Buy the smallest stocks by market cap, short the largest</p></li>
+<li><p><strong>Hml</strong>, High-minus-Los: Buy the stocks with the highest Book-to-Market, short the ones with the lowest Book-to-Market</p></li>
+<li><p><strong>RmW</strong>, Robust-minus-Weak: Buy stocks with the highest profitability over assets, short the ones with the lowest</p></li>
+<li><p><strong>CMA</strong>, Conservative-minus-Aggressive: Buy the stock that have the lowest CAPEX over assets, short the ones with the highest</p></li>
+<li><p><strong>MOM</strong>, Momentum: Buy the stocks that performed the best in the last 12 months, sell the stocks that performed the worst</p></li>
+</ul>
+<ul class="simple">
 <li><p>All these portfolio are “market-cap-weighted”.</p></li>
-<li><p>once we isolate the stocks we like and dislike  we weight them by market cap</p></li>
-<li><p>We make the lon and short side same size, so all these portfolio are “excess returns”</p></li>
+<li><p>once we isolate the stocks that go in each portfolio (long or short) we weight them by market cap</p></li>
+<li><p>We make the long and short side same size, so all these portfolio are “excess returns”</p></li>
 <li><p>Putting aside (very important) frictions in taking leverage, these portfolios are “costless to implement” as the have zero cost</p></li>
 <li><p>You fund your longs with your shorts</p></li>
 <li><p>Except the market where the short side is risk-free, all the others are designed to be “market-neutral” cross-sectional bets</p></li>
-<li><p>You are not taking a view on the market as a whole, but only in one segment against the other</p></li>
-<li><p>These portfolios are the core of the “smart beta” industry. And it is often  called systematic investing</p></li>
+<li><p>You are not taking a view on the market as a whole, but only in one segment of the market against the other</p></li>
+<li><p>These portfolios are the core of the “smart beta” industry. And it is often  called systematic investing and even quantitative investing</p></li>
 <li><p>Their construction has many details, which we will did into chapter 10</p></li>
-<li><p>They are called factors because we tend to use these trading strategies as factors.</p></li>
+<li><p>They are called factors because we tend to use these trading strategies as factors to control for known priced risks</p></li>
+<li><p>But players like Blackrock, AQR, Ivesco, Dimensional Fund Advisors, Vanguard, State Street,… make a living of supplying these factors in a easy to trade wrapper to investors (in ETF or mutual fund)</p></li>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -902,6 +906,7 @@ This is the MEAN-VARIANCE EFFICIENT PORTFOLIO associated with moments \)</span>E
 <li><p><span class="math notranslate nohighlight">\( \max_W E[W'R^e_T]~~~subject~~to~~~Var(W'R^e_T)\leq Vmax \)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\( \min_W Var(W'R^e_T)~~~subject~~to~~~E[W'R^e_T]\geq Emin \)</span></p></li>
 </ol>
+<p>⚡ ⏰ Question: G4 ⚡ Explain to me what each of these problems above are solving. Yeah just go from math to english</p>
 <p>It should not be surprising! They all want the highest SR, but use it to achieve different goals</p>
 <p>Here is the solution for the first one</p>
 <p><span class="math notranslate nohighlight">\( \max_W E[W'R^e_T]-\gamma/2 Var(W'R^e_T)\)</span></p>
@@ -922,9 +927,9 @@ respect to the choice variable to zero. The only difference is that now you are 
 </ul>
 <p>We can multiply by the inverse of the Variance-covariance matrix in both sides</p>
 <div class="math notranslate nohighlight">
-\[ (\gamma Var(R^e_T))^{-1}E[R^e_T]=(\gamma Var(R^e_T))^{-1}\gamma Var(R^e_T)W\]</div>
+\[ (\gamma Var(R^e_T))^{-1}E[R^e_T]=(\gamma Var(R^e_T))^{-1}\gamma Var(R^e_T)W^*\]</div>
 <p>We get:
-$<span class="math notranslate nohighlight">\( W=\frac{1}{\gamma}Var(R^e_T)^{-1}E[R^e_T] \)</span>$</p>
+$<span class="math notranslate nohighlight">\( W^*=\frac{1}{\gamma}Var(R^e_T)^{-1}E[R^e_T] \)</span>$</p>
 </section>
 <section id="two-fund-separation">
 <h2><span class="section-number">7.12. </span>⛪ Two fund Separation<a class="headerlink" href="#two-fund-separation" title="Link to this heading">#</a></h2>
@@ -933,7 +938,7 @@ $<span class="math notranslate nohighlight">\( W=\frac{1}{\gamma}Var(R^e_T)^{-1}
 <p>This means that to hit a variance target or a expected return target all you need to do is solve for the leverage that implements it!</p>
 <p>Sometimes this is referred as “two-fund” separation because everyone with all sort of different risk-aversions only need to invest in two “funds”: the risk-free fund, and the maximum Sharpe Ratio fund</p>
 <p>How is this possible: They invest with very different weights</p>
-<p>A risk-averse investor does nto hold safer assets–it holds a safer portfolio that include a little bit of the MVE portfolio</p>
+<p>A risk-averse investor does not hold safer assets–it holds a safer portfolio that include a little bit of the MVE portfolio and a lot of the risk-free asset</p>
 <p>A super risk-tolerant investor does not hold the riskiest assets–it holds a lot of the MVE portfolio, potentially leveraging it’s portfolio to get where she wants to be</p>
 <section id="question-g2">
 <h3><span class="section-number">7.12.1. </span>⚡ ⏰ Question: G2 ⚡<a class="headerlink" href="#question-g2" title="Link to this heading">#</a></h3>
@@ -952,7 +957,7 @@ $<span class="math notranslate nohighlight">\( W=\frac{1}{\gamma}Var(R^e_T)^{-1}
 <span class="n">display</span><span class="p">(</span><span class="n">SigmaR</span><span class="p">)</span>
 <span class="c1"># this inverts the variance covariance matrix</span>
 <span class="n">display</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">SigmaR</span><span class="p">))</span>
-<span class="n">W</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">SigmaR</span><span class="p">)</span> <span class="o">@</span> <span class="n">muR</span>
+<span class="n">W</span><span class="o">=</span> <span class="n">__</span> <span class="o">@</span> <span class="n">__</span>
 <span class="n">display</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
 <span class="c1"># Now we have the optimal mix of risky assets. How do you scale it to achieve your desired premium?</span>
 <span class="c1"># hint:  the final portfolio will be W*=l*W where l is a scalar, i.e. a number. What is the number that you need to achieve your goal?</span>
@@ -995,6 +1000,7 @@ $<span class="math notranslate nohighlight">\( W=\frac{1}{\gamma}Var(R^e_T)^{-1}
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Portfolio Volatility&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Average Return&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">#  Bonus:  what is the slope of this line?</span>
 </pre></div>
 </div>
 </div>
@@ -1024,10 +1030,14 @@ $<span class="math notranslate nohighlight">\( W=\frac{1}{\gamma}Var(R^e_T)^{-1}
 <p>The solution is <span class="math notranslate nohighlight">\(w*W\)</span> and <span class="math notranslate nohighlight">\(w*W_f\)</span> for any scalar w, where</p>
 <p><span class="math notranslate nohighlight">\(W=A\Sigma_{\epsilon}^{-1}\)</span></p>
 <p><span class="math notranslate nohighlight">\(W_f=-W'\beta\)</span></p>
-<p>and you pick w to control the overall volatility of your portfolio and where
-$<span class="math notranslate nohighlight">\(A\Sigma_{\epsilon}^{-1}=\left[\alpha_1,\alpha_2,...,\alpha_N\right]\left[\begin{array}{ccc}\sigma^2_{\epsilon,1} &amp; 0 &amp; 0\\0 &amp; \sigma^2_{\epsilon,i} &amp; 0\\0&amp;0&amp;\sigma^2_{\epsilon,N}\end{array}\right]^{-1}=\left[\begin{array}{c}\frac{\alpha_1}{\sigma^2_{\epsilon,1} }\\\frac{\alpha_2}{\sigma^2_{\epsilon,2} }\\...\\\frac{\alpha_N}{\sigma^2_{\epsilon,N} }\end{array}\right]\)</span>$</p>
-<p>The fact that all the trading strategies are stripped out of the co-movement leads to a really clean formula</p>
-<p>You can rewrite in terms of volatility allocations in each strategy</p>
+<p>and you pick <span class="math notranslate nohighlight">\(w\)</span> to control the overall volatility of your portfolio. In case the factors strip out the strategies of any co-movement we get</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}A\Sigma_{\epsilon}^{-1}=\left[\alpha_1,\alpha_2,...,\alpha_N\right]\left[\begin{array}{ccc}\sigma^2_{\epsilon,1} &amp; 0 &amp; 0\\0 &amp; \sigma^2_{\epsilon,i} &amp; 0\\0&amp;0&amp;\sigma^2_{\epsilon,N}\end{array}\right]^{-1}=\left[\begin{array}{c}\frac{\alpha_1}{\sigma^2_{\epsilon,1} }\\\frac{\alpha_2}{\sigma^2_{\epsilon,2} }\\...\\\frac{\alpha_N}{\sigma^2_{\epsilon,N} }\end{array}\right]\end{split}\]</div>
+<ul class="simple">
+<li><p>The fact that all the trading strategies are stripped out of any co-movement leads to a really clean formula–but this is an assumption.</p></li>
+<li><p>What we will get in general?</p></li>
+</ul>
+<p>You can rewrite in terms of “volatility allocations” in each strategy</p>
 <div class="math notranslate nohighlight">
 \[W_i\sigma_{\epsilon,i}=\frac{\alpha_i}{\sigma_{\epsilon,i}}\]</div>
 <p>What is this?</p>
@@ -1035,10 +1045,10 @@ $<span class="math notranslate nohighlight">\(A\Sigma_{\epsilon}^{-1}=\left[\alp
 <li><p>recall that <span class="math notranslate nohighlight">\(\sigma_{\epsilon,i}\)</span> is the volatility of the strategy that is long the asset and short the factor in the optimal hedging, i.e. the vol of the hedging portfolio, and alpha is….</p></li>
 </ul>
 <div class="math notranslate nohighlight">
-\[r^e_i-h^if=\alpha_i+\beta_i*f+\epsilon_i+hf\]</div>
+\[r^e_i+h^if=\alpha_i+\beta_i*f+\epsilon_i+hf\]</div>
 <p>so if you set <span class="math notranslate nohighlight">\(h=-\beta_i\)</span></p>
 <div class="math notranslate nohighlight">
-\[r^e_i-h^if=\alpha_i+\epsilon_i\]</div>
+\[r^e_i-\beta_if=\alpha_i+\epsilon_i\]</div>
 <p>and follows that <span class="math notranslate nohighlight">\(E[r^e_i-h^if]=\alpha_i\)</span> and <span class="math notranslate nohighlight">\(Var(r^e_i-h^if)=\sigma_{\epsilon,i}^2\)</span></p>
 <section id="implementation-estimates-for-alpha-beta-hedged-portfolios-covariances">
 <h3><span class="section-number">7.14.1. </span>Implementation:Estimates for <span class="math notranslate nohighlight">\(alpha\)</span>, <span class="math notranslate nohighlight">\(\beta\)</span>, Hedged portfolios covariances<a class="headerlink" href="#implementation-estimates-for-alpha-beta-hedged-portfolios-covariances" title="Link to this heading">#</a></h3>
@@ -1109,6 +1119,7 @@ Sigma_e: [0.01005633 0.01014849 0.00570013 0.00446193 0.0203163 ]
 <span class="c1"># what is an alternative approach to get the same result using the hedged returns directly?</span>
 
 <span class="c1"># did we assume anything about the covariance matrix of the returns? Or we just let the data speak?</span>
+<span class="c1"># How would you impose that the covariance of the residual are zero? Why would you?</span>
 </pre></div>
 </div>
 </div>
