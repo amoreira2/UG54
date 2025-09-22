@@ -478,11 +478,15 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">9.2. Volatility Timing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">9.2. Volatility Timing</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-functions">9.2.1. Libraries and Functions</a></li>
+</ul>
+</li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#volatility-timing-the-market">9.3. Volatility Timing the market</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">9.3.1. Intuition</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">9.3.2. From signal to weights</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-strategy-returns">9.3.3. Construct strategy returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.3.4. 📝 Key Takeaways</a></li>
 </ul>
 </li>
 </ul>
@@ -497,78 +501,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="cell tag_hide-cell docutils container">
-<details class="admonition hide above-input">
-<summary aria-label="Toggle hidden content">
-<p class="collapsed admonition-title">Show code cell content</p>
-<p class="expanded admonition-title">Hide code cell content</p>
-</summary>
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;daily&#39;</span><span class="p">):</span>   
-    
-    <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
-        <span class="n">freq_label</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">freq_label</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">freq</span>
-
-
-    <span class="k">if</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;CAPM&#39;</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
-        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    
-     
-        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span> 
-    <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF3&#39;</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
-        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
-    <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF5&#39;</span><span class="p">:</span>
-
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
-        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
-        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
-        <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
-        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>    
-        
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
-        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
-        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
-        <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
-        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>   
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Momentum_Factor&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
-        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
-        <span class="n">df_factor</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">,</span><span class="s1">&#39;MOM&#39;</span><span class="p">]</span>    
-    <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
-        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-        
-
-
-    <span class="k">return</span> <span class="n">df_factor</span><span class="o">/</span><span class="mi">100</span>
-</pre></div>
-</div>
-</div>
-</details>
-</div>
-<section id="volatility-timing">
+  <section class="tex2jax_ignore mathjax_ignore" id="volatility-timing">
 <h1><span class="section-number">9.2. </span>Volatility Timing<a class="headerlink" href="#volatility-timing" title="Link to this heading">#</a></h1>
 <p>Recall our earlier formula</p>
 <div class="math notranslate nohighlight">
@@ -592,12 +525,80 @@ document.write(`
 <li><p>Note that both things can happen at the same time, as long they don’t move exactly together you can time both!</p></li>
 </ul>
 </div></blockquote>
-<p>One can think of minimum-variance investing in the time-series–just like if you believed expected are constant across assets</p>
+<p>One can think of minimum-variance investing in the time-series–just like if you believed expected are constant across assets you would simply swing to minimize vol.</p>
 <p>For any trading strategy the  volatility timing portfolio is <span class="math notranslate nohighlight">\(w_i=\frac{\alpha_i}{\sigma_{i,t}^2}\)</span></p>
 <blockquote>
 <div><h3 class="rubric" id="note">Note</h3>
-<p>If Alphas are time-varying but Sharpe ratios are constant, i.e. <span class="math notranslate nohighlight">\(\alpha_{i,t}=k\sigma_{i,t}\)</span>, then the optimal allocation becomes proportion to inverse volatility <span class="math notranslate nohighlight">\(w_i=\frac{\alpha_i}{\sigma_{i,t}}\)</span>.</p>
+<p>If Alphas are time-varying but Sharpe ratios are constant, i.e. <span class="math notranslate nohighlight">\(\alpha_{i,t}=k\sigma_{i,t}\)</span>, then the optimal allocation becomes proportion to inverse volatility <span class="math notranslate nohighlight">\(w_i=\frac{\alpha_i}{\sigma_{i,t}}\)</span>. In this case you would do a volatility-managed portfolio instead of a “variance-managed” portfolio.</p>
 </div></blockquote>
+<section id="libraries-and-functions">
+<h2><span class="section-number">9.2.1. </span>Libraries and Functions<a class="headerlink" href="#libraries-and-functions" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">DataReader</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;daily&#39;</span><span class="p">):</span>   
+    
+    <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
+        <span class="n">freq_label</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">freq_label</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">freq</span>
+
+
+    <span class="k">if</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;CAPM&#39;</span><span class="p">:</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+     
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span> 
+    <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF3&#39;</span><span class="p">:</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+    <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF5&#39;</span><span class="p">:</span>
+
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>    
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>   
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Momentum_Factor&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">,</span><span class="s1">&#39;MOM&#39;</span><span class="p">]</span>    
+    <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        
+
+
+    <span class="k">return</span> <span class="n">df_factor</span><span class="o">/</span><span class="mi">100</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="volatility-timing-the-market">
 <h1><span class="section-number">9.3. </span>Volatility Timing the market<a class="headerlink" href="#volatility-timing-the-market" title="Link to this heading">#</a></h1>
@@ -630,10 +631,6 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\alan.moreira\Anaconda3\lib\site-packages\pandas_datareader\famafrench.py:114: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  df = read_csv(StringIO(&quot;Date&quot; + src[start:]), **params)
-</pre></div>
-</div>
 <div class="output text_html"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -750,17 +747,145 @@ dtype: float64
 <span class="c1"># meaning they group the data into 5 equal-sized bins based on the values of &#39;RV_lag&#39;.</span>
 <span class="c1"># ensuring that each group has approximately the same number of observations.</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Quantile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;RV_lag&#39;</span><span class="p">],</span> <span class="n">q</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="c1"># Group by quantile and calculate the mean for each column</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>RV</th>
+      <th>RF</th>
+      <th>Mkt-RF</th>
+      <th>RV_lag</th>
+      <th>Quantile</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1926-07-31</th>
+      <td>0.005116</td>
+      <td>0.002252</td>
+      <td>0.029054</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1926-08-31</th>
+      <td>0.008827</td>
+      <td>0.002603</td>
+      <td>0.026493</td>
+      <td>0.005116</td>
+      <td>(-0.00022600000000000007, 0.00632]</td>
+    </tr>
+    <tr>
+      <th>1926-09-30</th>
+      <td>0.006117</td>
+      <td>0.002162</td>
+      <td>0.003627</td>
+      <td>0.008827</td>
+      <td>(0.00632, 0.00997]</td>
+    </tr>
+    <tr>
+      <th>1926-10-31</th>
+      <td>0.017660</td>
+      <td>0.003255</td>
+      <td>-0.032814</td>
+      <td>0.006117</td>
+      <td>(-0.00022600000000000007, 0.00632]</td>
+    </tr>
+    <tr>
+      <th>1926-11-30</th>
+      <td>0.003628</td>
+      <td>0.003125</td>
+      <td>0.025747</td>
+      <td>0.017660</td>
+      <td>(0.017, 0.0323]</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2025-02-28</th>
+      <td>0.019447</td>
+      <td>0.003235</td>
+      <td>-0.024214</td>
+      <td>0.020641</td>
+      <td>(0.017, 0.0323]</td>
+    </tr>
+    <tr>
+      <th>2025-03-31</th>
+      <td>0.047814</td>
+      <td>0.003365</td>
+      <td>-0.064063</td>
+      <td>0.019447</td>
+      <td>(0.017, 0.0323]</td>
+    </tr>
+    <tr>
+      <th>2025-04-30</th>
+      <td>0.252127</td>
+      <td>0.003576</td>
+      <td>-0.008223</td>
+      <td>0.047814</td>
+      <td>(0.0323, 0.862]</td>
+    </tr>
+    <tr>
+      <th>2025-05-31</th>
+      <td>0.029994</td>
+      <td>0.003787</td>
+      <td>0.060498</td>
+      <td>0.252127</td>
+      <td>(0.0323, 0.862]</td>
+    </tr>
+    <tr>
+      <th>2025-06-30</th>
+      <td>0.010415</td>
+      <td>0.003405</td>
+      <td>0.048595</td>
+      <td>0.029994</td>
+      <td>(0.017, 0.0323]</td>
+    </tr>
+  </tbody>
+</table>
+<p>1188 rows × 5 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Group by quantile and calculate the mean for each column</span>
 <span class="n">quantile_means</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Quantile&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="c1"># label the index according the volatility of the highest vol month in the quantile</span>
 <span class="n">quantile_means</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">quantile_means</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">round</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">right</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
-<span class="c1"># compute the price of risk--i.e. the ratio of the mean excess return to the mean realized variance</span>
-<span class="c1"># across the months in each quantile</span>
-<span class="c1"># importantly these are for the future months, i.e. the mean excess return  and variance for month t+1</span>
-<span class="c1"># while we used the variance for month t</span>
-<span class="n">quantile_means</span> <span class="p">[</span><span class="s1">&#39;priceofrisk&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">quantile_means</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="p">(</span><span class="n">quantile_means</span><span class="p">[</span><span class="s1">&#39;RV&#39;</span><span class="p">])</span>
 
 
 <span class="c1"># Display the mean of quantiles for each column</span>
@@ -774,6 +899,13 @@ dtype: float64
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Market Excess Return (t+1) by RV(t) Quantile&#39;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">)</span>
 
+
+<span class="c1"># compute the price of risk--i.e. the ratio of the mean excess return to the mean realized variance</span>
+<span class="c1"># across the months in each quantile</span>
+<span class="c1"># importantly these are for the future months, i.e. the mean excess return  and variance for month t+1</span>
+<span class="c1"># while we used the variance for month t</span>
+<span class="n">quantile_means</span> <span class="p">[</span><span class="s1">&#39;priceofrisk&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">quantile_means</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="p">(</span><span class="n">quantile_means</span><span class="p">[</span><span class="s1">&#39;RV&#39;</span><span class="p">])</span>
+
 <span class="n">quantile_means</span><span class="o">.</span><span class="n">priceofrisk</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Price of Risk by Quantile by RV(t) Quantile&#39;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Price of Risk&#39;</span><span class="p">)</span>
@@ -785,11 +917,7 @@ dtype: float64
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alan.moreira\AppData\Local\Temp\ipykernel_29908\2575752801.py:9: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
-  quantile_means = df.groupby(&#39;Quantile&#39;).mean()
-</pre></div>
-</div>
-<img alt="../../_images/e638c9af9c0c2fc877ca6e3f5c7f276dfe215e583406d51727064c321f2343ac.png" src="../../_images/e638c9af9c0c2fc877ca6e3f5c7f276dfe215e583406d51727064c321f2343ac.png" />
+<img alt="../../_images/8ef571e1f69bd6d4f9cf1e36414799ab1f9efda584b2f2bfbd5deff44d116c13.png" src="../../_images/8ef571e1f69bd6d4f9cf1e36414799ab1f9efda584b2f2bfbd5deff44d116c13.png" />
 </div>
 </div>
 <p>We see that following months of high variance–on the right– you don’t really get higher returns</p>
@@ -807,7 +935,7 @@ dtype: float64
 \[w_t=\frac{c}{rv_t},\]</div>
 <p>where <span class="math notranslate nohighlight">\(c\)</span> is some constant.</p>
 <p>If you want to be very formal you could set <span class="math notranslate nohighlight">\(c=\frac{E[r^{MKT}_{t+1}-r^f_{t+1}]}{\gamma}\)</span></p>
-<p>But this only controls you average position in the market–and doesn’t say anything about timing</p>
+<p>But this only controls you average position in the market</p>
 <ul class="simple">
 <li><p>Hold the position for a month</p></li>
 <li><p>The returns of the strategy are given by</p></li>
@@ -882,15 +1010,14 @@ dtype: float64
 <img alt="../../_images/8e16e0a5a3719c00ee9aafcdff7678ff7c2433be1bc84bcb21300e1158f6d699.png" src="../../_images/8e16e0a5a3719c00ee9aafcdff7678ff7c2433be1bc84bcb21300e1158f6d699.png" />
 </div>
 </div>
-<p>Does it work or not?</p>
-<p>How to evaluate?</p>
-<p>What should you look at?</p>
+<p>Does it work or not? Look at the plot and explain to me what you see and why it might work and why it might not.</p>
+<p>How to evaluate? What ARE the formal tests/metrics to look at here?</p>
 <p><strong>Things to try</strong></p>
 <ul class="simple">
 <li><p>How well it works with VIX instead of RV?</p></li>
 <li><p>What If we use a forecasting model to predict variance?</p></li>
 <li><p>How well it works with standard deviation instead of variance</p></li>
-<li><p>How well it works if we put leverage limits</p></li>
+<li><p>How well it works if we put leverage limits. How would you put leverage limits?</p></li>
 <li><p>How well it works if we combine an expected return signal with the volatility signal?</p></li>
 <li><p>What about the other factors? Does it work there as well?</p></li>
 </ul>
@@ -905,7 +1032,7 @@ dtype: float64
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">volmanaged</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
     <span class="n">factor</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">name</span>
     <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-    <span class="n">endofmonth</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">+</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">endofmonth</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">+</span><span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">Signal</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">endofmonth</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
     <span class="n">Signal</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">Signal</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">Signal</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;signal&#39;</span>
@@ -915,8 +1042,9 @@ dtype: float64
     <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">signal</span>
     <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
     <span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_volmanaged&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">df</span>
+    <span class="n">SR_volmanaged</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_volmanaged&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_volmanaged&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="o">*</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">SR_factor</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="o">*</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">,</span><span class="n">SR_volmanaged</span><span class="p">,</span><span class="n">SR_factor</span>
 
 
 <span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">(</span><span class="s1">&#39;FF6&#39;</span><span class="p">)</span>
@@ -925,39 +1053,38 @@ dtype: float64
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c:\Users\alan.moreira\Anaconda3\lib\site-packages\pandas_datareader\famafrench.py:114: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  df = read_csv(StringIO(&quot;Date&quot; + src[start:]), **params)
-c:\Users\alan.moreira\Anaconda3\lib\site-packages\pandas_datareader\famafrench.py:114: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  df = read_csv(StringIO(&quot;Date&quot; + src[start:]), **params)
-c:\Users\alan.moreira\Anaconda3\lib\site-packages\pandas_datareader\famafrench.py:114: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  df = read_csv(StringIO(&quot;Date&quot; + src[start:]), **params)
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(MOM               0.462232
- MOM_volmanaged    0.906813
- dtype: float64,
- MOM              -0.159845
- MOM_volmanaged   -0.085163
- Name: 0.005, dtype: float64,
-                  signal       MOM    Weight  MOM_volmanaged
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(                 signal       MOM    Weight  MOM_volmanaged
  Date                                                       
- 1926-11-30          NaN  0.014683       NaN             NaN
- 1926-12-31  2277.092450  0.002114  0.589074        0.001245
- 1927-01-31  2662.927643  0.035187  0.688888        0.024240
- 1927-02-28  2568.855606  0.000668  0.664552        0.000444
- 1927-03-31  3769.446919  0.045621  0.975140        0.044487
+ 1926-11-30          NaN  0.014184       NaN             NaN
+ 1926-12-31  2366.756741  0.003517  0.613907        0.002159
+ 1927-01-31  2642.821639  0.034461  0.685515        0.023624
+ 1927-02-28  2546.099681  0.000874  0.660426        0.000577
+ 1927-03-31  3967.710054  0.046042  1.029174        0.047385
  ...                 ...       ...       ...             ...
- 2024-08-31   599.322929  0.048827  0.155042        0.007570
- 2024-09-30  1049.077765 -0.000230  0.271392       -0.000062
- 2024-10-31  1164.418175  0.036818  0.301230        0.011091
- 2024-11-30  1582.413470  0.005364  0.409363        0.002196
- 2024-12-31   908.504923  0.000585  0.235026        0.000138
+ 2025-02-28   410.124245 -0.013113  0.106381       -0.001395
+ 2025-03-31   839.543006 -0.015939  0.217767       -0.003471
+ 2025-04-30   368.525015  0.055426  0.095591        0.005298
+ 2025-05-31   506.875158  0.010772  0.131477        0.001416
+ 2025-06-30   466.668326 -0.011951  0.121048       -0.001447
  
- [1178 rows x 4 columns])
+ [1184 rows x 4 columns],
+ 0.9088565237632564,
+ 0.46569413488418665)
 </pre></div>
 </div>
 </div>
 </div>
+</section>
+<section id="key-takeaways">
+<h2><span class="section-number">9.3.4. </span>📝 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>We care about risk-adjusted returns</p></li>
+<li><p>While predicting returns is tricky, predicting variance is much easier</p></li>
+<li><p>If variance does NOT predict returns, then we can increase risk-adjusted returns by takign more risk when varianc eis low and less risk with variance is high</p></li>
+<li><p>This idea can be applied to individual factors, btu also to your entire portfolio level</p></li>
+<li><p>Pod funds are well known for aggressively de-risking when vol spikes. Why is that? Because risk does not predict returns so why risk it?</p></li>
+</ul>
+<hr class="docutils" />
 </section>
 </section>
 
@@ -1025,11 +1152,15 @@ c:\Users\alan.moreira\Anaconda3\lib\site-packages\pandas_datareader\famafrench.p
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">9.2. Volatility Timing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">9.2. Volatility Timing</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-functions">9.2.1. Libraries and Functions</a></li>
+</ul>
+</li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#volatility-timing-the-market">9.3. Volatility Timing the market</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">9.3.1. Intuition</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">9.3.2. From signal to weights</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-strategy-returns">9.3.3. Construct strategy returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.3.4. 📝 Key Takeaways</a></li>
 </ul>
 </li>
 </ul>
