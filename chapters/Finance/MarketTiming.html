@@ -455,7 +455,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -471,6 +473,20 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-functions">9.1.1. Libraries and Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data">9.1.2. Our Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-yield-or-valuation-ratio">9.1.3. Dividend yield or (Valuation ratio)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#return-predictability">9.1.4. Return Predictability?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-you-see-if-the-signal-works">9.1.5. How do you see if the signal works?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evalaution">9.1.6. Evalaution?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#goign-deeper">9.1.7. Goign Deeper</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -480,7 +496,34 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="cell tag_hide-cell docutils container">
+  <section class="tex2jax_ignore mathjax_ignore" id="expected-return-timing">
+<h1><span class="section-number">9.1. </span>Expected Return Timing<a class="headerlink" href="#expected-return-timing" title="Link to this heading">#</a></h1>
+<p>The most classic timing strategies are motivated by the fact that high dividend yield periods seems to be followed by above average returns</p>
+<p>The plot shows the dividend-yield of the stock market overlayed with the future 7 year returns
+<img alt="MVfrontier" src="https://github.com/amoreira2/Fin418/blob/main/assets/plots/Timing1.jpg?raw=1" /></p>
+<p>It tell us that in this sample, periods when the dividend yield was high were periods where the returns were really high going forward.</p>
+<p>This might be intuitive to you, but it is really a fact that puzzled lots of people and earned Robert Shiller a nobel prize</p>
+<img src="https://som.yale.edu/sites/default/files/styles/square_1280/public/profile_pictures/shiller-bob.jpg.webp?itok=TgThr2LT" alt="Rober shiller" style="width: 20%;">
+<p>It tells us that when the price (per dividend) is low what actually happens is NOT that the dividends go down going forward which would be intuitive–if the price is low is probably because payouts will be low– but instead prices go up–meaning expected returns were high!</p>
+<p>So this suggests EXPECTED returns to invest in the market change a lot overtime.</p>
+<p>A trading strategy that exploits this would have weights that depend on the dividend yield signal.</p>
+<section id="libraries-and-functions">
+<h2><span class="section-number">9.1.1. </span>Libraries and Functions<a class="headerlink" href="#libraries-and-functions" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="ch">#!pip install wrds</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import wrds</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-cell docutils container">
 <details class="admonition hide above-input">
 <summary aria-label="Toggle hidden content">
 <p class="collapsed admonition-title">Show code cell content</p>
@@ -490,13 +533,14 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">DataReader</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;daily&#39;</span><span class="p">):</span>   
-    
+<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;daily&#39;</span><span class="p">):</span>
+
     <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
         <span class="n">freq_label</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
     <span class="k">else</span><span class="p">:</span>
@@ -504,70 +548,166 @@ document.write(`
 
 
     <span class="k">if</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;CAPM&#39;</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    
-     
-        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span> 
+
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span>
     <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF3&#39;</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
     <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF5&#39;</span><span class="p">:</span>
 
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
-        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
-        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>    
-        
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
-        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
-        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>   
-        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Momentum_Factor&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Momentum_Factor&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
         <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
-        <span class="n">df_factor</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">,</span><span class="s1">&#39;MOM&#39;</span><span class="p">]</span>    
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">,</span><span class="s1">&#39;MOM&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
         <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">()</span><span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-        
+
 
 
     <span class="k">return</span> <span class="n">df_factor</span><span class="o">/</span><span class="mi">100</span>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="nn">/tmp/ipython-input-2096262426.py</span> in <span class="ni">&lt;cell line: 0&gt;</span><span class="nt">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span><span class="s1">&#39;matplotlib&#39;</span><span class="p">,</span> <span class="s1">&#39;inline&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> 
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">statsmodels</span><span class="o">/</span><span class="n">api</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">     </span><span class="mi">74</span> 
+<span class="g g-Whitespace">     </span><span class="mi">75</span> 
+<span class="ne">---&gt; </span><span class="mi">76</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">distributions</span><span class="p">,</span> <span class="n">iolib</span><span class="p">,</span> <span class="n">regression</span><span class="p">,</span> <span class="n">robust</span><span class="p">,</span> <span class="n">tools</span>
+<span class="g g-Whitespace">     </span><span class="mi">77</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.__init__</span><span class="w"> </span><span class="kn">import</span> <span class="n">test</span>
+<span class="g g-Whitespace">     </span><span class="mi">78</span> <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels._version</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">statsmodels</span><span class="o">/</span><span class="n">distributions</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.tools._test_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">PytestTester</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.empirical_distribution</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">ECDF</span><span class="p">,</span> <span class="n">ECDFDiscrete</span><span class="p">,</span> <span class="n">monotone_fn_inverter</span><span class="p">,</span> <span class="n">StepFunction</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.edgeworth</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExpandedNormal</span>
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">statsmodels</span><span class="o">/</span><span class="n">distributions</span><span class="o">/</span><span class="n">empirical_distribution</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span><span class="sd"> import numpy as np</span>
+<span class="ne">----&gt; </span><span class="mi">5</span><span class="sd"> from scipy.interpolate import interp1d</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span><span class="sd"> </span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span><span class="sd"> </span>
+
+<span class="sd">/usr/local/lib/python3.12/dist-packages/scipy/interpolate/__init__.py in &lt;module&gt;</span>
+<span class="g g-Whitespace">    </span><span class="mi">190</span><span class="sd"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">191</span><span class="sd"> &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+<span class="ne">--&gt; </span><span class="mi">192</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="g g-Whitespace">    </span><span class="mi">193</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._fitpack_py</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="g g-Whitespace">    </span><span class="mi">194</span> 
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">scipy</span><span class="o">/</span><span class="n">interpolate</span><span class="o">/</span><span class="n">_interpolate</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">comb</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> 
+<span class="ne">---&gt; </span><span class="mi">12</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_fitpack_py</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._polyint</span><span class="w"> </span><span class="kn">import</span> <span class="n">_Interpolator1D</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ppoly</span>
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">scipy</span><span class="o">/</span><span class="n">interpolate</span><span class="o">/</span><span class="n">_fitpack_py</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._fitpack_impl</span><span class="w"> </span><span class="kn">import</span> <span class="n">bisplrep</span><span class="p">,</span> <span class="n">bisplev</span><span class="p">,</span> <span class="n">dblint</span>  <span class="c1"># noqa: F401</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_fitpack_impl</span> <span class="k">as</span> <span class="n">_impl</span>
+<span class="ne">---&gt; </span><span class="mi">10</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._bsplines</span><span class="w"> </span><span class="kn">import</span> <span class="n">BSpline</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> 
+<span class="g g-Whitespace">     </span><span class="mi">12</span> 
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">scipy</span><span class="o">/</span><span class="n">interpolate</span><span class="o">/</span><span class="n">_bsplines</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>                           <span class="n">cholesky_banded</span><span class="p">,</span> <span class="n">cho_solve_banded</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span>                           <span class="n">solve</span><span class="p">,</span> <span class="n">solve_banded</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">9</span> <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize_scalar</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_dierckx</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_fitpack_impl</span>
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">scipy</span><span class="o">/</span><span class="n">optimize</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">    </span><span class="mi">421</span> 
+<span class="g g-Whitespace">    </span><span class="mi">422</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._optimize</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="ne">--&gt; </span><span class="mi">423</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._minimize</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="g g-Whitespace">    </span><span class="mi">424</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._root</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="g g-Whitespace">    </span><span class="mi">425</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._root_scalar</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">scipy</span><span class="o">/</span><span class="n">optimize</span><span class="o">/</span><span class="n">_minimize</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">     </span><span class="mi">26</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._trustregion_krylov</span><span class="w"> </span><span class="kn">import</span> <span class="n">_minimize_trust_krylov</span>
+<span class="g g-Whitespace">     </span><span class="mi">27</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._trustregion_exact</span><span class="w"> </span><span class="kn">import</span> <span class="n">_minimize_trustregion_exact</span>
+<span class="ne">---&gt; </span><span class="mi">28</span> <span class="kn">from</span><span class="w"> </span><span class="nn">._trustregion_constr</span><span class="w"> </span><span class="kn">import</span> <span class="n">_minimize_trustregion_constr</span>
+<span class="g g-Whitespace">     </span><span class="mi">29</span> 
+<span class="g g-Whitespace">     </span><span class="mi">30</span> <span class="c1"># constrained minimization</span>
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">scipy</span><span class="o">/</span><span class="n">optimize</span><span class="o">/</span><span class="n">_trustregion_constr</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.minimize_trustregion_constr</span><span class="w"> </span><span class="kn">import</span> <span class="n">_minimize_trustregion_constr</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_minimize_trustregion_constr&#39;</span><span class="p">]</span>
+
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.12</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">scipy</span><span class="o">/</span><span class="n">optimize</span><span class="o">/</span><span class="n">_trustregion_constr</span><span class="o">/</span><span class="n">minimize_trustregion_constr</span><span class="o">.</span><span class="n">py</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearOperator</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.._differentiable_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorFunction</span>
+<span class="ne">----&gt; </span><span class="mi">5</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.._constraints</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="n">NonlinearConstraint</span><span class="p">,</span> <span class="n">LinearConstraint</span><span class="p">,</span> <span class="n">PreparedConstraint</span><span class="p">,</span> <span class="n">Bounds</span><span class="p">,</span> <span class="n">strict_bounds</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="kn">from</span><span class="w"> </span><span class="nn">.._hessian_update_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">BFGS</span>
+
+<span class="nn">/usr/lib/python3.12/importlib/_bootstrap.py</span> in <span class="ni">_find_and_load</span><span class="nt">(name, import_)</span>
+
+<span class="nn">/usr/lib/python3.12/importlib/_bootstrap.py</span> in <span class="ni">_find_and_load_unlocked</span><span class="nt">(name, import_)</span>
+
+<span class="nn">/usr/lib/python3.12/importlib/_bootstrap.py</span> in <span class="ni">_load_unlocked</span><span class="nt">(spec)</span>
+
+<span class="nn">/usr/lib/python3.12/importlib/_bootstrap_external.py</span> in <span class="ni">exec_module</span><span class="nt">(self, module)</span>
+
+<span class="nn">/usr/lib/python3.12/importlib/_bootstrap_external.py</span> in <span class="ni">get_code</span><span class="nt">(self, fullname)</span>
+
+<span class="nn">/usr/lib/python3.12/importlib/_bootstrap_external.py</span> in <span class="ni">get_data</span><span class="nt">(self, path)</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
+</pre></div>
+</div>
+</div>
 </details>
 </div>
-<section class="tex2jax_ignore mathjax_ignore" id="expected-return-timing">
-<h1><span class="section-number">9.1. </span>Expected Return Timing<a class="headerlink" href="#expected-return-timing" title="Link to this heading">#</a></h1>
-<p>The most classic timing strategies are motivated by the fact that high dividend yield periods seems to be followed by above average returns</p>
-<p>The plot shows the dividend-yield of the stock market overlayed with the future 7 year returns
-<img alt="MVfrontier" src="../../_images/Timing1.jpg" /></p>
-<p>It tell us that in this sample, periods when the dividend yield was high were periods where the returns were really high going forward.</p>
-<p>This might be intuitive to you, but it is really a fact that puzzled lots of people and earned Robert Shiller a nobel prize</p>
-<img src="https://som.yale.edu/sites/default/files/styles/square_1280/public/profile_pictures/shiller-bob.jpg.webp?itok=TgThr2LT" alt="Rober shiller" style="width: 50%;">
-<p>It tells us that when the price (per dividend) is low what actually happens is NOT that the dividends go down going forward which would be intuitive–if the price is low is probably because payouts will be low– but instead prices go up–meaning expected returns were high!</p>
-<p>So this suggests EXPECTED returns to invest in the market change a lot overtime.</p>
-<p>A trading strategy that exploits this would have weights that depend on the dividend yield signal.</p>
+</section>
+<section id="our-data">
+<h2><span class="section-number">9.1.2. </span>Our Data<a class="headerlink" href="#our-data" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Monthly data one the market portfolio returns and it’s dividend yield</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="ch">#!pip install wrds </span>
-<span class="c1"># import wrds</span>
-<span class="n">db</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">db</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>
 <span class="n">crsp_sql</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    SELECT date, vwretd, vwretx</span>
 <span class="s2">    FROM crsp.msi</span>
@@ -689,6 +829,15 @@ Done
 <p>1189 rows × 3 columns</p>
 </div></div></div>
 </div>
+</section>
+<section id="dividend-yield-or-valuation-ratio">
+<h2><span class="section-number">9.1.3. </span>Dividend yield or (Valuation ratio)<a class="headerlink" href="#dividend-yield-or-valuation-ratio" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>dividend yields went from 4%-7% in the start of the sample (1930’s) to around 2% now</p></li>
+<li><p>We will now look at the relationship between dividend yields and  5-year ahead returns</p></li>
+<li><p>That is, I will ask the regression to tell me: if I see a high dividend-yield what does typically happen with the returns of my investment in the market if I buy it and hold it for 5 years</p></li>
+<li><p>Because this story is mostly about risk-premia we will take out the risk-free rate</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># we will average over 1 year to get rid of seasonality and noise in general</span>
@@ -704,18 +853,15 @@ Done
 <img alt="../../_images/86b8ef197fac758b82124a694ddc52b6d08c4231dea0eb065d79b8f811a81a38.png" src="../../_images/86b8ef197fac758b82124a694ddc52b6d08c4231dea0eb065d79b8f811a81a38.png" />
 </div>
 </div>
-<ul class="simple">
-<li><p>dividend yields went from 4%-7% in the start of the sample (1930’s) to around 2% now</p></li>
-<li><p>We will now look at the relationship between dividend yields and  5-year ahead returns</p></li>
-<li><p>That is, I will ask the regression to tell me: if I see a high dividend-yield what does typically happen with the returns of my investment in the market if I buy it and hold it for 5 years</p></li>
-<li><p>Because this story is mostly about risk-premia we will take out the risk-free rate</p></li>
-</ul>
+</section>
+<section id="return-predictability">
+<h2><span class="section-number">9.1.4. </span>Return Predictability?<a class="headerlink" href="#return-predictability" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">(</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;monthly&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
-<span class="c1"># We align the indices of the CRSP data and the Fama-French data </span>
-<span class="c1"># they are both monthly data but wrds has the actual last trading date of the month while </span>
+<span class="c1"># We align the indices of the CRSP data and the Fama-French data</span>
+<span class="c1"># they are both monthly data but wrds has the actual last trading date of the month while</span>
 <span class="c1"># the Fama-French data has the last calendar day of the month</span>
 
 <span class="n">crsp</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">crsp</span><span class="o">.</span><span class="n">index</span><span class="o">+</span><span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -732,6 +878,9 @@ Done
 <span class="c1">#finally I multiply the dividend yield by 3 to make it more visible in the plot</span>
 <span class="n">ax</span><span class="o">=</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="n">merged_data</span><span class="p">[[</span><span class="s1">&#39;R_future&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="c1">#raw correlation suggests interesting relationship</span>
+<span class="c1"># this is predictive</span>
+<span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -748,21 +897,9 @@ c:\Users\alan.moreira\Anaconda3\lib\site-packages\pandas_datareader\famafrench.p
 <img alt="../../_images/431536957960ed73f401292d51459ac3d7f93d8723c279658d9314246f706c97.png" src="../../_images/431536957960ed73f401292d51459ac3d7f93d8723c279658d9314246f706c97.png" />
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#raw correlation suggests interesting relationship</span>
-<span class="c1"># this is predictive</span>
-<span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.3670940450303395
-</pre></div>
-</div>
-</div>
-</div>
-<p>How do you see if the signal works?</p>
+</section>
+<section id="how-do-you-see-if-the-signal-works">
+<h2><span class="section-number">9.1.5. </span>How do you see if the signal works?<a class="headerlink" href="#how-do-you-see-if-the-signal-works" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>You start with some signal that you know in date <span class="math notranslate nohighlight">\(t\)</span></p></li>
 <li><p>Estimate the forecasting regression</p></li>
@@ -776,7 +913,7 @@ c:\Users\alan.moreira\Anaconda3\lib\site-packages\pandas_datareader\famafrench.p
 <li><p>In fact what we will do below is to try to predict the next 5 years</p></li>
 </ul>
 <div class="math notranslate nohighlight">
-\[ r_{t\rightarrow t+50}=a+b *signal_t+u_{t+1}\]</div>
+\[ r_{t\rightarrow t+60}=a+b *signal_t+u_{t+1}\]</div>
 <ul class="simple">
 <li><p>We will be looking at the b coefficient, it’s standard errors and the r-squared of this regression</p></li>
 <li><p>Is the R-squared meaningful ( we will discuss later ) and the b is well estimate and different from zero?</p>
@@ -789,8 +926,7 @@ c:\Users\alan.moreira\Anaconda3\lib\site-packages\pandas_datareader\famafrench.p
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># lets run the regression</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span> <span class="p">)</span>  
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span> <span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
@@ -838,14 +974,14 @@ Notes:
 <li><p>the variable dividend yield is extremely persistent, so we do not have that much variation in it. Just a few data points even in a long sample</p></li>
 <li><p>The return are overlapping, so when we cumulate the returns we are really double counting the number of observations, so the traditional standard errors are totally off</p></li>
 <li><p>Traditional–but not bullet proof is to use an adjusted standard errors like HAC with a window consistent with the rolling window. We  do that below and does make a huge difference</p></li>
-<li><p>The third issue is that there is a bias in the regression because the innovation in the variables are correlated</p></li>
+<li><p>The third issue is that there is a bias in the regression because the innovation in the variables are correlated–too nerdy</p></li>
+<li><p>the Takeaway should be: focus on SIGNALS that are less persistent. This will allow the data to be more informative about predictability</p></li>
 </ul>
 </li>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span> <span class="p">)</span>  
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span> <span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">merged_data</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HAC&#39;</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;maxlags&#39;</span><span class="p">:</span> <span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">})</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
@@ -881,7 +1017,10 @@ Notes:
 </div>
 </div>
 </div>
-<p>one thing that people do to evaluate these forecasting regressions is loot at the R-squared out of sample relative to some benchmark <span class="math notranslate nohighlight">\(\mu_{t}\)</span>.</p>
+</section>
+<section id="evalaution">
+<h2><span class="section-number">9.1.6. </span>Evalaution?<a class="headerlink" href="#evalaution" title="Link to this heading">#</a></h2>
+<p>One thing that people do to evaluate these forecasting regressions is loot at the R-squared out of sample relative to some benchmark <span class="math notranslate nohighlight">\(\mu_{t}\)</span>.</p>
 <div class="math notranslate nohighlight">
 \[R^2_{TS}=1-\frac{(r_{t+1}-(a+b *signal_t))^2}{((r_{t+1})-\mu_{t})^2}\]</div>
 <p>A less “academicy” way is to simply see how well the trading strategy does out of sample</p>
@@ -909,7 +1048,7 @@ on the market excess return, and <span class="math notranslate nohighlight">\(a+
 <span class="n">years</span><span class="o">=</span><span class="mi">5</span>
 <span class="n">Estimation_sample</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">]</span><span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">Estimation_sample</span><span class="p">[</span><span class="s1">&#39;vwretd&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">)</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">years</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
 
-<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">Estimation_sample</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span> <span class="p">)</span>  
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">Estimation_sample</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span> <span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">Estimation_sample</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HAC&#39;</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;maxlags&#39;</span><span class="p">:</span> <span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">})</span>
 
 
@@ -931,7 +1070,7 @@ on the market excess return, and <span class="math notranslate nohighlight">\(a+
 </div>
 </div>
 <ul class="simple">
-<li><p>Note that the denominator here <span class="math notranslate nohighlight">\(\gamma \sigma^2\)</span> is only impacting your average position in the asset</p></li>
+<li><p>Note that the denominator here <span class="math notranslate nohighlight">\(\gamma \sigma^2\)</span> is only impacting your average position in the asset. Why?</p></li>
 <li><p>An alternative it to pick it so that you have some average desired position in the asset</p></li>
 </ul>
 <p>We can now directly look at it’s performance relative to a buy and hold strategy</p>
@@ -969,8 +1108,24 @@ on the market excess return, and <span class="math notranslate nohighlight">\(a+
 <img alt="../../_images/d500c21c88974293695bb3af90906a42cf48bc422d2cf821425b2eedb42371e1.png" src="../../_images/d500c21c88974293695bb3af90906a42cf48bc422d2cf821425b2eedb42371e1.png" />
 </div>
 </div>
-<p>Does it work or not?</p>
-<p>How to evaluate?</p>
+<p>The hard question is what is the benchmark?</p>
+<p>For a timing strategy that trades on a single factor the approach is straight foward</p>
+<p>Run a regression of the timing strategy returns on the buy and hold factor that the strategy times. And look at the _______</p>
+<p>Baiscally this will be asking whether the timing adds any value once you adjust for the average ______ it has to the _____.</p>
+<p>The relevant metric for us is if the strategy had ___ in the _____ sample.</p>
+<p>When we run this regression we making sure to always take the ____ so we have ____ returns in both sides and the ____ has clear interpretation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;vwretd&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">Test_sample</span><span class="p">[</span><span class="n">___</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;ret_timing&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">Test_sample</span><span class="p">[</span><span class="n">___</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="goign-deeper">
+<h2><span class="section-number">9.1.7. </span>Goign Deeper<a class="headerlink" href="#goign-deeper" title="Link to this heading">#</a></h2>
 <p>if you are interested in digging further see</p>
 <blockquote>
 <div><p>John Y. Campbell, Samuel B. Thompson, Predicting Excess Stock Returns Out of Sample: Can Anything Beat the Historical Average?, The Review of Financial Studies, Volume 21, Issue 4, July 2008, Pages 1509–1531, <a class="reference external" href="https://doi.org/10.1093/rfs/hhm055">https://doi.org/10.1093/rfs/hhm055</a></p>
@@ -1004,6 +1159,7 @@ on the market excess return, and <span class="math notranslate nohighlight">\(a+
 </ul>
 </li>
 </ul>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1060,6 +1216,27 @@ on the market excess return, and <span class="math notranslate nohighlight">\(a+
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-functions">9.1.1. Libraries and Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data">9.1.2. Our Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-yield-or-valuation-ratio">9.1.3. Dividend yield or (Valuation ratio)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#return-predictability">9.1.4. Return Predictability?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-you-see-if-the-signal-works">9.1.5. How do you see if the signal works?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evalaution">9.1.6. Evalaution?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#goign-deeper">9.1.7. Goign Deeper</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
