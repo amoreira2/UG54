@@ -485,11 +485,16 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-yield-or-valuation-ratio">9.1.3. Dividend yield or (Valuation ratio)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#return-predictability">9.1.4. Return Predictability?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-you-test-if-the-signal-works">9.1.5. How do you test if the signal works?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation">9.1.6. Evaluation?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trading-strategy-implementation">9.1.7. Trading strategy Implementation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-conclusion-here">9.1.8. What is the conclusion here?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#going-deeper">9.1.9. Going Deeper</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.1.10. 📝 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#too-good-to-be-true">9.1.6. Too good to be true</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-1-adjusting-the-r-squared">9.1.7. Evaluation 1: Adjusting the R-squared</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trading-strategy-implementation">9.1.8. Trading strategy Implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">9.1.9. Performance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-right-benchmark">9.1.10. What is the right benchmark?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pricking-the-right-benchmark">9.1.11. Pricking the Right Benchmark</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buy-and-hold-sharpe-ratios">9.1.12. Buy and Hold Sharpe Ratios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-conclusion-here">9.1.13. What is the conclusion here?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#going-deeper">9.1.14. Going Deeper</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.1.15. 📝 Key Takeaways</a></li>
 </ul>
             </nav>
         </div>
@@ -1001,10 +1006,15 @@ document.write(`
 <section id="dividend-yield-or-valuation-ratio">
 <h2><span class="section-number">9.1.3. </span>Dividend yield or (Valuation ratio)<a class="headerlink" href="#dividend-yield-or-valuation-ratio" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>dividend yields went from 4%-7% in the start of the sample (1930’s) to around 2% now</p></li>
+<li><p>Dividend yields went from 4%-7% in the start of the sample (1930’s) to around 2% now</p></li>
 <li><p>We will now look at the relationship between dividend yields and  5-year ahead returns</p></li>
 <li><p>That is, I will ask the regression to tell me: if I see a high dividend-yield what does typically happen with the returns of my investment in the market if I buy it and hold it for 5 years</p></li>
 <li><p>Because this story is mostly about risk-premia we will take out the risk-free rate</p></li>
+</ul>
+<p>⚡ ⏰ Question: Group A - B ⚡</p>
+<ul class="simple">
+<li><p>Explain the economics of why variation in dividend yields would predict returns and with which sign</p></li>
+<li><p>Explain the economics of why variation in dividend yields would NOT predict returns. What should it predict in this case?</p></li>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1078,7 +1088,7 @@ document.write(`
 \[ r_{t+1}=a+b *signal_t+u_{t+1}\]</div>
 <ul class="simple">
 <li><p>The difference from factor models is that the relationship is NOT contemporaneous</p></li>
-<li><p>The whole point is to use the fact that you know the signal ahead of time</p></li>
+<li><p>The whole point is to use the fact that you <strong>know the signal ahead of time</strong></p></li>
 <li><p>That is the signal at date <span class="math notranslate nohighlight">\(t\)</span> has information about the return in data <span class="math notranslate nohighlight">\(t+1\)</span> (or some longer horizon)</p></li>
 <li><p>In fact what we will do below is to try to predict the next 5 years</p></li>
 </ul>
@@ -1086,7 +1096,7 @@ document.write(`
 \[ r_{t\rightarrow t+60}=a+b *signal_t+u_{t+1}\]</div>
 <ul class="simple">
 <li><p>We will be looking at the b coefficient, it’s standard errors and the r-squared of this regression</p></li>
-<li><p>Is the R-squared meaningful ( we will discuss later ) and the b is well estimate and different from zero?</p>
+<li><p>Is the R-squared meaningful AND the b is well estimate and different from zero?</p>
 <ul>
 <li><p>If the answer is no: STOP, the signal does not work even in sample!</p></li>
 <li><p>If yes, then you kick the tires more…</p></li>
@@ -1132,10 +1142,19 @@ Notes:
 </div>
 </div>
 </div>
+</section>
+<section id="too-good-to-be-true">
+<h2><span class="section-number">9.1.6. </span>Too good to be true<a class="headerlink" href="#too-good-to-be-true" title="Link to this heading">#</a></h2>
 <p>WOW! Look at this t-stat!</p>
 <p>What do you think? Can we really take it to the bank?</p>
 <ul class="simple">
-<li><p>Note that we have overlapping windowns. Better adjsut this standard errors</p></li>
+<li><p>Note that we have overlapping windows. Better adjust this standard errors</p></li>
+</ul>
+<p>⚡ ⏰ Question: Group C-D ⚡</p>
+<ul class="simple">
+<li><p>Think why overlapping will mess with standard errors</p></li>
+<li><p>Try to think of examples and be concrete</p></li>
+<li><p>What is the objective of the standard errors?</p></li>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1176,23 +1195,32 @@ Notes:
 </div>
 </div>
 </section>
-<section id="evaluation">
-<h2><span class="section-number">9.1.6. </span>Evaluation?<a class="headerlink" href="#evaluation" title="Link to this heading">#</a></h2>
-<p>Obviously we cannot trade on the same data we estiamte our model</p>
-<p>So we will need to split the sample. For now we will do somethign simple</p>
+<section id="evaluation-1-adjusting-the-r-squared">
+<h2><span class="section-number">9.1.7. </span>Evaluation 1: Adjusting the R-squared<a class="headerlink" href="#evaluation-1-adjusting-the-r-squared" title="Link to this heading">#</a></h2>
+<p>In sample, this looks pretty good</p>
+<p>BUT…….</p>
+<p>Obviously we cannot trade on the same data we estimate our model</p>
+<p>So we will need to kick the tires more.</p>
+<p>For now we will do something simple</p>
 <ul class="simple">
 <li><p>Estimation vs Test sample</p></li>
-<li><p>We then we will look at an adjsuted R-rsquared and also a tradign strategy format</p></li>
+<li><p>We then we will look at an adjusted R-squared and also a trading strategy format</p></li>
 </ul>
-<p>One thing that people do to evaluate these forecasting regressions is loot at the R-squared <strong>out of the estimation sample</strong> relative to some benchmark <span class="math notranslate nohighlight">\(\mu_{t}\)</span>.</p>
+<p>One thing that people do to evaluate these forecasting regressions is look at the R-squared <strong>out of sample</strong> relative to some benchmark <span class="math notranslate nohighlight">\(\mu_{t}\)</span>.</p>
+<ul class="simple">
+<li><p>Typically a regression R-squared has the average–but we cannot use the average out of sample</p></li>
+</ul>
+<p>⚡ ⏰ Question: Group E-F⚡</p>
+<ul class="simple">
+<li><p>Why not? Explain the need to use some benchmark <span class="math notranslate nohighlight">\(\mu_{t}\)</span> instead of the average?</p></li>
+</ul>
 <div class="math notranslate nohighlight">
-\[R^2_{TS}=1-\frac{\sum(r_{t+1}-(a+b *signal_t))^2}{\sum(r_{t+1}-\mu_{benchmark})^2}\]</div>
+\[R^2_{OOS}=1-\frac{\sum(r_{t+1}-(a+b *signal_t))^2}{\sum(r_{t+1}-\mu_{benchmark})^2}\]</div>
 <ul class="simple">
 <li><p>Just need to adjust forecast relative to the standard R-squared formula</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[R^2_{Standard}=1-\frac{\sum(r_{t+1}-(a+b *signal_t))^2}{\sum(r_{t+1}-Average(r_{t+1}))^2}\]</div>
-<p>Why this second is unfair?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Estimation_sample</span><span class="o">=</span><span class="n">merged_data</span><span class="p">[:</span><span class="s1">&#39;2010&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1207,12 +1235,17 @@ Notes:
 <span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;premium_forecast&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">])</span>
 <span class="n">premium_benchmark</span><span class="o">=</span><span class="p">(</span><span class="n">Estimation_sample</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;premium_forecast&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="p">(</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;premium_forecast&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">0</span><span class="o">+</span><span class="p">(</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="p">(</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;premium_forecast&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">0</span><span class="o">+</span><span class="n">premium_benchmark</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="p">(</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;premium_forecast&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">0</span><span class="o">+</span><span class="p">(</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># what is going on here?</span>
+<span class="p">(</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;premium_forecast&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">0</span><span class="o">+</span><span class="n">premium_benchmark</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># what is going on here?</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;The forecast&#39;</span><span class="p">,</span><span class="s1">&#39;The actual&#39;</span><span class="p">,</span><span class="s1">&#39;The past average&#39;</span><span class="p">])</span>
 
 
 <span class="c1">#What does this say? What do we wanted this number to look like?</span>
+
+<span class="c1">##############################################</span>
+<span class="c1"># The out-of-sample R2</span>
+<span class="c1"># R2_TS=1-((Test_sample[&#39;R_future&#39;]-(Test_sample[&#39;premium_forecast&#39;]))**2).sum()/((Test_sample[&#39;R_future&#39;]-premium_benchmark)**2).sum()</span>
+<span class="c1"># R2_TS</span>
 </pre></div>
 </div>
 </div>
@@ -1223,31 +1256,17 @@ Notes:
 <img alt="../../_images/02975075e80b0ebbc0dd57527d3a0838f5b92b9f33b13881996c5721e30a40f2.png" src="../../_images/02975075e80b0ebbc0dd57527d3a0838f5b92b9f33b13881996c5721e30a40f2.png" />
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">R2_TS</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="p">((</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">]</span><span class="o">-</span><span class="p">(</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;premium_forecast&#39;</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="p">((</span><span class="n">Test_sample</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">premium_benchmark</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="n">R2_TS</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(-1.9299831475318894)
-</pre></div>
-</div>
-</div>
-</div>
 </section>
 <section id="trading-strategy-implementation">
-<h2><span class="section-number">9.1.7. </span>Trading strategy Implementation<a class="headerlink" href="#trading-strategy-implementation" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">9.1.8. </span>Trading strategy Implementation<a class="headerlink" href="#trading-strategy-implementation" title="Link to this heading">#</a></h2>
 <p>A less “academicy” way is to simply see how well the trading strategy does out of sample</p>
-<p>How would we do that?</p>
-<p>for example you would have a weight</p>
+<p>For example you would have a weight</p>
 <div class="math notranslate nohighlight">
-\[x_t=\frac{(a+b\frac{d_t}{p_t})}{\gamma \sigma^2}\]</div>
+\[x_t=\frac{\mu_t}{\gamma \sigma_t^2}=\frac{(a+b\frac{d_t}{p_t})}{\gamma \sigma^2}\]</div>
 <ul class="simple">
 <li><p>where a b are  the regression coefficient
 on the market excess return, and <span class="math notranslate nohighlight">\(a+b\frac{d_t}{p_t}\)</span> is our premium forecast</p></li>
-<li><p><span class="math notranslate nohighlight">\(\gamma\)</span> is the risk-aversion and <span class="math notranslate nohighlight">\(\sigma\)</span> is the volatility of the asset.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span> is the risk-aversion and <span class="math notranslate nohighlight">\(\sigma\)</span> is the volatility of the asset (we are assuming it is constant).</p></li>
 </ul>
 <p>So your strategy return is</p>
 <div class="math notranslate nohighlight">
@@ -1256,7 +1275,7 @@ on the market excess return, and <span class="math notranslate nohighlight">\(a+
 <p>Or more simply</p>
 <div class="math notranslate nohighlight">
 \[r_{t+1}=r^f_{t+1}+x_t(r_{t+1}^{mkt}-r^f_{t+1})\]</div>
-<p>If x&lt;1, invest in the risk-free rate, if x&gt;1, borrow to fund a bigger position in the risky asset</p>
+<p>If x&lt;1, invest some in the risk-free rate, if x&gt;1, borrow to fund a bigger position in the risky asset</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gamma</span><span class="o">=</span><span class="mi">2</span>
@@ -1276,8 +1295,11 @@ on the market excess return, and <span class="math notranslate nohighlight">\(a+
 <img alt="../../_images/89953e65a7d348159c8b5811ee77f83260b3e312bb392b9a25c1c0334b43f074.png" src="../../_images/89953e65a7d348159c8b5811ee77f83260b3e312bb392b9a25c1c0334b43f074.png" />
 </div>
 </div>
+</section>
+<section id="performance">
+<h2><span class="section-number">9.1.9. </span>Performance<a class="headerlink" href="#performance" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Note that the denominator here <span class="math notranslate nohighlight">\(\gamma \sigma^2\)</span> is only impacting your average position in the asset. Why? Is that true in general?</p></li>
+<li><p>Note that the denominator here <span class="math notranslate nohighlight">\(\gamma \sigma^2\)</span> is only impacting your average position in the asset.</p></li>
 <li><p>An alternative it to pick it so that you have some average desired position in the asset</p></li>
 </ul>
 <p>We can now directly look at it’s performance relative to a buy and hold strategy</p>
@@ -1296,6 +1318,9 @@ on the market excess return, and <span class="math notranslate nohighlight">\(a+
 <img alt="../../_images/8baa70369243bf190124cfd4b1bcd50847ff31d80f4e7db6bc7bdfa4c4daf4fc.png" src="../../_images/8baa70369243bf190124cfd4b1bcd50847ff31d80f4e7db6bc7bdfa4c4daf4fc.png" />
 </div>
 </div>
+</section>
+<section id="what-is-the-right-benchmark">
+<h2><span class="section-number">9.1.10. </span>What is the right benchmark?<a class="headerlink" href="#what-is-the-right-benchmark" title="Link to this heading">#</a></h2>
 <p>But is this the right benchmark for performance?</p>
 <p>Here is a different one</p>
 <p>Here we use the average return in the estimation sample as our measure of risk-premium</p>
@@ -1315,11 +1340,17 @@ on the market excess return, and <span class="math notranslate nohighlight">\(a+
 <img alt="../../_images/7d680ca2eed521361a04788f45cb1d299471de226d88a489eab4f7983e7d289f.png" src="../../_images/7d680ca2eed521361a04788f45cb1d299471de226d88a489eab4f7983e7d289f.png" />
 </div>
 </div>
-<p>The question is what is the right benchmark?</p>
+</section>
+<section id="pricking-the-right-benchmark">
+<h2><span class="section-number">9.1.11. </span>Pricking the Right Benchmark<a class="headerlink" href="#pricking-the-right-benchmark" title="Link to this heading">#</a></h2>
+<p>⚡ ⏰ Question: Group G-A⚡</p>
+<ul class="simple">
+<li><p>Complete the blank spaces!</p></li>
+</ul>
 <p>For a timing strategy that trades on a single factor the approach is straight forward</p>
-<p>Run a regression of the timing strategy returns on the buy and hold factor that the strategy times. And look at the _______</p>
-<p>Basically this will be asking whether the timing adds any value once you adjust for the average ______ it has to the _____. Teh right benchmark is a portfolio as the same average ___ as the timing. Clean separating the timing aspect from just differences in risk- taking.</p>
-<p>The relevant metric for us is if the strategy had ___ in the _____ sample.</p>
+<p>Run a regression of the timing strategy returns on the buy and hold factor that the strategy times. And look at the _______.</p>
+<p>Basically this will be asking whether the timing adds any value once you adjust for the average ______ it has to the _____. The right benchmark is a portfolio with the same average ___ as the timing strategy. This approach cleanly separates the timing aspect from just differences in ________.</p>
+<p>The relevant metric for us is if the strategy had ______ in the _____ sample.</p>
 <p>When we run this regression we making sure to always take the ____ so we have ____ returns in both sides and the ____ has clear interpretation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1359,7 +1390,10 @@ Notes:
 </div>
 </div>
 </div>
-<p>You could also look directly at Sharpe Ratios.</p>
+</section>
+<section id="buy-and-hold-sharpe-ratios">
+<h2><span class="section-number">9.1.12. </span>Buy and Hold Sharpe Ratios<a class="headerlink" href="#buy-and-hold-sharpe-ratios" title="Link to this heading">#</a></h2>
+<p>You could also look directly at Sharpe Ratios and compare the Buy and hold with the timing strategy</p>
 <p>To the extent that timing works, you should be harvesting more premium per unit of risk you are taking</p>
 <p>Variation in beta will simply move expected returns and volatility together and be Sharpe Ratio neutral.</p>
 <p>To boost SR you have to have alpha, so the timing has to be doing something</p>
@@ -1382,7 +1416,7 @@ Notes:
 </div>
 </section>
 <section id="what-is-the-conclusion-here">
-<h2><span class="section-number">9.1.8. </span>What is the conclusion here?<a class="headerlink" href="#what-is-the-conclusion-here" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">9.1.13. </span>What is the conclusion here?<a class="headerlink" href="#what-is-the-conclusion-here" title="Link to this heading">#</a></h2>
 <p>The summary is</p>
 <ul class="simple">
 <li><p>This regression has many issues and academics have spent a lot of time on it</p></li>
@@ -1392,15 +1426,18 @@ Notes:
 <ul>
 <li><p>the variable dividend yield is extremely persistent, so we do not have that much variation in it. Just a few data points even in a long sample</p></li>
 <li><p>The return are overlapping, so when we cumulate the returns we are really double counting the number of observations, so the traditional standard errors are totally off</p></li>
-<li><p>Traditional–but not bullet proof is to use an adjusted standard errors like HAC with a window consistent with the rolling window. We  do that below and does make a huge difference</p></li>
-<li><p>The third issue is that there is a bias in the regression because the innovation in the variables are correlated–too nerdy</p></li>
-<li><p>the Takeaway should be: focus on SIGNALS that are less persistent. This will allow the data to be more informative about predictability</p></li>
+<li><p>Traditional–but not bullet proof is to use an adjusted standard errors like HAC with a window consistent with the rolling window. We  did that and does make a huge difference</p></li>
 </ul>
 </li>
 </ul>
+<p>⚡ ⏰ Question: Group B-C⚡</p>
+<ul class="simple">
+<li><p>What is another big issue that these very long term regressions have? We haven’t explicitly discussed but it is the biggest one.</p></li>
+<li><p>Why the past relationship would not hold in the future?</p></li>
+</ul>
 </section>
 <section id="going-deeper">
-<h2><span class="section-number">9.1.9. </span>Going Deeper<a class="headerlink" href="#going-deeper" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">9.1.14. </span>Going Deeper<a class="headerlink" href="#going-deeper" title="Link to this heading">#</a></h2>
 <p>if you are interested in digging further see</p>
 <blockquote>
 <div><p>John Y. Campbell, Samuel B. Thompson, Predicting Excess Stock Returns Out of Sample: Can Anything Beat the Historical Average?, The Review of Financial Studies, Volume 21, Issue 4, July 2008, Pages 1509–1531, <a class="reference external" href="https://doi.org/10.1093/rfs/hhm055">https://doi.org/10.1093/rfs/hhm055</a></p>
@@ -1409,34 +1446,24 @@ Notes:
 <li><p>We refer to the dividend-yield as a signal</p></li>
 <li><p>There are many other signals that have been show to predict market returns– in the past</p></li>
 <li><p>Harder to know which ones work right now</p></li>
+</ul>
+<p>⚡ ⏰ Question: Group D-E⚡</p>
+<p>Tell me a story of why each of these signals might predict stock market returns and with which sign</p>
+<ul class="simple">
 <li><p>Some of the signals are</p>
 <ul>
-<li><p>Short interest (The size of short positions relative to the overall market)</p>
-<ul>
-<li><p>idea: shorts must know what they are doing and if the short is high things will be bad</p></li>
-</ul>
-</li>
-<li><p>Variance risk premium (VIX-squared-Realized Variance)</p>
-<ul>
-<li><p>If risk-premium in option markets is high, risk premium in equity markets is probably high</p></li>
-</ul>
-</li>
-<li><p>Equity issuing activity (fraction of the market being sold)</p>
-<ul>
-<li><p>If companies are issuing a lot they must think they are overvalued</p></li>
-</ul>
-</li>
-<li><p>Aggregate accruals</p>
-<ul>
-<li><p>I think the idea here is that accruals capture manipulation so if firms are doing a lot of of it, it might mean that bad news are about to land and returns will be low going forward</p></li>
-</ul>
-</li>
+<li><p>Short interest (The size of short positions relative to the overall market)</p></li>
+<li><p>Variance risk premium (VIX-squared-Realized Variance)</p></li>
+<li><p>Equity issuing activity (fraction of the market being sold)</p></li>
+<li><p>Aggregate accruals</p></li>
+<li><p>Credit spread: difference in yield between maturity matched BBB bonds and treasury bonds</p></li>
+<li><p>Term spread: Difference in yield between a long term bond and a short term bond</p></li>
 </ul>
 </li>
 </ul>
 </section>
 <section id="key-takeaways">
-<h2><span class="section-number">9.1.10. </span>📝 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">9.1.15. </span>📝 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>To time a factor you need a signal that predicts future returns</p></li>
 <li><p>Predicting in sample is a nice start–but the relationship has to be stable enough so you can predict out of sample</p></li>
@@ -1527,11 +1554,16 @@ Notes:
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-yield-or-valuation-ratio">9.1.3. Dividend yield or (Valuation ratio)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#return-predictability">9.1.4. Return Predictability?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-do-you-test-if-the-signal-works">9.1.5. How do you test if the signal works?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation">9.1.6. Evaluation?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trading-strategy-implementation">9.1.7. Trading strategy Implementation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-conclusion-here">9.1.8. What is the conclusion here?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#going-deeper">9.1.9. Going Deeper</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.1.10. 📝 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#too-good-to-be-true">9.1.6. Too good to be true</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-1-adjusting-the-r-squared">9.1.7. Evaluation 1: Adjusting the R-squared</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trading-strategy-implementation">9.1.8. Trading strategy Implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance">9.1.9. Performance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-right-benchmark">9.1.10. What is the right benchmark?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pricking-the-right-benchmark">9.1.11. Pricking the Right Benchmark</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buy-and-hold-sharpe-ratios">9.1.12. Buy and Hold Sharpe Ratios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-conclusion-here">9.1.13. What is the conclusion here?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#going-deeper">9.1.14. Going Deeper</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.1.15. 📝 Key Takeaways</a></li>
 </ul>
   </nav></div>
 
