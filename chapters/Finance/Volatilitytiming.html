@@ -482,10 +482,13 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-functions">9.2.1. Libraries and Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#volatility-timing-the-market-portfolio">9.2.2. Volatility Timing the Market Portfolio</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">9.2.3. Intuition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">9.2.4. From signal to weights</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-strategy-returns">9.2.5. Construct strategy returns</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.2.6. 📝 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-monthly-realized-variance-from-daily-data">9.2.3. Constructing monthly realized variance from daily data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">9.2.4. Intuition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">9.2.5. From signal to weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-strategy-returns">9.2.6. Construct strategy returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-in-a-function">9.2.7. Wrapping in a function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-try">9.2.8. Things to try</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.2.9. 📝 Key Takeaways</a></li>
 </ul>
             </nav>
         </div>
@@ -506,23 +509,21 @@ document.write(`
 <p>Now we will look at the other extreme <span class="math notranslate nohighlight">\(x_t=\frac{E[r_{t+1}-r^f_{t+1}]}{\gamma Var_t(r_{t+1})}\)</span></p>
 <p>(note the subscripts!!! )</p>
 <blockquote>
-<div><p>The crucial necessary condition for this to work is that there is no time-series relationship between expected returns and variance (or at the very least that this relationship is weak enough)</p>
+<div><p>The crucial necessary condition for this to work is that when variance goes up expected returns go up less than proportionally.</p>
+</div></blockquote>
+<p>Say <span class="math notranslate nohighlight">\(E_t[r_{t+1}-r^f_{t+1}]=a+b Var_t(r_{t+1})\)</span></p>
+<p>It follows that</p>
 <div class="math notranslate nohighlight">
-\[cov(E_t[r_{t+1}-r^f_{t+1}],Var_t(r_{t+1}))=0\]</div>
-</div></blockquote>
-<blockquote>
-<div><ul class="simple">
+\[x_t=\frac{E_t[r_{t+1}-r^f_{t+1}]}{\gamma Var_t(r_{t+1})}=\frac{a+b Var_t(r_{t+1})}{\gamma Var_t(r_{t+1})}=\frac{a}{\gamma Var_t(r_{t+1})}+\frac{b }{\gamma}\]</div>
+<p>So in general you want to combine the buy and hold portfolio (<span class="math notranslate nohighlight">\(\frac{b }{\gamma}\)</span> is constant with the Variance-managed portfolio <span class="math notranslate nohighlight">\(\frac{a}{\gamma Var_t(r_{t+1})}\)</span></p>
+<ul class="simple">
+<li><p>If a=0, i.e. expected returns exactly proportional to variance, you get that the optimal is to not trade on variance–but then variance must predict returns really strongly!</p></li>
+<li><p>If b=0, you have the other extreme where it is optimal to do the variance-timing</p></li>
 <li><p>This is key. Might or might not be true depending on asset/strategy.</p></li>
-<li><p>But tends to be true.</p></li>
-<li><p>This only works if the alpha/premium is positive to begin with</p></li>
+<li><p>But tends to be true for many factors/trading strategies.</p></li>
+<li><p>This only works if the alpha/premium is positive to begin with.</p></li>
 <li><p>If Sharpe ratio is zero, you can’t increase it by managing risk!</p></li>
-<li><p>This is also true for market timing! You can see that if variance and expected returns moved tightly together you would never trade!</p></li>
-<li><p>Note that both things can happen at the same time, as long they don’t move exactly together you can time both!</p></li>
 </ul>
-</div></blockquote>
-<p>One can think of minimum-variance investing in the time-series–just like if you believed expected are constant across assets you would simply swing to minimize vol.</p>
-<p>For any trading strategy the  volatility timing portfolio is <span class="math notranslate nohighlight">\(w_i=\frac{E[r_{t+1}-r^f_{t+1}]}{Var_t(r_{t+1})}\)</span></p>
-<p>If expected returns  are time-varying but Sharpe ratios are constant, i.e. <span class="math notranslate nohighlight">\(E[r_{t+1}-r^f_{t+1}]=k\sigma_{t}\)</span>, then the optimal allocation becomes proportion to inverse volatility <span class="math notranslate nohighlight">\(w_i=k{\sigma_{t}}\)</span>. In this case you would do a volatility-managed portfolio instead of a “variance-managed” portfolio.</p>
 <section id="libraries-and-functions">
 <h2><span class="section-number">9.2.1. </span>Libraries and Functions<a class="headerlink" href="#libraries-and-functions" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
@@ -895,7 +896,9 @@ document.write(`
   </div>
 </div></div>
 </div>
-<p><strong>Constructing monthly realized variance from daily data</strong></p>
+</section>
+<section id="constructing-monthly-realized-variance-from-daily-data">
+<h2><span class="section-number">9.2.3. </span>Constructing monthly realized variance from daily data<a class="headerlink" href="#constructing-monthly-realized-variance-from-daily-data" title="Link to this heading">#</a></h2>
 <p>You basically use pandas time series function that shifts all dates to the end of the month, so this way you are technically grouping by the end of the month day. We did this before!</p>
 <p>We then will do the same with our daily returns to get monthly returns</p>
 <div class="cell docutils container">
@@ -962,7 +965,7 @@ document.write(`
 </div>
 </section>
 <section id="intuition">
-<h2><span class="section-number">9.2.3. </span>Intuition<a class="headerlink" href="#intuition" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">9.2.4. </span>Intuition<a class="headerlink" href="#intuition" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Before build the strategy it is useful to see WHY it works</p></li>
 <li><p>For Vol timing to payoff we need that</p>
@@ -1441,7 +1444,7 @@ document.write(`
 <p>so the natural strategy to exploit this pattern is to lever up when vol is low and reduce exposure when vol is high.</p>
 </section>
 <section id="from-signal-to-weights">
-<h2><span class="section-number">9.2.4. </span>From signal to weights<a class="headerlink" href="#from-signal-to-weights" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">9.2.5. </span>From signal to weights<a class="headerlink" href="#from-signal-to-weights" title="Link to this heading">#</a></h2>
 <p>Specifically we buy the market at the closing price of month t according to the rule:</p>
 <div class="math notranslate nohighlight">
 \[w_t=\frac{c}{rv_t},\]</div>
@@ -1461,12 +1464,17 @@ document.write(`
 <div class="math notranslate nohighlight">
 \[E[x_t]=E[c\frac{1}{rv_t}]=1\]</div>
 <p>implies <span class="math notranslate nohighlight">\(c=\frac{1}{E[\frac{1}{rv_t}]}\)</span></p>
+<p>You see that leverage gets really high.</p>
+<p>As high as 10!</p>
+<p>You can see that in your position in the risk-free rate which exactly mirrors that</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">df</span><span class="o">.</span><span class="n">RV_lag</span>
 <span class="n">c</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">c</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span>
 <span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1478,85 +1486,55 @@ document.write(`
 <img alt="../../_images/9a1e603b49789ceb92eeb5f5e457f960a23ff224f605d04579156bf6b6b920d7.png" src="../../_images/9a1e603b49789ceb92eeb5f5e457f960a23ff224f605d04579156bf6b6b920d7.png" />
 </div>
 </div>
-<p>You see that leverage gets really high.</p>
-<p>As high as 10!</p>
-<p>You can see that in your position in the risk-free rate which exactly mirrors that</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot the weights on the risk-free rate</span>
-<span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../../_images/4a7ea2f1769688145f0ce2929c5566f4c323585a13e25459d391674ce4afef95.png" src="../../_images/4a7ea2f1769688145f0ce2929c5566f4c323585a13e25459d391674ce4afef95.png" />
-</div>
-</div>
 </section>
 <section id="construct-strategy-returns">
-<h2><span class="section-number">9.2.5. </span>Construct strategy returns<a class="headerlink" href="#construct-strategy-returns" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">9.2.6. </span>Construct strategy returns<a class="headerlink" href="#construct-strategy-returns" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Now to construct the strategy return recall that we use the realized variance in month t to buy the market at the closing of month t and earn the return accrued in month t+1</p></li>
 <li><p>I will call the strategy as <span class="math notranslate nohighlight">\(\textbf{VMS}\)</span> (Volatility Managed Strategy)</p></li>
 </ul>
+<hr class="docutils" />
+<p>Does it work or not? Look at the plot and explain to me what you see and why it might work and why it might not.</p>
+<p>Anything else you want to look at?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># now construct the return of the strategy</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;VMS&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="p">[[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;VMS&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">logy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>We can see the cumulative returns of the market and the volatility managed strategy</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;VMS&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">logy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;Date&#39;&gt;
-</pre></div>
-</div>
-<img alt="../../_images/8e16e0a5a3719c00ee9aafcdff7678ff7c2433be1bc84bcb21300e1158f6d699.png" src="../../_images/8e16e0a5a3719c00ee9aafcdff7678ff7c2433be1bc84bcb21300e1158f6d699.png" />
-</div>
-</div>
-<p>Does it work or not? Look at the plot and explain to me what you see and why it might work and why it might not.</p>
-<p>How to evaluate? What ARE the formal tests/metrics to look at here?</p>
-<p><strong>Things to try</strong></p>
-<ul class="simple">
-<li><p>How well it works with VIX instead of RV?</p></li>
-<li><p>What If we use a forecasting model to predict variance?</p></li>
-<li><p>How well it works with standard deviation instead of variance</p></li>
-<li><p>How well it works if we put leverage limits. How would you put leverage limits?</p></li>
-<li><p>How well it works if we combine an expected return signal with the volatility signal?</p></li>
-<li><p>What about the other factors? Does it work there as well?</p></li>
-</ul>
+</section>
+<section id="wrapping-in-a-function">
+<h2><span class="section-number">9.2.7. </span>Wrapping in a function<a class="headerlink" href="#wrapping-in-a-function" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Before copying and pasting this code 20 times, simply put it all together in a function</p></li>
-<li><p>As you try different things adjust the function to be more flexible</p></li>
+<li><p>As you try different things adjust the function to be more flexible
+Below is the basic vol managed strategy</p></li>
 </ul>
-<p>Below is the basic vol managed strategy</p>
-<p>It returns the time-series of the strategy returns, but you should all the outcomes you are interest on</p>
+<p>It returns the time-series of the strategy returns, but you should report all the outcomes you are interest on</p>
+<p>⚡ ⏰ Question: A-C⚡</p>
+<p>Complete the code below</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">volmanaged</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
     <span class="n">factor</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">name</span>
     <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
     <span class="n">endofmonth</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">+</span><span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">Signal</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">endofmonth</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-    <span class="n">Signal</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">Signal</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">Signal</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;signal&#39;</span>
-    <span class="n">Ret</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">endofmonth</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">Signal</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">endofmonth</span><span class="p">)</span><span class="o">.</span><span class="n">__</span>
+    <span class="n">Signal</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">__</span>
+    <span class="n">Signal_lag</span><span class="o">=</span><span class="n">Signal</span><span class="o">.</span><span class="n">__</span><span class="p">(</span><span class="n">__</span><span class="p">)</span>
+    <span class="n">Signal_lag</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;signal&#39;</span>
+    <span class="n">Ret</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">endofmonth</span><span class="p">)</span><span class="o">.</span><span class="n">__</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span>
 
-    <span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Signal</span><span class="p">)</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">Ret</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">signal</span>
-    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-    <span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_volmanaged&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="p">]</span>
-    <span class="n">SR_volmanaged</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_volmanaged&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_volmanaged&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="o">*</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">__</span><span class="p">)</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">__</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">__</span><span class="p">]</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="n">__</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_managed&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">__</span><span class="p">]</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="n">__</span><span class="p">]</span>
+    <span class="n">SR_managed</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_managed&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_managed&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="o">*</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
     <span class="n">SR_factor</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="o">*</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
-    <span class="k">return</span> <span class="n">df</span><span class="p">,</span><span class="n">SR_volmanaged</span><span class="p">,</span><span class="n">SR_factor</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">,</span><span class="n">SR_managed</span><span class="p">,</span><span class="n">SR_factor</span>
 
 
 <span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">(</span><span class="s1">&#39;FF6&#39;</span><span class="p">)</span>
@@ -1564,45 +1542,29 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipython-input-3148458022.py:40: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  fama_french = DataReader.DataReader(&quot;F-F_Research_Data_Factors&quot;+freq_label, &quot;famafrench&quot;,start=&quot;1921-01-01&quot;)
-/tmp/ipython-input-3148458022.py:44: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  fama_french2 = DataReader.DataReader(&quot;F-F_Research_Data_5_Factors_2x3&quot;+freq_label, &quot;famafrench&quot;,start=&quot;1921-01-01&quot;)
-/tmp/ipython-input-3148458022.py:49: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  fama_french = DataReader.DataReader(&quot;F-F_Momentum_Factor&quot;+freq_label, &quot;famafrench&quot;,start=&quot;1921-01-01&quot;)
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(                 signal    Mkt-RF    Weight  Mkt-RF_volmanaged
- Date                                                          
- 1926-11-30          NaN  0.021050       NaN                NaN
- 1926-12-31  3143.407727  0.026114  2.328047           0.060795
- 1927-01-31  2403.152937 -0.000513  1.779805          -0.000913
- 1927-02-28  2351.577815  0.042156  1.741608           0.073419
- 1927-03-31  7151.401675  0.001374  5.296417           0.007279
- ...                 ...       ...       ...                ...
- 2025-02-28   642.572139 -0.024214  0.475897          -0.011523
- 2025-03-31   719.917854 -0.064063  0.533180          -0.034157
- 2025-04-30   263.521872 -0.008223  0.195168          -0.001605
- 2025-05-31    49.974718  0.060498  0.037012           0.002239
- 2025-06-30   420.081328  0.048595  0.311117           0.015119
- 
- [1184 rows x 4 columns],
- np.float64(0.5147690043930357),
- np.float64(0.44856172378882947))
-</pre></div>
-</div>
-</div>
 </div>
 </section>
-<section id="key-takeaways">
-<h2><span class="section-number">9.2.6. </span>📝 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<section id="things-to-try">
+<h2><span class="section-number">9.2.8. </span>Things to try<a class="headerlink" href="#things-to-try" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>We care about risk-adjusted returns</p></li>
+<li><p><strong>VIX</strong>: How well iF you use the variance signal form option markets</p></li>
+<li><p><strong>EVAR</strong>: What If we use a forecasting model to predict variance?</p></li>
+<li><p><strong>Timing Everything</strong>: How well it works if we combine an expected return signal with the volatility signal?</p></li>
+<li><p><strong>Factors</strong>: What about the other factors? Does it work there as well?</p></li>
+<li><p><strong>Leverage caps</strong>:How well it works if we put leverage limits. How would you put leverage limits?</p></li>
+<li><p><strong>VOL vs Variance</strong>: If expected returns  are time-varying but Sharpe ratios are constant, i.e. <span class="math notranslate nohighlight">\(E[r_{t+1}-r^f_{t+1}]=k\sigma_{t}\)</span>, then the optimal allocation becomes proportion to inverse volatility <span class="math notranslate nohighlight">\(w_i=k\frac{1}{\sigma_{t}}\)</span>. In this case you would do a volatility-managed portfolio instead of a “variance-managed” portfolio.How well it works with standard deviation instead of variance</p></li>
+</ul>
+<p>⚡ ⏰ Question: D-G⚡</p>
+<p>Adjsut the code above to impose a leverage limit</p>
+</section>
+<section id="key-takeaways">
+<h2><span class="section-number">9.2.9. </span>📝 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ul class="simple">
 <li><p>While predicting returns is tricky, predicting variance is much easier</p></li>
-<li><p>If variance does NOT predict returns, then we can increase risk-adjusted returns by takign more risk when varianc eis low and less risk with variance is high</p></li>
-<li><p>This idea can be applied to individual factors, btu also to your entire portfolio level</p></li>
+<li><p>If variance does NOT predict returns, then we can increase risk-adjusted returns by takign more risk when variance is low and less risk when variance is high</p></li>
+<li><p>This idea can be applied to individual factors, but also to your entire portfolio level</p></li>
 <li><p>Pod funds are well known for aggressively de-risking when vol spikes. Why is that? Because risk does not predict returns so why risk it?</p></li>
+<li><p>Bonus question: What happens if enveryone starts following this advice?</p></li>
 </ul>
 <hr class="docutils" />
 </section>
@@ -1674,10 +1636,13 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-functions">9.2.1. Libraries and Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#volatility-timing-the-market-portfolio">9.2.2. Volatility Timing the Market Portfolio</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">9.2.3. Intuition</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">9.2.4. From signal to weights</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-strategy-returns">9.2.5. Construct strategy returns</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.2.6. 📝 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-monthly-realized-variance-from-daily-data">9.2.3. Constructing monthly realized variance from daily data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">9.2.4. Intuition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">9.2.5. From signal to weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-strategy-returns">9.2.6. Construct strategy returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-in-a-function">9.2.7. Wrapping in a function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-try">9.2.8. Things to try</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.2.9. 📝 Key Takeaways</a></li>
 </ul>
   </nav></div>
 
