@@ -541,8 +541,8 @@ Explore how the number of groups, the dispersion of the signal, and the choice o
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">psycopg2</span> 
-<span class="kn">import</span><span class="w"> </span><span class="nn">wrds</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import psycopg2 </span>
+<span class="c1"># import wrds</span>
 </pre></div>
 </div>
 </div>
@@ -1710,7 +1710,8 @@ Please chat with your group!</p>
 <span class="n">df_X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="n">df_X</span><span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 <span class="n">df_X</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">date</span><span class="o">+</span><span class="n">pd</span><span class="o">.</span><span class="n">tseries</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">()</span>
-<span class="n">df_X</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_X</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+<span class="n">df_X</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1974,54 +1975,6 @@ Please chat with your group!</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">duplicates='drop'</span></code>: In case there are two stocks with exactly the same signal that are exactly in the cutoff of the groups, we drop one of the observations</p></li>
 <li><p><code class="docutils literal notranslate"> <span class="pre">labels=False</span></code>: The method simply label the groups with numbers. For example if <code class="docutils literal notranslate"><span class="pre">ngroups=10</span></code> then it will assign <code class="docutils literal notranslate"><span class="pre">0</span></code> to the stocks with the  bottom 10% returns in a given date, <code class="docutils literal notranslate"><span class="pre">1</span></code> to stocks with returns in between 10% and 20% of the signal distribution on a given date, …, and 9 for stocks in the top 10% (signal in between 90% and 100% of the return distribution on a given date) .</p></li>
 </ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">()</span>  <span class="c1"># you&#39;ll be prompted for WRDS credentials</span>
-
-<span class="n">permnos</span> <span class="o">=</span> <span class="p">[</span><span class="mi">77418</span><span class="p">,</span> <span class="mi">21936</span><span class="p">,</span> <span class="mi">70519</span><span class="p">,</span> <span class="mi">11850</span><span class="p">,</span> <span class="mi">10107</span><span class="p">]</span>
-<span class="n">asof_date</span> <span class="o">=</span> <span class="s2">&quot;2002-12-31&quot;</span>  <span class="c1"># adjust if needed</span>
-
-<span class="n">q</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">SELECT permno, permco, ticker, comnam, shrcd, exchcd, namedt, nameenddt</span>
-<span class="s2">FROM crsp.stocknames</span>
-<span class="s2">WHERE permno IN (</span><span class="si">{</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">permnos</span><span class="p">))</span><span class="si">}</span><span class="s2">)</span>
-<span class="s2">  AND namedt &lt;= &#39;</span><span class="si">{</span><span class="n">asof_date</span><span class="si">}</span><span class="s2">&#39;</span>
-<span class="s2">  AND (nameenddt IS NULL OR nameenddt &gt;= &#39;</span><span class="si">{</span><span class="n">asof_date</span><span class="si">}</span><span class="s2">&#39;)</span>
-<span class="s2">ORDER BY permno, namedt;</span>
-<span class="s2">&quot;&quot;&quot;</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;namedt&#39;</span><span class="p">,</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">])</span>
-
-<span class="c1"># If multiple rows per PERMNO remain (e.g., share classes), prefer common shares if present.</span>
-<span class="n">preferred_shrcd</span> <span class="o">=</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">}</span>  <span class="c1"># 10=Ordinary common, 11=ADR common</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;is_common&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;shrcd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">preferred_shrcd</span><span class="p">)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;is_common&#39;</span><span class="p">,</span><span class="s1">&#39;namedt&#39;</span><span class="p">])</span>
-        <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="s1">&#39;last&#39;</span><span class="p">))</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span><span class="s1">&#39;comnam&#39;</span><span class="p">,</span><span class="s1">&#39;shrcd&#39;</span><span class="p">,</span><span class="s1">&#39;namedt&#39;</span><span class="p">,</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]])</span>
-<span class="c1"># If you just want a dict permno -&gt; ticker:</span>
-<span class="n">mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WRDS recommends setting up a .pgpass file.
-Created .pgpass file successfully.
-You can create this file yourself at any time with the create_pgpass_file() function.
-Loading library list...
-Done
-   permno ticker                 comnam  shrcd     namedt  nameenddt
-0   10107   MSFT         MICROSOFT CORP     11 1986-03-13 2024-12-31
-1   11850    XOM       EXXON MOBIL CORP     11 1999-12-01 2016-12-18
-2   21936    PFE             PFIZER INC     11 1970-04-20 2021-04-04
-3   70519      C          CITIGROUP INC     11 2002-02-01 2011-05-08
-4   77418    AOL  A O L TIME WARNER INC     11 2001-01-12 2003-10-15
-{10107: &#39;MSFT&#39;, 11850: &#39;XOM&#39;, 21936: &#39;PFE&#39;, 70519: &#39;C&#39;, 77418: &#39;AOL&#39;}
-</pre></div>
-</div>
-</div>
-</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;X_group&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">])[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
