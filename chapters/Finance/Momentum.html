@@ -482,7 +482,14 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#signal-construction">10.18.1. Signal Construction</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-all-that">10.18.2. Libraries and all that</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-all-in-a-function-that-goes-from-the-return-market-cap-data-to-the-final-signal-sorted-portfolio">10.18.3. Wrapping all in a function that goes from the Return/market cap data to the final signal-sorted portfolio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-return-and-market-cap-data-by-firm-date">10.18.3. 1. Load return and market cap data by firm/date**</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-rolling-cumulate-the-returns">10.18.4. 2. Construct rolling  cumulate the returns**</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-signal-with-returns">10.18.5. Merge Signal with returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#we-lag-the-signal-by-two-months">10.18.6. 3. We lag the signal by two months.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portfolio-formation">10.18.7. Portfolio formation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-all-in-a-function-that-goes-from-the-return-market-cap-data-to-the-final-signal-sorted-portfolio">10.18.8. Wrapping all in a function that goes from the Return/market cap data to the final signal-sorted portfolio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#return-based-signals-a-summary">10.18.9. Return-Based Signals: a summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-might-work">10.18.10. Why this might work?</a></li>
 </ul>
             </nav>
         </div>
@@ -567,7 +574,9 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 <li><p>Groups stocks according to this signal</p></li>
 <li><p>Form portfolios</p></li>
 </ol>
-<p><strong>1. Load return and market cap data by firm/date</strong></p>
+</section>
+<section id="load-return-and-market-cap-data-by-firm-date">
+<h2><span class="section-number">10.18.3. </span>1. Load return and market cap data by firm/date**<a class="headerlink" href="#load-return-and-market-cap-data-by-firm-date" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/amoreira2/UG54/blob/main/assets/data/crspm2002_2024.pkl?raw=true&quot;</span>
@@ -579,11 +588,11 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 <span class="c1"># change variable format to int</span>
 <span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 <span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permco&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permco&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-<span class="c1"># Line up date to be end of month </span>
+<span class="c1"># Line up date to be end of month</span>
 <span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="c1"># calculate market equity</span>
 <span class="c1"># why do we use absolute value of price?</span>
-<span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;prc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">*</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;shrout&#39;</span><span class="p">]</span> 
+<span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;prc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">*</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;shrout&#39;</span><span class="p">]</span>
 <span class="c1"># drop price and shareoustandng since we won&#39;t need it anymore</span>
 <span class="n">crsp</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;prc&#39;</span><span class="p">,</span><span class="s1">&#39;shrout&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">crsp_me</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permco&#39;</span><span class="p">])[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
@@ -678,7 +687,9 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </table>
 </div></div></div>
 </div>
-<p><strong>2. Construct rolling  cumulate the returns</strong></p>
+</section>
+<section id="construct-rolling-cumulate-the-returns">
+<h2><span class="section-number">10.18.4. </span>2. Construct rolling  cumulate the returns**<a class="headerlink" href="#construct-rolling-cumulate-the-returns" title="Link to this heading">#</a></h2>
 <p>We need to construct the returns from t-11 to t:</p>
 <div class="math notranslate nohighlight">
 \[1+r_{t-11,t}=(1+r_{t-11})(1+r_{t-10})..(1+r_{t-1})(1+r_{t})\]</div>
@@ -757,6 +768,9 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </table>
 </div></div></div>
 </div>
+</section>
+<section id="merge-signal-with-returns">
+<h2><span class="section-number">10.18.5. </span>Merge Signal with returns<a class="headerlink" href="#merge-signal-with-returns" title="Link to this heading">#</a></h2>
 <p>We now merge back this <code class="docutils literal notranslate"><span class="pre">cumret11</span></code> variable with our data set</p>
 <ul class="simple">
 <li><p>Reset the <code class="docutils literal notranslate"><span class="pre">df</span></code> index so both <code class="docutils literal notranslate"><span class="pre">permno</span></code> and <code class="docutils literal notranslate"><span class="pre">date</span></code> are normal columns.</p></li>
@@ -769,9 +783,9 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </div>
 </div>
 </div>
-<ol class="arabic simple" start="3">
-<li><p>We lag the signal by two months.</p></li>
-</ol>
+</section>
+<section id="we-lag-the-signal-by-two-months">
+<h2><span class="section-number">10.18.6. </span>3. We lag the signal by two months.<a class="headerlink" href="#we-lag-the-signal-by-two-months" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>The first month to make sure the signal is tradable, so that is mandatory to make this a valid strategy without look-ahead bias</p></li>
 <li><p>We do an additional month, so lag by 2, because we will be skipping a month between the last return data used in the signal and the time we buy the stock</p></li>
@@ -886,7 +900,9 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </table>
 </div></div></div>
 </div>
-<p><strong>Portfolio formation</strong></p>
+</section>
+<section id="portfolio-formation">
+<h2><span class="section-number">10.18.7. </span>Portfolio formation<a class="headerlink" href="#portfolio-formation" title="Link to this heading">#</a></h2>
 <p>We can now simply use the function we just build to construct characteristic-based portfolios</p>
 <p>Just make sure that our labels here are consistent with what we had before</p>
 <div class="cell docutils container">
@@ -1105,10 +1121,9 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </div></div><img alt="../../_images/47a78110bb11101388297184eeeebad45b29191343576375edb68de258e00b89.png" src="../../_images/47a78110bb11101388297184eeeebad45b29191343576375edb68de258e00b89.png" />
 </div>
 </div>
-<p>Note that this sample is after the original momentum paper was published, so it is true out of sample.</p>
 </section>
 <section id="wrapping-all-in-a-function-that-goes-from-the-return-market-cap-data-to-the-final-signal-sorted-portfolio">
-<h2><span class="section-number">10.18.3. </span>Wrapping all in a function that goes from the Return/market cap data to the final signal-sorted portfolio<a class="headerlink" href="#wrapping-all-in-a-function-that-goes-from-the-return-market-cap-data-to-the-final-signal-sorted-portfolio" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">10.18.8. </span>Wrapping all in a function that goes from the Return/market cap data to the final signal-sorted portfolio<a class="headerlink" href="#wrapping-all-in-a-function-that-goes-from-the-return-market-cap-data-to-the-final-signal-sorted-portfolio" title="Link to this heading">#</a></h2>
 <p>Things to try</p>
 <ul class="simple">
 <li><p>Play with different look-back windows</p></li>
@@ -1140,9 +1155,8 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
     <span class="n">df</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;signal_contemp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">extraskip</span><span class="p">)</span>
     <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">)</span>
     <span class="n">ret</span><span class="o">=</span><span class="n">returnbyX</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span><span class="n">X</span><span class="o">=</span><span class="s1">&#39;signal&#39;</span><span class="p">,</span><span class="n">ngroups</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    
+
     <span class="k">return</span> <span class="n">ret</span>
-    
 </pre></div>
 </div>
 </div>
@@ -1347,7 +1361,9 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </div></div><img alt="../../_images/0030429c070d3fe9d823add51ec13fbd240b538cfc77acc0c4ccbe3e5bf9f5e6.png" src="../../_images/0030429c070d3fe9d823add51ec13fbd240b538cfc77acc0c4ccbe3e5bf9f5e6.png" />
 </div>
 </div>
-<p><strong>Return-Based Signals: a summary</strong></p>
+</section>
+<section id="return-based-signals-a-summary">
+<h2><span class="section-number">10.18.9. </span>Return-Based Signals: a summary<a class="headerlink" href="#return-based-signals-a-summary" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>Long-term reversals</p>
 <ul class="simple">
@@ -1369,7 +1385,9 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </ul>
 </li>
 </ol>
-<p><strong>Why this might work?</strong></p>
+</section>
+<section id="why-this-might-work">
+<h2><span class="section-number">10.18.10. </span>Why this might work?<a class="headerlink" href="#why-this-might-work" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Behavioral view: The idea here is that markets might be slow to incorporate information, so good/bad news gets into prices slowly over time. For example investors might only slowly get into prices the consequences of a Trump second term.</p></li>
 <li><p>Rational view: Maybe all these stocks are exposed to the same missing risk-factor. They all went up and down at the same time after all! For example all firms that went down in march 2020 are particularly exposed to Covid and the ones that did well are positively exposed. So they will move together as COVID risk fluctuate. It is hard to use a story like that to explain the premium, but it is easy to see how it explains the co-movement.</p></li>
@@ -1401,6 +1419,20 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 <li><p>Start by telling me what do you want to do</p></li>
 <li><p>Then explain how you will get it done</p></li>
 </ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">__</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">results</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">__</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">__</span> <span class="ow">in</span> <span class="n">__</span><span class="p">:</span>
+  <span class="n">ret</span><span class="o">=</span><span class="n">__</span>
+  <span class="n">LS</span><span class="o">=</span><span class="n">__</span>
+  <span class="n">results</span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="o">=</span><span class="n">__</span>
+
+<span class="n">results</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 </section>
 
@@ -1470,7 +1502,14 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#signal-construction">10.18.1. Signal Construction</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-all-that">10.18.2. Libraries and all that</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-all-in-a-function-that-goes-from-the-return-market-cap-data-to-the-final-signal-sorted-portfolio">10.18.3. Wrapping all in a function that goes from the Return/market cap data to the final signal-sorted portfolio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#load-return-and-market-cap-data-by-firm-date">10.18.3. 1. Load return and market cap data by firm/date**</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-rolling-cumulate-the-returns">10.18.4. 2. Construct rolling  cumulate the returns**</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-signal-with-returns">10.18.5. Merge Signal with returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#we-lag-the-signal-by-two-months">10.18.6. 3. We lag the signal by two months.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portfolio-formation">10.18.7. Portfolio formation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-all-in-a-function-that-goes-from-the-return-market-cap-data-to-the-final-signal-sorted-portfolio">10.18.8. Wrapping all in a function that goes from the Return/market cap data to the final signal-sorted portfolio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#return-based-signals-a-summary">10.18.9. Return-Based Signals: a summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-might-work">10.18.10. Why this might work?</a></li>
 </ul>
   </nav></div>
 
