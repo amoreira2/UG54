@@ -1,0 +1,1061 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Factor Models as Models of Expected Returns &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Not used/ExpectedReturnModels';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/Fin418/chapters/Not used/ExpectedReturnModels.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/IntrotoReturns.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/TheChoiceofFrequency.html">4.5. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/UsingAPI.html">4.6. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/FactorModels.html">5. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/PortfolioMath.html">6. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1.html">6.12. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/CapitalAllocationI.html">7. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/FactorModelEstimation.html">8. Factor Model Estimation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/Timing.html">9. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/MarketTiming.html">9.1. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Volatilitytiming.html">9.2. 📈 Volatility Timing: Boosting Sharpe Ratios! 🚀</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/crosssectionalequitystrategies.html">10. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Momentum.html">10.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Factors.html">10.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/CapitalAllocationII.html">11. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/Performance_evaluation.html">12. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/MachineLearning.html">13. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/MultiFactorModels.html">14. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/InterpretingFactorModels.html">14.6. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/RiskManagement.html">15. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/TradingCosts.html">16. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/LeverageandShorting.html">17. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/GenAIandLLMsinFinance.html">18. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">19. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">20. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">20.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment2.html">20.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment3.html">20.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment4.html">20.6. Assignment 4</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/Fin418/blob/main/chapters/Not used/ExpectedReturnModels.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418/issues/new?title=Issue%20on%20page%20%2Fchapters/Not used/ExpectedReturnModels.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Not used/ExpectedReturnModels.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Factor Models as Models of Expected Returns</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha">Alpha</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capm">CAPM</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-if-alpha-i-neq-0">Testing  if <span class="math notranslate nohighlight">\(\alpha_i \neq 0\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-does-warren-buffet-beats-the-market">Application: Does Warren Buffet beats the market?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portable-alpha-and-hedged-portfolios">Portable Alpha and Hedged Portfolios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-ratios">Appraisal Ratios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-factor-theory">Multi-factor: theory</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#it-is-the-capm-but-the-wealth-portfolio-is-not-the-stock-market">IT is the CAPM, but the wealth portfolio is not the stock market</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icapm-intertemporal-capital-asset-pricing-model">ICAPM: Intertemporal Capital Asset Pricing Model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apt-arbitrage-pricing-theory">APT: Arbitrage Pricing Theory</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="factor-models-as-models-of-expected-returns">
+<h1>Factor Models as Models of Expected Returns<a class="headerlink" href="#factor-models-as-models-of-expected-returns" title="Link to this heading">#</a></h1>
+<p>So far we had</p>
+<div class="math notranslate nohighlight">
+\[r_t^i=b_{i,1}f_t^1+b_{i,2}f_t^2+b_{i,3}f_t^3+...+b_{i,M}f_t^M+u_{i,t}\]</div>
+<ul class="simple">
+<li><p>Where we made assumptions about how <span class="math notranslate nohighlight">\(u_{i,t}\)</span> was uncorrelated across assets (i.e. across i)</p></li>
+<li><p>But we made NO assumption about any risk-premium in <span class="math notranslate nohighlight">\(u_{i,t}\)</span>, i.e <span class="math notranslate nohighlight">\(E[u_{i,t}]\)</span> does not need to be equal to zero</p></li>
+<li><p>In fact we added a constant when we estimated the model to keep this parameter free</p></li>
+</ul>
+<p><strong>A model of expected returns is exactly the opposite</strong></p>
+<ul class="simple">
+<li><p>We will relax the assumption that the <span class="math notranslate nohighlight">\(u_{i,t}\)</span> are uncorrelated–they will be free to do whatever, but</p></li>
+<li><p>We will impose that they have no risk-premium, i.e. <span class="math notranslate nohighlight">\(E[u_{i,t}]=0\)</span> for any asset <span class="math notranslate nohighlight">\(i\)</span></p></li>
+<li><p>If this restriction is true, when we take expectations in both sides we get</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[E[r_t^i]=\sum_j^M b_{i,j}E[f_t^j]+E[u_{i,t}]=\sum_j^M b_{i,j}E[f_t^j]\]</div>
+<ul class="simple">
+<li><p>Thus the exposures together with the factor risk-premium are all we need to know to know the expected return of a given asset</p></li>
+<li><p>It means that if the model is right ( it never is! It is a model!An approximation) All the premium that there is has to be harvested from these factors alone</p></li>
+<li><p>It also means that any portfolio that has any risk <span class="math notranslate nohighlight">\(\sigma(u_{i,t})&gt;0\)</span> is not mean-variance efficient</p></li>
+<li><p>Why? Because this <span class="math notranslate nohighlight">\(\sigma(u_{i,t})\)</span> adds vol, but does not add premium so it must have a lower Sharpe ratio than a portfolio that has the same loadings but no idio risk</p></li>
+<li><p>It also tell us that a portfolio of the factors spam (meaning you can combine them to obtaim) the maximum Sharpe Ratio portfolio</p></li>
+<li><p>Just as before, our model is a linear regression with a very important restriction–the intercept must be zero for the model to be right</p></li>
+</ul>
+<section id="alpha">
+<h2>Alpha<a class="headerlink" href="#alpha" title="Link to this heading">#</a></h2>
+<p>For clarity lets focus on the single factor case M=1. Say we run the regression</p>
+<div class="math notranslate nohighlight">
+\[r^i_t=\alpha_i +\beta_{i}f_t +\epsilon_{i,t}\]</div>
+<ul class="simple">
+<li><p>Then this relation predicts that the intercept, the alpha, <strong>should be zero</strong></p></li>
+<li><p>It is important here that both the test assets and the reference portfolios are all <strong>excess returns</strong>. This makes the test really simple. If you use returns instead the prediction about the intercept will be different because of the risk-free rate–so don’t do it!</p></li>
+<li><p>We refer to these assets on the Left Hand Side of the regression as <strong>Test Assets</strong> and the asset on the right as the <strong>model</strong>, which is the candidate factor model ( that can contain one or many more factors)</p></li>
+<li><p>This means that we can use this to test whether a new strategy adds value relative to another strategy (i.e. the model).</p></li>
+<li><p>If the model is “right” than we will <strong>fail to reject</strong> that the alphas are zero, i.e. the relationship between average returns and factor exposures and factor premiums hold.</p></li>
+<li><p>Why alpha=0 is so special? Because it tells us that the expected return of any of these assets can be captured by varying the exposure to  the factor with the minimum increase in risk possible</p></li>
+</ul>
+<p>-It means that the test portfolio can increase the  sharpe ratio of the maximum sharpe ratio portfolio spanned by the factors. So it means that this asset increases the opportunity set of an investor that has access to the factors</p>
+<section id="capm">
+<h3>CAPM<a class="headerlink" href="#capm" title="Link to this heading">#</a></h3>
+<p>CAPM prediction: Market portfolio is the mean-variance efficient portfolio</p>
+<ul>
+<li><p>The most used reference portfolio is the market portfolio</p></li>
+<li><p>So we will do our first alpha test with respect to the market</p></li>
+<li><p>The CAPM holds for a set of assets i=1…N if and only if</p>
+<div class="math notranslate nohighlight">
+\[E[r_{i,t}] =\alpha_i+\beta_{i,MKT} E[r_{t}^{MKT}]\]</div>
+<p>with <span class="math notranslate nohighlight">\(\alpha_i=0\)</span> for all assets  i=1…N</p>
+<p>Where both <span class="math notranslate nohighlight">\(r_{i,t}\)</span> and <span class="math notranslate nohighlight">\(r_{t}^{MKT}\)</span> are excess returns</p>
+</li>
+<li><p>So if you put any other factor on the right instead of the market excess return, then you are <strong>not testing the CAPM</strong>. The CAPM is a specific model that predicts that the market portfolio is MVE–in fact the model predicts that is the excess return on the total wealth portfolio–so it is really hard to test!</p></li>
+<li><p>It is very important here that is all about expectations, not at all about realized returns.</p></li>
+<li><p>Being MVE does <strong>NOT</strong> mean that your realized returns should explain all the other realized returns.</p></li>
+<li><p>The idio risk can be quite large and can even be correlated across assets!</p></li>
+</ul>
+<p>Instead, it means that the betas of the asset with the factor should explain the expected return of the asset.</p>
+<p>Of course, stuff happens, so even if your reference portfolio is in fact MVE portfolio under the true distribution, it will not be in any particular sample, so we will use statistics to tell us if the <span class="math notranslate nohighlight">\(\alpha\)</span> is different enough from zero. That is what the t-stats are for!</p>
+<p>**Why practitioners care about this? They want to Beat the Market **
+(or whatever set of factors their clients can easily invest!)</p>
+<p>Practicioners use this to see if they can beat the CAPM (or any richer factor model), i.e. <strong>beat the market</strong>. Having an alpha–a positive intercept– means that you have an average return that is higher than your strategy market risk exposure would predict.</p>
+<p>So if you are U of R  endowment, and a big shot hedge fund manager comes and pitch some fund with some large Sharpe ratio—all you should want to know is whether after you adjust for the exposures to the expected return factors that you already know how to invest by yourself, if this guys still has alpha.</p>
+<p>His value added to you is only the alpha–not the entire Sharpe ratio</p>
+<p>Why? Because the other stuff you already know how to harvest the premium</p>
+</section>
+</section>
+<section id="testing-if-alpha-i-neq-0">
+<h2>Testing  if <span class="math notranslate nohighlight">\(\alpha_i \neq 0\)</span><a class="headerlink" href="#testing-if-alpha-i-neq-0" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Our test will be agnostic on the direction.</p></li>
+</ul>
+<blockquote>
+<div><p>Can a negative alpha be value enhancing? Is it likely to be value enhancing in the case of a hedge fund pitching the UofR endowment?</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>After running the regression with a free intercept you do a standard t-test</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[t=\frac{\alpha_i }{\sigma(\alpha_i)}\]</div>
+<ul class="simple">
+<li><p>We say</p></li>
+</ul>
+<ul class="simple">
+<li><p>if <span class="math notranslate nohighlight">\(|t|\geq 1.64\)</span> there is a 10% chance that the factor is MVE</p></li>
+<li><p>if <span class="math notranslate nohighlight">\(|t|\geq 1.96\)</span> there is a 5% chance that the factor is MVE</p></li>
+<li><p>if <span class="math notranslate nohighlight">\(|t|\geq 2.1\)</span> there is a 2.5% chance that the factor is MVE</p></li>
+<li><p>if <span class="math notranslate nohighlight">\(|t|\geq 2.6\)</span> there is a 1% chance that the factor is MVE</p></li>
+</ul>
+<ul class="simple">
+<li><p>The Time-series regression asks the following question:</p></li>
+</ul>
+<blockquote>
+<div><p>Can I replicate  the average return I get in asset/strategy <span class="math notranslate nohighlight">\(i\)</span> by investing in the factor/factors on the right?</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>It mean that you can do better by investing by adding asset <span class="math notranslate nohighlight">\(i\)</span> to your investment mix</p></li>
+</ul>
+<blockquote>
+<div><p>Question: I show that Asset A has alpha with respect to Asset B. Does it mean that an investor should prefer asset A to asset B?</p>
+</div></blockquote>
+</section>
+<section id="application-does-warren-buffet-beats-the-market">
+<h2>Application: Does Warren Buffet beats the market?<a class="headerlink" href="#application-does-warren-buffet-beats-the-market" title="Link to this heading">#</a></h2>
+<p><img alt="fig" src="../../_images/WB_image.jpg" /></p>
+<p>Warren Buffett is the chairman and CEO of Berkshire Hathaway, a multinational conglomerate holding company. Berkshire Hathaway’s portfolio includes a diverse range of companies, but its five largest positions are in Apple Inc., Bank of America Corp, Chevron, The Coca-Cola Company, and American Express Company. Buffett is known for his extraordinary performance record and his transparent, straightforward investment model, which involves investing in large, blue-chip companies with strong balance sheets and attractive valuations. His investment strategy focuses on long-term investments and he is recognized for making significant new investments while also being unafraid to drop longtime holdings. As of 2022, Buffett’s largest holding was in Apple Inc., representing 41.76% of the equity portfolio, with an estimated gain of 246.02%. Berkshire Hathaway is a leading conglomerate due to Buffett’s business savvy and investing, with a high rate of return and a portfolio that continues to attract wide media attention and scrutiny.</p>
+<p>Citations:
+[1] <a class="reference external" href="https://en.wikipedia.org/wiki/Warren_Buffett">https://en.wikipedia.org/wiki/Warren_Buffett</a>
+[2] <a class="reference external" href="https://www.berkshirehathaway.com">https://www.berkshirehathaway.com</a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/Fin418/main/assets/data/df_WarrenBAndCathieW.pkl&#39;</span><span class="p">)</span>
+<span class="c1"># select the columns to use as factors</span>
+<span class="n">Factors</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;BRK&#39;</span><span class="p">,</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;ARKK&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Factors</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">BrK</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">BRK</span><span class="o">-</span><span class="n">df</span><span class="o">.</span><span class="n">RF</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="n">x</span><span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">])</span>
+
+<span class="n">results</span><span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">BrK</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">results</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>            <td>y</td>        <th>  R-squared:         </th> <td>   0.223</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.220</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   79.32</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Fri, 02 Feb 2024</td> <th>  Prob (F-statistic):</th> <td>7.17e-17</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>11:37:53</td>     <th>  Log-Likelihood:    </th> <td>  442.23</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   279</td>      <th>  AIC:               </th> <td>  -880.5</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>   277</td>      <th>  BIC:               </th> <td>  -873.2</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+     <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th>  <td>    0.0054</td> <td>    0.003</td> <td>    1.797</td> <td> 0.073</td> <td>   -0.001</td> <td>    0.011</td>
+</tr>
+<tr>
+  <th>Mkt-RF</th> <td>    0.5919</td> <td>    0.066</td> <td>    8.906</td> <td> 0.000</td> <td>    0.461</td> <td>    0.723</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td>51.668</td> <th>  Durbin-Watson:     </th> <td>   1.989</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.000</td> <th>  Jarque-Bera (JB):  </th> <td> 198.575</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.710</td> <th>  Prob(JB):          </th> <td>7.59e-44</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 6.882</td> <th>  Cond. No.          </th> <td>    22.3</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</div></div>
+</div>
+<ul class="simple">
+<li><p>what do we learn?</p></li>
+<li><p>how to think about this alpha? Is it large?</p></li>
+<li><p>Is it large economically?</p></li>
+<li><p>is it large statistically?</p></li>
+</ul>
+<p>Now lets use a multi-factor model</p>
+<p><strong>Which Multi-factor model?</strong></p>
+<ol class="arabic simple">
+<li><p>Fama French 3 factor model:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[E[R_t^i-R_t^f]=\beta_{i,mkt}E[R^{mkt}_t-R^f_t]+\beta_{i,smb}E[SmB_t]+\beta_{i,HmL}E[HmL_t]\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Carhart 4 factor model:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[E[R_t^i-R_t^f]=\beta_{i,mkt}E[R^{mkt}_t-R^f_t]+\beta_{i,smb}E[SmB_t]+\beta_{i,HmL}E[HmL_t]+\beta_{i,MoM}E[MoM_t]\]</div>
+<ol class="arabic simple" start="3">
+<li><p>Fama French  5 factor model:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[E[R_t^i-R_t^f]=\beta_{i,mkt}E[R^{mkt}_t-R^f_t]+\beta_{i,smb}E[SmB_t]+\beta_{i,HmL}E[HmL_t]+\beta_{i,rmw}E[RmW_t]+\beta_{i,cma}E[CmA_t]\]</div>
+<ol class="arabic simple" start="4">
+<li><p>Fama French  5 factor model + Momentum:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[E[R_t^i-R_t^f]=\beta_{i,mkt}E[R^{mkt}_t-R^f_t]+\beta_{i,smb}E[SmB_t]+\beta_{i,HmL}E[HmL_t]+\beta_{i,rmw}E[RmW_t]+\beta_{i,cma}E[CmA_t]+\beta_{i,MoM}E[MoM_t]\]</div>
+<p>These models are more or less on chronological order.</p>
+<p>Most practicioners today would start with the 6 factor model and if they are dealing with non equity assets add a bunch of asset class specific factors that essentially mimic some of these factors in these spaces.</p>
+<p>But these 6 are must add factors for low frequency (monthly or longer) equity strategies.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">temp</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+<span class="n">Factors</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;BRK&#39;</span><span class="p">,</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;ARKK&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span><span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">Factors</span><span class="p">)</span>
+<span class="n">y</span><span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">BRK</span><span class="o">-</span><span class="n">df</span><span class="o">.</span><span class="n">RF</span>
+<span class="n">results</span><span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">results</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>            <td>y</td>        <th>  R-squared:         </th>  <td>   0.291</td> 
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th>  <td>   0.291</td> 
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th>  <td>   570.7</td> 
+</tr>
+<tr>
+  <th>Date:</th>             <td>Fri, 02 Feb 2024</td> <th>  Prob (F-statistic):</th>   <td>  0.00</td>  
+</tr>
+<tr>
+  <th>Time:</th>                 <td>11:39:18</td>     <th>  Log-Likelihood:    </th>  <td>  24961.</td> 
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>  8338</td>      <th>  AIC:               </th> <td>-4.991e+04</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>  8331</td>      <th>  BIC:               </th> <td>-4.986e+04</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     6</td>      <th>                     </th>      <td> </td>    
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>      <td> </td>    
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+     <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th>  <td>    0.0003</td> <td>    0.000</td> <td>    2.295</td> <td> 0.022</td> <td> 4.46e-05</td> <td>    0.001</td>
+</tr>
+<tr>
+  <th>Mkt-RF</th> <td>    0.6296</td> <td>    0.013</td> <td>   47.908</td> <td> 0.000</td> <td>    0.604</td> <td>    0.655</td>
+</tr>
+<tr>
+  <th>SMB</th>    <td>   -0.1003</td> <td>    0.024</td> <td>   -4.236</td> <td> 0.000</td> <td>   -0.147</td> <td>   -0.054</td>
+</tr>
+<tr>
+  <th>HML</th>    <td>    0.4461</td> <td>    0.027</td> <td>   16.835</td> <td> 0.000</td> <td>    0.394</td> <td>    0.498</td>
+</tr>
+<tr>
+  <th>RMW</th>    <td>   -0.1677</td> <td>    0.032</td> <td>   -5.263</td> <td> 0.000</td> <td>   -0.230</td> <td>   -0.105</td>
+</tr>
+<tr>
+  <th>CMA</th>    <td>   -0.0608</td> <td>    0.041</td> <td>   -1.469</td> <td> 0.142</td> <td>   -0.142</td> <td>    0.020</td>
+</tr>
+<tr>
+  <th>Mom   </th> <td>    0.0338</td> <td>    0.017</td> <td>    2.000</td> <td> 0.045</td> <td>    0.001</td> <td>    0.067</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td>2249.754</td> <th>  Durbin-Watson:     </th> <td>   2.032</td> 
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th>  <td> 0.000</td>  <th>  Jarque-Bera (JB):  </th> <td>45256.687</td>
+</tr>
+<tr>
+  <th>Skew:</th>           <td> 0.794</td>  <th>  Prob(JB):          </th> <td>    0.00</td> 
+</tr>
+<tr>
+  <th>Kurtosis:</th>       <td>14.302</td>  <th>  Cond. No.          </th> <td>    338.</td> 
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</div></div>
+</div>
+<p>Now lets look at monthly data</p>
+<ul class="simple">
+<li><p>Do you think the results will change?</p></li>
+<li><p>What can happen?</p></li>
+<li><p>Are the exposures comparable?</p></li>
+<li><p>Are the alphas comparable?</p></li>
+<li><p>How to make them comparable?</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># df=pd.read_pickle(&#39;https://raw.githubusercontent.com/amoreira2/Fin418/main/assets/data/df_WarrenBAndCathieW_monthly.pkl&#39;)</span>
+<span class="c1"># # select the columns to use as factors</span>
+<span class="c1"># Factors=df.drop([&#39;BRK&#39;,&#39;RF&#39;,&#39;ARKK&#39;],axis=1)</span>
+<span class="c1"># Factors.head(3)</span>
+<span class="c1"># BrK=df.BRK-df.RF</span>
+
+<span class="c1"># temp=df.copy() </span>
+<span class="c1"># Factors=df.drop([&#39;BRK&#39;,&#39;RF&#39;,&#39;ARKK&#39;],axis=1)</span>
+<span class="c1"># x= sm.add_constant(Factors)</span>
+<span class="c1"># y= df.BRK-df.RF</span>
+<span class="c1"># results= sm.OLS(y,x).fit()</span>
+<span class="c1"># results.summary()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>what do we learn now? Did it make any difference?</p></li>
+<li><p>what kind of stocks Warren likes?</p></li>
+<li><p>What do we learn about Warren Investment style?</p></li>
+<li><p>What do we learn about Warren specific stock picking skills?</p></li>
+</ul>
+</section>
+<section id="portable-alpha-and-hedged-portfolios">
+<h2>Portable Alpha and Hedged Portfolios<a class="headerlink" href="#portable-alpha-and-hedged-portfolios" title="Link to this heading">#</a></h2>
+<p>Suppose we want a strategy that replicates the returns of Berkshire Hathaway using the factors above.</p>
+<p>How would you do that?</p>
+<p>How large a fraction of the expected return of Berkshire Hathaway can we replicate using the factors above?</p>
+<p>Now suppose you want only the alpha of Berkshire Hathaway. How would you do that? Can you do that unsing only the factors?</p>
+<p>The hedged portfolio is the portfolios that keeps only the alpha and hedges the factors away. So by design it’s Expected return is the alpha and the alpha only</p>
+</section>
+<section id="appraisal-ratios">
+<h2>Appraisal Ratios<a class="headerlink" href="#appraisal-ratios" title="Link to this heading">#</a></h2>
+<p>Appraisal ratio is the ratio of the abnormal expected return of the portfolio to the standard deviation of the abnormal return.</p>
+<ul class="simple">
+<li><p>We can compute it by using the alpha of the regression and divide it by the standard deviation of the residuals.</p></li>
+<li><p>We can compute it by getting the t-stat of the alpha and divide it by the square root of the degrees of freedom.</p></li>
+<li><p>We can compute it by dividing the expected return of the Hedged portfolio</p></li>
+</ul>
+</section>
+<section id="multi-factor-theory">
+<h2>Multi-factor: theory<a class="headerlink" href="#multi-factor-theory" title="Link to this heading">#</a></h2>
+<p>What about the theory?</p>
+<section id="it-is-the-capm-but-the-wealth-portfolio-is-not-the-stock-market">
+<h3>IT is the CAPM, but the wealth portfolio is not the stock market<a class="headerlink" href="#it-is-the-capm-but-the-wealth-portfolio-is-not-the-stock-market" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>According to the  CAPM the Wealth portfolio is the tangency portfolio</p></li>
+<li><p>The return on the wealth portfolio summarizes how Bad the times are</p></li>
+<li><p>Assets that co-vary more with the market must earn higher returns</p></li>
+<li><p>They pay poorly exactly when things are worse</p></li>
+<li><p>What is the wealth portfolio? It is the portfolio that holds all assets in proportion to their value</p></li>
+<li><p>We often use the equity market as a proxy for this, but that is not the CAPM</p></li>
+<li><p>In a way that CAPM is untestable because it is impossible to construct the true wealth portfolio</p></li>
+<li><p>The fact that we cannot really measure the returns of the total wealth portfolio gives us a reason to add other facts in additions to the returns to the equity market. Under this logic you add returns to other assets classes&gt;</p>
+<ul>
+<li><p>Real estate</p></li>
+<li><p>Corporate debt</p></li>
+<li><p>Human capital</p></li>
+<li><p>Private equity</p></li>
+<li><p>Venture Capital
+-…</p></li>
+</ul>
+</li>
+</ul>
+<p>So you get:</p>
+<div class="math notranslate nohighlight">
+\[E[R_t^i-R_t^f]=\beta_{i,mkt}E[R^{mkt}_t-R^f_t]+\sum_a^A\beta_{i,a}E[R^{a}_t-R^f_t]\]</div>
+<ul class="simple">
+<li><p>where <span class="math notranslate nohighlight">\(a\)</span> are the different asset classes.</p></li>
+<li><p>Sometimes people refer to these other hard to trade assets as “background risks”, basically risks that are you are exposed to that are not capture by your financial assets</p></li>
+</ul>
+</section>
+<section id="icapm-intertemporal-capital-asset-pricing-model">
+<h3>ICAPM: Intertemporal Capital Asset Pricing Model<a class="headerlink" href="#icapm-intertemporal-capital-asset-pricing-model" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Another way to rationalize additional  factors is to realize that the premium and the volatility of the market are time-varying.</p></li>
+<li><p>This means that assets that allow you to hedge this investment opportunity set risk will be valuable</p>
+<ul>
+<li><p>For example, an asset that pays well when the market is more/less volatile or one that pays well when the expected returns of market going froward are higher/lower</p></li>
+</ul>
+</li>
+<li><p>Under this logic, any strategy that is related to the market moments can also explain average returns on top of the marker beta</p></li>
+<li><p>Sometimes people refer to the background risks discussed earlier in this framework as well. But in this case it is not about the moments of the market portfolio per se, but about correlation of the strategy with the background risks investors bear</p></li>
+<li><p>The end result is the same</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[E[R_t^i-R_t^f]=\beta_{i,mkt}E[R^{mkt}_t-R^f_t]+\sum_{j=1}^J\beta_{i,j}E[Factor^j_t]\]</div>
+<ul class="simple">
+<li><p>but now these are “Factors” and do no need to be components of the total wealth</p></li>
+<li><p>but these factors must still be excess returns, i.e. they must be strategies based on financial assets that have price zero</p></li>
+</ul>
+</section>
+<section id="apt-arbitrage-pricing-theory">
+<h3>APT: Arbitrage Pricing Theory<a class="headerlink" href="#apt-arbitrage-pricing-theory" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>This is probably the most popular and more flexible way to think about multi-factor models</p></li>
+<li><p>but now the factors are motivated because the explain time-series variation in realized return</p></li>
+<li><p>the idea is that if you have enough factors you explain enough of the variation in the returns of an asset that if the betas do no explain the average returns than an arbitrage opportunity wouldd open up</p></li>
+<li><p>If you have a good enough model of RISK–then by arbitrage –you better have a good model of expected returns!</p></li>
+<li><p>Essentially they idea is that if</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[R_t^i-R_t^f=\sum_{j=1}^J\beta_{i,j}Factor^j_t+u_{i,t}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma(u)\)</span> is small , then</p>
+<div class="math notranslate nohighlight">
+\[E[R_t^i-R_t^f]\approx\sum_{j=1}^J\beta_{i,j}E[Factor^j_t]\]</div>
+<ul class="simple">
+<li><p>otherwise Sharpe ratio of going long/short the asset and short/long the model would be huge since</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[E[u_{i,t}]=E[R_t^i-R_t^f]-\sum_{j=1}^J\beta_{i,j}E[Factor^j_t]\]</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Not used"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha">Alpha</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capm">CAPM</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-if-alpha-i-neq-0">Testing  if <span class="math notranslate nohighlight">\(\alpha_i \neq 0\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-does-warren-buffet-beats-the-market">Application: Does Warren Buffet beats the market?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portable-alpha-and-hedged-portfolios">Portable Alpha and Hedged Portfolios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-ratios">Appraisal Ratios</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-factor-theory">Multi-factor: theory</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#it-is-the-capm-but-the-wealth-portfolio-is-not-the-stock-market">IT is the CAPM, but the wealth portfolio is not the stock market</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icapm-intertemporal-capital-asset-pricing-model">ICAPM: Intertemporal Capital Asset Pricing Model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#apt-arbitrage-pricing-theory">APT: Arbitrage Pricing Theory</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,2265 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>10. Cross-Sectional Trading strategies &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/crosssectionalequitystrategies';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/Fin418/chapters/Finance/crosssectionalequitystrategies.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10.18. Momentum" href="Momentum.html" />
+    <link rel="prev" title="9.2. 📈 Volatility Timing: Boosting Sharpe Ratios! 🚀" href="Volatilitytiming.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="IntrotoReturns.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency.html">4.5. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI.html">4.6. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModels.html">5. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="PortfolioMath.html">6. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1.html">6.12. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationI.html">7. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModelEstimation.html">8. Factor Model Estimation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Timing.html">9. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming.html">9.1. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming.html">9.2. 📈 Volatility Timing: Boosting Sharpe Ratios! 🚀</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">10. Cross-Sectional Equity Strategies</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">10.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">10.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">11. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance_evaluation.html">12. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MachineLearning.html">13. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels.html">14. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">14.6. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="RiskManagement.html">15. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TradingCosts.html">16. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LeverageandShorting.html">17. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GenAIandLLMsinFinance.html">18. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">19. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">20. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">20.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment2.html">20.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment3.html">20.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment4.html">20.6. Assignment 4</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/Fin418/blob/main/chapters/Finance/crosssectionalequitystrategies.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/crosssectionalequitystrategies.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/crosssectionalequitystrategies.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Cross-Sectional Trading strategies</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-all-that">10.1. Libraries and all that</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-market-cap-weighted-strategy">10.2. The Market-Cap Weighted strategy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stacked-datasets">10.2.1. Stacked Datasets</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-cleaning-and-organization">10.3. Data Cleaning and Organization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stacked-datasets-structure">10.4. Stacked Datasets structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-portfolio-weights">10.5. constructing portfolio weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portfolio-weights">10.6. Portfolio Weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portfolio-returns">10.7. Portfolio returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#characteristic-based-strategies">10.8. Characteristic-Based Strategies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementing-the-recipe">10.9. Implementing the recipe</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-characteristic-data">10.10. Our Characteristic  data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#group-assets-by-signal">10.11. Group assets by signal</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-the-portfolio-return">10.12. Calculate the portfolio return</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#market-cap-weighted-returns">10.13. Market cap weighted returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-evolution-of-a-firm-through-the-lens-of-a-characteristic">10.14. The evolution of a firm through the lens of a characteristic</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-in-a-function">10.15. Wrapping in a function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portfolio-formation-tradeoffs-diversification-vs-signal-strength">10.16. Portfolio formation tradeoffs: Diversification vs Signal Strength</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-try">10.17. Things to try</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="cross-sectional-trading-strategies">
+<h1><span class="section-number">10. </span>Cross-Sectional Trading strategies<a class="headerlink" href="#cross-sectional-trading-strategies" title="Link to this heading">#</a></h1>
+<hr class="docutils" />
+<p><strong>🎯 Learning Objectives</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Contrast timing vs. cross-sectional approaches</strong><br />
+Recognize that characteristic-based strategies keep aggregate market exposure roughly constant and instead shift weight across individual stocks according to firm-level signals.</p></li>
+<li><p><strong>Master the four-step portfolio recipe</strong><br />
+<em>Build a signal</em> → <em>sort stocks each month</em> → <em>weight within buckets (equal or market-cap)</em> → <em>form the long-short spread (top – bottom)</em>, always using information that is known on the trade date.</p></li>
+<li><p><strong>Construct the market-cap-weighted benchmark correctly</strong><br />
+Compute market capitalizations from lagged price × shares-outstanding and show how to aggregate them to the total-market portfolio, avoiding look-ahead bias.</p></li>
+<li><p><strong>Organize large equity data sets efficiently</strong><br />
+Work with “stacked” (date-firm) data frames, merge CRSP returns with characteristics, and reshape the grouped returns so they are ready for analysis and plotting.</p></li>
+<li><p><strong>Code a reusable function that maps any signal to portfolios</strong><br />
+Generalize the recipe into a single function that takes a signal (<code class="docutils literal notranslate"><span class="pre">X</span></code>), number of groups, and weighting choice, and then delivers decile returns, cumulative-return plots, and the long-short series.</p></li>
+<li><p><strong>Develop empirical intuition about trade-offs</strong><br />
+Explore how the number of groups, the dispersion of the signal, and the choice of weights influence the return spread, volatility, and diversification of the resulting portfolios.</p></li>
+</ol>
+<hr class="docutils" />
+<section id="libraries-and-all-that">
+<h2><span class="section-number">10.1. </span>Libraries and all that<a class="headerlink" href="#libraries-and-all-that" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># !pip install wrds</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import psycopg2 </span>
+<span class="c1"># import wrds</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dateutil.relativedelta</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas.tseries.offsets</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;daily&#39;</span><span class="p">):</span>   
+    
+    <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
+        <span class="n">freq_label</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">freq_label</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">freq</span>
+
+
+    <span class="k">if</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;CAPM&#39;</span><span class="p">:</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+     
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span> 
+    <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF3&#39;</span><span class="p">:</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+    <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF5&#39;</span><span class="p">:</span>
+
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>    
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>   
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Momentum_Factor&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">,</span><span class="s1">&#39;MOM&#39;</span><span class="p">]</span>    
+    <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        
+
+
+    <span class="k">return</span> <span class="n">df_factor</span><span class="o">/</span><span class="mi">100</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-market-cap-weighted-strategy">
+<h2><span class="section-number">10.2. </span>The Market-Cap Weighted strategy<a class="headerlink" href="#the-market-cap-weighted-strategy" title="Link to this heading">#</a></h2>
+<p>As a warm up for you first factor construction we will construct the returns on the market portfolio</p>
+<ul class="simple">
+<li><p>In some way that is the most important strategy ever</p></li>
+<li><p>It completely revolutionized Wall Street leading to the rise of index funds</p></li>
+</ul>
+<p>How to do it?</p>
+<ul class="simple">
+<li><p>start with a vector of market capitalization for all relevant assets <span class="math notranslate nohighlight">\(M_t=[m_t^{AAPL},m_t^{GOOG},m_t^{TSLA},..]\)</span></p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[m_t^{AAPL}=P^{AAPL}_t\times SharesOutstanding^{AAPL}\]</div>
+<p>The strategy then set the weights simply to</p>
+<div class="math notranslate nohighlight">
+\[X_t=\frac{M_t}{\sum_i^Im^i_t}\]</div>
+<p>So at end of month <strong>t</strong> you look at the market caps, construct the weights, and buy the assets with weights <span class="math notranslate nohighlight">\(X_t\)</span> (at prices <span class="math notranslate nohighlight">\(P_t\)</span>) to earn</p>
+<div class="math notranslate nohighlight">
+\[R^{mcap}_{t+1}=X_tR_{t+1}\]</div>
+<p>at the end of the next month.</p>
+<p>That is you pay <span class="math notranslate nohighlight">\(P_t\)</span> and get back <span class="math notranslate nohighlight">\(P_{t+1}+D_{t+1}\)</span>, hence return <span class="math notranslate nohighlight">\(R_{t+1}=\frac{P_{t+1}+D_{t+1}}{P_t}\)</span></p>
+<p>This portfolio has nice properties</p>
+<ol class="arabic simple">
+<li><p>This portfolio is very easy to trade. It does not require re-balancing as your weights naturally go up if the stock rallies and go down if the stock crashes</p></li>
+<li><p>You can implement this approach to any subset of firms (for example SP500 or Russel2000) are market cap indexes that track a particular universe of stocks and we will be using it in our characteristic-based portfolios shortly</p></li>
+<li><p>By buying proportionally to market cap you never have to build a huge position in a tiny stock–so this is much easier to trade!</p>
+<ul class="simple">
+<li><p>Equal weighted portfolio tend to be very hard to trade and the alphas that you get there are mostly a mirrage, unless you focus on large caps</p></li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<div><p><strong>Steps</strong></p>
+<ol class="arabic simple">
+<li><p>Get firm level monthly return data with market capitalizations</p></li>
+<li><p>clean up/organize the data set</p></li>
+<li><p>Make sure to lag the market cap signal so that we use prices from last month to trade at the start of this month ( we could also skip another month to be extra sure)</p></li>
+<li><p>Construct the weighted average of returns across stocks for each date</p></li>
+</ol>
+</div></blockquote>
+<section id="stacked-datasets">
+<h3><span class="section-number">10.2.1. </span>Stacked Datasets<a class="headerlink" href="#stacked-datasets" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p>We will now work with large data sets</p></li>
+<li><p>Data sets that include all US stocks</p></li>
+<li><p>Because there are many stocks, we have to work with it stacked</p></li>
+</ul>
+</div></blockquote>
+<p><strong>Organizing the data</strong></p>
+<p>The objective here is to have a data set with</p>
+<ul class="simple">
+<li><p>Security identifier</p></li>
+<li><p>Date of the information</p></li>
+<li><p>Monthly return of the firm in that month</p></li>
+<li><p>Market capitalization of the firm in that month</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">########################</span>
+<span class="c1">### Download CRSP monthly data</span>
+<span class="c1">###################</span>
+<span class="c1"># conn=wrds.Connection() </span>
+<span class="c1"># crsp = conn.raw_sql(&quot;&quot;&quot;</span>
+<span class="c1">#                       select a.permno,a.permco, a.date, b.shrcd, b.exchcd,b.ticker,</span>
+<span class="c1">#                       a.ret, a.shrout, a.prc,a.retx</span>
+<span class="c1">#                       from crsp.msf as a</span>
+<span class="c1">#                       left join crsp.msenames as b</span>
+<span class="c1">#                       on a.permno=b.permno</span>
+<span class="c1">#                       and b.namedt&lt;=a.date</span>
+<span class="c1">#                       and a.date&lt;=b.nameendt</span>
+<span class="c1">#                       where a.date between &#39;01/31/2002&#39; and &#39;12/31/2024&#39;</span>
+<span class="c1">#                       and b.exchcd between 1 and 3</span>
+<span class="c1">#                       and b.shrcd between 10 and 11</span>
+<span class="c1">#                       &quot;&quot;&quot;, date_cols=[&#39;date&#39;]) </span>
+
+<span class="c1"># crsp.to_pickle(&#39;../../assets/data/crspm2002_2024.pkl&#39;)</span>
+<span class="c1"># # variables downloaded</span>
+<span class="c1"># # 1. Permno-- are unique indentifier to a security </span>
+<span class="c1"># # (for exmaple a stock that has multiple types of stocks will have multiple permnos)</span>
+
+<span class="c1"># # 2. shrco is the type of share: common share, ADR, ETF, ....</span>
+<span class="c1"># # we will focus on common shares</span>
+
+<span class="c1"># # 3. exchcd is the code of the exchange where the stock was originally listed</span>
+<span class="c1"># # we will focus on stock listed in the 3 major stock exchanges ( basically the whole market)</span>
+
+<span class="c1"># # 4. ret,retx, shrout,  prc, are the stock return, the stock return excluding dividends, number of shares outstanding, and price</span>
+
+<span class="c1"># # 5. date is the trading date of the return</span>
+
+<span class="c1">#####</span>
+<span class="c1"># get pre downloaded data</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/amoreira2/UG54/blob/main/assets/data/crspm2002_2024.pkl?raw=true&quot;</span>
+<span class="n">crsp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">crsp</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permno</th>
+      <th>permco</th>
+      <th>date</th>
+      <th>shrcd</th>
+      <th>exchcd</th>
+      <th>ticker</th>
+      <th>ret</th>
+      <th>shrout</th>
+      <th>prc</th>
+      <th>retx</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10066</td>
+      <td>6331</td>
+      <td>2002-02-28</td>
+      <td>11</td>
+      <td>2</td>
+      <td>FCM</td>
+      <td>-0.333333</td>
+      <td>43809.0</td>
+      <td>0.040</td>
+      <td>-0.333333</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>10066</td>
+      <td>6331</td>
+      <td>2002-03-28</td>
+      <td>11</td>
+      <td>2</td>
+      <td>FCM</td>
+      <td>0.000000</td>
+      <td>43809.0</td>
+      <td>0.040</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10066</td>
+      <td>6331</td>
+      <td>2002-04-30</td>
+      <td>11</td>
+      <td>2</td>
+      <td>FCM</td>
+      <td>-0.250000</td>
+      <td>43809.0</td>
+      <td>0.030</td>
+      <td>-0.250000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>10066</td>
+      <td>6331</td>
+      <td>2002-05-31</td>
+      <td>11</td>
+      <td>2</td>
+      <td>FCM</td>
+      <td>0.333333</td>
+      <td>43809.0</td>
+      <td>0.040</td>
+      <td>0.333333</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>10066</td>
+      <td>6331</td>
+      <td>2002-06-28</td>
+      <td>11</td>
+      <td>2</td>
+      <td>FCM</td>
+      <td>-0.250000</td>
+      <td>43809.0</td>
+      <td>0.030</td>
+      <td>-0.250000</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>144996</th>
+      <td>78830</td>
+      <td>11893</td>
+      <td>2006-06-30</td>
+      <td>11</td>
+      <td>3</td>
+      <td>TRUE</td>
+      <td>-0.048387</td>
+      <td>2263.0</td>
+      <td>-23.010</td>
+      <td>-0.048387</td>
+    </tr>
+    <tr>
+      <th>144997</th>
+      <td>78830</td>
+      <td>11893</td>
+      <td>2006-07-31</td>
+      <td>11</td>
+      <td>3</td>
+      <td>TRUE</td>
+      <td>0.030204</td>
+      <td>2263.0</td>
+      <td>-23.705</td>
+      <td>0.030204</td>
+    </tr>
+    <tr>
+      <th>144998</th>
+      <td>78830</td>
+      <td>11893</td>
+      <td>2006-08-31</td>
+      <td>11</td>
+      <td>3</td>
+      <td>TRUE</td>
+      <td>-0.031850</td>
+      <td>2233.0</td>
+      <td>22.950</td>
+      <td>-0.031850</td>
+    </tr>
+    <tr>
+      <th>144999</th>
+      <td>78830</td>
+      <td>11893</td>
+      <td>2006-09-29</td>
+      <td>11</td>
+      <td>3</td>
+      <td>TRUE</td>
+      <td>0.006972</td>
+      <td>2233.0</td>
+      <td>23.110</td>
+      <td>0.006972</td>
+    </tr>
+    <tr>
+      <th>145000</th>
+      <td>78830</td>
+      <td>11893</td>
+      <td>2006-10-31</td>
+      <td>11</td>
+      <td>3</td>
+      <td>TRUE</td>
+      <td>-0.026396</td>
+      <td>2233.0</td>
+      <td>22.500</td>
+      <td>-0.026396</td>
+    </tr>
+  </tbody>
+</table>
+<p>1145001 rows × 10 columns</p>
+</div></div></div>
+</div>
+</section>
+</section>
+<section id="data-cleaning-and-organization">
+<h2><span class="section-number">10.3. </span>Data Cleaning and Organization<a class="headerlink" href="#data-cleaning-and-organization" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">crsp</span><span class="o">=</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permco&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span><span class="s1">&#39;shrout&#39;</span><span class="p">,</span><span class="s1">&#39;prc&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="c1"># change variable format to int</span>
+<span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># Line up date to be end of month </span>
+<span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># calculate market equity</span>
+<span class="c1"># why do we use absolute value of price?</span>
+<span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;prc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">*</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;shrout&#39;</span><span class="p">]</span> 
+
+<span class="c1"># sort by permno and date and also drop duplicates</span>
+<span class="n">crsp</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+<span class="n">crsp</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permco</th>
+      <th>permno</th>
+      <th>ticker</th>
+      <th>date</th>
+      <th>ret</th>
+      <th>shrout</th>
+      <th>prc</th>
+      <th>me</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>212</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-01-31</td>
+      <td>-0.013100</td>
+      <td>2566.0</td>
+      <td>11.30000</td>
+      <td>2.899580e+04</td>
+    </tr>
+    <tr>
+      <th>213</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-02-28</td>
+      <td>-0.053097</td>
+      <td>2569.0</td>
+      <td>10.70000</td>
+      <td>2.748830e+04</td>
+    </tr>
+    <tr>
+      <th>214</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-03-31</td>
+      <td>-0.015888</td>
+      <td>2571.0</td>
+      <td>10.40000</td>
+      <td>2.673840e+04</td>
+    </tr>
+    <tr>
+      <th>215</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-04-30</td>
+      <td>-0.043269</td>
+      <td>2571.0</td>
+      <td>9.95000</td>
+      <td>2.558145e+04</td>
+    </tr>
+    <tr>
+      <th>216</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-05-31</td>
+      <td>0.014824</td>
+      <td>2571.0</td>
+      <td>10.09750</td>
+      <td>2.596067e+04</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>144132</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-08-31</td>
+      <td>-0.077391</td>
+      <td>3194640.0</td>
+      <td>214.11000</td>
+      <td>6.840044e+08</td>
+    </tr>
+    <tr>
+      <th>144133</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-09-30</td>
+      <td>0.221942</td>
+      <td>3207000.0</td>
+      <td>261.63000</td>
+      <td>8.390474e+08</td>
+    </tr>
+    <tr>
+      <th>144134</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-10-31</td>
+      <td>-0.045025</td>
+      <td>3210060.0</td>
+      <td>249.85001</td>
+      <td>8.020335e+08</td>
+    </tr>
+    <tr>
+      <th>144135</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-11-30</td>
+      <td>0.381469</td>
+      <td>3210060.0</td>
+      <td>345.16000</td>
+      <td>1.107984e+09</td>
+    </tr>
+    <tr>
+      <th>144136</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-12-31</td>
+      <td>0.170008</td>
+      <td>3210060.0</td>
+      <td>403.84000</td>
+      <td>1.296351e+09</td>
+    </tr>
+  </tbody>
+</table>
+<p>1145001 rows × 8 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pandas.tseries.offsets</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="n">crsp</span><span class="o">=</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permco&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span><span class="s1">&#39;shrout&#39;</span><span class="p">,</span><span class="s1">&#39;prc&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="c1"># change variable format to int</span>
+<span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permco&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permco&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="c1"># Line up date to be end of month </span>
+<span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># calculate market equity</span>
+<span class="c1"># why do we use absolute value of price?</span>
+<span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;prc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">*</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;shrout&#39;</span><span class="p">]</span> 
+<span class="c1"># drop price and shareoustandng since we won&#39;t need it anymore</span>
+<span class="n">crsp</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;prc&#39;</span><span class="p">,</span><span class="s1">&#39;shrout&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">crsp_me</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permco&#39;</span><span class="p">])[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+
+<span class="c1"># largest mktcap within a permco/date</span>
+<span class="n">crsp_maxme</span> <span class="o">=</span> <span class="n">crsp</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permco&#39;</span><span class="p">])[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+<span class="c1"># join by jdate/maxme to find the permno</span>
+<span class="n">crsp</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">crsp</span><span class="p">,</span> <span class="n">crsp_maxme</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permco&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+
+<span class="c1"># drop me column and replace with the sum me</span>
+<span class="n">crsp</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;me&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># join with sum of me to get the correct market cap info</span>
+<span class="n">crsp</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">crsp</span><span class="p">,</span> <span class="n">crsp_me</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permco&#39;</span><span class="p">])</span>
+
+<span class="c1"># sort by permno and date and also drop duplicates</span>
+<span class="n">crsp</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="stacked-datasets-structure">
+<h2><span class="section-number">10.4. </span>Stacked Datasets structure<a class="headerlink" href="#stacked-datasets-structure" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>Take time to note the stacked structure of the data set</p>
+<ul class="simple">
+<li><p>Before with a “rectangular” data set  we need two coordinates, row and column, to identify the return of an asset in a particular date</p></li>
+<li><p>It was easier to manipulate but we would need one dataframe for each different firm variable: In this case one for return and one for market equity</p></li>
+<li><p>As we work with many signals, this becomes intractable because we would need many dataframes</p></li>
+<li><p>As we work with many asset, this would become intractable because we would need dataframes with many columns with most locations empty. This is very inefficient and hard to manipulate</p></li>
+<li><p>Now we need two coordinates both in columns, “date” and “permco”, to identify one firm-date observation, and then a third coordinate, the column names to identify the particular variable for that firm-date pair</p></li>
+</ul>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">crsp</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permco</th>
+      <th>permno</th>
+      <th>ticker</th>
+      <th>date</th>
+      <th>ret</th>
+      <th>me</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-01-31</td>
+      <td>-0.013100</td>
+      <td>28995.8000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-02-28</td>
+      <td>-0.053097</td>
+      <td>27488.3000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-03-31</td>
+      <td>-0.015888</td>
+      <td>26738.4000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-04-30</td>
+      <td>-0.043269</td>
+      <td>25581.4500</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-05-31</td>
+      <td>0.014824</td>
+      <td>25960.6725</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="constructing-portfolio-weights">
+<h2><span class="section-number">10.5. </span>constructing portfolio weights<a class="headerlink" href="#constructing-portfolio-weights" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>We are constructing a market capitalization weighted strategy</p></li>
+<li><p>It is key that the weights are know at the time of portfolio formation</p></li>
+<li><p>So we need to lag our portfolio weights</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Lagging the market cap signal</strong></p>
+<ul class="simple">
+<li><p>We use the method <code class="docutils literal notranslate"><span class="pre">.shift(d)</span></code> which “lags” the data by d periods.</p></li>
+<li><p>It is important that we have our data set sorted by date</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shift(d)</span></code> simply shifts the rows. So you have to make sure that it is actually lagging by date.
+The way to do that is to  <code class="docutils literal notranslate"><span class="pre">groupby</span></code> security and applying the shift within security.</p></li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><p>Why this is important?</p>
+<ul class="simple">
+<li><p>Because the data set is stacked so when you shift the first month of security n, it will end up returning the last month of security n-1.</p></li>
+<li><p>By “grouping by” we correctly assign a missing value there since we don’t have the data</p></li>
+</ul>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># sort by permno and date and set as index</span>
+<span class="n">crsp</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+<span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;me_l1&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">me</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">crsp</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permco</th>
+      <th>permno</th>
+      <th>ticker</th>
+      <th>date</th>
+      <th>ret</th>
+      <th>me</th>
+      <th>me_l1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-01-31</td>
+      <td>-0.013100</td>
+      <td>2.899580e+04</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-02-28</td>
+      <td>-0.053097</td>
+      <td>2.748830e+04</td>
+      <td>2.899580e+04</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-03-31</td>
+      <td>-0.015888</td>
+      <td>2.673840e+04</td>
+      <td>2.748830e+04</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-04-30</td>
+      <td>-0.043269</td>
+      <td>2.558145e+04</td>
+      <td>2.673840e+04</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EWST</td>
+      <td>2002-05-31</td>
+      <td>0.014824</td>
+      <td>2.596067e+04</td>
+      <td>2.558145e+04</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1130765</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-08-31</td>
+      <td>-0.077391</td>
+      <td>6.840044e+08</td>
+      <td>7.413801e+08</td>
+    </tr>
+    <tr>
+      <th>1130766</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-09-30</td>
+      <td>0.221942</td>
+      <td>8.390474e+08</td>
+      <td>6.840044e+08</td>
+    </tr>
+    <tr>
+      <th>1130767</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-10-31</td>
+      <td>-0.045025</td>
+      <td>8.020335e+08</td>
+      <td>8.390474e+08</td>
+    </tr>
+    <tr>
+      <th>1130768</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-11-30</td>
+      <td>0.381469</td>
+      <td>1.107984e+09</td>
+      <td>8.020335e+08</td>
+    </tr>
+    <tr>
+      <th>1130769</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2024-12-31</td>
+      <td>0.170008</td>
+      <td>1.296351e+09</td>
+      <td>1.107984e+09</td>
+    </tr>
+  </tbody>
+</table>
+<p>1130770 rows × 7 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="portfolio-weights">
+<h2><span class="section-number">10.6. </span>Portfolio Weights<a class="headerlink" href="#portfolio-weights" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>We now want to compute the returns of our portfolio</p></li>
+<li><p>We need to start with the weights</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[ W_i=\frac{Marketcap_i}{\sum MarketCap_i}\]</div>
+<p>⚡ ⏰ Question: Group A-B ⚡</p>
+<ul class="simple">
+<li><p>Write the code that constructs the vector of weights for the date ‘2015-06-60’</p></li>
+<li><p>Write the core that returns that the portfolio return in data date</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_temp</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="n">____</span><span class="o">==</span><span class="n">___</span><span class="p">]</span>
+<span class="n">W</span><span class="o">=</span><span class="n">_temp</span><span class="p">[]</span><span class="o">/</span><span class="p">(</span><span class="n">_temp</span><span class="p">[</span><span class="n">___</span><span class="p">]</span><span class="o">.</span><span class="n">___</span><span class="p">)</span>
+<span class="n">_temp</span><span class="p">[</span><span class="n">___</span><span class="p">]</span><span class="nd">@W</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>permco</th>
+      <th>permno</th>
+      <th>ticker</th>
+      <th>date</th>
+      <th>ret</th>
+      <th>me</th>
+      <th>me_l1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4</th>
+      <td>7953</td>
+      <td>10001</td>
+      <td>EGAS</td>
+      <td>2015-06-30</td>
+      <td>0.030000</td>
+      <td>1.080779e+05</td>
+      <td>104880.00</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>7975</td>
+      <td>10025</td>
+      <td>AEPI</td>
+      <td>2015-06-30</td>
+      <td>0.103338</td>
+      <td>2.816856e+05</td>
+      <td>255303.09</td>
+    </tr>
+    <tr>
+      <th>57</th>
+      <td>7976</td>
+      <td>10026</td>
+      <td>JJSF</td>
+      <td>2015-06-30</td>
+      <td>0.029963</td>
+      <td>2.068644e+06</td>
+      <td>2014889.80</td>
+    </tr>
+    <tr>
+      <th>176</th>
+      <td>7978</td>
+      <td>10028</td>
+      <td>DGSE</td>
+      <td>2015-06-30</td>
+      <td>0.116750</td>
+      <td>5.473862e+03</td>
+      <td>4901.60</td>
+    </tr>
+    <tr>
+      <th>295</th>
+      <td>7980</td>
+      <td>10032</td>
+      <td>PLXS</td>
+      <td>2015-06-30</td>
+      <td>-0.035180</td>
+      <td>1.474587e+06</td>
+      <td>1528355.40</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>451180</th>
+      <td>53446</td>
+      <td>93428</td>
+      <td>BSFT</td>
+      <td>2015-06-30</td>
+      <td>-0.053136</td>
+      <td>1.016012e+06</td>
+      <td>1063901.40</td>
+    </tr>
+    <tr>
+      <th>451216</th>
+      <td>53447</td>
+      <td>93429</td>
+      <td>CBOE</td>
+      <td>2015-06-30</td>
+      <td>-0.022215</td>
+      <td>4.743538e+06</td>
+      <td>4884839.96</td>
+    </tr>
+    <tr>
+      <th>451259</th>
+      <td>53451</td>
+      <td>93433</td>
+      <td>VLTC</td>
+      <td>2015-06-30</td>
+      <td>-0.138719</td>
+      <td>5.123420e+04</td>
+      <td>59472.96</td>
+    </tr>
+    <tr>
+      <th>451281</th>
+      <td>53427</td>
+      <td>93434</td>
+      <td>SANW</td>
+      <td>2015-06-30</td>
+      <td>0.088071</td>
+      <td>6.565552e+04</td>
+      <td>59524.92</td>
+    </tr>
+    <tr>
+      <th>451400</th>
+      <td>53453</td>
+      <td>93436</td>
+      <td>TSLA</td>
+      <td>2015-06-30</td>
+      <td>0.069617</td>
+      <td>3.409612e+07</td>
+      <td>31702123.20</td>
+    </tr>
+  </tbody>
+</table>
+<p>3724 rows × 7 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="portfolio-returns">
+<h2><span class="section-number">10.7. </span>Portfolio returns<a class="headerlink" href="#portfolio-returns" title="Link to this heading">#</a></h2>
+<p>⚡ ⏰ Question: Group C-E ⚡</p>
+<p>Complete the code</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">portreturn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[]</span><span class="o">/</span><span class="n">x</span><span class="p">[]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="nd">@x</span><span class="p">[]</span>
+
+<span class="c1">#try first if it works in one date</span>
+
+<span class="n">portreturn</span><span class="p">(</span><span class="n">_temp</span><span class="p">)</span>
+
+<span class="c1"># no apply to all dates</span>
+<span class="n">Rmkt</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">__</span><span class="p">([</span><span class="n">___</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">portreturn</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>What is the code that does each step?</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">X</span></code> method groups the data by month so we obtain the return of the portfolio in that month</p></li>
+<li><p>the code <code class="docutils literal notranslate"><span class="pre">Y</span></code> has the weights in a given date, which for each date will return a vector that adds up to one.</p></li>
+<li><p>the code  <code class="docutils literal notranslate"><span class="pre">Z</span></code> multiplies the return of each asset by the weight</p></li>
+<li><p>the code <code class="docutils literal notranslate"><span class="pre">W</span></code>  sum all up to get the return of the portfolio</p></li>
+</ul>
+</div></blockquote>
+<p>Lets compare our factor with the one ken french website</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Lets look at the cumulative return</span>
+<span class="n">df</span><span class="o">=</span><span class="n">get_factors</span><span class="p">(</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;monthly&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">Rmkt</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])[</span><span class="s1">&#39;2015&#39;</span><span class="p">:</span><span class="s1">&#39;2024&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;Date&#39;&gt;
+</pre></div>
+</div>
+<img alt="../../_images/67ebf811139a7b3b1c244fc3c43c88fc1a00057f3ee47aada953d06f944b26a3.png" src="../../_images/67ebf811139a7b3b1c244fc3c43c88fc1a00057f3ee47aada953d06f944b26a3.png" />
+</div>
+</div>
+<p><strong>Things to try and think about</strong></p>
+<ul class="simple">
+<li><p>Suppose you lag market cap 2 months instead of 1 does it make any difference? Do you expect there is any difference</p></li>
+<li><p>Suppose you drop the stocks with “negative” prices (i.e. stocks that didn’t trade in the last day of the month), do you expect any difference? Does it make a difference?</p></li>
+</ul>
+<p>I want  everyone to stop and think about how one would approach the problem below.
+Please chat with your group!</p>
+<ul class="simple">
+<li><p>Harder: Suppose you wanted to construct something “like” the SP500? I.e. do market cap weights but only for the 500 largest firms in a given month. How would you do that?</p></li>
+</ul>
+</section>
+<section id="characteristic-based-strategies">
+<h2><span class="section-number">10.8. </span>Characteristic-Based Strategies<a class="headerlink" href="#characteristic-based-strategies" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>So far we have looked at strategies that go in and out of a particular asset according to a signal.</p></li>
+<li><p>Now we will look at strategies that trade on asset characteristics</p></li>
+</ul>
+<p><strong>The  recipe</strong></p>
+<ol class="arabic simple">
+<li><p>Construct a characteristic for each stock.</p>
+<ul class="simple">
+<li><p>It can be based on accounting data (aka fundamentals), return data, textual data from earning calls, twitter activity, ownership, shorting activity, satellite images–ANYTHING</p></li>
+<li><p>What is important is that for each stock in each date you have a value for this characteristic</p></li>
+<li><p>This characteristic must vary across firms</p></li>
+<li><p>And you have a sense/theory of how this characteristic relates to expected returns</p></li>
+</ul>
+</li>
+<li><p>On a given date sort stocks by this characteristic.</p>
+<ul class="simple">
+<li><p>It is key that this characteristic is in fact known at sorting date!</p></li>
+<li><p>Extremely careful not to introduce “look-ahead” bias</p></li>
+</ul>
+</li>
+<li><p>Construct portfolios by dividing stocks in deciles/quintiles to form portfolios of stocks that have similar characteristic</p>
+<ul class="simple">
+<li><p>You can either equal-weight or value-weight or volume-weights or signal-weight within portfolio</p></li>
+<li><p>Value-weighed portfolios are easier to trade, but if you are focused on large caps, you can go with either</p></li>
+<li><p>But what is important is that each portfolio will have stocks of have very different characteristic values</p></li>
+</ul>
+</li>
+<li><p>Construct the long-short where you go long portfolio “10” and short portfolio “1” (or vice versa) but the point is to take a bet on the characteristic spread</p></li>
+</ol>
+<blockquote>
+<div><p><strong>The goal here is to produce Alpha</strong></p>
+</div></blockquote>
+<blockquote>
+<div><ul class="simple">
+<li><p>this is a simple and algorithimic  way to implement your idea in a way that harvest the benefits of diversification</p></li>
+<li><p>Instead of betting on Apple because it is exposed to tariffs, build a tariff exposure “characteristic”</p></li>
+</ul>
+</div></blockquote>
+<p><strong>From “names”  to characteristics</strong></p>
+<ul class="simple">
+<li><p>The  sorting by date keeps the stocks inside the portfolios with similar characteristics</p></li>
+<li><p>This sorting will “work” if these characteristics are good proxies for the behavior of the stock returns</p></li>
+<li><p>Indeed, the key is that each portfolio has stocks of vastly different characterisitcs and keeps churning as firms change</p>
+<ul>
+<li><p>Let’s take MSFT (microsoft) as an example:</p></li>
+<li><p>MSFT transitioned from being small in the 80’s to be gigantic in the 90’s, as a result, it moved up from the small portfolio to the big portfolio</p></li>
+<li><p>During the Tech boom when MSFT had a huge valuation relative to it’s book value, it went to the low BM portfolio</p></li>
+<li><p>But then MSFT transtioned back to the high BM portfolio once it’s market valuation collapsed in the aftermath of the techbubble</p></li>
+<li><p>Now with AI, MSFT is back into the low BM portfolio</p></li>
+<li><p>During these 80 years MSFT changed dramatically and the characteristic changed with it…</p></li>
+</ul>
+</li>
+<li><p>The key is that firms’ characteristics change over time, by constructing  portfolios, we hope to estimate some stable parameters (for example, alpha and beta)</p></li>
+<li><p>But it doesn’t work always, if you use the first letter of stock ticker to construct 26 portfolios you are unlikely to get spread in average returns and most likely each portfolio will resemble the market portfolio but with much more volatility.</p></li>
+<li><p>The characteristics have to capture the right economics/market dynamics</p></li>
+</ul>
+</section>
+<section id="implementing-the-recipe">
+<h2><span class="section-number">10.9. </span>Implementing the recipe<a class="headerlink" href="#implementing-the-recipe" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>We will start with a constructed characteristic <span class="math notranslate nohighlight">\(c_{i,t}\)</span></p></li>
+<li><p>Produce 10 portfolios based on this characteristic</p>
+<ul class="simple">
+<li><p>Members of portfolio 1 in date t have the bottom 10% value of the characteristics in date t</p></li>
+<li><p>Members of portfolio 2 in date t have characteristic between 10% and 20% of the characteristics in date t</p></li>
+</ul>
+</li>
+<li><p>Given these memberships for each date we will the construct return by buying at the closing price of date t and selling at the closing on date t+1</p>
+<ul class="simple">
+<li><p>We will typically work with monthly data, so this should read as the closing of the last date of months t and t+1</p></li>
+</ul>
+</li>
+</ol>
+<p>We start by loading a dataset where you have many signals</p>
+</section>
+<section id="our-characteristic-data">
+<h2><span class="section-number">10.10. </span>Our Characteristic  data<a class="headerlink" href="#our-characteristic-data" title="Link to this heading">#</a></h2>
+<ul>
+<li><p>They are based on various accounting and market based information</p></li>
+<li><p>The construction of each signal is full of painful details and there are many details that matter</p></li>
+<li><p>Here are some of the variables</p>
+<ul class="simple">
+<li><p>permno identifies the company in a way that is invariant to ticker changes</p></li>
+<li><p>re is the excess return on the stock</p></li>
+<li><p>rme is the market excess returns ( the same across all stocks in a given date)</p></li>
+<li><p>rf is the risk-free rate (also the same across stocks)</p></li>
+<li><p>size is log market cap</p></li>
+<li><p>Value is Book-to-market (Why is this called value?)</p></li>
+</ul>
+<p>There are many other characteristics</p>
+<p>For now all we need to know is that all the characteristics are already lagged 1 month, so we can form portfolios directly based on them without lagging</p>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/amoreira2/UG54/blob/main/assets/data/characteristics20022016.pkl?raw=true&quot;</span>
+
+<span class="n">df_X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">df_X</span><span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="n">df_X</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">date</span><span class="o">+</span><span class="n">pd</span><span class="o">.</span><span class="n">tseries</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">()</span>
+<span class="n">df_X</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 163913 entries, 0 to 163912
+Data columns (total 34 columns):
+ #   Column     Non-Null Count   Dtype         
+---  ------     --------------   -----         
+ 0   date       163913 non-null  datetime64[ns]
+ 1   permno     163913 non-null  int64         
+ 2   re         163913 non-null  float64       
+ 3   rf         163913 non-null  float64       
+ 4   rme        163913 non-null  float64       
+ 5   size       163913 non-null  float64       
+ 6   value      163913 non-null  float64       
+ 7   prof       163913 non-null  float64       
+ 8   fscore     163913 non-null  int64         
+ 9   debtiss    163913 non-null  int64         
+ 10  repurch    163913 non-null  int64         
+ 11  nissa      163913 non-null  float64       
+ 12  growth     163913 non-null  float64       
+ 13  aturnover  163913 non-null  float64       
+ 14  gmargins   163913 non-null  float64       
+ 15  ep         163913 non-null  float64       
+ 16  sgrowth    163913 non-null  float64       
+ 17  lev        163913 non-null  float64       
+ 18  roaa       163913 non-null  float64       
+ 19  roea       163913 non-null  float64       
+ 20  sp         163913 non-null  float64       
+ 21  mom        163913 non-null  float64       
+ 22  indmom     163913 non-null  int64         
+ 23  mom12      163913 non-null  float64       
+ 24  momrev     163913 non-null  float64       
+ 25  valuem     163913 non-null  float64       
+ 26  nissm      163913 non-null  float64       
+ 27  strev      163913 non-null  float64       
+ 28  ivol       163913 non-null  float64       
+ 29  betaarb    163913 non-null  float64       
+ 30  indrrev    163913 non-null  float64       
+ 31  price      163913 non-null  float64       
+ 32  age        163913 non-null  float64       
+ 33  shvol      163913 non-null  float64       
+dtypes: datetime64[ns](1), float64(28), int64(5)
+memory usage: 42.5 MB
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="group-assets-by-signal">
+<h2><span class="section-number">10.11. </span>Group assets by signal<a class="headerlink" href="#group-assets-by-signal" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Select our characteristic</p></li>
+<li><p>assign stocks to groups. These groups will identify which portfolio each stock belongs in a particular date according to their relative ranking of the characteristic in that date</p></li>
+</ol>
+<ul class="simple">
+<li><p>We will do this by applying the function <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.qcut.html">pd.qcut</a>  to the chosen characteristic. This will “cut” the signal distribution in the chosen number of groups.</p></li>
+<li><p>The important aspects is that we will be applying this date by date. This make the strategy cross-sectional because you are using the distribution of the signal as given date to do the grouping– Very much like curved grades by cohort</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Details</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">duplicates='drop'</span></code>: In case there are two stocks with exactly the same signal that are exactly in the cutoff of the groups, we drop one of the observations</p></li>
+<li><p><code class="docutils literal notranslate"> <span class="pre">labels=False</span></code>: The method simply label the groups with numbers. For example if <code class="docutils literal notranslate"><span class="pre">ngroups=10</span></code> then it will assign <code class="docutils literal notranslate"><span class="pre">0</span></code> to the stocks with the  bottom 10% returns in a given date, <code class="docutils literal notranslate"><span class="pre">1</span></code> to stocks with returns in between 10% and 20% of the signal distribution on a given date, …, and 9 for stocks in the top 10% (signal in between 90% and 100% of the return distribution on a given date) .</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;X_group&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">])[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
+<span class="n">df_X</span><span class="p">[[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="s1">&#39;X_group&#39;</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>permno</th>
+      <th>value</th>
+      <th>X_group</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2002-01-31</td>
+      <td>10078</td>
+      <td>-2.471709</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2002-01-31</td>
+      <td>10104</td>
+      <td>-3.183480</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2002-01-31</td>
+      <td>10107</td>
+      <td>-1.696643</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2002-01-31</td>
+      <td>10108</td>
+      <td>-1.461118</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2002-01-31</td>
+      <td>10119</td>
+      <td>-0.521094</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>163908</th>
+      <td>2016-12-31</td>
+      <td>93420</td>
+      <td>1.049163</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th>163909</th>
+      <td>2016-12-31</td>
+      <td>93422</td>
+      <td>0.829353</td>
+      <td>9</td>
+    </tr>
+    <tr>
+      <th>163910</th>
+      <td>2016-12-31</td>
+      <td>93423</td>
+      <td>-2.128977</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>163911</th>
+      <td>2016-12-31</td>
+      <td>93429</td>
+      <td>-3.001095</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>163912</th>
+      <td>2016-12-31</td>
+      <td>93436</td>
+      <td>-3.328269</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>163913 rows × 4 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="calculate-the-portfolio-return">
+<h2><span class="section-number">10.12. </span>Calculate the portfolio return<a class="headerlink" href="#calculate-the-portfolio-return" title="Link to this heading">#</a></h2>
+<p>We need weights where they must add up to 1.</p>
+<div class="math notranslate nohighlight">
+\[\sum_i^I w_{it} r_{it}\]</div>
+<p>We do this so when we do the long-short we have a clear notion of “book size”</p>
+<p>if you go 100 times the long short, you know this means buy 100 dollars of the long and selling 100 dollars of the short</p>
+<p>We will start with equal-weighted returns which is easy and it is simply an average of the returns in the portfolio in a given date ( the wrights is 1/I)</p>
+<p>⚡ ⏰ Question: Group F-G ⚡</p>
+<p>Complete the code below so we obtain the output below with the cumulative returns for each portfolio</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ret_byX_ew</span> <span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">__</span><span class="p">,</span><span class="n">__</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">__</span><span class="o">+</span><span class="n">__</span><span class="p">))</span>
+<span class="c1"># what this code below does?</span>
+<span class="n">ret_byX_ew</span><span class="o">=</span><span class="n">ret_byX_ew</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="n">level</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">__</span><span class="o">+</span><span class="n">__</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;date&#39;&gt;
+</pre></div>
+</div>
+<img alt="../../_images/63481518471282c6df9aabc5532709a2de5e36bdbc3e2a71698488b7b3f035b1.png" src="../../_images/63481518471282c6df9aabc5532709a2de5e36bdbc3e2a71698488b7b3f035b1.png" />
+</div>
+</div>
+</section>
+<section id="market-cap-weighted-returns">
+<h2><span class="section-number">10.13. </span>Market cap weighted returns<a class="headerlink" href="#market-cap-weighted-returns" title="Link to this heading">#</a></h2>
+<p>What about for market cap weights?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;me_l1&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">])</span>
+<span class="n">ret_byX_vw</span> <span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;X_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:((</span><span class="n">x</span><span class="o">.</span><span class="n">__</span><span class="o">+</span><span class="n">x</span><span class="o">.</span><span class="n">__</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">__</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">__</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+<span class="n">ret_byX_vw</span><span class="o">=</span><span class="n">ret_byX_vw</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="n">level</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">(</span><span class="n">ret_byX_vw</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alan.moreira\AppData\Local\Temp\ipykernel_24324\2208835029.py:2: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  ret_byX_vw =df_X.groupby([&#39;date&#39;,&#39;X_group&#39;]).apply(lambda x:(x.re*x.me_l1).sum()/x.me_l1.sum())
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;date&#39;&gt;
+</pre></div>
+</div>
+<img alt="../../_images/5fc262617f6037edb3469c3c80432b7abf4c1b761dbe35b16b5b00a4f47307ef.png" src="../../_images/5fc262617f6037edb3469c3c80432b7abf4c1b761dbe35b16b5b00a4f47307ef.png" />
+</div>
+</div>
+</section>
+<section id="the-evolution-of-a-firm-through-the-lens-of-a-characteristic">
+<h2><span class="section-number">10.14. </span>The evolution of a firm through the lens of a characteristic<a class="headerlink" href="#the-evolution-of-a-firm-through-the-lens-of-a-characteristic" title="Link to this heading">#</a></h2>
+<p>-If we focus on a particular stock, we can see how it’s portfolio membership changed over time.</p>
+<p>-You can check you that some characteristics are fairly persistent and change only slowly over time</p>
+<p>-While others, like momentum change very frequently.</p>
+<ul class="simple">
+<li><p>We will look at the 5 largest firms as of 2002</p></li>
+<li><p>I did a query to get their tickers so we know what we are looking at</p></li>
+</ul>
+<p>permno ticker                 comnam<br />
+10107   MSFT         MICROSOFT CORP<br />
+11850    XOM       EXXON MOBIL CORP<br />
+21936    PFE             PFIZER INC<br />
+70519      C          CITIGROUP INC<br />
+77418    AOL  A O L TIME WARNER INC</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># lets select the top 5 firms with highest market capitalization in Jan 2002</span>
+<span class="n">_temp</span><span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;size&#39;</span><span class="p">])</span>
+<span class="n">top</span><span class="o">=</span><span class="n">_temp</span><span class="p">[</span><span class="n">_temp</span><span class="o">.</span><span class="n">date</span><span class="o">==</span><span class="s1">&#39;2002-01-31&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">permno</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">top</span><span class="p">)</span>
+<span class="c1">## In case we want to change the characteristic</span>
+<span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;X_group&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df_X</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">])[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
+<span class="c1"># LETS LOOOK AT THEIR PORTFOLIO MEMBERSHIP OVER TIME</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">firm</span> <span class="ow">in</span> <span class="n">top</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">df_X</span><span class="p">[</span><span class="n">df_X</span><span class="o">.</span><span class="n">permno</span><span class="o">==</span><span class="n">firm</span><span class="p">][[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;X_group&#39;</span><span class="p">]]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;X_group&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">firm</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Portfolio Membership (X_group)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Portfolio Membership Over Time for Top  Firms&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/32caef11011905c5c7848c91c4feaad888ff2544d071b1f08c6341c5358163e1.png" src="../../_images/32caef11011905c5c7848c91c4feaad888ff2544d071b1f08c6341c5358163e1.png" />
+</div>
+</div>
+</section>
+<section id="wrapping-in-a-function">
+<h2><span class="section-number">10.15. </span>Wrapping in a function<a class="headerlink" href="#wrapping-in-a-function" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>We have all the code we need to write a function that takes our data and constructs a long-short strategy returns for any characteristic we have and for any choice of granularity (i.e. number of groups)</p></li>
+<li><p>The long short should got long the highest portfolio (9) and short the lowest (0)</p></li>
+</ul>
+<p>⚡ ⏰ Question: All groups ⚡</p>
+<ul class="simple">
+<li><p>I want you to get together with your group and tell me how to build this function</p></li>
+<li><p>I want you to tell me which cells I need to copy, how to modify it, and what new code do we need</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">long_short</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">n_groups</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+
+<span class="c1">#complete the code</span>
+
+    <span class="k">return</span> <span class="n">long_short_ret</span>
+<span class="n">long_short</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">n_groups</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+2002-01-31    0.040104
+2002-02-28    0.105311
+2002-03-31    0.015371
+2002-04-30    0.079384
+2002-05-31    0.035573
+                ...   
+2016-08-31    0.019712
+2016-09-30    0.012818
+2016-10-31    0.014353
+2016-11-30    0.054571
+2016-12-31    0.019796
+Length: 180, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="portfolio-formation-tradeoffs-diversification-vs-signal-strength">
+<h2><span class="section-number">10.16. </span>Portfolio formation tradeoffs: Diversification vs Signal Strength<a class="headerlink" href="#portfolio-formation-tradeoffs-diversification-vs-signal-strength" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Why not sort in 100 groups instead on only 10? This way your top portfolio would have much higher average characteristics</p></li>
+<li><p>Why no simply focus on the stock with the highest characteristic?</p>
+<ol class="arabic simple">
+<li><p>Individual stocks have <span class="math notranslate nohighlight">\(\sigma\)</span> = 40 − 80%, so <span class="math notranslate nohighlight">\(\sigma/\sqrt{T}\)</span> makes it nearly impossible to accurately measure E(R). Portfolios have lower <span class="math notranslate nohighlight">\(\sigma\)</span> by diversification.</p></li>
+<li><p>So  you have to trade-off strength of the signal against benefits of diversification</p></li>
+</ol>
+</li>
+</ul>
+<p>Lets look at this trade-off for Value, Profitability and Momentum</p>
+<ul class="simple">
+<li><p>Profitability is simply Gross Profits/Book Assets</p></li>
+<li><p>Momentum is the cumulative return in the last  12 months skipping the last month (next class!)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">long_short_stats</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">n_groups</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">r</span><span class="o">=</span><span class="n">long_short</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">n_groups</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
+
+<span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Number of groups: </span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">long_short_stats</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span><span class="n">g</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">long_short_stats</span><span class="p">(</span><span class="s1">&#39;mom&#39;</span><span class="p">,</span><span class="n">g</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">long_short_stats</span><span class="p">(</span><span class="s1">&#39;prof&#39;</span><span class="p">,</span><span class="n">g</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-------------------&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of groups: 5
+0.08255392985128295
+0.16600364967177128
+0.08110923708672288
+-------------------
+Number of groups: 10
+0.10275291207096139
+0.2140897671349157
+0.11537007514740719
+-------------------
+Number of groups: 50
+0.15912031882198882
+0.32389078360187246
+0.16863395249433805
+-------------------
+Number of groups: 100
+0.19292759374957438
+0.3818200164373193
+0.22228821463684753
+-------------------
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="things-to-try">
+<h2><span class="section-number">10.17. </span>Things to try<a class="headerlink" href="#things-to-try" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>Look at different characteristics. Which ones create higher spread in average returns</p></li>
+<li><p>Construct the long-short portfolio that goes long the high portfolio and short the low portfolio. What are the properties of this portfolio?</p></li>
+<li><p>Which ones have alpha relative to the market in the sample? What do their betas look like?</p></li>
+<li><p>When they perform poorly?</p></li>
+<li><p>How correlated are the returns of the long-shorts of different characteristics?</p></li>
+<li><p>What about interactions of characteristics? How Do you buy “profitable firms” at a good “value” Like Warren likes?</p></li>
+</ul>
+</div></blockquote>
+<p>Important:</p>
+<ul class="simple">
+<li><p>This is a short sample so things can  be done in class quickly</p></li>
+<li><p>To learn anything meaningful about risk-premiums you would want a longer sample</p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>📝 Key Takeaways</strong></p>
+<ul class="simple">
+<li><p><strong>Stacked data frames are the backbone</strong> when working with thousands of stocks and multiple characteristics.</p></li>
+<li><p><strong>Lagged market-cap weights should be the default</strong>: they minimize turnover, reflect realistic trading capacity, and eliminate look-ahead bias.</p></li>
+<li><p><strong>Characteristic-sorted portfolios isolate cross-sectional spreads</strong> in the signal; the long-short “top minus bottom” position delivers a clean test of the signal’s pricing power.</p></li>
+<li><p><strong>Portfolio design choices matter</strong>: more groups widen the average-return spread but shrink the number of stocks per bucket; equal-weighting boosts the influence of small caps, while value-weighting is closer to how real money is run.</p></li>
+<li><p><strong>A single, well-structured function automates experimentation</strong> across different signals, making it easy to investigate which characteristics generate higher alpha, when they underperform, and how their long-short returns co-move.</p></li>
+<li><p><strong>The core tension is signal strength versus diversification</strong>: stronger signals often come with higher concentration and trading costs, so practical implementation always balances these forces.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Volatilitytiming.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">9.2. </span>📈 Volatility Timing: Boosting Sharpe Ratios! 🚀</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="Momentum.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">10.18. </span>Momentum</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-all-that">10.1. Libraries and all that</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-market-cap-weighted-strategy">10.2. The Market-Cap Weighted strategy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stacked-datasets">10.2.1. Stacked Datasets</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-cleaning-and-organization">10.3. Data Cleaning and Organization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stacked-datasets-structure">10.4. Stacked Datasets structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-portfolio-weights">10.5. constructing portfolio weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portfolio-weights">10.6. Portfolio Weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portfolio-returns">10.7. Portfolio returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#characteristic-based-strategies">10.8. Characteristic-Based Strategies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementing-the-recipe">10.9. Implementing the recipe</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-characteristic-data">10.10. Our Characteristic  data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#group-assets-by-signal">10.11. Group assets by signal</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculate-the-portfolio-return">10.12. Calculate the portfolio return</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#market-cap-weighted-returns">10.13. Market cap weighted returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-evolution-of-a-firm-through-the-lens-of-a-characteristic">10.14. The evolution of a firm through the lens of a characteristic</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-in-a-function">10.15. Wrapping in a function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#portfolio-formation-tradeoffs-diversification-vs-signal-strength">10.16. Portfolio formation tradeoffs: Diversification vs Signal Strength</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-try">10.17. Things to try</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

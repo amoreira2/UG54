@@ -1,0 +1,3259 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>3.4. Pandas &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/essentials/introtopandas';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/Fin418/chapters/essentials/introtopandas.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="3.4.3. The Index" href="pandas/the_index.html" />
+    <link rel="prev" title="3.3. Introduction to Numpy" href="numpy.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">3. Python Essentials</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">3.4. Pandas</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/IntrotoReturns.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/TheChoiceofFrequency.html">4.5. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/UsingAPI.html">4.6. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/FactorModels.html">5. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/PortfolioMath.html">6. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1.html">6.12. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/CapitalAllocationI.html">7. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/FactorModelEstimation.html">8. Factor Model Estimation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/Timing.html">9. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/MarketTiming.html">9.1. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Volatilitytiming.html">9.2. 📈 Volatility Timing: Boosting Sharpe Ratios! 🚀</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/crosssectionalequitystrategies.html">10. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Momentum.html">10.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Factors.html">10.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/CapitalAllocationII.html">11. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/Performance_evaluation.html">12. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/MachineLearning.html">13. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/MultiFactorModels.html">14. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/InterpretingFactorModels.html">14.6. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/RiskManagement.html">15. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/TradingCosts.html">16. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/LeverageandShorting.html">17. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/GenAIandLLMsinFinance.html">18. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">19. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">20. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">20.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment2.html">20.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment3.html">20.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment4.html">20.6. Assignment 4</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/Fin418/blob/main/chapters/essentials/introtopandas.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418/issues/new?title=Issue%20on%20page%20%2Fchapters/essentials/introtopandas.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/essentials/introtopandas.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Pandas</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">3.4.1. Introduction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#series">3.4.1.1. Series</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-can-we-do-with-a-series-object">3.4.1.1.1. What Can We Do with a Series object?</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-plotting">3.4.1.2. Basic Plotting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing">3.4.1.3. Indexing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataframe">3.4.1.4. DataFrame</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#head-and-tail">3.4.1.4.1. <code class="docutils literal notranslate"><span class="pre">.head</span></code> and <code class="docutils literal notranslate"><span class="pre">.tail</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting">3.4.1.5. Plotting</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.4.2. Indexing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computations-with-columns">3.4.2.1. Computations with Columns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-types">3.4.2.2. Data Types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changing-dataframes">3.4.2.3. Changing DataFrames</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-new-columns">3.4.2.4. Creating New Columns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changing-values">3.4.2.5. Changing Values</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#renaming-columns">3.4.2.6. Renaming Columns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dates-in-pandas">3.4.2.7. Dates in pandas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataframe-aggregations">3.4.2.8. DataFrame Aggregations</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-aggregations">3.4.2.8.1. Built-in Aggregations</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transforms">3.4.2.9. Transforms</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-transforms">3.4.2.9.1. Built-in Transforms</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boolean-selection">3.4.2.10. Boolean Selection</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="pandas">
+<h1><span class="section-number">3.4. </span>Pandas<a class="headerlink" href="#pandas" title="Link to this heading">#</a></h1>
+<section id="introduction">
+<h2><span class="section-number">3.4.1. </span>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+</div>
+<p>This lecture begins the material on <code class="docutils literal notranslate"><span class="pre">pandas</span></code> which is the library that allows us to work with data</p>
+<p>To start, we will import the pandas package and give it the alias
+<code class="docutils literal notranslate"><span class="pre">pd</span></code>, which is conventional practice.</p>
+<p>There are two types of collections: Series, for a single variable, that is one columns with multiple rows, and a DataFrame, for multiple variables , that is multiple rows and columns</p>
+<section id="series">
+<h3><span class="section-number">3.4.1.1. </span>Series<a class="headerlink" href="#series" title="Link to this heading">#</a></h3>
+<p>The first main pandas type we will introduce is called Series.</p>
+<p>A Series is a single column of data, with row labels for each
+observation.</p>
+<p>pandas refers to the row labels as the <em>index</em> of the Series.</p>
+<img src="https://datascience.quantecon.org/_static/PandasSeries.png" alt="PandasSeries.png" style="">
+<p>Below, we create a Series which contains the Google Stock price every
+other year starting in 2005. ( This is made up!)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this creates a lsit with the stock prices of google from 2005 to 2015</span>
+<span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.6</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mf">4.3</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">,</span> <span class="mf">5.8</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mf">4.6</span><span class="p">,</span> <span class="mf">7.8</span><span class="p">,</span> <span class="mf">9.1</span><span class="p">,</span> <span class="mf">8.</span><span class="p">,</span> <span class="mf">5.7</span><span class="p">]</span>
+<span class="c1"># this creates a list with the years from 2005 to 2015</span>
+<span class="n">years</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2005</span><span class="p">,</span> <span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="c1"># this creates a pandas series with the stock prices of google from 2005 to 2015</span>
+
+<span class="n">Google</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">values</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">years</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Google Stock Price&quot;</span><span class="p">)</span>
+
+<span class="c1"># lets see what it looks like</span>
+<span class="n">Google</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can look at the index and values in our Series.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Google</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Int64Index([1995, 1997, 1999, 2001, 2003, 2005, 2007, 2009, 2011, 2013, 2015], dtype=&#39;int64&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Google</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([5.6, 5.3, 4.3, 4.2, 5.8, 5.3, 4.6, 7.8, 9.1, 8. , 5.7])
+</pre></div>
+</div>
+</div>
+</div>
+<section id="what-can-we-do-with-a-series-object">
+<h4><span class="section-number">3.4.1.1.1. </span>What Can We Do with a Series object?<a class="headerlink" href="#what-can-we-do-with-a-series-object" title="Link to this heading">#</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">.head</span></code> and <code class="docutils literal notranslate"><span class="pre">.tail</span></code></p>
+<p>Often, our data will have many rows, and we won’t want to display it all
+at once.</p>
+<p>The methods <code class="docutils literal notranslate"><span class="pre">.head</span></code> and <code class="docutils literal notranslate"><span class="pre">.tail</span></code> show rows at the beginning and end
+of our Series, respectively.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Google</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1995    5.6
+1997    5.3
+1999    4.3
+2001    4.2
+2003    5.8
+Name: Unemployment, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Google</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2007    4.6
+2009    7.8
+2011    9.1
+2013    8.0
+2015    5.7
+Name: Unemployment, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="basic-plotting">
+<h3><span class="section-number">3.4.1.2. </span>Basic Plotting<a class="headerlink" href="#basic-plotting" title="Link to this heading">#</a></h3>
+<p>We can also plot data using the <code class="docutils literal notranslate"><span class="pre">.plot</span></code> method.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Google</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:&gt;
+</pre></div>
+</div>
+<img alt="../../_images/d522acc222a0d7aa696efba21fecd036718c0f9974b5cb5b4a778baec8d96d2e.png" src="../../_images/d522acc222a0d7aa696efba21fecd036718c0f9974b5cb5b4a778baec8d96d2e.png" />
+</div>
+</div>
+<blockquote>
+<div><p><strong>Note</strong></p>
+<p>This is why we needed the <code class="docutils literal notranslate"><span class="pre">%matplotlib</span> <span class="pre">inline</span></code> — it tells the notebook
+to display figures inside the notebook itself. Also, pandas has much greater visualization functionality than this, but we will study that later on.</p>
+</div></blockquote>
+</section>
+<section id="indexing">
+<h3><span class="section-number">3.4.1.3. </span>Indexing<a class="headerlink" href="#indexing" title="Link to this heading">#</a></h3>
+<p>Sometimes, we will want to select particular elements from a Series.</p>
+<p>We can do this using <code class="docutils literal notranslate"><span class="pre">.loc[index_items]</span></code>; where <code class="docutils literal notranslate"><span class="pre">index_items</span></code> is
+an item from the index, or a list of items in the index.</p>
+<p>We will see this more in-depth in a coming lecture, but for now, we
+demonstrate how to select one or multiple elements of the Series.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Google</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">2007</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4.3
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Google</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">2008</span><span class="p">,</span> <span class="mi">2010</span><span class="p">,</span> <span class="mi">2015</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2008    4.2
+2010    5.3
+2015    5.7
+Name: Google Stock Price, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="dataframe">
+<h3><span class="section-number">3.4.1.4. </span>DataFrame<a class="headerlink" href="#dataframe" title="Link to this heading">#</a></h3>
+<p>A DataFrame is how pandas stores one or more columns of data.</p>
+<p>We can think a DataFrames a multiple Series stacked side by side as
+columns.</p>
+<p>This is similar to a sheet in an Excel workbook or a table in a SQL
+database.</p>
+<p>In addition to row labels (an index), DataFrames also have column labels.</p>
+<p>We refer to these column labels as the columns or column names.</p>
+<img src="https://datascience.quantecon.org/_static/PandasDataFrame.png" alt="PandasDataFrame.png" style="">
+<p>Below, we create a DataFrame that contains the Stock price in the end of each year starting in 2005 for a few US tech stocks.</p>
+<p>(This is made up)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create dictionary with stock prices of google, apple, amazon, microsoft, and facebook</span>
+<span class="c1">#</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Amazon&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.9</span><span class="p">,</span>  <span class="mf">5.6</span><span class="p">,</span>  <span class="mf">4.4</span><span class="p">,</span>  <span class="mf">3.8</span><span class="p">,</span>  <span class="mf">5.8</span><span class="p">,</span>  <span class="mf">4.9</span><span class="p">,</span>  <span class="mf">4.3</span><span class="p">,</span>  <span class="mf">7.1</span><span class="p">,</span>  <span class="mf">8.3</span><span class="p">,</span>  <span class="mf">7.9</span><span class="p">,</span>  <span class="mf">5.7</span><span class="p">],</span>
+    <span class="s2">&quot;Microsoft&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.5</span><span class="p">,</span>  <span class="mf">4.3</span><span class="p">,</span>  <span class="mf">3.6</span><span class="p">,</span>  <span class="mf">4.</span> <span class="p">,</span>  <span class="mf">5.7</span><span class="p">,</span>  <span class="mf">5.7</span><span class="p">,</span>  <span class="mf">4.9</span><span class="p">,</span>  <span class="mf">8.1</span><span class="p">,</span>  <span class="mf">8.7</span><span class="p">,</span>  <span class="mf">7.4</span><span class="p">,</span>  <span class="mf">5.1</span><span class="p">],</span>
+    <span class="s2">&quot;Google&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.3</span><span class="p">,</span>  <span class="mf">5.2</span><span class="p">,</span>  <span class="mf">4.2</span><span class="p">,</span>  <span class="mf">4.</span> <span class="p">,</span>  <span class="mf">5.7</span><span class="p">,</span>  <span class="mf">5.2</span><span class="p">,</span>  <span class="mf">4.3</span><span class="p">,</span>  <span class="mf">7.6</span><span class="p">,</span>  <span class="mf">9.1</span><span class="p">,</span>  <span class="mf">7.4</span><span class="p">,</span>  <span class="mf">5.5</span><span class="p">],</span>
+    <span class="s2">&quot;Facebook&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.6</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">,</span> <span class="mf">4.6</span><span class="p">,</span> <span class="mf">6.5</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mf">8.6</span><span class="p">,</span> <span class="mf">10.7</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">,</span> <span class="mf">6.1</span><span class="p">],</span>
+    <span class="s2">&quot;Apple&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.6</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mf">4.3</span><span class="p">,</span> <span class="mf">4.2</span><span class="p">,</span> <span class="mf">5.8</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mf">4.6</span><span class="p">,</span> <span class="mf">7.8</span><span class="p">,</span> <span class="mf">9.1</span><span class="p">,</span> <span class="mf">8.</span><span class="p">,</span> <span class="mf">5.7</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># create a pandas dataframe with the stock prices of google, apple, amazon, microsoft, and facebook</span>
+<span class="n">stock_prices</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">years</span><span class="p">)</span>
+<span class="n">stock_prices</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Google</th>
+      <th>Facebook</th>
+      <th>Apple</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2005</th>
+      <td>5.9</td>
+      <td>4.5</td>
+      <td>5.3</td>
+      <td>6.6</td>
+      <td>5.6</td>
+    </tr>
+    <tr>
+      <th>2006</th>
+      <td>5.6</td>
+      <td>4.3</td>
+      <td>5.2</td>
+      <td>6.0</td>
+      <td>5.3</td>
+    </tr>
+    <tr>
+      <th>2007</th>
+      <td>4.4</td>
+      <td>3.6</td>
+      <td>4.2</td>
+      <td>5.2</td>
+      <td>4.3</td>
+    </tr>
+    <tr>
+      <th>2008</th>
+      <td>3.8</td>
+      <td>4.0</td>
+      <td>4.0</td>
+      <td>4.6</td>
+      <td>4.2</td>
+    </tr>
+    <tr>
+      <th>2009</th>
+      <td>5.8</td>
+      <td>5.7</td>
+      <td>5.7</td>
+      <td>6.5</td>
+      <td>5.8</td>
+    </tr>
+    <tr>
+      <th>2010</th>
+      <td>4.9</td>
+      <td>5.7</td>
+      <td>5.2</td>
+      <td>5.5</td>
+      <td>5.3</td>
+    </tr>
+    <tr>
+      <th>2011</th>
+      <td>4.3</td>
+      <td>4.9</td>
+      <td>4.3</td>
+      <td>4.5</td>
+      <td>4.6</td>
+    </tr>
+    <tr>
+      <th>2012</th>
+      <td>7.1</td>
+      <td>8.1</td>
+      <td>7.6</td>
+      <td>8.6</td>
+      <td>7.8</td>
+    </tr>
+    <tr>
+      <th>2013</th>
+      <td>8.3</td>
+      <td>8.7</td>
+      <td>9.1</td>
+      <td>10.7</td>
+      <td>9.1</td>
+    </tr>
+    <tr>
+      <th>2014</th>
+      <td>7.9</td>
+      <td>7.4</td>
+      <td>7.4</td>
+      <td>8.5</td>
+      <td>8.0</td>
+    </tr>
+    <tr>
+      <th>2015</th>
+      <td>5.7</td>
+      <td>5.1</td>
+      <td>5.5</td>
+      <td>6.1</td>
+      <td>5.7</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>This is one way to create a dataframe</p>
+<p>We can retrieve the index and the DataFrame values as we
+did with a Series.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Int64Index([2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015], dtype=&#39;int64&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">values</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 5.9,  4.5,  5.3,  6.6,  5.6],
+       [ 5.6,  4.3,  5.2,  6. ,  5.3],
+       [ 4.4,  3.6,  4.2,  5.2,  4.3],
+       [ 3.8,  4. ,  4. ,  4.6,  4.2],
+       [ 5.8,  5.7,  5.7,  6.5,  5.8],
+       [ 4.9,  5.7,  5.2,  5.5,  5.3],
+       [ 4.3,  4.9,  4.3,  4.5,  4.6],
+       [ 7.1,  8.1,  7.6,  8.6,  7.8],
+       [ 8.3,  8.7,  9.1, 10.7,  9.1],
+       [ 7.9,  7.4,  7.4,  8.5,  8. ],
+       [ 5.7,  5.1,  5.5,  6.1,  5.7]])
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>What Can We Do with a DataFrame?</strong></p>
+<p>A lot stuff!</p>
+<p>This will be the main way we will work with data in Python</p>
+<section id="head-and-tail">
+<h4><span class="section-number">3.4.1.4.1. </span><code class="docutils literal notranslate"><span class="pre">.head</span></code> and <code class="docutils literal notranslate"><span class="pre">.tail</span></code><a class="headerlink" href="#head-and-tail" title="Link to this heading">#</a></h4>
+<p>As with Series, we can use <code class="docutils literal notranslate"><span class="pre">.head</span></code> and <code class="docutils literal notranslate"><span class="pre">.tail</span></code> to show only the
+first or last <code class="docutils literal notranslate"><span class="pre">n</span></code> rows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Google</th>
+      <th>Facebook</th>
+      <th>Apple</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2005</th>
+      <td>5.9</td>
+      <td>4.5</td>
+      <td>5.3</td>
+      <td>6.6</td>
+      <td>5.6</td>
+    </tr>
+    <tr>
+      <th>2006</th>
+      <td>5.6</td>
+      <td>4.3</td>
+      <td>5.2</td>
+      <td>6.0</td>
+      <td>5.3</td>
+    </tr>
+    <tr>
+      <th>2007</th>
+      <td>4.4</td>
+      <td>3.6</td>
+      <td>4.2</td>
+      <td>5.2</td>
+      <td>4.3</td>
+    </tr>
+    <tr>
+      <th>2008</th>
+      <td>3.8</td>
+      <td>4.0</td>
+      <td>4.0</td>
+      <td>4.6</td>
+      <td>4.2</td>
+    </tr>
+    <tr>
+      <th>2009</th>
+      <td>5.8</td>
+      <td>5.7</td>
+      <td>5.7</td>
+      <td>6.5</td>
+      <td>5.8</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+</section>
+<section id="plotting">
+<h3><span class="section-number">3.4.1.5. </span>Plotting<a class="headerlink" href="#plotting" title="Link to this heading">#</a></h3>
+<p>We can generate plots with the <code class="docutils literal notranslate"><span class="pre">.plot</span></code> method.</p>
+<p>Notice we now have a separate line for each column of data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:&gt;
+</pre></div>
+</div>
+<img alt="../../_images/d9880607d467b6ac0e27d55e301c52c20767e4ed736eb897d457ed3fcbc0b926.png" src="../../_images/d9880607d467b6ac0e27d55e301c52c20767e4ed736eb897d457ed3fcbc0b926.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="id1">
+<h2><span class="section-number">3.4.2. </span>Indexing<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>We can also do indexing using <code class="docutils literal notranslate"><span class="pre">.loc</span></code>.</p>
+<p>This is slightly more advanced than before because we can choose
+subsets of both row and columns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">2005</span><span class="p">,</span> <span class="s2">&quot;Apple&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5.6
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">2005</span><span class="p">,</span><span class="mi">2008</span><span class="p">],</span> <span class="s2">&quot;Facebook&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2005    6.6
+2008    4.6
+Name: Facebook, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">2005</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Microsoft&quot;</span><span class="p">,</span> <span class="s2">&quot;Google&quot;</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Microsoft    4.5
+Google       5.3
+Name: 2005, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;Microsoft&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2005    4.5
+2006    4.3
+2007    3.6
+2008    4.0
+2009    5.7
+2010    5.7
+2011    4.9
+2012    8.1
+2013    8.7
+2014    7.4
+2015    5.1
+Name: Microsoft, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># `[string]` with no `.loc` extracts a whole column</span>
+<span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;Apple&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2005    5.6
+2006    5.3
+2007    4.3
+2008    4.2
+2009    5.8
+2010    5.3
+2011    4.6
+2012    7.8
+2013    9.1
+2014    8.0
+2015    5.7
+Name: Apple, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<section id="computations-with-columns">
+<h3><span class="section-number">3.4.2.1. </span>Computations with Columns<a class="headerlink" href="#computations-with-columns" title="Link to this heading">#</a></h3>
+<p>pandas can do various computations and mathematical operations on
+columns.</p>
+<p>Let’s take a look at a few of them.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Divide by 100 </span>
+<span class="n">stock_prices</span> <span class="o">/</span> <span class="mi">100</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Google</th>
+      <th>Facebook</th>
+      <th>Apple</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2005</th>
+      <td>0.059</td>
+      <td>0.045</td>
+      <td>0.053</td>
+      <td>0.066</td>
+      <td>0.056</td>
+    </tr>
+    <tr>
+      <th>2006</th>
+      <td>0.056</td>
+      <td>0.043</td>
+      <td>0.052</td>
+      <td>0.060</td>
+      <td>0.053</td>
+    </tr>
+    <tr>
+      <th>2007</th>
+      <td>0.044</td>
+      <td>0.036</td>
+      <td>0.042</td>
+      <td>0.052</td>
+      <td>0.043</td>
+    </tr>
+    <tr>
+      <th>2008</th>
+      <td>0.038</td>
+      <td>0.040</td>
+      <td>0.040</td>
+      <td>0.046</td>
+      <td>0.042</td>
+    </tr>
+    <tr>
+      <th>2009</th>
+      <td>0.058</td>
+      <td>0.057</td>
+      <td>0.057</td>
+      <td>0.065</td>
+      <td>0.058</td>
+    </tr>
+    <tr>
+      <th>2010</th>
+      <td>0.049</td>
+      <td>0.057</td>
+      <td>0.052</td>
+      <td>0.055</td>
+      <td>0.053</td>
+    </tr>
+    <tr>
+      <th>2011</th>
+      <td>0.043</td>
+      <td>0.049</td>
+      <td>0.043</td>
+      <td>0.045</td>
+      <td>0.046</td>
+    </tr>
+    <tr>
+      <th>2012</th>
+      <td>0.071</td>
+      <td>0.081</td>
+      <td>0.076</td>
+      <td>0.086</td>
+      <td>0.078</td>
+    </tr>
+    <tr>
+      <th>2013</th>
+      <td>0.083</td>
+      <td>0.087</td>
+      <td>0.091</td>
+      <td>0.107</td>
+      <td>0.091</td>
+    </tr>
+    <tr>
+      <th>2014</th>
+      <td>0.079</td>
+      <td>0.074</td>
+      <td>0.074</td>
+      <td>0.085</td>
+      <td>0.080</td>
+    </tr>
+    <tr>
+      <th>2015</th>
+      <td>0.057</td>
+      <td>0.051</td>
+      <td>0.055</td>
+      <td>0.061</td>
+      <td>0.057</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find maximum</span>
+<span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;Apple&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>9.1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find the difference between two columns</span>
+<span class="c1"># Notice that pandas applies `-` to _all rows_ at once</span>
+<span class="c1"># We&#39;ll see more of this throughout these materials</span>
+<span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;Google&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;Apple&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2005   -0.3
+2006   -0.1
+2007   -0.1
+2008   -0.2
+2009   -0.1
+2010   -0.1
+2011   -0.3
+2012   -0.2
+2013    0.0
+2014   -0.6
+2015   -0.2
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find correlation between two columns</span>
+<span class="n">stock_prices</span><span class="p">[</span><span class="s1">&#39;Apple&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;Microsoft&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9523890760029825
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># find correlation between all column pairs</span>
+<span class="n">stock_prices</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Google</th>
+      <th>Facebook</th>
+      <th>Apple</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Amazon</th>
+      <td>1.000000</td>
+      <td>0.875654</td>
+      <td>0.964415</td>
+      <td>0.967875</td>
+      <td>0.976016</td>
+    </tr>
+    <tr>
+      <th>Microsoft</th>
+      <td>0.875654</td>
+      <td>1.000000</td>
+      <td>0.951379</td>
+      <td>0.900638</td>
+      <td>0.952389</td>
+    </tr>
+    <tr>
+      <th>Google</th>
+      <td>0.964415</td>
+      <td>0.951379</td>
+      <td>1.000000</td>
+      <td>0.987259</td>
+      <td>0.995030</td>
+    </tr>
+    <tr>
+      <th>Facebook</th>
+      <td>0.967875</td>
+      <td>0.900638</td>
+      <td>0.987259</td>
+      <td>1.000000</td>
+      <td>0.981308</td>
+    </tr>
+    <tr>
+      <th>Apple</th>
+      <td>0.976016</td>
+      <td>0.952389</td>
+      <td>0.995030</td>
+      <td>0.981308</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="data-types">
+<h3><span class="section-number">3.4.2.2. </span>Data Types<a class="headerlink" href="#data-types" title="Link to this heading">#</a></h3>
+<p>We asked you to run the commands <code class="docutils literal notranslate"><span class="pre">unemp.dtype</span></code> and
+<code class="docutils literal notranslate"><span class="pre">unemp_region.dtypes</span></code> and think about the outputs.</p>
+<p>You might have guessed that they return the type of the values inside
+each column.</p>
+<p>Occasionally, you might need to investigate what types you have in your
+DataFrame when an operation isn’t behaving as expected.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Google</span><span class="o">.</span><span class="n">dtype</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dtype(&#39;float64&#39;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Amazon       float64
+Microsoft    float64
+Google       float64
+Facebook     float64
+Apple        float64
+dtype: object
+</pre></div>
+</div>
+</div>
+</div>
+<p>DataFrames will only distinguish between a few types.</p>
+<ul class="simple">
+<li><p>Booleans (<code class="docutils literal notranslate"><span class="pre">bool</span></code>)</p></li>
+<li><p>Floating point numbers (<code class="docutils literal notranslate"><span class="pre">float64</span></code>)</p></li>
+<li><p>Integers (<code class="docutils literal notranslate"><span class="pre">int64</span></code>)</p></li>
+<li><p>Dates (<code class="docutils literal notranslate"><span class="pre">datetime</span></code>) — we will learn this soon</p></li>
+<li><p>Categorical data (<code class="docutils literal notranslate"><span class="pre">categorical</span></code>)</p></li>
+<li><p>Everything else, including strings (<code class="docutils literal notranslate"><span class="pre">object</span></code>)</p></li>
+</ul>
+<p>In the future, we will often refer to the type of data stored in a
+column as its <code class="docutils literal notranslate"><span class="pre">dtype</span></code>.</p>
+<p>Let’s look at an example for when having an incorrect <code class="docutils literal notranslate"><span class="pre">dtype</span></code> can
+cause problems.</p>
+<p>Suppose that when we imported the data the <code class="docutils literal notranslate"><span class="pre">South</span></code> column was
+interpreted as a string.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices_str</span> <span class="o">=</span> <span class="n">stock_prices</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">stock_prices_str</span><span class="p">[</span><span class="s2">&quot;Apple&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stock_prices_str</span><span class="p">[</span><span class="s2">&quot;Apple&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">stock_prices_str</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Amazon       float64
+Microsoft    float64
+Google       float64
+Facebook     float64
+Apple         object
+dtype: object
+</pre></div>
+</div>
+</div>
+</div>
+<p>Everything <em>looks</em> ok…</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices_str</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Google</th>
+      <th>Facebook</th>
+      <th>Apple</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2005</th>
+      <td>5.9</td>
+      <td>4.5</td>
+      <td>5.3</td>
+      <td>6.6</td>
+      <td>5.6</td>
+    </tr>
+    <tr>
+      <th>2006</th>
+      <td>5.6</td>
+      <td>4.3</td>
+      <td>5.2</td>
+      <td>6.0</td>
+      <td>5.3</td>
+    </tr>
+    <tr>
+      <th>2007</th>
+      <td>4.4</td>
+      <td>3.6</td>
+      <td>4.2</td>
+      <td>5.2</td>
+      <td>4.3</td>
+    </tr>
+    <tr>
+      <th>2008</th>
+      <td>3.8</td>
+      <td>4.0</td>
+      <td>4.0</td>
+      <td>4.6</td>
+      <td>4.2</td>
+    </tr>
+    <tr>
+      <th>2009</th>
+      <td>5.8</td>
+      <td>5.7</td>
+      <td>5.7</td>
+      <td>6.5</td>
+      <td>5.8</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>But if we try to do something like compute the sum of all the columns,
+we get unexpected results…</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices_str</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Amazon                                    63.7
+Microsoft                                 62.0
+Google                                    63.5
+Facebook                                  72.8
+Apple        5.65.34.34.25.85.34.67.89.18.05.7
+dtype: object
+</pre></div>
+</div>
+</div>
+</div>
+<p>Why this happened?</p>
+</section>
+<section id="changing-dataframes">
+<h3><span class="section-number">3.4.2.3. </span>Changing DataFrames<a class="headerlink" href="#changing-dataframes" title="Link to this heading">#</a></h3>
+<p>We can change the data inside of a DataFrame in various ways:</p>
+<ul class="simple">
+<li><p>Adding new columns</p></li>
+<li><p>Changing index labels or column names</p></li>
+<li><p>Altering existing data (e.g. doing some arithmetic or making a column
+of strings lowercase)</p></li>
+</ul>
+</section>
+<section id="creating-new-columns">
+<h3><span class="section-number">3.4.2.4. </span>Creating New Columns<a class="headerlink" href="#creating-new-columns" title="Link to this heading">#</a></h3>
+<p>We can create new data by assigning values to a column similar to how
+we assign values to a variable.</p>
+<p>In pandas, we create a new column of a DataFrame by writing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;New Column Name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_values</span>
+</pre></div>
+</div>
+<p>Below, we create an unweighted mean of the unemployment rate across the
+four regions of the US — notice that this differs from the national
+unemployment rate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;ValueofEW_portfolio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;Amazon&quot;</span><span class="p">]</span> <span class="o">+</span>
+                                  <span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;Apple&quot;</span><span class="p">]</span> <span class="o">+</span>
+                                  <span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;Microsoft&quot;</span><span class="p">]</span> <span class="o">+</span>
+                                  <span class="n">stock_prices</span><span class="p">[</span><span class="s2">&quot;Google&quot;</span><span class="p">]</span><span class="o">+</span>
+                                  <span class="n">stock_prices</span><span class="p">[</span><span class="s1">&#39;Facebook&#39;</span><span class="p">])</span><span class="o">/</span><span class="mi">5</span>
+
+<span class="c1"># what is a easier way to accomplish this?</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Google</th>
+      <th>Facebook</th>
+      <th>Apple</th>
+      <th>ValueofEW_portfolio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2005</th>
+      <td>5.9</td>
+      <td>4.5</td>
+      <td>5.3</td>
+      <td>6.6</td>
+      <td>5.6</td>
+      <td>5.58</td>
+    </tr>
+    <tr>
+      <th>2006</th>
+      <td>5.6</td>
+      <td>4.3</td>
+      <td>5.2</td>
+      <td>6.0</td>
+      <td>5.3</td>
+      <td>5.28</td>
+    </tr>
+    <tr>
+      <th>2007</th>
+      <td>4.4</td>
+      <td>3.6</td>
+      <td>4.2</td>
+      <td>5.2</td>
+      <td>4.3</td>
+      <td>4.34</td>
+    </tr>
+    <tr>
+      <th>2008</th>
+      <td>3.8</td>
+      <td>4.0</td>
+      <td>4.0</td>
+      <td>4.6</td>
+      <td>4.2</td>
+      <td>4.12</td>
+    </tr>
+    <tr>
+      <th>2009</th>
+      <td>5.8</td>
+      <td>5.7</td>
+      <td>5.7</td>
+      <td>6.5</td>
+      <td>5.8</td>
+      <td>5.90</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="changing-values">
+<h3><span class="section-number">3.4.2.5. </span>Changing Values<a class="headerlink" href="#changing-values" title="Link to this heading">#</a></h3>
+<p>Changing the values inside of a DataFrame should be done very rarely.</p>
+<p>Typically when you are using the dataframe to store some computation</p>
+<p>However, it can be done by assigning a value to a location in the
+DataFrame.</p>
+<p><code class="docutils literal notranslate"><span class="pre">df.loc[index,</span> <span class="pre">column]</span> <span class="pre">=</span> <span class="pre">value</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">2015</span><span class="p">,</span> <span class="s2">&quot;ValueofEW_portfolio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Google</th>
+      <th>Facebook</th>
+      <th>Apple</th>
+      <th>ValueofEW_portfolio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2011</th>
+      <td>4.3</td>
+      <td>4.9</td>
+      <td>4.3</td>
+      <td>4.5</td>
+      <td>4.6</td>
+      <td>4.52</td>
+    </tr>
+    <tr>
+      <th>2012</th>
+      <td>7.1</td>
+      <td>8.1</td>
+      <td>7.6</td>
+      <td>8.6</td>
+      <td>7.8</td>
+      <td>7.84</td>
+    </tr>
+    <tr>
+      <th>2013</th>
+      <td>8.3</td>
+      <td>8.7</td>
+      <td>9.1</td>
+      <td>10.7</td>
+      <td>9.1</td>
+      <td>9.18</td>
+    </tr>
+    <tr>
+      <th>2014</th>
+      <td>7.9</td>
+      <td>7.4</td>
+      <td>7.4</td>
+      <td>8.5</td>
+      <td>8.0</td>
+      <td>7.84</td>
+    </tr>
+    <tr>
+      <th>2015</th>
+      <td>5.7</td>
+      <td>5.1</td>
+      <td>5.5</td>
+      <td>6.1</td>
+      <td>5.7</td>
+      <td>0.00</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="renaming-columns">
+<h3><span class="section-number">3.4.2.6. </span>Renaming Columns<a class="headerlink" href="#renaming-columns" title="Link to this heading">#</a></h3>
+<p>We can also rename the columns of a DataFrame, which is helpful because the names that sometimes come with datasets are
+unbearable…</p>
+<p>For example, twe can change facebook to Meta and google became alphabet.</p>
+<p>We can rename columns by passing a dictionary to the <code class="docutils literal notranslate"><span class="pre">rename</span></code> method.</p>
+<p>This dictionary contains the old names as the keys and new names as the
+values.</p>
+<p>See the example below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Facebook&quot;</span><span class="p">:</span> <span class="s2">&quot;Meta&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;Google&quot;</span><span class="p">:</span> <span class="s2">&quot;Alphabet&quot;</span><span class="p">}</span>
+<span class="n">stock_prices</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Alphabet</th>
+      <th>Meta</th>
+      <th>Apple</th>
+      <th>ValueofEW_portfolio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2005</th>
+      <td>5.9</td>
+      <td>4.5</td>
+      <td>5.3</td>
+      <td>6.6</td>
+      <td>5.6</td>
+      <td>5.58</td>
+    </tr>
+    <tr>
+      <th>2006</th>
+      <td>5.6</td>
+      <td>4.3</td>
+      <td>5.2</td>
+      <td>6.0</td>
+      <td>5.3</td>
+      <td>5.28</td>
+    </tr>
+    <tr>
+      <th>2007</th>
+      <td>4.4</td>
+      <td>3.6</td>
+      <td>4.2</td>
+      <td>5.2</td>
+      <td>4.3</td>
+      <td>4.34</td>
+    </tr>
+    <tr>
+      <th>2008</th>
+      <td>3.8</td>
+      <td>4.0</td>
+      <td>4.0</td>
+      <td>4.6</td>
+      <td>4.2</td>
+      <td>4.12</td>
+    </tr>
+    <tr>
+      <th>2009</th>
+      <td>5.8</td>
+      <td>5.7</td>
+      <td>5.7</td>
+      <td>6.5</td>
+      <td>5.8</td>
+      <td>5.90</td>
+    </tr>
+    <tr>
+      <th>2010</th>
+      <td>4.9</td>
+      <td>5.7</td>
+      <td>5.2</td>
+      <td>5.5</td>
+      <td>5.3</td>
+      <td>5.32</td>
+    </tr>
+    <tr>
+      <th>2011</th>
+      <td>4.3</td>
+      <td>4.9</td>
+      <td>4.3</td>
+      <td>4.5</td>
+      <td>4.6</td>
+      <td>4.52</td>
+    </tr>
+    <tr>
+      <th>2012</th>
+      <td>7.1</td>
+      <td>8.1</td>
+      <td>7.6</td>
+      <td>8.6</td>
+      <td>7.8</td>
+      <td>7.84</td>
+    </tr>
+    <tr>
+      <th>2013</th>
+      <td>8.3</td>
+      <td>8.7</td>
+      <td>9.1</td>
+      <td>10.7</td>
+      <td>9.1</td>
+      <td>9.18</td>
+    </tr>
+    <tr>
+      <th>2014</th>
+      <td>7.9</td>
+      <td>7.4</td>
+      <td>7.4</td>
+      <td>8.5</td>
+      <td>8.0</td>
+      <td>7.84</td>
+    </tr>
+    <tr>
+      <th>2015</th>
+      <td>5.7</td>
+      <td>5.1</td>
+      <td>5.5</td>
+      <td>6.1</td>
+      <td>5.7</td>
+      <td>0.00</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">stock_prices</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Google</th>
+      <th>Facebook</th>
+      <th>Apple</th>
+      <th>ValueofEW_portfolio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2005</th>
+      <td>5.9</td>
+      <td>4.5</td>
+      <td>5.3</td>
+      <td>6.6</td>
+      <td>5.6</td>
+      <td>5.58</td>
+    </tr>
+    <tr>
+      <th>2006</th>
+      <td>5.6</td>
+      <td>4.3</td>
+      <td>5.2</td>
+      <td>6.0</td>
+      <td>5.3</td>
+      <td>5.28</td>
+    </tr>
+    <tr>
+      <th>2007</th>
+      <td>4.4</td>
+      <td>3.6</td>
+      <td>4.2</td>
+      <td>5.2</td>
+      <td>4.3</td>
+      <td>4.34</td>
+    </tr>
+    <tr>
+      <th>2008</th>
+      <td>3.8</td>
+      <td>4.0</td>
+      <td>4.0</td>
+      <td>4.6</td>
+      <td>4.2</td>
+      <td>4.12</td>
+    </tr>
+    <tr>
+      <th>2009</th>
+      <td>5.8</td>
+      <td>5.7</td>
+      <td>5.7</td>
+      <td>6.5</td>
+      <td>5.8</td>
+      <td>5.90</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>We renamed our columns… Why does the DataFrame still show the old
+column names?</p>
+<p>Many pandas operations create a copy of your data by
+default to protect your data and prevent you from overwriting
+information you meant to keep.</p>
+<p>We can make these operations permanent by either:</p>
+<ol class="arabic simple">
+<li><p>Assigning the output back to the variable name
+<code class="docutils literal notranslate"><span class="pre">df</span> <span class="pre">=</span> <span class="pre">df.rename(columns=rename_dict)</span></code></p></li>
+<li><p>Looking into whether the method has an <code class="docutils literal notranslate"><span class="pre">inplace</span></code> option. For
+example, <code class="docutils literal notranslate"><span class="pre">df.rename(columns=rename_dict,</span> <span class="pre">inplace=True)</span></code></p></li>
+</ol>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">inplace=True</span></code> will sometimes make your code faster
+(e.g. if you have a very large DataFrame and you don’t want to copy all
+the data), but that doesn’t always happen.</p>
+<p>We recommend using the first option until you get comfortable with
+pandas because operations that don’t alter your data are (usually)
+safer.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Facebook&quot;</span><span class="p">:</span> <span class="s2">&quot;Meta&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;Google&quot;</span><span class="p">:</span> <span class="s2">&quot;Alphabet&quot;</span><span class="p">}</span>
+<span class="n">stock_prices</span><span class="o">=</span><span class="n">stock_prices</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+<span class="n">stock_prices</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Amazon</th>
+      <th>Microsoft</th>
+      <th>Alphabet</th>
+      <th>Meta</th>
+      <th>Apple</th>
+      <th>ValueofEW_portfolio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2005</th>
+      <td>5.9</td>
+      <td>4.5</td>
+      <td>5.3</td>
+      <td>6.6</td>
+      <td>5.6</td>
+      <td>5.58</td>
+    </tr>
+    <tr>
+      <th>2006</th>
+      <td>5.6</td>
+      <td>4.3</td>
+      <td>5.2</td>
+      <td>6.0</td>
+      <td>5.3</td>
+      <td>5.28</td>
+    </tr>
+    <tr>
+      <th>2007</th>
+      <td>4.4</td>
+      <td>3.6</td>
+      <td>4.2</td>
+      <td>5.2</td>
+      <td>4.3</td>
+      <td>4.34</td>
+    </tr>
+    <tr>
+      <th>2008</th>
+      <td>3.8</td>
+      <td>4.0</td>
+      <td>4.0</td>
+      <td>4.6</td>
+      <td>4.2</td>
+      <td>4.12</td>
+    </tr>
+    <tr>
+      <th>2009</th>
+      <td>5.8</td>
+      <td>5.7</td>
+      <td>5.7</td>
+      <td>6.5</td>
+      <td>5.8</td>
+      <td>5.90</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="dates-in-pandas">
+<h3><span class="section-number">3.4.2.7. </span>Dates in pandas<a class="headerlink" href="#dates-in-pandas" title="Link to this heading">#</a></h3>
+<p>Now lets understand date manipulation more carefully</p>
+<p>So far our years were integer, but to work with dates it is convenient to have data type specific for it</p>
+<p>In pandas this type is <code class="docutils literal notranslate"><span class="pre">datetime</span></code></p>
+<p>LEts import a <code class="docutils literal notranslate"><span class="pre">monthly</span></code> data set with returns of 50 different companies</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/amoreira2/Fin418/main/assets/data/Retuns50stocks.csv&quot;</span>
+<span class="n">df_returns50</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">df_returns50</span> 
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>CTL</th>
+      <th>T</th>
+      <th>CSCO</th>
+      <th>FCX</th>
+      <th>XL</th>
+      <th>IVZ</th>
+      <th>AMT</th>
+      <th>WHR</th>
+      <th>IR</th>
+      <th>...</th>
+      <th>SWK</th>
+      <th>DVN</th>
+      <th>TMO</th>
+      <th>PEP</th>
+      <th>LNC</th>
+      <th>EMR</th>
+      <th>MLM</th>
+      <th>CCI</th>
+      <th>NU</th>
+      <th>Market</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>200001</td>
+      <td>-18.4697</td>
+      <td>-11.5513</td>
+      <td>2.2170</td>
+      <td>-17.4556</td>
+      <td>-12.5301</td>
+      <td>-4.0929</td>
+      <td>17.3824</td>
+      <td>-10.4707</td>
+      <td>-14.5289</td>
+      <td>...</td>
+      <td>-16.5975</td>
+      <td>6.8441</td>
+      <td>15.4167</td>
+      <td>-3.1915</td>
+      <td>-6.9312</td>
+      <td>-4.0305</td>
+      <td>2.4390</td>
+      <td>-1.5564</td>
+      <td>-0.3040</td>
+      <td>-3.9612</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>200002</td>
+      <td>-12.9450</td>
+      <td>-11.2245</td>
+      <td>20.7192</td>
+      <td>-21.1470</td>
+      <td>-9.8898</td>
+      <td>5.3057</td>
+      <td>37.2822</td>
+      <td>-6.1760</td>
+      <td>-18.2311</td>
+      <td>...</td>
+      <td>-8.4577</td>
+      <td>6.0498</td>
+      <td>-9.7473</td>
+      <td>-5.8608</td>
+      <td>-25.2115</td>
+      <td>-16.6039</td>
+      <td>-15.1667</td>
+      <td>1.9763</td>
+      <td>-7.7439</td>
+      <td>3.1777</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>200003</td>
+      <td>10.5502</td>
+      <td>10.6732</td>
+      <td>16.9740</td>
+      <td>-12.2727</td>
+      <td>36.9397</td>
+      <td>24.4250</td>
+      <td>0.2538</td>
+      <td>7.9402</td>
+      <td>15.4976</td>
+      <td>...</td>
+      <td>15.6304</td>
+      <td>30.5034</td>
+      <td>30.4000</td>
+      <td>8.9805</td>
+      <td>21.2670</td>
+      <td>16.5981</td>
+      <td>33.8028</td>
+      <td>17.4419</td>
+      <td>14.2857</td>
+      <td>5.3500</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>200004</td>
+      <td>-34.0067</td>
+      <td>4.6083</td>
+      <td>-10.3274</td>
+      <td>-20.2073</td>
+      <td>-13.9955</td>
+      <td>0.9670</td>
+      <td>-5.6962</td>
+      <td>11.0874</td>
+      <td>6.0734</td>
+      <td>...</td>
+      <td>11.8483</td>
+      <td>-0.9009</td>
+      <td>-4.9080</td>
+      <td>5.1971</td>
+      <td>4.7836</td>
+      <td>3.2941</td>
+      <td>11.5789</td>
+      <td>1.3201</td>
+      <td>0.0000</td>
+      <td>-5.9530</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>200005</td>
+      <td>10.3980</td>
+      <td>-0.2853</td>
+      <td>-17.8724</td>
+      <td>-4.5455</td>
+      <td>25.8793</td>
+      <td>-8.7719</td>
+      <td>-20.2685</td>
+      <td>-12.4338</td>
+      <td>-2.5672</td>
+      <td>...</td>
+      <td>-8.8983</td>
+      <td>24.2857</td>
+      <td>-4.1935</td>
+      <td>11.4140</td>
+      <td>11.3106</td>
+      <td>8.1686</td>
+      <td>-7.4198</td>
+      <td>-31.7590</td>
+      <td>3.3721</td>
+      <td>-3.8871</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>175</th>
+      <td>201408</td>
+      <td>5.8359</td>
+      <td>-1.7702</td>
+      <td>-0.9512</td>
+      <td>-2.2837</td>
+      <td>6.0174</td>
+      <td>9.1948</td>
+      <td>4.4602</td>
+      <td>7.8029</td>
+      <td>2.3984</td>
+      <td>...</td>
+      <td>4.6312</td>
+      <td>-0.1060</td>
+      <td>-1.0617</td>
+      <td>4.9830</td>
+      <td>5.0582</td>
+      <td>1.2569</td>
+      <td>5.7394</td>
+      <td>7.1852</td>
+      <td>4.5330</td>
+      <td>4.0171</td>
+    </tr>
+    <tr>
+      <th>176</th>
+      <td>201409</td>
+      <td>-0.2440</td>
+      <td>0.8009</td>
+      <td>1.4806</td>
+      <td>-10.2282</td>
+      <td>-2.4868</td>
+      <td>-3.3301</td>
+      <td>-4.6755</td>
+      <td>-4.8164</td>
+      <td>-5.9635</td>
+      <td>...</td>
+      <td>-2.3934</td>
+      <td>-9.2814</td>
+      <td>1.3643</td>
+      <td>1.3569</td>
+      <td>-2.6526</td>
+      <td>-2.2493</td>
+      <td>-1.5425</td>
+      <td>1.7230</td>
+      <td>-2.6095</td>
+      <td>-2.5129</td>
+    </tr>
+    <tr>
+      <th>177</th>
+      <td>201410</td>
+      <td>1.4429</td>
+      <td>0.1703</td>
+      <td>-2.7811</td>
+      <td>-11.7534</td>
+      <td>2.1405</td>
+      <td>2.5076</td>
+      <td>4.1333</td>
+      <td>18.1257</td>
+      <td>11.1072</td>
+      <td>...</td>
+      <td>5.4623</td>
+      <td>-11.9977</td>
+      <td>-3.3936</td>
+      <td>3.3086</td>
+      <td>2.5009</td>
+      <td>2.3650</td>
+      <td>-9.3222</td>
+      <td>-2.9927</td>
+      <td>11.3995</td>
+      <td>2.1178</td>
+    </tr>
+    <tr>
+      <th>178</th>
+      <td>201411</td>
+      <td>-0.4098</td>
+      <td>1.5499</td>
+      <td>12.9546</td>
+      <td>-5.7895</td>
+      <td>4.8406</td>
+      <td>0.3459</td>
+      <td>7.7026</td>
+      <td>8.6428</td>
+      <td>0.7027</td>
+      <td>...</td>
+      <td>0.8543</td>
+      <td>-1.7167</td>
+      <td>9.9685</td>
+      <td>4.0865</td>
+      <td>3.4149</td>
+      <td>0.2498</td>
+      <td>3.0106</td>
+      <td>6.3620</td>
+      <td>2.6140</td>
+      <td>2.1149</td>
+    </tr>
+    <tr>
+      <th>179</th>
+      <td>201412</td>
+      <td>-2.9188</td>
+      <td>-5.0594</td>
+      <td>0.6331</td>
+      <td>-12.9981</td>
+      <td>-2.7872</td>
+      <td>-2.0813</td>
+      <td>-5.5042</td>
+      <td>4.0662</td>
+      <td>0.9198</td>
+      <td>...</td>
+      <td>2.2872</td>
+      <td>4.2055</td>
+      <td>-2.9778</td>
+      <td>-4.8801</td>
+      <td>1.8365</td>
+      <td>-3.1686</td>
+      <td>-8.0973</td>
+      <td>-4.2965</td>
+      <td>6.4623</td>
+      <td>-0.3616</td>
+    </tr>
+  </tbody>
+</table>
+<p>180 rows × 52 columns</p>
+</div></div></div>
+</div>
+<p>Note that the data was not imported correctly</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_returns50</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 180 entries, 0 to 179
+Data columns (total 52 columns):
+ #   Column  Non-Null Count  Dtype  
+---  ------  --------------  -----  
+ 0   date    180 non-null    int64  
+ 1   CTL     180 non-null    float64
+ 2   T       180 non-null    float64
+ 3   CSCO    180 non-null    float64
+ 4   FCX     180 non-null    float64
+ 5   XL      180 non-null    float64
+ 6   IVZ     180 non-null    float64
+ 7   AMT     180 non-null    float64
+ 8   WHR     180 non-null    float64
+ 9   IR      180 non-null    float64
+ 10  WFT     180 non-null    float64
+ 11  YUM     180 non-null    float64
+ 12  CVS     180 non-null    float64
+ 13  GD      180 non-null    float64
+ 14  TYC     180 non-null    float64
+ 15  EL      180 non-null    float64
+ 16  MUR     180 non-null    float64
+ 17  CTAS    180 non-null    float64
+ 18  CBSA    180 non-null    float64
+ 19  SNV     180 non-null    float64
+ 20  CAM     180 non-null    float64
+ 21  DLTR    180 non-null    float64
+ 22  CAH     180 non-null    float64
+ 23  DTE     180 non-null    float64
+ 24  SSP     180 non-null    float64
+ 25  PSA     180 non-null    float64
+ 26  EXC     180 non-null    float64
+ 27  TKR     180 non-null    float64
+ 28  CMA     180 non-null    float64
+ 29  ORCL    180 non-null    float64
+ 30  MS      180 non-null    float64
+ 31  RSG     180 non-null    float64
+ 32  ACAS    180 non-null    float64
+ 33  AGN     180 non-null    float64
+ 34  MMM     180 non-null    float64
+ 35  ETFC    180 non-null    float64
+ 36  CAR     180 non-null    float64
+ 37  MDR     180 non-null    float64
+ 38  NOV     180 non-null    float64
+ 39  PCH     180 non-null    float64
+ 40  BAX     180 non-null    float64
+ 41  JCI     180 non-null    float64
+ 42  SWK     180 non-null    float64
+ 43  DVN     180 non-null    float64
+ 44  TMO     180 non-null    float64
+ 45  PEP     180 non-null    float64
+ 46  LNC     180 non-null    float64
+ 47  EMR     180 non-null    float64
+ 48  MLM     180 non-null    float64
+ 49  CCI     180 non-null    float64
+ 50  NU      180 non-null    float64
+ 51  Market  180 non-null    float64
+dtypes: float64(51), int64(1)
+memory usage: 73.2 KB
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="c1"># Create a date parser function that will allow pandas to read the dates in the format we have them</span>
+<span class="n">date_parser</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;%Y%m&quot;</span><span class="p">)</span>
+
+<span class="c1"># Use pd.read_csv with the date_parser</span>
+<span class="n">df_returns50</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">date_parser</span><span class="o">=</span><span class="n">date_parser</span><span class="p">)</span>
+<span class="n">df_returns50</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+RangeIndex: 180 entries, 0 to 179
+Data columns (total 52 columns):
+ #   Column  Non-Null Count  Dtype         
+---  ------  --------------  -----         
+ 0   date    180 non-null    datetime64[ns]
+ 1   CTL     180 non-null    float64       
+ 2   T       180 non-null    float64       
+ 3   CSCO    180 non-null    float64       
+ 4   FCX     180 non-null    float64       
+ 5   XL      180 non-null    float64       
+ 6   IVZ     180 non-null    float64       
+ 7   AMT     180 non-null    float64       
+ 8   WHR     180 non-null    float64       
+ 9   IR      180 non-null    float64       
+ 10  WFT     180 non-null    float64       
+ 11  YUM     180 non-null    float64       
+ 12  CVS     180 non-null    float64       
+ 13  GD      180 non-null    float64       
+ 14  TYC     180 non-null    float64       
+ 15  EL      180 non-null    float64       
+ 16  MUR     180 non-null    float64       
+ 17  CTAS    180 non-null    float64       
+ 18  CBSA    180 non-null    float64       
+ 19  SNV     180 non-null    float64       
+ 20  CAM     180 non-null    float64       
+ 21  DLTR    180 non-null    float64       
+ 22  CAH     180 non-null    float64       
+ 23  DTE     180 non-null    float64       
+ 24  SSP     180 non-null    float64       
+ 25  PSA     180 non-null    float64       
+ 26  EXC     180 non-null    float64       
+ 27  TKR     180 non-null    float64       
+ 28  CMA     180 non-null    float64       
+ 29  ORCL    180 non-null    float64       
+ 30  MS      180 non-null    float64       
+ 31  RSG     180 non-null    float64       
+ 32  ACAS    180 non-null    float64       
+ 33  AGN     180 non-null    float64       
+ 34  MMM     180 non-null    float64       
+ 35  ETFC    180 non-null    float64       
+ 36  CAR     180 non-null    float64       
+ 37  MDR     180 non-null    float64       
+ 38  NOV     180 non-null    float64       
+ 39  PCH     180 non-null    float64       
+ 40  BAX     180 non-null    float64       
+ 41  JCI     180 non-null    float64       
+ 42  SWK     180 non-null    float64       
+ 43  DVN     180 non-null    float64       
+ 44  TMO     180 non-null    float64       
+ 45  PEP     180 non-null    float64       
+ 46  LNC     180 non-null    float64       
+ 47  EMR     180 non-null    float64       
+ 48  MLM     180 non-null    float64       
+ 49  CCI     180 non-null    float64       
+ 50  NU      180 non-null    float64       
+ 51  Market  180 non-null    float64       
+dtypes: datetime64[ns](1), float64(51)
+memory usage: 73.2 KB
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the date column as the index</span>
+<span class="n">df_returns50</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_returns50</span><span class="o">.</span><span class="n">index</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>DatetimeIndex([&#39;2000-01-01&#39;, &#39;2000-02-01&#39;, &#39;2000-03-01&#39;, &#39;2000-04-01&#39;,
+               &#39;2000-05-01&#39;, &#39;2000-06-01&#39;, &#39;2000-07-01&#39;, &#39;2000-08-01&#39;,
+               &#39;2000-09-01&#39;, &#39;2000-10-01&#39;,
+               ...
+               &#39;2014-03-01&#39;, &#39;2014-04-01&#39;, &#39;2014-05-01&#39;, &#39;2014-06-01&#39;,
+               &#39;2014-07-01&#39;, &#39;2014-08-01&#39;, &#39;2014-09-01&#39;, &#39;2014-10-01&#39;,
+               &#39;2014-11-01&#39;, &#39;2014-12-01&#39;],
+              dtype=&#39;datetime64[ns]&#39;, name=&#39;date&#39;, length=180, freq=None)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can index into a DataFrame with a <code class="docutils literal notranslate"><span class="pre">DatetimeIndex</span></code> using string
+representations of dates.</p>
+<p>For example</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data corresponding to a single date</span>
+<span class="n">df_returns50</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;2005-01&quot;</span><span class="p">,</span> <span class="p">:]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CTL</th>
+      <th>T</th>
+      <th>CSCO</th>
+      <th>FCX</th>
+      <th>XL</th>
+      <th>IVZ</th>
+      <th>AMT</th>
+      <th>WHR</th>
+      <th>IR</th>
+      <th>WFT</th>
+      <th>...</th>
+      <th>SWK</th>
+      <th>DVN</th>
+      <th>TMO</th>
+      <th>PEP</th>
+      <th>LNC</th>
+      <th>EMR</th>
+      <th>MLM</th>
+      <th>CCI</th>
+      <th>NU</th>
+      <th>Market</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2005-01-01</th>
+      <td>-8.0914</td>
+      <td>-6.5483</td>
+      <td>-6.6253</td>
+      <td>-3.0604</td>
+      <td>-3.6961</td>
+      <td>7.0064</td>
+      <td>-1.5217</td>
+      <td>-1.3726</td>
+      <td>-7.3724</td>
+      <td>5.7895</td>
+      <td>...</td>
+      <td>-2.919</td>
+      <td>4.4964</td>
+      <td>-0.8281</td>
+      <td>2.8736</td>
+      <td>-0.3749</td>
+      <td>-4.0799</td>
+      <td>0.6709</td>
+      <td>-1.4423</td>
+      <td>-0.7958</td>
+      <td>-2.6552</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 51 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data for all days between New Years Day and June first in the year 2000</span>
+<span class="n">df_returns50</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;01/2003&quot;</span><span class="p">:</span><span class="s2">&quot;06/2003&quot;</span><span class="p">,</span> <span class="p">:]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CTL</th>
+      <th>T</th>
+      <th>CSCO</th>
+      <th>FCX</th>
+      <th>XL</th>
+      <th>IVZ</th>
+      <th>AMT</th>
+      <th>WHR</th>
+      <th>IR</th>
+      <th>WFT</th>
+      <th>...</th>
+      <th>SWK</th>
+      <th>DVN</th>
+      <th>TMO</th>
+      <th>PEP</th>
+      <th>LNC</th>
+      <th>EMR</th>
+      <th>MLM</th>
+      <th>CCI</th>
+      <th>NU</th>
+      <th>Market</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2003-01-01</th>
+      <td>3.233500</td>
+      <td>-8.8528</td>
+      <td>2.0611</td>
+      <td>11.8594</td>
+      <td>-2.8350</td>
+      <td>-8.3333</td>
+      <td>43.9093</td>
+      <td>-0.4787</td>
+      <td>-8.8249</td>
+      <td>-6.9371</td>
+      <td>...</td>
+      <td>-23.0191</td>
+      <td>-1.3072</td>
+      <td>-9.6919</td>
+      <td>-4.1213</td>
+      <td>3.182400</td>
+      <td>-7.708899</td>
+      <td>-4.7619</td>
+      <td>5.3333</td>
+      <td>-5.4054</td>
+      <td>-2.3392</td>
+    </tr>
+    <tr>
+      <th>2003-02-01</th>
+      <td>-9.660399</td>
+      <td>-14.8936</td>
+      <td>4.5625</td>
+      <td>-9.3234</td>
+      <td>-5.4889</td>
+      <td>-18.9610</td>
+      <td>-7.6772</td>
+      <td>-4.5603</td>
+      <td>0.9170</td>
+      <td>7.7503</td>
+      <td>...</td>
+      <td>-3.0428</td>
+      <td>6.4018</td>
+      <td>-3.1370</td>
+      <td>-5.3360</td>
+      <td>-12.155000</td>
+      <td>1.134700</td>
+      <td>-5.0342</td>
+      <td>-1.7722</td>
+      <td>-1.4808</td>
+      <td>-1.5390</td>
+    </tr>
+    <tr>
+      <th>2003-03-01</th>
+      <td>0.930700</td>
+      <td>-3.5577</td>
+      <td>-7.1531</td>
+      <td>0.1763</td>
+      <td>0.4511</td>
+      <td>-2.3504</td>
+      <td>17.6972</td>
+      <td>-0.4669</td>
+      <td>-2.1800</td>
+      <td>-5.6693</td>
+      <td>...</td>
+      <td>-6.0635</td>
+      <td>0.1452</td>
+      <td>2.8409</td>
+      <td>4.7756</td>
+      <td>-1.164800</td>
+      <td>-3.654100</td>
+      <td>0.1088</td>
+      <td>41.7526</td>
+      <td>-0.5714</td>
+      <td>1.0325</td>
+    </tr>
+    <tr>
+      <th>2003-04-01</th>
+      <td>6.702900</td>
+      <td>18.1082</td>
+      <td>15.5624</td>
+      <td>2.0528</td>
+      <td>16.2758</td>
+      <td>24.0886</td>
+      <td>20.2899</td>
+      <td>9.0965</td>
+      <td>14.2265</td>
+      <td>6.5131</td>
+      <td>...</td>
+      <td>0.1667</td>
+      <td>-1.9079</td>
+      <td>0.3867</td>
+      <td>8.2000</td>
+      <td>15.339300</td>
+      <td>11.797100</td>
+      <td>7.0989</td>
+      <td>15.8182</td>
+      <td>7.1839</td>
+      <td>8.2762</td>
+    </tr>
+    <tr>
+      <th>2003-05-01</th>
+      <td>14.329400</td>
+      <td>8.9897</td>
+      <td>9.4000</td>
+      <td>26.8053</td>
+      <td>5.7716</td>
+      <td>11.4311</td>
+      <td>34.9398</td>
+      <td>7.0107</td>
+      <td>-0.2496</td>
+      <td>12.7268</td>
+      <td>...</td>
+      <td>17.4157</td>
+      <td>10.0529</td>
+      <td>16.1255</td>
+      <td>2.1257</td>
+      <td>8.886101</td>
+      <td>3.930000</td>
+      <td>16.3003</td>
+      <td>30.7692</td>
+      <td>9.2326</td>
+      <td>6.3471</td>
+    </tr>
+    <tr>
+      <th>2003-06-01</th>
+      <td>3.668000</td>
+      <td>0.3535</td>
+      <td>2.3157</td>
+      <td>11.6173</td>
+      <td>-4.1011</td>
+      <td>12.9241</td>
+      <td>-1.2277</td>
+      <td>11.9508</td>
+      <td>8.0365</td>
+      <td>-7.6075</td>
+      <td>...</td>
+      <td>-1.2875</td>
+      <td>2.6923</td>
+      <td>-0.3791</td>
+      <td>1.0407</td>
+      <td>2.385100</td>
+      <td>-2.294500</td>
+      <td>-1.7539</td>
+      <td>-6.7227</td>
+      <td>3.5891</td>
+      <td>1.6336</td>
+    </tr>
+  </tbody>
+</table>
+<p>6 rows × 51 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="dataframe-aggregations">
+<h3><span class="section-number">3.4.2.8. </span>DataFrame Aggregations<a class="headerlink" href="#dataframe-aggregations" title="Link to this heading">#</a></h3>
+<p>Let’s talk about <em>aggregations</em>.</p>
+<p>Loosely speaking, an aggregation is an operation that combines multiple
+values into a single value.</p>
+<p>For example, computing the mean of three numbers (for example
+<code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></code>) returns a single number (1).</p>
+<p>We will use aggregations extensively as we analyze and manipulate our data.</p>
+<p>Thankfully, pandas makes this easy!</p>
+<section id="built-in-aggregations">
+<h4><span class="section-number">3.4.2.8.1. </span>Built-in Aggregations<a class="headerlink" href="#built-in-aggregations" title="Link to this heading">#</a></h4>
+<p>pandas already has some of the most frequently used aggregations.</p>
+<p>For example:</p>
+<ul class="simple">
+<li><p>Mean  (<code class="docutils literal notranslate"><span class="pre">mean</span></code>)</p></li>
+<li><p>Variance (<code class="docutils literal notranslate"><span class="pre">var</span></code>)</p></li>
+<li><p>Standard deviation (<code class="docutils literal notranslate"><span class="pre">std</span></code>)</p></li>
+<li><p>Minimum (<code class="docutils literal notranslate"><span class="pre">min</span></code>)</p></li>
+<li><p>Median (<code class="docutils literal notranslate"><span class="pre">median</span></code>)</p></li>
+<li><p>Maximum (<code class="docutils literal notranslate"><span class="pre">max</span></code>)</p></li>
+<li><p>etc…</p></li>
+</ul>
+<blockquote>
+<div><p><strong>Note</strong></p>
+<p>When looking for common operations, using “tab completion” goes a long way.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_returns50</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CTL       0.543043
+T         0.420712
+CSCO      0.272205
+FCX       1.562149
+XL        0.795499
+IVZ       1.184839
+AMT       1.819912
+WHR       1.448373
+IR        1.238221
+WFT       1.072977
+YUM       1.521299
+CVS       1.248207
+GD        1.351494
+TYC       0.860400
+EL        1.022905
+MUR       1.307606
+CTAS      0.873001
+CBSA      0.839838
+SNV       0.333623
+CAM       1.294745
+DLTR      1.551786
+CAH       1.056583
+DTE       1.100076
+SSP       1.682069
+PSA       1.685901
+EXC       0.931623
+TKR       1.400294
+CMA       0.592855
+ORCL      0.836469
+MS        0.489803
+RSG       1.215401
+ACAS      1.536324
+AGN       1.527276
+MMM       1.046845
+ETFC      0.078211
+CAR       2.628951
+MDR       1.817811
+NOV       2.050656
+PCH       0.890657
+BAX       0.921694
+JCI       1.496786
+SWK       1.201223
+DVN       1.245351
+TMO       1.574135
+PEP       0.842792
+LNC       1.240616
+EMR       0.889204
+MLM       1.019899
+CCI       1.533439
+NU        0.931297
+Market    0.487743
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p>As seen above, the aggregation’s default is to aggregate each column.</p>
+<p>However, by using the <code class="docutils literal notranslate"><span class="pre">axis</span></code> keyword argument, you can do aggregations by
+row as well.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_returns50</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+2000-01-01    -3.620535
+2000-02-01    -3.927663
+2000-03-01    13.901192
+2000-04-01     0.988890
+2000-05-01     1.003367
+                ...    
+2014-08-01     3.464653
+2014-09-01    -3.517967
+2014-10-01     1.356545
+2014-11-01     1.745494
+2014-12-01     0.175312
+Length: 180, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p>What is the finance interpretation of the time-series above?</p>
+</section>
+</section>
+<section id="transforms">
+<h3><span class="section-number">3.4.2.9. </span>Transforms<a class="headerlink" href="#transforms" title="Link to this heading">#</a></h3>
+<p>Many analytical operations do not necessarily involve an aggregation.</p>
+<p>The output of a function applied to a Series might need to be a new
+Series.</p>
+<p>Some examples:</p>
+<ul class="simple">
+<li><p>Compute the percentage change in average firm size from month to month.</p></li>
+<li><p>Calculate the cumulative sum of elements in each column.</p></li>
+</ul>
+<section id="built-in-transforms">
+<h4><span class="section-number">3.4.2.9.1. </span>Built-in Transforms<a class="headerlink" href="#built-in-transforms" title="Link to this heading">#</a></h4>
+<p>pandas comes with many transform functions including:</p>
+<ul class="simple">
+<li><p>Cumulative sum/max/min/product (<code class="docutils literal notranslate"><span class="pre">cum(sum|min|max|prod)</span></code>)</p></li>
+<li><p>Difference  (<code class="docutils literal notranslate"><span class="pre">diff</span></code>)</p></li>
+<li><p>Elementwise addition/subtraction/multiplication/division (<code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">/</span></code>)</p></li>
+<li><p>Percent change (<code class="docutils literal notranslate"><span class="pre">pct_change</span></code>)</p></li>
+<li><p>Number of occurrences of each distinct value (<code class="docutils literal notranslate"><span class="pre">value_counts</span></code>)</p></li>
+<li><p>Absolute value (<code class="docutils literal notranslate"><span class="pre">abs</span></code>)</p></li>
+</ul>
+<p>Again, tab completion is helpful when trying to find these functions.</p>
+<p>How do I compute the cumulative return of an equal weighted portfolio of these stocks?</p>
+</section>
+</section>
+<section id="boolean-selection">
+<h3><span class="section-number">3.4.2.10. </span>Boolean Selection<a class="headerlink" href="#boolean-selection" title="Link to this heading">#</a></h3>
+<p>We have seen how we can select subsets of data by referring to the index
+or column names.</p>
+<p>However, we often want to select based on conditions met by
+the data itself.</p>
+<p>Some examples are:</p>
+<ul class="simple">
+<li><p>Restrict analysis to all individuals older than 18.</p></li>
+<li><p>Look at data that corresponds to particular time periods.</p></li>
+<li><p>Analyze only data that corresponds to a recession.</p></li>
+<li><p>Obtain data for a specific product or customer ID.</p></li>
+</ul>
+<p>We will be able to do this by using a Series or list of boolean values
+to index into a Series or DataFrame.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#lets find all dates that the CVS stock has a monthly return lower than -10%</span>
+
+<span class="n">df_returns50</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_returns50</span><span class="p">[</span><span class="s2">&quot;CVS&quot;</span><span class="p">]</span><span class="o">&lt;-</span><span class="mi">10</span><span class="p">,</span><span class="s2">&quot;CVS&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+2000-01-01   -12.2382
+2001-06-01   -29.6904
+2001-10-01   -27.8389
+2002-09-01   -13.7462
+2005-10-01   -15.7316
+2009-11-01   -12.1530
+2010-06-01   -15.3335
+2010-08-01   -12.0886
+Name: CVS, dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<p>Suppose I want to see how another stock, say CSCO, performed in these dates.</p>
+<p>What do I do?</p>
+<p>What is happening behind the scenes is boolean selection</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_returns50</span><span class="p">[</span><span class="s2">&quot;CVS&quot;</span><span class="p">]</span><span class="o">&lt;-</span><span class="mi">10</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>date
+2000-01-01     True
+2000-02-01    False
+2000-03-01    False
+2000-04-01    False
+2000-05-01    False
+              ...  
+2014-08-01    False
+2014-09-01    False
+2014-10-01    False
+2014-11-01    False
+2014-12-01    False
+Name: CVS, Length: 180, dtype: bool
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/essentials"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="numpy.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">3.3. </span>Introduction to Numpy</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="pandas/the_index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">3.4.3. </span>The Index</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">3.4.1. Introduction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#series">3.4.1.1. Series</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-can-we-do-with-a-series-object">3.4.1.1.1. What Can We Do with a Series object?</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-plotting">3.4.1.2. Basic Plotting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing">3.4.1.3. Indexing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataframe">3.4.1.4. DataFrame</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#head-and-tail">3.4.1.4.1. <code class="docutils literal notranslate"><span class="pre">.head</span></code> and <code class="docutils literal notranslate"><span class="pre">.tail</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting">3.4.1.5. Plotting</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.4.2. Indexing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computations-with-columns">3.4.2.1. Computations with Columns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-types">3.4.2.2. Data Types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changing-dataframes">3.4.2.3. Changing DataFrames</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-new-columns">3.4.2.4. Creating New Columns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changing-values">3.4.2.5. Changing Values</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#renaming-columns">3.4.2.6. Renaming Columns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dates-in-pandas">3.4.2.7. Dates in pandas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataframe-aggregations">3.4.2.8. DataFrame Aggregations</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-aggregations">3.4.2.8.1. Built-in Aggregations</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transforms">3.4.2.9. Transforms</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-transforms">3.4.2.9.1. Built-in Transforms</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boolean-selection">3.4.2.10. Boolean Selection</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

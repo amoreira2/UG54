@@ -1,0 +1,1723 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>9.2. 📈 Volatility Timing: Boosting Sharpe Ratios! 🚀 &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/Volatilitytiming';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/Fin418/chapters/Finance/Volatilitytiming.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="10. Cross-Sectional Trading strategies" href="crosssectionalequitystrategies.html" />
+    <link rel="prev" title="9.1. Expected Return Timing" href="MarketTiming.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="IntrotoReturns.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency.html">4.5. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI.html">4.6. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModels.html">5. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="PortfolioMath.html">6. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1.html">6.12. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationI.html">7. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModelEstimation.html">8. Factor Model Estimation</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="Timing.html">9. Timing Strategies</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming.html">9.1. Expected Returns Timing</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">9.2. 📈 Volatility Timing: Boosting Sharpe Ratios! 🚀</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="crosssectionalequitystrategies.html">10. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">10.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">10.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">11. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance_evaluation.html">12. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MachineLearning.html">13. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels.html">14. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">14.6. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="RiskManagement.html">15. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TradingCosts.html">16. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LeverageandShorting.html">17. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GenAIandLLMsinFinance.html">18. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">19. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">20. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">20.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment2.html">20.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment3.html">20.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment4.html">20.6. Assignment 4</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/Fin418/blob/main/chapters/Finance/Volatilitytiming.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/Volatilitytiming.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/Volatilitytiming.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>📈 Volatility Timing: Boosting Sharpe Ratios! 🚀</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">9.2. 📈 Volatility Timing: Boosting Sharpe Ratios! 🚀</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#volatility-timing">9.3. 📊 Volatility Timing 📊</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-functions">9.3.1. 📚 Libraries and Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#volatility-timing-the-market-portfolio">9.3.2. Volatility Timing the Market Portfolio 💼</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-monthly-realized-variance-from-daily-data">9.3.3. Constructing monthly realized variance from daily data 🗓️</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">9.3.4. Intuition 🤔</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">9.3.5. From signal to weights 🚦</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#weights-can-be-extreme">9.3.6. Weights can be extreme!</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-strategy-returns">9.3.7. Construct strategy returns 📈</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-in-a-function">9.3.8. Wrapping in a function 📦</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-try">9.3.9. Things to try ✨</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.3.10. 📝 Key Takeaways</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="volatility-timing-boosting-sharpe-ratios">
+<h1><span class="section-number">9.2. </span>📈 Volatility Timing: Boosting Sharpe Ratios! 🚀<a class="headerlink" href="#volatility-timing-boosting-sharpe-ratios" title="Link to this heading">#</a></h1>
+<p>Welcome to this notebook on Volatility Timing! 👋</p>
+<p>We’ll explore how to potentially improve investment performance by adjusting portfolio risk based on market volatility. Get ready to dive into the world of dynamic asset allocation! 📊</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="volatility-timing">
+<h1><span class="section-number">9.3. </span>📊 Volatility Timing 📊<a class="headerlink" href="#volatility-timing" title="Link to this heading">#</a></h1>
+<p>Recall our earlier formula</p>
+<div class="math notranslate nohighlight">
+\[x_t=\frac{E_t[r_{t+1}-r^f_{t+1}]}{\gamma Var_t(r_{t+1})}\]</div>
+<p>Before we had <span class="math notranslate nohighlight">\(x_t=\frac{E_t[r_{t+1}-r^f_{t+1}]}{\gamma Var(r_{t+1})}\)</span></p>
+<p>Now we will look at the other extreme <span class="math notranslate nohighlight">\(x_t=\frac{E[r_{t+1}-r^f_{t+1}]}{\gamma Var_t(r_{t+1})}\)</span></p>
+<p>(note the subscripts!!! 👀)</p>
+<blockquote>
+<div><p>The crucial necessary condition for this to work is that when variance goes up expected returns go up less than proportionally.</p>
+</div></blockquote>
+<p>Say <span class="math notranslate nohighlight">\(E_t[r_{t+1}-r^f_{t+1}]=a+b Var_t(r_{t+1})\)</span></p>
+<p>It follows that</p>
+<div class="math notranslate nohighlight">
+\[x_t=\frac{E_t[r_{t+1}-r^f_{t+1}]}{\gamma Var_t(r_{t+1})}=\frac{a+b Var_t(r_{t+1})}{\gamma Var_t(r_{t+1})}=\frac{a}{\gamma Var_t(r_{t+1})}+\frac{b }{\gamma}\]</div>
+<p>So in general you want to combine the buy and hold portfolio (<span class="math notranslate nohighlight">\(\frac{b }{\gamma}\)</span> is constant with the Variance-managed portfolio <span class="math notranslate nohighlight">\(\frac{a}{\gamma Var_t(r_{t+1})}\)</span></p>
+<ul class="simple">
+<li><p>If a=0, i.e. expected returns exactly proportional to variance, you get that the optimal is to not trade on variance–but then variance must predict returns really strongly! 💪</p></li>
+<li><p>If b=0, you have the other extreme where it is optimal to do the variance-timing 🎯</p></li>
+<li><p>This is key. Might or might not be true depending on asset/strategy. 🤔</p></li>
+<li><p>But tends to be true for many factors/trading strategies. ✅</p></li>
+<li><p>This only works if the alpha/premium is positive to begin with. 📈</p></li>
+<li><p>If Sharpe ratio is zero, you can’t increase it by managing risk! 🚫</p></li>
+</ul>
+<section id="libraries-and-functions">
+<h2><span class="section-number">9.3.1. </span>📚 Libraries and Functions<a class="headerlink" href="#libraries-and-functions" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">DataReader</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span><span class="n">freq</span><span class="o">=</span><span class="s1">&#39;daily&#39;</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
+        <span class="n">freq_label</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">freq_label</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="n">freq</span>
+
+
+    <span class="k">if</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;CAPM&#39;</span><span class="p">:</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span>
+    <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF3&#39;</span><span class="p">:</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+    <span class="k">elif</span> <span class="n">factors</span><span class="o">==</span><span class="s1">&#39;FF5&#39;</span><span class="p">:</span>
+
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_Factors&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data</span> <span class="o">=</span> <span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">daily_data</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+        <span class="n">fama_french2</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">daily_data2</span> <span class="o">=</span> <span class="n">fama_french2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">df_factor2</span> <span class="o">=</span> <span class="n">daily_data2</span><span class="p">[[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]]</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factor2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+        <span class="n">fama_french</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;F-F_Momentum_Factor&quot;</span><span class="o">+</span><span class="n">freq_label</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span><span class="o">=</span><span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">fama_french</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">,</span><span class="s1">&#39;MOM&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">freq</span><span class="o">==</span><span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+
+
+    <span class="k">return</span> <span class="n">df_factor</span><span class="o">/</span><span class="mi">100</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="volatility-timing-the-market-portfolio">
+<h2><span class="section-number">9.3.2. </span>Volatility Timing the Market Portfolio 💼<a class="headerlink" href="#volatility-timing-the-market-portfolio" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>ALAN MOREIRA, TYLER MUIR, Volatility-Managed Portfolios, Journal of Finance, August 2017
+<a class="reference external" href="https://doi.org/10.1111/jofi.12513">https://doi.org/10.1111/jofi.12513</a></p>
+<p>Show that this logic works for the market and many other factors. 📊</p>
+<p>Since then a huge literature has emerged showing that volatility managing is a great way to boost Sharpe Ratios ✨</p>
+</div></blockquote>
+<p>The construct portfolios</p>
+<div class="math notranslate nohighlight">
+\[x_t=c\frac{E[r^e_{t+1}]}{Var_t(r^e_{t+1})}\]</div>
+<p>The key is to construct a good measure for <span class="math notranslate nohighlight">\( Var_t(r^e_{t+1})\)</span></p>
+<ul>
+<li><p>We will do something simple and use past vol as a proxy for future vol. 🕰️</p></li>
+<li><p>Of course whether is a good proxy or not depends of how it plays out in the data. 📉📈</p></li>
+<li><p>But we already saw that for the market past vol dos a really good job. 👍</p></li>
+<li><p>Using daily data for month t, construct the market return “realized variance” during month t like we did in our estimation sample lecture</p>
+<div class="math notranslate nohighlight">
+\[rv_t=\sum_{d \in days~ in ~month ~t}\frac{(r_d- \overline{r})^2}{N_{days}},\]</div>
+</li>
+</ul>
+<p>where <span class="math notranslate nohighlight">\(\overline{r}\)</span> is the average return within the month</p>
+<p>We will need daily data to do this. 🗓️</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">()</span>
+<span class="n">df_factor</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipython-input-3148458022.py:17: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
+  fama_french = DataReader.DataReader(&quot;F-F_Research_Data_Factors&quot;+freq_label, &quot;famafrench&quot;,start=&quot;1921-01-01&quot;)
+</pre></div>
+</div>
+<div class="output text_html">
+  <div id="df-7b73c0cd-bf59-4ca5-92e3-6f9de506d1e3" class="colab-df-container">
+    <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>RF</th>
+      <th>Mkt-RF</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1926-07-01</th>
+      <td>0.00009</td>
+      <td>0.0009</td>
+    </tr>
+    <tr>
+      <th>1926-07-02</th>
+      <td>0.00009</td>
+      <td>0.0045</td>
+    </tr>
+    <tr>
+      <th>1926-07-06</th>
+      <td>0.00009</td>
+      <td>0.0017</td>
+    </tr>
+    <tr>
+      <th>1926-07-07</th>
+      <td>0.00009</td>
+      <td>0.0009</td>
+    </tr>
+    <tr>
+      <th>1926-07-08</th>
+      <td>0.00009</td>
+      <td>0.0022</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-7b73c0cd-bf59-4ca5-92e3-6f9de506d1e3')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-7b73c0cd-bf59-4ca5-92e3-6f9de506d1e3 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-7b73c0cd-bf59-4ca5-92e3-6f9de506d1e3');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    <div id="df-88415abf-ca53-4e03-885b-e982b5187a81">
+      <button class="colab-df-quickchart" onclick="quickchart('df-88415abf-ca53-4e03-885b-e982b5187a81')"
+                title="Suggest charts"
+                style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+     width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+    </g>
+</svg>
+      </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+      <script>
+        async function quickchart(key) {
+          const quickchartButtonEl =
+            document.querySelector('#' + key + ' button');
+          quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+          quickchartButtonEl.classList.add('colab-df-spinner');
+          try {
+            const charts = await google.colab.kernel.invokeFunction(
+                'suggestCharts', [key], {});
+          } catch (error) {
+            console.error('Error during call to suggestCharts:', error);
+          }
+          quickchartButtonEl.classList.remove('colab-df-spinner');
+          quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+        }
+        (() => {
+          let quickchartButtonEl =
+            document.querySelector('#df-88415abf-ca53-4e03-885b-e982b5187a81 button');
+          quickchartButtonEl.style.display =
+            google.colab.kernel.accessAllowed ? 'block' : 'none';
+        })();
+      </script>
+    </div>
+
+    </div>
+  </div>
+</div></div>
+</div>
+</section>
+<section id="constructing-monthly-realized-variance-from-daily-data">
+<h2><span class="section-number">9.3.3. </span>Constructing monthly realized variance from daily data 🗓️<a class="headerlink" href="#constructing-monthly-realized-variance-from-daily-data" title="Link to this heading">#</a></h2>
+<p>You basically use pandas time series function that shifts all dates to the end of the month, so this way you are technically grouping by the end of the month day. We did this before! 😉</p>
+<p>We then will do the same with our daily returns to get monthly returns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">RV</span><span class="o">=</span><span class="n">df_factor</span><span class="p">[[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="o">+</span><span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">var</span><span class="p">()</span><span class="o">*</span><span class="mi">252</span>
+
+<span class="n">RV</span><span class="o">=</span><span class="n">RV</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">:</span><span class="s1">&#39;RV&#39;</span><span class="p">})</span>
+
+<span class="c1"># aggregate daily returns to monthly returns</span>
+<span class="n">Ret</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">df_factor</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="o">+</span><span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span>
+<span class="c1"># Merge Ret (monthly return) with RV (realized variance and weights)</span>
+<span class="n">df</span><span class="o">=</span><span class="n">RV</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">Ret</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># construct excess returns</span>
+
+<span class="c1"># lag RV by one month</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;RV_lag&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;RV&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>RV</th>
+      <td>0.028825</td>
+    </tr>
+    <tr>
+      <th>RF</th>
+      <td>0.002691</td>
+    </tr>
+    <tr>
+      <th>Mkt-RF</th>
+      <td>0.006896</td>
+    </tr>
+    <tr>
+      <th>RV_lag</th>
+      <td>0.028841</td>
+    </tr>
+  </tbody>
+</table>
+</div><br><label><b>dtype:</b> float64</label></div></div>
+</div>
+</section>
+<section id="intuition">
+<h2><span class="section-number">9.3.4. </span>Intuition 🤔<a class="headerlink" href="#intuition" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Before build the strategy it is useful to see WHY it works. 🤔</p></li>
+<li><p>For Vol timing to payoff we need that:</p>
+<ul>
+<li><p>when vol goes up the risk-return trade-off goes down. 📉</p></li>
+<li><p>When vol goes dow the risk-return trade-off goes up. 📈</p></li>
+</ul>
+</li>
+</ul>
+<div class="math notranslate nohighlight">
+\[Cov(RV_t,\frac{r_{t+1}-r^f_{t+1}}{RV_{t+1}})&lt;0\]</div>
+<p>One way to see if that is true in the data is to sort all months by past vol in buckets. 🪣</p>
+<ul class="simple">
+<li><p>In bucket 1 go the really low vol months. 👇</p></li>
+<li><p>In bucket 5 the really high vol months. 👋</p></li>
+</ul>
+<p>We then look at how vol and returns were the month after–i.e. we group the month vol and the month return by past vol! 📊</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create quantile groups based on the RV variable</span>
+
+<span class="c1"># pd.qcut splits the &#39;RV_lag&#39; column into 5 quantile-based groups,</span>
+<span class="c1"># meaning they group the data into 5 equal-sized bins based on the values of &#39;RV_lag&#39;.</span>
+<span class="c1"># ensuring that each group has approximately the same number of observations.</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Quantile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;RV_lag&#39;</span><span class="p">],</span> <span class="n">q</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+  <div id="df-0e6074c3-986f-4ced-80be-67f538d7f6e3" class="colab-df-container">
+    <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>RV</th>
+      <th>RF</th>
+      <th>Mkt-RF</th>
+      <th>RV_lag</th>
+      <th>Quantile</th>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1926-07-31</th>
+      <td>0.005116</td>
+      <td>0.002252</td>
+      <td>0.029054</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1926-08-31</th>
+      <td>0.008827</td>
+      <td>0.002603</td>
+      <td>0.026493</td>
+      <td>0.005116</td>
+      <td>(-0.00022600000000000007, 0.00632]</td>
+    </tr>
+    <tr>
+      <th>1926-09-30</th>
+      <td>0.006117</td>
+      <td>0.002162</td>
+      <td>0.003627</td>
+      <td>0.008827</td>
+      <td>(0.00632, 0.00997]</td>
+    </tr>
+    <tr>
+      <th>1926-10-31</th>
+      <td>0.017660</td>
+      <td>0.003255</td>
+      <td>-0.032814</td>
+      <td>0.006117</td>
+      <td>(-0.00022600000000000007, 0.00632]</td>
+    </tr>
+    <tr>
+      <th>1926-11-30</th>
+      <td>0.003628</td>
+      <td>0.003125</td>
+      <td>0.025747</td>
+      <td>0.017660</td>
+      <td>(0.017, 0.0323]</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2025-02-28</th>
+      <td>0.019447</td>
+      <td>0.003235</td>
+      <td>-0.024214</td>
+      <td>0.020641</td>
+      <td>(0.017, 0.0323]</td>
+    </tr>
+    <tr>
+      <th>2025-03-31</th>
+      <td>0.047814</td>
+      <td>0.003365</td>
+      <td>-0.064063</td>
+      <td>0.019447</td>
+      <td>(0.017, 0.0323]</td>
+    </tr>
+    <tr>
+      <th>2025-04-30</th>
+      <td>0.252127</td>
+      <td>0.003576</td>
+      <td>-0.008223</td>
+      <td>0.047814</td>
+      <td>(0.0323, 0.862]</td>
+    </tr>
+    <tr>
+      <th>2025-05-31</th>
+      <td>0.029994</td>
+      <td>0.003787</td>
+      <td>0.060498</td>
+      <td>0.252127</td>
+      <td>(0.0323, 0.862]</td>
+    </tr>
+    <tr>
+      <th>2025-06-30</th>
+      <td>0.010415</td>
+      <td>0.003405</td>
+      <td>0.048595</td>
+      <td>0.029994</td>
+      <td>(0.017, 0.0323]</td>
+    </tr>
+  </tbody>
+</table>
+<p>1188 rows × 5 columns</p>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-0e6074c3-986f-4ced-80be-67f538d7f6e3')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-0e6074c3-986f-4ced-80be-67f538d7f6e3 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-0e6074c3-986f-4ced-80be-67f538d7f6e3');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    <div id="df-54dc93a3-aec7-4d41-920d-845b8cc9e486">
+      <button class="colab-df-quickchart" onclick="quickchart('df-54dc93a3-aec7-4d41-920d-845b8cc9e486')"
+                title="Suggest charts"
+                style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+     width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+    </g>
+</svg>
+      </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+      <script>
+        async function quickchart(key) {
+          const quickchartButtonEl =
+            document.querySelector('#' + key + ' button');
+          quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+          quickchartButtonEl.classList.add('colab-df-spinner');
+          try {
+            const charts = await google.colab.kernel.invokeFunction(
+                'suggestCharts', [key], {});
+          } catch (error) {
+            console.error('Error during call to suggestCharts:', error);
+          }
+          quickchartButtonEl.classList.remove('colab-df-spinner');
+          quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+        }
+        (() => {
+          let quickchartButtonEl =
+            document.querySelector('#df-54dc93a3-aec7-4d41-920d-845b8cc9e486 button');
+          quickchartButtonEl.style.display =
+            google.colab.kernel.accessAllowed ? 'block' : 'none';
+        })();
+      </script>
+    </div>
+
+  <div id="id_17928a76-cf2a-4a8e-92bf-8c7fee4b36bc">
+    <style>
+      .colab-df-generate {
+        background-color: #E8F0FE;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        fill: #1967D2;
+        height: 32px;
+        padding: 0 0 0 0;
+        width: 32px;
+      }
+
+      .colab-df-generate:hover {
+        background-color: #E2EBFA;
+        box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+        fill: #174EA6;
+      }
+
+      [theme=dark] .colab-df-generate {
+        background-color: #3B4455;
+        fill: #D2E3FC;
+      }
+
+      [theme=dark] .colab-df-generate:hover {
+        background-color: #434B5C;
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+        filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+        fill: #FFFFFF;
+      }
+    </style>
+    <button class="colab-df-generate" onclick="generateWithVariable('df')"
+            title="Generate code using this dataframe."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M7,19H8.4L18.45,9,17,7.55,7,17.6ZM5,21V16.75L18.45,3.32a2,2,0,0,1,2.83,0l1.4,1.43a1.91,1.91,0,0,1,.58,1.4,1.91,1.91,0,0,1-.58,1.4L9.25,21ZM18.45,9,17,7.55Zm-12,3A5.31,5.31,0,0,0,4.9,8.1,5.31,5.31,0,0,0,1,6.5,5.31,5.31,0,0,0,4.9,4.9,5.31,5.31,0,0,0,6.5,1,5.31,5.31,0,0,0,8.1,4.9,5.31,5.31,0,0,0,12,6.5,5.46,5.46,0,0,0,6.5,12Z"/>
+  </svg>
+    </button>
+    <script>
+      (() => {
+      const buttonEl =
+        document.querySelector('#id_17928a76-cf2a-4a8e-92bf-8c7fee4b36bc button.colab-df-generate');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      buttonEl.onclick = () => {
+        google.colab.notebook.generateWithVariable('df');
+      }
+      })();
+    </script>
+  </div>
+
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Group by quantile and calculate the mean for each column</span>
+<span class="n">quantile_means</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Quantile&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="c1"># label the index according the volatility of the highest vol month in the quantile</span>
+<span class="n">quantile_means</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">quantile_means</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">round</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">right</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+
+
+<span class="c1"># Display the mean of quantiles for each column</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">((</span><span class="n">quantile_means</span><span class="o">.</span><span class="n">RV</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Realized Variance (RV(t+1)) by RV(t) Quantile &#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Vol(t+1)&#39;</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">quantile_means</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Market Excess Return (t+1) by RV(t) Quantile&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># compute the price of risk--i.e. the ratio of the mean excess return to the mean realized variance</span>
+<span class="c1"># across the months in each quantile</span>
+<span class="c1"># importantly these are for the future months, i.e. the mean excess return  and variance for month t+1</span>
+<span class="c1"># while we used the variance for month t</span>
+<span class="n">quantile_means</span> <span class="p">[</span><span class="s1">&#39;priceofrisk&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">quantile_means</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="p">(</span><span class="n">quantile_means</span><span class="p">[</span><span class="s1">&#39;RV&#39;</span><span class="p">])</span>
+
+<span class="n">quantile_means</span><span class="o">.</span><span class="n">priceofrisk</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Price of Risk by Quantile by RV(t) Quantile&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Price of Risk&#39;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Quantile&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipython-input-3050817006.py:2: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+  quantile_means = df.groupby(&#39;Quantile&#39;).mean()
+</pre></div>
+</div>
+<img alt="../../_images/2c9056d2792ea7a6ff9311f858625b0f07778085d78b38249b098354a1238000.png" src="../../_images/2c9056d2792ea7a6ff9311f858625b0f07778085d78b38249b098354a1238000.png" />
+</div>
+</div>
+<p>We see that following months of high variance–on the right– you don’t really get higher returns 🤔</p>
+<p>if you focus on the ratio – the price of risk</p>
+<div class="math notranslate nohighlight">
+\[E[\frac{r^e_{t+1}}{RV_{t+1}(r^e)}|RV_t]\]</div>
+<p>you see that it is massively decreasing with variance 📉</p>
+<p>Average returns are not constant with previous month volatility–<strong>but are close to</strong>–</p>
+<p>so the natural strategy to exploit this pattern is to lever up when vol is low and reduce exposure when vol is high. 💪📈</p>
+</section>
+<section id="from-signal-to-weights">
+<h2><span class="section-number">9.3.5. </span>From signal to weights 🚦<a class="headerlink" href="#from-signal-to-weights" title="Link to this heading">#</a></h2>
+<p>Specifically we buy the market at the closing price of month t according to the rule:</p>
+<div class="math notranslate nohighlight">
+\[w_t=\frac{c}{rv_t},\]</div>
+<p>where <span class="math notranslate nohighlight">\(c\)</span> is some constant.</p>
+<p>If you want to be very formal you could set <span class="math notranslate nohighlight">\(c=\frac{E[r^{MKT}_{t+1}-r^f_{t+1}]}{\gamma}\)</span></p>
+<p>But this only controls you average position in the market.</p>
+<ul class="simple">
+<li><p>Hold the position for a month. 📅</p></li>
+<li><p>The returns of the strategy are given by:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[ r^{VolTiming}_{t+1}=r^f_{t+1}+\frac{c}{rv_t}(r^{MKT}_{t+1}-r^f_{t+1})\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(c\)</span> controls how levered is the strategy on average. 💪</p></li>
+<li><p>Here lets keep it simple and simply choose it so that the position on the market is 1 on average.</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[E[x_t]=E[c\frac{1}{rv_t}]=1\]</div>
+<p>implies <span class="math notranslate nohighlight">\(c=\frac{1}{E[\frac{1}{rv_t}]}\)</span></p>
+</section>
+<section id="weights-can-be-extreme">
+<h2><span class="section-number">9.3.6. </span>Weights can be extreme!<a class="headerlink" href="#weights-can-be-extreme" title="Link to this heading">#</a></h2>
+<p>You see that leverage gets really high. 📈</p>
+<p>As high as 10! 🤯</p>
+<p>You can see that in your position in the risk-free rate which exactly mirrors that 👇</p>
+<p>Product idea: How would implement this in a setting with more reasonable leverage?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">df</span><span class="o">.</span><span class="n">RV_lag</span>
+<span class="n">c</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">c</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0
+</pre></div>
+</div>
+<img alt="../../_images/9a1e603b49789ceb92eeb5f5e457f960a23ff224f605d04579156bf6b6b920d7.png" src="../../_images/9a1e603b49789ceb92eeb5f5e457f960a23ff224f605d04579156bf6b6b920d7.png" />
+</div>
+</div>
+</section>
+<section id="construct-strategy-returns">
+<h2><span class="section-number">9.3.7. </span>Construct strategy returns 📈<a class="headerlink" href="#construct-strategy-returns" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Now to construct the strategy return recall that we use the realized variance in month t to buy the market at the closing of month t and earn the return accrued in month t+1.</p></li>
+<li><p>I will call the strategy as <span class="math notranslate nohighlight">\(\textbf{VMS}\)</span> (Volatility Managed Strategy)</p></li>
+</ul>
+<hr class="docutils" />
+<p>Does it work or not? 🤔 Look at the plot and explain to me what you see and why it might work and why it might not.</p>
+<p>Anything else you want to look at? 👇</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># now construct the return of the strategy</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;VMS&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">Weight</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="p">[[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;VMS&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">logy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="wrapping-in-a-function">
+<h2><span class="section-number">9.3.8. </span>Wrapping in a function 📦<a class="headerlink" href="#wrapping-in-a-function" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Before copying and pasting this code 20 times, simply put it all together in a function. 📝</p></li>
+<li><p>As you try different things adjust the function to be more flexible. 💪
+Below is the basic vol managed strategy.</p></li>
+</ul>
+<p>It returns the time-series of the strategy returns, but you should report all the outcomes you are interest on. 📊</p>
+<p>⚡ ⏰ Question: A-C⚡</p>
+<p>Complete the code below 👇</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">volmanaged</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="n">factor</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">endofmonth</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">+</span><span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">Signal</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">endofmonth</span><span class="p">)</span><span class="o">.</span><span class="n">__</span>
+    <span class="n">Signal</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">__</span>
+    <span class="n">Signal_lag</span><span class="o">=</span><span class="n">Signal</span><span class="o">.</span><span class="n">__</span><span class="p">(</span><span class="n">__</span><span class="p">)</span>
+    <span class="n">Signal_lag</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;signal&#39;</span>
+    <span class="n">Ret</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">endofmonth</span><span class="p">)</span><span class="o">.</span><span class="n">__</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span>
+
+    <span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">__</span><span class="p">)</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">__</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Weight&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">__</span><span class="p">]</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="n">__</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_managed&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">__</span><span class="p">]</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="n">__</span><span class="p">]</span>
+    <span class="n">SR_managed</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_managed&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="o">+</span><span class="s1">&#39;_managed&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="o">*</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">SR_factor</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="n">factor</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="o">*</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">,</span><span class="n">SR_managed</span><span class="p">,</span><span class="n">SR_factor</span>
+
+
+<span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">(</span><span class="s1">&#39;FF6&#39;</span><span class="p">)</span>
+<span class="n">volmanaged</span><span class="p">(</span><span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="things-to-try">
+<h2><span class="section-number">9.3.9. </span>Things to try ✨<a class="headerlink" href="#things-to-try" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>VIX</strong>: How well iF you use the variance signal form option markets? 🤔</p></li>
+<li><p><strong>EVAR</strong>: What If we use a forecasting model to predict variance? 🧠</p></li>
+<li><p><strong>Timing Everything</strong>: How well it works if we combine an expected return signal with the volatility signal? 📈📉</p></li>
+<li><p><strong>Factors</strong>: What about the other factors? Does it work there as well? 🤔</p></li>
+<li><p><strong>Leverage caps</strong>:How well it works if we put leverage limits. How would you put leverage limits? 🛡️</p></li>
+<li><p><strong>VOL vs Variance</strong>: If expected returns are time-varying but Sharpe ratios are constant, i.e. <span class="math notranslate nohighlight">\(E[r_{t+1}-r^f_{t+1}]=k\sigma_{t}\)</span>, then the optimal allocation becomes proportion to inverse volatility <span class="math notranslate nohighlight">\(w_i=k\frac{1}{\sigma_{t}}\)</span>. In this case you would do a volatility-managed portfolio instead of a “variance-managed” portfolio.How well it works with standard deviation instead of variance? 🤔</p></li>
+</ul>
+<p>⚡ ⏰ Question: D-G⚡</p>
+<p>Adjsut the code above to impose a leverage limit 👇</p>
+</section>
+<section id="key-takeaways">
+<h2><span class="section-number">9.3.10. </span>📝 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>While predicting returns is tricky, predicting variance is much easier. ✅</p></li>
+<li><p>If variance does NOT predict returns, then we can increase risk-adjusted returns by takign more risk when variance is low and less risk when variance is high. 📈📉</p></li>
+<li><p>This idea can be applied to individual factors, but also to your entire portfolio level. 💼</p></li>
+<li><p>Pod funds are well known for aggressively de-risking when vol spikes. Why is that? Because risk does not predict returns so why risk it? 🤔</p></li>
+<li><p>Bonus question: What happens if enveryone starts following this advice? 🌐</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="MarketTiming.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">9.1. </span>Expected Return Timing</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="crosssectionalequitystrategies.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">10. </span>Cross-Sectional Trading strategies</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">9.2. 📈 Volatility Timing: Boosting Sharpe Ratios! 🚀</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#volatility-timing">9.3. 📊 Volatility Timing 📊</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-functions">9.3.1. 📚 Libraries and Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#volatility-timing-the-market-portfolio">9.3.2. Volatility Timing the Market Portfolio 💼</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-monthly-realized-variance-from-daily-data">9.3.3. Constructing monthly realized variance from daily data 🗓️</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">9.3.4. Intuition 🤔</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">9.3.5. From signal to weights 🚦</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#weights-can-be-extreme">9.3.6. Weights can be extreme!</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construct-strategy-returns">9.3.7. Construct strategy returns 📈</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrapping-in-a-function">9.3.8. Wrapping in a function 📦</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#things-to-try">9.3.9. Things to try ✨</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">9.3.10. 📝 Key Takeaways</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
