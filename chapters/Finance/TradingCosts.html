@@ -1,0 +1,1783 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>16. Trading costs and Liquidity &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/TradingCosts';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/Fin418/chapters/Finance/TradingCosts.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="17. Levering up and Shorting" href="LeverageandShorting.html" />
+    <link rel="prev" title="15. Risk Management" href="RiskManagement.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="IntrotoReturns.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency.html">4.5. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI.html">4.6. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModels.html">5. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="PortfolioMath.html">6. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1.html">6.12. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationI.html">7. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModelEstimation.html">8. Factor Model Estimation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Timing.html">9. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming.html">9.1. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming.html">9.2. 📈 Volatility Timing: Boosting Sharpe Ratios! 🚀</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="crosssectionalequitystrategies.html">10. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">10.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">10.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">11. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance_evaluation.html">12. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MachineLearning.html">13. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels.html">14. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">14.6. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="RiskManagement.html">15. Risk Management</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">16. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LeverageandShorting.html">17. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GenAIandLLMsinFinance.html">18. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">19. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">20. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">20.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment2.html">20.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment3.html">20.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment4.html">20.6. Assignment 4</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/Fin418/blob/main/chapters/Finance/TradingCosts.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/TradingCosts.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/TradingCosts.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Trading costs and Liquidity</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-shortfall">16.1. Implementation Shortfall</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#absorption-capacity">16.2. Absorption capacity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-much-do-you-actually-need-to-trade">16.3. How much do you actually need to trade?</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <p>To Be Done</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alan.moreira\AppData\Roaming\Python\Python39\site-packages\pandas\core\computation\expressions.py:21: UserWarning: Pandas requires version &#39;2.8.4&#39; or newer of &#39;numexpr&#39; (version &#39;2.8.1&#39; currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+C:\Users\alan.moreira\AppData\Roaming\Python\Python39\site-packages\pandas\core\arrays\masked.py:60: UserWarning: Pandas requires version &#39;1.3.6&#39; or newer of &#39;bottleneck&#39; (version &#39;1.3.4&#39; currently installed).
+  from pandas.core import (
+</pre></div>
+</div>
+</div>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="trading-costs-and-liquidity">
+<h1><span class="section-number">16. </span>Trading costs and Liquidity<a class="headerlink" href="#trading-costs-and-liquidity" title="Link to this heading">#</a></h1>
+<p>So we have taken prices as given and discussed quantitative allocation rules that overperform relative to a standard CAPM benchmark.</p>
+<p>An important question is whether we would be able to trade at those prices if we tried to implement the strategy.</p>
+<p>Liquidity is the ease of trading a security.</p>
+<p>This encompass many factors, all of which impose a cost on those wishing to trade.</p>
+<p>Sources of illiquidity:</p>
+<ol class="arabic simple">
+<li><p>Exogenous transactions costs = brokerage fees, order-processing costs, transaction taxes.</p></li>
+<li><p>Demand pressure = when need to sell quickly, nautral buyer not available. Whoever is available will ask to be compensated to absorb the trade</p></li>
+<li><p>Inventory risk = if can’t find a buyer will sell to a market maker who will later sell position.  But, since market maker faces future price changes, he might demand compensation for this risk</p></li>
+<li><p>Private information = concern over trading against an informed party (e.g., insider).  Need to be compensated for this risk. Private information can be about fundamentals or about future flows.</p></li>
+</ol>
+<p>Obviuosly a perfect answer to this question requires costly experimentation. It would require trading and measuring how prices change in reponse to your trading behavior.</p>
+<section id="implementation-shortfall">
+<h2><span class="section-number">16.1. </span>Implementation Shortfall<a class="headerlink" href="#implementation-shortfall" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Wish portfolio: your portfolio is trading costs were zero</p></li>
+<li><p>Performance of wish portfolio: compute returns in real time assuming you can trade at the mid</p></li>
+</ul>
+<p><strong>Shortfall=return of wish portfolio- return of real portfolio</strong></p>
+<p>(after all costs)</p>
+<p>Shortfall includes both execution costs ( the costs of trading to  get you to the wish portfolio)  and opportunity costs ( the costs of deviating from the wish portfolio )</p>
+<p>IF you trade quickly what force will increase the Shotfall ?Which will increase?</p>
+<p>How should you trade in this world?</p>
+<p>Precise answer is highly empirical</p>
+<p>But overall shape of the solution is clear</p>
+<ul class="simple">
+<li><p>Find size of tracking error that minimize shortfall</p></li>
+<li><p>IF your weights imply a tracking below the cap, don;t trade</p></li>
+<li><p>Trade whenever tracking error going above this value</p></li>
+<li><p>Trade just enough to keep tracking error at the cap</p></li>
+</ul>
+<p>Key for this trade-off is the cost of trading.</p>
+<p>Trading cost highly dependent of who is trading</p>
+<ul class="simple">
+<li><p>Why?</p></li>
+</ul>
+</section>
+<section id="absorption-capacity">
+<h2><span class="section-number">16.2. </span>Absorption capacity<a class="headerlink" href="#absorption-capacity" title="Link to this heading">#</a></h2>
+<p>The idea is to measure how much of the trading volume of each stock you would “use” to implement the strategy for a given position size</p>
+<p>Specifically:</p>
+<div class="math notranslate nohighlight">
+\[UsedVolume_{i,t}=\frac{Trading_{i,t}}{Volume_{i,t}}\]</div>
+<p>The idea is that if you trade a small share of the volume, you are likely to be able to trade at the posted prices.</p>
+<p>This graph below shows costs for Trades made by AQR</p>
+<p><img alt="Market Impact" src="../../_images/marketimpact.jpg" /></p>
+</section>
+<section id="how-much-do-you-actually-need-to-trade">
+<h2><span class="section-number">16.3. </span>How much do you actually need to trade?<a class="headerlink" href="#how-much-do-you-actually-need-to-trade" title="Link to this heading">#</a></h2>
+<p>To compute how much you need to trade you need to compare the desired weights in date <span class="math notranslate nohighlight">\(t\)</span> with the weights you have in the end of date <span class="math notranslate nohighlight">\(t+1\)</span>.</p>
+<ul class="simple">
+<li><p>Before trading, your weight in date <span class="math notranslate nohighlight">\(t+1\)</span> is</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[w_{i,t+1}(\text{before trading})= \frac{w_{i,t}^*(1+r_{i,t+1})}{(1+r_{t+1}^{strategy})}\]</div>
+<ul class="simple">
+<li><p>If the desired position in the stock is <span class="math notranslate nohighlight">\(w_{i,t+1}^*\)</span>, then
+$<span class="math notranslate nohighlight">\(
+\begin{align}
+UsedVolume_{i,t}&amp;=\frac{position \times \bigg(w_{i,t+1}^*-w_{i,t+1}(\text{before trading})\bigg)}{Volume_{i,t}} \\
+&amp;=\frac{position}{Volume_{i,t}}\left(w_{i,t+1}^*-\frac{w_{i,t}^*(1+r_{i,t+1})}{1+r_{t+1}^{strategy}}\right)
+\end{align}\)</span>$</p></li>
+<li><p><span class="math notranslate nohighlight">\(UsedVolume_{i,t}\)</span> is a stock-time specific statistic. Implementability will depend on how high this quantity is across time and across stocks– the lower the better.</p></li>
+<li><p>If it is very high (i.e., close to  1), it means that your position would require almost all volume in a particular stock. It doesn’t mean that you wouldn’t be able to trade, but likely prices would move against you (i.e., go up as you buy, do down as you sell)</p></li>
+<li><p>One very conservative way of looking at it is to look at the <strong>maximum</strong> of this statistic across stocks. This tells you the “weakest” link in your portfolio formation.</p></li>
+<li><p>The max statistic is the right one to look at if you are unwilling to deviate from your “wish portfolio”.</p></li>
+<li><p>But the “wish portfolio” does not take into account transaction costs</p></li>
+</ul>
+<blockquote>
+<div><p>How can portfolios take into account trading costs to reduce total costs substantially?</p>
+</div></blockquote>
+<blockquote>
+<div><p>Can we change the portfolios to reduce trading costs without altering them significantly?</p>
+</div></blockquote>
+<p>One simple way of looking at this is to look at the  95/75/50 percentiles of the used volume distribution.</p>
+<ul class="simple">
+<li><p>If it declines steeply it might make sense to avoid the 5% to 25% of the stocks that are least liquid in you portfolio</p></li>
+<li><p>But as you deviate from the original portfolio you will have tracking error relative to the original strategy.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">crsp</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">&#39;https://github.com/amoreira2/Fin418/blob/main/assets/data/crspm2005_2020.pkl?raw=true&#39;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas.tseries.offsets</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># change variable format to int</span>
+<span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="c1"># Line up date to be end of month </span>
+<span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># calculate market equity</span>
+<span class="c1"># why do we use absolute value of price?</span>
+<span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;prc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">*</span><span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;shrout&#39;</span><span class="p">]</span> 
+<span class="c1"># drop price and shareoustandng since we won&#39;t need it anymore</span>
+
+<span class="n">crsp</span><span class="o">=</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">,</span><span class="s1">&#39;vol&#39;</span><span class="p">,</span><span class="s1">&#39;prc&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="n">crsp</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>permno</th>
+      <th>ret</th>
+      <th>me</th>
+      <th>vol</th>
+      <th>prc</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2005-01-31</td>
+      <td>10001</td>
+      <td>-0.040580</td>
+      <td>1.717890e+04</td>
+      <td>515.0</td>
+      <td>6.620000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2005-02-28</td>
+      <td>10001</td>
+      <td>-0.045166</td>
+      <td>1.642828e+04</td>
+      <td>726.0</td>
+      <td>6.321000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2005-03-31</td>
+      <td>10001</td>
+      <td>0.124822</td>
+      <td>1.866375e+04</td>
+      <td>4107.0</td>
+      <td>7.110000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2005-04-30</td>
+      <td>10001</td>
+      <td>-0.074684</td>
+      <td>1.726987e+04</td>
+      <td>527.0</td>
+      <td>6.579000</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2005-05-31</td>
+      <td>10001</td>
+      <td>0.219030</td>
+      <td>2.105250e+04</td>
+      <td>1990.0</td>
+      <td>8.020000</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>763616</th>
+      <td>2020-08-31</td>
+      <td>93436</td>
+      <td>0.741452</td>
+      <td>4.643391e+08</td>
+      <td>4051970.0</td>
+      <td>498.320007</td>
+    </tr>
+    <tr>
+      <th>763617</th>
+      <td>2020-09-30</td>
+      <td>93436</td>
+      <td>-0.139087</td>
+      <td>4.067015e+08</td>
+      <td>17331954.0</td>
+      <td>429.010010</td>
+    </tr>
+    <tr>
+      <th>763618</th>
+      <td>2020-10-31</td>
+      <td>93436</td>
+      <td>-0.095499</td>
+      <td>3.678235e+08</td>
+      <td>8330610.0</td>
+      <td>388.040009</td>
+    </tr>
+    <tr>
+      <th>763619</th>
+      <td>2020-11-30</td>
+      <td>93436</td>
+      <td>0.462736</td>
+      <td>5.380286e+08</td>
+      <td>7811501.0</td>
+      <td>567.599976</td>
+    </tr>
+    <tr>
+      <th>763620</th>
+      <td>2020-12-31</td>
+      <td>93436</td>
+      <td>0.243252</td>
+      <td>6.689053e+08</td>
+      <td>11962716.0</td>
+      <td>705.669983</td>
+    </tr>
+  </tbody>
+</table>
+<p>763621 rows × 6 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># data=crsp_m.copy()</span>
+<span class="c1"># ngroups=10</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">momreturns_w</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ngroups</span><span class="p">):</span>
+    
+    <span class="c1"># step1. create a temporary crsp dataset</span>
+    <span class="n">_tmp_crsp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">,</span><span class="s1">&#39;vol&#39;</span><span class="p">,</span><span class="s1">&#39;prc&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+    <span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;vol&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;prc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="mf">1e6</span> <span class="c1"># in million dollars like me</span>
+
+    <span class="c1"># step 2: construct the signal</span>
+    <span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;grossret&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">_tmp_cumret</span><span class="o">=</span><span class="n">_tmp_crsp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;grossret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">_tmp_cumret</span><span class="o">=</span><span class="n">_tmp_cumret</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;grossret&#39;</span><span class="p">:</span><span class="s1">&#39;cumret&#39;</span><span class="p">})</span>
+
+    <span class="n">_tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">_tmp_crsp</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">_tmp_cumret</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;cumret&#39;</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+    <span class="c1"># merge the 12 month return signal back to the original database</span>
+    <span class="n">_tmp</span><span class="p">[</span><span class="s1">&#39;mom&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">_tmp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;cumret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># step 3: rank assets by signal</span>
+    <span class="n">mom</span><span class="o">=</span><span class="n">_tmp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span> <span class="c1"># sort by date and firm identifier </span>
+    <span class="n">mom</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mom&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">)</span><span class="c1"># drop the row if any of these variables &#39;mom&#39;,&#39;ret&#39;,&#39;me&#39; are missing</span>
+    <span class="n">mom</span><span class="p">[</span><span class="s1">&#39;mom_group&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">])[</span><span class="s1">&#39;mom&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ngroups</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
+    <span class="c1"># create `ngroups` groups each month. Assign membership accroding to the stock ranking in the distribution of trading signal </span>
+    <span class="c1"># in a given month </span>
+    <span class="c1"># transform in string the group names</span>
+    <span class="n">mom</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mom_group&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">)</span><span class="c1"># drop the row if any of &#39;mom_group&#39; is missing</span>
+    <span class="n">mom</span><span class="p">[</span><span class="s1">&#39;mom_group&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">mom</span><span class="p">[</span><span class="s1">&#39;mom_group&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;m</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">mom</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">mom</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1">#shift all the date to end of the month</span>
+    <span class="n">mom</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span> <span class="c1"># resort </span>
+
+    <span class="c1"># step 4: form portfolio weights</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wavg_wght</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">ret_name</span><span class="p">,</span> <span class="n">weight_name</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="n">ret_name</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="n">weight_name</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">group</span><span class="p">[</span><span class="s1">&#39;Wght&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">group</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;Wght&#39;</span><span class="p">]]</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="c1"># We now simply have to  use the above function to construct the portfolio</span>
+
+    <span class="c1"># the code below applies the function in each date,mom_group group,</span>
+    <span class="c1"># so it applies the function to each of these subgroups of the data set, </span>
+    <span class="c1"># so it retursn one time-series for each mom_group, as it average the returns of</span>
+    <span class="c1"># all the firms in a given group in a given date</span>
+
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">wavg_wght</span><span class="p">,</span> <span class="s1">&#39;ret&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">)</span> 
+
+    <span class="c1"># merge back</span>
+    <span class="n">weights</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span>
+    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span>
+
+    <span class="n">weights</span><span class="p">[</span><span class="s1">&#39;mom_group_lead&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mom_group</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">weights</span><span class="p">[</span><span class="s1">&#39;Wght_lead&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Wght</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">wavg_ret</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">ret_name</span><span class="p">,</span> <span class="n">weight_name</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="n">ret_name</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="n">weight_name</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">d</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="n">port_vwret</span> <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">wavg_ret</span><span class="p">,</span> <span class="s1">&#39;ret&#39;</span><span class="p">,</span><span class="s1">&#39;Wght&#39;</span><span class="p">)</span>
+    <span class="n">port_vwret</span> <span class="o">=</span> <span class="n">port_vwret</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;port_vwret&#39;</span><span class="p">})</span><span class="c1"># give a name to the new time-seires</span>
+
+
+    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">port_vwret</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span>
+
+    <span class="n">port_vwret</span><span class="o">=</span><span class="n">port_vwret</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span> <span class="c1"># set indexes</span>
+    <span class="n">port_vwret</span><span class="o">=</span><span class="n">port_vwret</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="n">level</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># unstack so we have in each column the different portfolios, and in each </span>
+    <span class="n">port_vwret</span><span class="o">=</span><span class="n">port_vwret</span><span class="o">.</span><span class="n">port_vwret</span>
+
+    <span class="k">return</span> <span class="n">port_vwret</span><span class="p">,</span> <span class="n">weights</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">port_ret</span><span class="p">,</span> <span class="n">wght</span><span class="o">=</span><span class="n">momreturns_w</span><span class="p">(</span><span class="n">crsp</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alan.moreira\AppData\Local\Temp\ipykernel_1440\3351365901.py:48: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  weights = mom.groupby([&#39;date&#39;,&#39;mom_group&#39;]).apply(wavg_wght, &#39;ret&#39;,&#39;me&#39;)
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
+<span class="nn">Input In [4],</span> in <span class="ni">&lt;cell line: 1&gt;</span><span class="nt">()</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">port_ret</span><span class="p">,</span> <span class="n">wght</span><span class="o">=</span><span class="n">momreturns_w</span><span class="p">(</span><span class="n">crsp</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="nn">Input In [3],</span> in <span class="ni">momreturns_w</span><span class="nt">(data, ngroups)</span>
+<span class="g g-Whitespace">     </span><span class="mi">48</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">wavg_wght</span><span class="p">,</span> <span class="s1">&#39;ret&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">)</span> 
+<span class="g g-Whitespace">     </span><span class="mi">50</span> <span class="c1"># merge back</span>
+<span class="ne">---&gt; </span><span class="mi">51</span> <span class="n">weights</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span>
+<span class="g g-Whitespace">     </span><span class="mi">52</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span>
+<span class="g g-Whitespace">     </span><span class="mi">54</span> <span class="n">weights</span><span class="p">[</span><span class="s1">&#39;mom_group_lead&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mom_group</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nn">File ~\AppData\Roaming\Python\Python39\site-packages\pandas\core\frame.py:10819,</span> in <span class="ni">DataFrame.merge</span><span class="nt">(self, right, how, on, left_on, right_on, left_index, right_index, sort, suffixes, copy, indicator, validate)</span>
+<span class="g g-Whitespace">  </span><span class="mi">10800</span> <span class="nd">@Substitution</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">  </span><span class="mi">10801</span> <span class="nd">@Appender</span><span class="p">(</span><span class="n">_merge_doc</span><span class="p">,</span> <span class="n">indents</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="g g-Whitespace">  </span><span class="mi">10802</span> <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">  </span><span class="mi">10815</span>     <span class="n">validate</span><span class="p">:</span> <span class="n">MergeValidate</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10816</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="g g-Whitespace">  </span><span class="mi">10817</span>     <span class="kn">from</span><span class="w"> </span><span class="nn">pandas.core.reshape.merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">merge</span>
+<span class="ne">&gt; </span><span class="mi">10819</span>     <span class="k">return</span> <span class="n">merge</span><span class="p">(</span>
+<span class="g g-Whitespace">  </span><span class="mi">10820</span>         <span class="bp">self</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10821</span>         <span class="n">right</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10822</span>         <span class="n">how</span><span class="o">=</span><span class="n">how</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10823</span>         <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10824</span>         <span class="n">left_on</span><span class="o">=</span><span class="n">left_on</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10825</span>         <span class="n">right_on</span><span class="o">=</span><span class="n">right_on</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10826</span>         <span class="n">left_index</span><span class="o">=</span><span class="n">left_index</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10827</span>         <span class="n">right_index</span><span class="o">=</span><span class="n">right_index</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10828</span>         <span class="n">sort</span><span class="o">=</span><span class="n">sort</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10829</span>         <span class="n">suffixes</span><span class="o">=</span><span class="n">suffixes</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10830</span>         <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10831</span>         <span class="n">indicator</span><span class="o">=</span><span class="n">indicator</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10832</span>         <span class="n">validate</span><span class="o">=</span><span class="n">validate</span><span class="p">,</span>
+<span class="g g-Whitespace">  </span><span class="mi">10833</span>     <span class="p">)</span>
+
+<span class="nn">File ~\AppData\Roaming\Python\Python39\site-packages\pandas\core\reshape\merge.py:170,</span> in <span class="ni">merge</span><span class="nt">(left, right, how, on, left_on, right_on, left_index, right_index, sort, suffixes, copy, indicator, validate)</span>
+<span class="g g-Whitespace">    </span><span class="mi">155</span>     <span class="k">return</span> <span class="n">_cross_merge</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">156</span>         <span class="n">left_df</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">157</span>         <span class="n">right_df</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">167</span>         <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">168</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">169</span> <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">170</span>     <span class="n">op</span> <span class="o">=</span> <span class="n">_MergeOperation</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">171</span>         <span class="n">left_df</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">172</span>         <span class="n">right_df</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">173</span>         <span class="n">how</span><span class="o">=</span><span class="n">how</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">174</span>         <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">175</span>         <span class="n">left_on</span><span class="o">=</span><span class="n">left_on</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">176</span>         <span class="n">right_on</span><span class="o">=</span><span class="n">right_on</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">177</span>         <span class="n">left_index</span><span class="o">=</span><span class="n">left_index</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">178</span>         <span class="n">right_index</span><span class="o">=</span><span class="n">right_index</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">179</span>         <span class="n">sort</span><span class="o">=</span><span class="n">sort</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">180</span>         <span class="n">suffixes</span><span class="o">=</span><span class="n">suffixes</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">181</span>         <span class="n">indicator</span><span class="o">=</span><span class="n">indicator</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">182</span>         <span class="n">validate</span><span class="o">=</span><span class="n">validate</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">183</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">184</span>     <span class="k">return</span> <span class="n">op</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+<span class="nn">File ~\AppData\Roaming\Python\Python39\site-packages\pandas\core\reshape\merge.py:794,</span> in <span class="ni">_MergeOperation.__init__</span><span class="nt">(self, left, right, how, on, left_on, right_on, left_index, right_index, sort, suffixes, indicator, validate)</span>
+<span class="g g-Whitespace">    </span><span class="mi">784</span>     <span class="k">raise</span> <span class="n">MergeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">786</span> <span class="bp">self</span><span class="o">.</span><span class="n">left_on</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right_on</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_left_right_on</span><span class="p">(</span><span class="n">left_on</span><span class="p">,</span> <span class="n">right_on</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">788</span> <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">789</span>     <span class="bp">self</span><span class="o">.</span><span class="n">left_join_keys</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">790</span>     <span class="bp">self</span><span class="o">.</span><span class="n">right_join_keys</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">791</span>     <span class="bp">self</span><span class="o">.</span><span class="n">join_names</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">792</span>     <span class="n">left_drop</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">793</span>     <span class="n">right_drop</span><span class="p">,</span>
+<span class="ne">--&gt; </span><span class="mi">794</span> <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_merge_keys</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">796</span> <span class="k">if</span> <span class="n">left_drop</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">797</span>     <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">_drop_labels_or_levels</span><span class="p">(</span><span class="n">left_drop</span><span class="p">)</span>
+
+<span class="nn">File ~\AppData\Roaming\Python\Python39\site-packages\pandas\core\reshape\merge.py:1297,</span> in <span class="ni">_MergeOperation._get_merge_keys</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1295</span> <span class="n">rk</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Hashable</span><span class="p">,</span> <span class="n">rk</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1296</span> <span class="k">if</span> <span class="n">rk</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1297</span>     <span class="n">right_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">right</span><span class="o">.</span><span class="n">_get_label_or_level_values</span><span class="p">(</span><span class="n">rk</span><span class="p">))</span>
+<span class="g g-Whitespace">   </span><span class="mi">1298</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1299</span>     <span class="c1"># work-around for merge_asof(right_index=True)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1300</span>     <span class="n">right_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">right</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">_values</span><span class="p">)</span>
+
+<span class="nn">File ~\AppData\Roaming\Python\Python39\site-packages\pandas\core\generic.py:1905,</span> in <span class="ni">NDFrame._get_label_or_level_values</span><span class="nt">(self, key, axis)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1902</span> <span class="n">other_axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_AXIS_LEN</span><span class="p">)</span> <span class="k">if</span> <span class="n">ax</span> <span class="o">!=</span> <span class="n">axis</span><span class="p">]</span>
+<span class="g g-Whitespace">   </span><span class="mi">1904</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_label_reference</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">):</span>
+<span class="ne">-&gt; </span><span class="mi">1905</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_check_label_or_level_ambiguity</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1906</span>     <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xs</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">other_axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">_values</span>
+<span class="g g-Whitespace">   </span><span class="mi">1907</span> <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_level_reference</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">):</span>
+
+<span class="nn">File ~\AppData\Roaming\Python\Python39\site-packages\pandas\core\generic.py:1867,</span> in <span class="ni">NDFrame._check_label_or_level_ambiguity</span><span class="nt">(self, key, axis)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1859</span> <span class="n">label_article</span><span class="p">,</span> <span class="n">label_type</span> <span class="o">=</span> <span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1860</span>     <span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;column&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">axis_int</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="s2">&quot;an&quot;</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1861</span> <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1863</span> <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1864</span>     <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; is both </span><span class="si">{</span><span class="n">level_article</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">level_type</span><span class="si">}</span><span class="s2"> level and &quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">1865</span>     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label_article</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">label_type</span><span class="si">}</span><span class="s2"> label, which is ambiguous.&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">1866</span> <span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1867</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="ne">ValueError</span>: &#39;date&#39; is both an index level and a column label, which is ambiguous.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wght</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>permno</th>
+      <th>ret</th>
+      <th>me</th>
+      <th>vol</th>
+      <th>prc</th>
+      <th>volume</th>
+      <th>grossret</th>
+      <th>cumret</th>
+      <th>mom</th>
+      <th>mom_group</th>
+      <th>Wght</th>
+      <th>mom_group_lead</th>
+      <th>Wght_lead</th>
+      <th>port_vwret</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2006-02-28</td>
+      <td>10001</td>
+      <td>-0.010537</td>
+      <td>27522.091006</td>
+      <td>439.0</td>
+      <td>9.390</td>
+      <td>0.412221</td>
+      <td>0.989463</td>
+      <td>0.499266</td>
+      <td>0.411365</td>
+      <td>m8</td>
+      <td>0.000016</td>
+      <td>m8</td>
+      <td>0.000024</td>
+      <td>-0.003999</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2006-03-31</td>
+      <td>10001</td>
+      <td>0.170394</td>
+      <td>32222.679329</td>
+      <td>777.0</td>
+      <td>10.990</td>
+      <td>0.853923</td>
+      <td>1.170394</td>
+      <td>0.560008</td>
+      <td>0.446795</td>
+      <td>m8</td>
+      <td>0.000024</td>
+      <td>m8</td>
+      <td>0.000020</td>
+      <td>0.032930</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2006-04-30</td>
+      <td>10001</td>
+      <td>-0.094631</td>
+      <td>29173.399441</td>
+      <td>883.0</td>
+      <td>9.950</td>
+      <td>0.878585</td>
+      <td>0.905369</td>
+      <td>0.526377</td>
+      <td>0.499266</td>
+      <td>m8</td>
+      <td>0.000020</td>
+      <td>m8</td>
+      <td>0.000024</td>
+      <td>0.018943</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2006-05-31</td>
+      <td>10001</td>
+      <td>-0.010452</td>
+      <td>28633.911396</td>
+      <td>319.0</td>
+      <td>9.766</td>
+      <td>0.311535</td>
+      <td>0.989548</td>
+      <td>0.239037</td>
+      <td>0.560008</td>
+      <td>m8</td>
+      <td>0.000024</td>
+      <td>m7</td>
+      <td>0.000023</td>
+      <td>-0.046612</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2006-06-30</td>
+      <td>10001</td>
+      <td>-0.076387</td>
+      <td>26464.681343</td>
+      <td>1186.0</td>
+      <td>9.020</td>
+      <td>1.069772</td>
+      <td>0.923613</td>
+      <td>0.014145</td>
+      <td>0.526377</td>
+      <td>m7</td>
+      <td>0.000023</td>
+      <td>m6</td>
+      <td>0.000017</td>
+      <td>0.001877</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># construct dollars of each stock that need to be bought (sold) at date t+1</span>
+<span class="n">mom</span><span class="o">=</span><span class="n">wght</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">mom</span><span class="p">[</span><span class="s1">&#39;trade&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">mom</span><span class="o">.</span><span class="n">Wght_lead</span><span class="o">*</span><span class="p">(</span><span class="n">mom</span><span class="o">.</span><span class="n">mom_group</span><span class="o">==</span><span class="n">mom</span><span class="o">.</span><span class="n">mom_group_lead</span><span class="p">)</span><span class="o">-</span><span class="n">mom</span><span class="o">.</span><span class="n">Wght</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">mom</span><span class="o">.</span><span class="n">ret</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">mom</span><span class="o">.</span><span class="n">port_vwret</span><span class="p">))</span>
+<span class="n">mom</span><span class="p">[</span><span class="s1">&#39;trade_newbuys&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">mom</span><span class="o">.</span><span class="n">mom_group</span><span class="o">==</span><span class="n">mom</span><span class="o">.</span><span class="n">mom_group_lead</span><span class="p">))</span><span class="o">*</span><span class="n">mom</span><span class="o">.</span><span class="n">Wght_lead</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># per dollar of position how much do you have to trade every month?</span>
+<span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">trade</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;m9&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group_lead&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">trade_newbuys</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;m9&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;date&#39;&gt;
+</pre></div>
+</div>
+<img alt="../../_images/820a90bd4e5d5c26e452b2c6a9f3b47df93ea9c10845dc6f489654c0faee41bb.png" src="../../_images/820a90bd4e5d5c26e452b2c6a9f3b47df93ea9c10845dc6f489654c0faee41bb.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">total_trade</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">trade</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;m9&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group_lead&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">trade_newbuys</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;m9&#39;</span><span class="p">]</span>
+
+<span class="n">total_trade</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;date&#39;&gt;
+</pre></div>
+</div>
+<img alt="../../_images/0fc01592bd42af527538910d3d211f4e0b66cf9eda40ce883efb1c8a1b570ad8.png" src="../../_images/0fc01592bd42af527538910d3d211f4e0b66cf9eda40ce883efb1c8a1b570ad8.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># lets look at the most illiquid stocks, the stocks that I will likely have most trouble trading</span>
+<span class="c1"># lets start by normalizing the amount of trade per stock volume</span>
+
+<span class="n">mom</span><span class="p">[</span><span class="s1">&#39;tradepervol&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">trade</span><span class="o">/</span><span class="n">mom</span><span class="o">.</span><span class="n">volume</span>
+
+<span class="n">mom</span><span class="p">[</span><span class="s1">&#39;trade_newbuyspervol&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">trade_newbuys</span><span class="o">/</span><span class="n">mom</span><span class="o">.</span><span class="n">volume</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this allow us to study how much of the volume of each stock I will be &quot;using&quot;</span>
+<span class="c1"># lets choose a position size, here in millions of dollars , because that is the normalization we used for the volume data</span>
+<span class="n">Position</span><span class="o">=</span><span class="mf">1e3</span> <span class="c1">#(1e3 means one billion dollars)</span>
+<span class="n">threshold</span><span class="o">=</span><span class="mf">0.05</span>
+<span class="p">(</span><span class="n">Position</span><span class="o">*</span><span class="p">(</span><span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">tradepervol</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;m9&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="p">(</span><span class="n">Position</span><span class="o">*</span><span class="p">(</span><span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">tradepervol</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;m9&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="p">(</span><span class="n">Position</span><span class="o">*</span><span class="p">(</span><span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">trade_newbuyspervol</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;m9&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;date&#39;&gt;
+</pre></div>
+</div>
+<img alt="../../_images/29c4388dcf8bffe31d1dc363e10627a075368678e19886d8e86b9fb54d235708.png" src="../../_images/29c4388dcf8bffe31d1dc363e10627a075368678e19886d8e86b9fb54d235708.png" />
+</div>
+</div>
+<p><strong>Tracking error</strong></p>
+<p>Let $<span class="math notranslate nohighlight">\(W^{wishportfolio}_t\)</span><span class="math notranslate nohighlight">\( and \)</span><span class="math notranslate nohighlight">\(W^{Implementationportfolio}_t\)</span>$ weights , then consider the following regression</p>
+<div class="math notranslate nohighlight">
+\[W^{Implementationportfolio}_tR_{t+1}=\alpha+\beta W^{wishportfolio}_tR_{t+1}+\epsilon_{t+1}\]</div>
+<p>a good implementation portfolio has <span class="math notranslate nohighlight">\(\beta=1\)</span> and <span class="math notranslate nohighlight">\(\sigma(\epsilon)\)</span> and <span class="math notranslate nohighlight">\(\alpha\approx 0\)</span>.</p>
+<p>So one can think of <span class="math notranslate nohighlight">\(|\beta-1|\)</span>, <span class="math notranslate nohighlight">\(\sigma(\epsilon)\)</span> , and <span class="math notranslate nohighlight">\(\alpha\)</span> as three dimensions of tracking error.</p>
+<p>The <span class="math notranslate nohighlight">\(\beta\)</span> dimension can be more easily correted by levering up and down the tracking portoflio (of possible)</p>
+<p>The <span class="math notranslate nohighlight">\(\sigma(\epsilon)\)</span> can only be corrected by simply making the implemenetation portoflio more similar to the wish portfolio. The cost of this is not obvious. Really depends how this tracking error relates to other stuff in your portfolio.</p>
+<p><span class="math notranslate nohighlight">\(\alpha\)</span> is the important part. The actual cost that you expect to pay to deviate from the wish portfolio</p>
+<hr class="docutils" />
+<p>In the industry people typicall refer to tracking error as simply</p>
+<div class="math notranslate nohighlight">
+\[\sigma(W^{Implementationportfolio}_tR_{t+1}- W^{wishportfolio}_tR_{t+1})\]</div>
+<p>The volatility of a portfolio that goes long the implementation portfolio and shorts the wish portfolio.</p>
+<p>This mixes together <span class="math notranslate nohighlight">\(|\beta-1|\)</span>, <span class="math notranslate nohighlight">\(\sigma(\epsilon)\)</span> and completely ignores <span class="math notranslate nohighlight">\(\alpha\)</span></p>
+<p>In the end the Implementation portfolio is chosen by trading off  trading costs (market impact) and opportunity cost (tracking error).</p>
+<p>So you can simply construct strategies that avoid these 5% less liquid stocks, and see how much your tracking error increases and whether these tracking errors are worth the reduction in trading costs</p>
+<p><strong>How to construct an Implementation portfolio?</strong></p>
+<ul class="simple">
+<li><p>A simple strategy: weight by trading volume -&gt; this make sure that you use the same amount of trading volume across all your positions</p></li>
+<li><p>Harder to implement: do not buy stocks that are illiquid now or likely to be illiquid next period. Amounts to add another signal interected to the momentum signal. Only buy if illiquid signal not too strong.</p></li>
+</ul>
+<p>How to change our code to implement the volume-weighted approach?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">momreturns</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ngroups</span><span class="p">,</span><span class="n">wghtvar</span><span class="o">=</span><span class="s1">&#39;me&#39;</span><span class="p">):</span>
+    
+    <span class="c1"># step1. create a temporary crsp dataset</span>
+    <span class="n">_tmp_crsp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">,</span><span class="s1">&#39;vol&#39;</span><span class="p">,</span><span class="s1">&#39;prc&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+    <span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;vol&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;prc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="mf">1e6</span> <span class="c1"># in million dollars like me</span>
+
+    <span class="c1"># step 2: construct the signal</span>
+    <span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;grossret&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">_tmp_crsp</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+    <span class="n">_tmp_cumret</span><span class="o">=</span><span class="n">_tmp_crsp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;grossret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">_tmp_cumret</span><span class="o">=</span><span class="n">_tmp_cumret</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;grossret&#39;</span><span class="p">:</span><span class="s1">&#39;cumret&#39;</span><span class="p">})</span>
+
+    <span class="n">_tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">_tmp_crsp</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">_tmp_cumret</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;cumret&#39;</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+    <span class="c1"># merge the 12 month return signal back to the original database</span>
+    <span class="n">_tmp</span><span class="p">[</span><span class="s1">&#39;mom&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">_tmp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;cumret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># step 3: rank assets by signal</span>
+    <span class="n">mom</span><span class="o">=</span><span class="n">_tmp</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span> <span class="c1"># sort by date and firm identifier </span>
+    <span class="n">mom</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mom&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">)</span><span class="c1"># drop the row if any of these variables &#39;mom&#39;,&#39;ret&#39;,&#39;me&#39; are missing</span>
+    <span class="n">mom</span><span class="p">[</span><span class="s1">&#39;mom_group&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">])[</span><span class="s1">&#39;mom&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ngroups</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
+    <span class="c1"># create `ngroups` groups each month. Assign membership accroding to the stock ranking in the distribution of trading signal </span>
+    <span class="c1"># in a given month </span>
+    <span class="c1"># transform in string the group names</span>
+    <span class="n">mom</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mom_group&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">)</span><span class="c1"># drop the row if any of &#39;mom_group&#39; is missing</span>
+    <span class="n">mom</span><span class="p">[</span><span class="s1">&#39;mom_group&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">mom</span><span class="p">[</span><span class="s1">&#39;mom_group&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;m</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">mom</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">mom</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1">#shift all the date to end of the month</span>
+    <span class="n">mom</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span> <span class="c1"># resort </span>
+
+    <span class="c1"># step 4: form portfolio weights</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wavg_wght</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">ret_name</span><span class="p">,</span> <span class="n">weight_name</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="n">ret_name</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="n">weight_name</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">group</span><span class="p">[</span><span class="s1">&#39;Wght&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">group</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;Wght&#39;</span><span class="p">]]</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="c1"># We now simply have to  use the above function to construct the portfolio</span>
+
+    <span class="c1"># the code below applies the function in each date,mom_group group,</span>
+    <span class="c1"># so it applies the function to each of these subgroups of the data set, </span>
+    <span class="c1"># so it retursn one time-series for each mom_group, as it average the returns of</span>
+    <span class="c1"># all the firms in a given group in a given date</span>
+
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">mom</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">wavg_wght</span><span class="p">,</span> <span class="s1">&#39;ret&#39;</span><span class="p">,</span><span class="n">wghtvar</span><span class="p">)</span> 
+
+    <span class="c1"># merge back</span>
+    <span class="n">weights</span><span class="o">=</span><span class="n">mom</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span>
+    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span>
+
+    <span class="n">weights</span><span class="p">[</span><span class="s1">&#39;mom_group_lead&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mom_group</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">weights</span><span class="p">[</span><span class="s1">&#39;Wght_lead&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">Wght</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">wavg_ret</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">ret_name</span><span class="p">,</span> <span class="n">weight_name</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="n">ret_name</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="n">weight_name</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">d</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="n">port_vwret</span> <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">wavg_ret</span><span class="p">,</span> <span class="s1">&#39;ret&#39;</span><span class="p">,</span><span class="s1">&#39;Wght&#39;</span><span class="p">)</span>
+    <span class="n">port_vwret</span> <span class="o">=</span> <span class="n">port_vwret</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;port_vwret&#39;</span><span class="p">})</span><span class="c1"># give a name to the new time-seires</span>
+
+
+    <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">port_vwret</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span>
+
+    <span class="n">port_vwret</span><span class="o">=</span><span class="n">port_vwret</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;mom_group&#39;</span><span class="p">])</span> <span class="c1"># set indexes</span>
+    <span class="n">port_vwret</span><span class="o">=</span><span class="n">port_vwret</span><span class="o">.</span><span class="n">unstack</span><span class="p">(</span><span class="n">level</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># unstack so we have in each column the different portfolios, and in each </span>
+    <span class="n">port_vwret</span><span class="o">=</span><span class="n">port_vwret</span><span class="o">.</span><span class="n">port_vwret</span>
+
+    <span class="k">return</span> <span class="n">port_vwret</span><span class="p">,</span> <span class="n">weights</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">momportfoliosme</span><span class="p">,</span><span class="n">wght</span><span class="o">=</span><span class="n">momreturns</span><span class="p">(</span><span class="n">crsp</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">wghtvar</span><span class="o">=</span><span class="s1">&#39;me&#39;</span><span class="p">)</span>
+<span class="n">momportfoliosvol</span><span class="p">,</span><span class="n">wght_vol</span><span class="o">=</span><span class="n">momreturns</span><span class="p">(</span><span class="n">crsp</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">wghtvar</span><span class="o">=</span><span class="s1">&#39;vol&#39;</span><span class="p">)</span>
+<span class="n">momportfolios</span><span class="o">=</span><span class="n">momportfoliosme</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">momportfoliosvol</span><span class="p">,</span><span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">suffixes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;_me&#39;</span><span class="p">,</span><span class="s1">&#39;_vol&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">momportfolios</span><span class="p">[[</span><span class="s1">&#39;m9_me&#39;</span><span class="p">,</span><span class="s1">&#39;m9_vol&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;AxesSubplot:xlabel=&#39;date&#39;&gt;
+</pre></div>
+</div>
+<img alt="../../_images/e6cee16b265a789af35a12657b84eef9d4df6d844e23a6827e3ec717052dc015.png" src="../../_images/e6cee16b265a789af35a12657b84eef9d4df6d844e23a6827e3ec717052dc015.png" />
+</div>
+</div>
+<p>Is this good how do you compare?</p>
+<p>Look at tracking error</p>
+<p>Don’t be fooled by the long-only performance–replciating the market is easy!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># lets look at it&#39;s tracking error</span>
+<span class="n">y</span><span class="o">=</span><span class="n">momportfolios</span><span class="p">[</span><span class="s1">&#39;m9_vol&#39;</span><span class="p">]</span>
+<span class="n">x</span><span class="o">=</span><span class="n">momportfolios</span><span class="p">[</span><span class="s1">&#39;m9_me&#39;</span><span class="p">]</span>
+<span class="n">x</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">results</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>         <td>m9_vol</td>      <th>  R-squared:         </th> <td>   0.611</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.609</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   277.7</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Wed, 01 May 2024</td> <th>  Prob (F-statistic):</th> <td>4.18e-38</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>17:39:33</td>     <th>  Log-Likelihood:    </th> <td>  242.81</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   179</td>      <th>  AIC:               </th> <td>  -481.6</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>   177</td>      <th>  BIC:               </th> <td>  -475.2</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+    <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th> <td>   -0.0050</td> <td>    0.005</td> <td>   -1.020</td> <td> 0.309</td> <td>   -0.015</td> <td>    0.005</td>
+</tr>
+<tr>
+  <th>m9_me</th> <td>    1.3036</td> <td>    0.078</td> <td>   16.664</td> <td> 0.000</td> <td>    1.149</td> <td>    1.458</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td>207.284</td> <th>  Durbin-Watson:     </th> <td>   1.986</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.000</td>  <th>  Jarque-Bera (JB):  </th> <td>8869.659</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 4.469</td>  <th>  Prob(JB):          </th> <td>    0.00</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td>36.307</td>  <th>  Cond. No.          </th> <td>    16.7</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</div></div>
+</div>
+<p>Observations:</p>
+<ul class="simple">
+<li><p>The beta difference can be adjusted by taking a smaller position on the implementation portfolio</p></li>
+<li><p>The alpha is the actual tracking error loss. How much you expect to loose.</p></li>
+<li><p>One calculation that people do is to see how much you are getting for your momentum exposure</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">momportfolios</span><span class="p">[</span><span class="s1">&#39;m9_vol&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">results</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span><span class="n">momportfolios</span><span class="p">[</span><span class="s1">&#39;m9_me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.17998714127139948, 0.2261181726535535]
+</pre></div>
+</div>
+</div>
+</div>
+<p>But be careful to not over interpret this. We are working today with a very short sample, less than 20 years, for average returns tests that is not much at all.</p>
+<p>But beta/residulas are well measured even in fairly short samples.</p>
+<p>In addition to that you also have to eat the strategy residual risk</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">results</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span><span class="n">momportfolios</span><span class="p">[</span><span class="s1">&#39;m9_me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0.06249878812223737, 0.06005053427493518]
+</pre></div>
+</div>
+</div>
+</div>
+<p>It is sizable, about the level of the original strategy volatility</p>
+<p><strong>How our implemented strategy compare with the desired strategy?</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/Fin418/main/assets/data/df_WarrenBAndCathieW_monthly.pkl&#39;</span><span class="p">)</span>
+<span class="n">Factors</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;BRK&#39;</span><span class="p">,</span><span class="s1">&#39;ARKK&#39;</span><span class="p">,</span><span class="s1">&#39;RF&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Factors</span> <span class="o">=</span> <span class="n">Factors</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">Factors</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="s1">&#39;Mom&#39;</span><span class="p">})</span>
+
+<span class="n">Factors</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mkt-RF    0.100955
+SMB       0.012654
+HML       0.011914
+RMW       0.041875
+CMA       0.012701
+Mom       0.069910
+dtype: float64
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">portfolios</span><span class="o">=</span><span class="n">momportfolios</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">Factors</span><span class="p">,</span><span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">portfolios</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>m0_me</th>
+      <th>m1_me</th>
+      <th>m2_me</th>
+      <th>m3_me</th>
+      <th>m4_me</th>
+      <th>m5_me</th>
+      <th>m6_me</th>
+      <th>m7_me</th>
+      <th>m8_me</th>
+      <th>m9_me</th>
+      <th>...</th>
+      <th>m6_vol</th>
+      <th>m7_vol</th>
+      <th>m8_vol</th>
+      <th>m9_vol</th>
+      <th>Mkt-RF</th>
+      <th>SMB</th>
+      <th>HML</th>
+      <th>RMW</th>
+      <th>CMA</th>
+      <th>Mom</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2006-02-28</th>
+      <td>-0.012354</td>
+      <td>-0.006109</td>
+      <td>0.012724</td>
+      <td>0.017131</td>
+      <td>0.012390</td>
+      <td>0.014931</td>
+      <td>0.008770</td>
+      <td>0.008683</td>
+      <td>-0.003999</td>
+      <td>-0.051872</td>
+      <td>...</td>
+      <td>0.016308</td>
+      <td>0.012868</td>
+      <td>-0.016740</td>
+      <td>-0.064788</td>
+      <td>-0.0030</td>
+      <td>-0.0042</td>
+      <td>-0.0034</td>
+      <td>-0.0051</td>
+      <td>0.0191</td>
+      <td>-0.0184</td>
+    </tr>
+    <tr>
+      <th>2006-03-31</th>
+      <td>0.043584</td>
+      <td>0.029708</td>
+      <td>0.034453</td>
+      <td>0.012203</td>
+      <td>0.013299</td>
+      <td>0.005424</td>
+      <td>0.014716</td>
+      <td>0.026616</td>
+      <td>0.032930</td>
+      <td>0.054823</td>
+      <td>...</td>
+      <td>0.023306</td>
+      <td>0.102972</td>
+      <td>0.149737</td>
+      <td>0.069339</td>
+      <td>0.0146</td>
+      <td>0.0338</td>
+      <td>0.0060</td>
+      <td>0.0006</td>
+      <td>-0.0041</td>
+      <td>0.0126</td>
+    </tr>
+    <tr>
+      <th>2006-05-31</th>
+      <td>-0.026365</td>
+      <td>-0.024219</td>
+      <td>0.001555</td>
+      <td>-0.015647</td>
+      <td>-0.030534</td>
+      <td>-0.027217</td>
+      <td>-0.032916</td>
+      <td>-0.031146</td>
+      <td>-0.046612</td>
+      <td>-0.080706</td>
+      <td>...</td>
+      <td>-0.058780</td>
+      <td>-0.056930</td>
+      <td>-0.079337</td>
+      <td>-0.107404</td>
+      <td>-0.0357</td>
+      <td>-0.0285</td>
+      <td>0.0241</td>
+      <td>0.0115</td>
+      <td>0.0146</td>
+      <td>-0.0370</td>
+    </tr>
+    <tr>
+      <th>2006-06-30</th>
+      <td>-0.029358</td>
+      <td>0.006137</td>
+      <td>-0.002789</td>
+      <td>0.002618</td>
+      <td>0.004338</td>
+      <td>0.002428</td>
+      <td>0.011803</td>
+      <td>0.001877</td>
+      <td>0.023077</td>
+      <td>-0.005062</td>
+      <td>...</td>
+      <td>-0.019315</td>
+      <td>-0.004445</td>
+      <td>0.013017</td>
+      <td>-0.067229</td>
+      <td>-0.0035</td>
+      <td>-0.0024</td>
+      <td>0.0085</td>
+      <td>0.0132</td>
+      <td>-0.0007</td>
+      <td>0.0154</td>
+    </tr>
+    <tr>
+      <th>2006-07-31</th>
+      <td>-0.058296</td>
+      <td>-0.036734</td>
+      <td>0.022658</td>
+      <td>-0.005353</td>
+      <td>0.024988</td>
+      <td>0.010822</td>
+      <td>0.005927</td>
+      <td>-0.008269</td>
+      <td>-0.022406</td>
+      <td>-0.046551</td>
+      <td>...</td>
+      <td>-0.008441</td>
+      <td>-0.033398</td>
+      <td>-0.040144</td>
+      <td>-0.102966</td>
+      <td>-0.0078</td>
+      <td>-0.0363</td>
+      <td>0.0260</td>
+      <td>0.0163</td>
+      <td>0.0090</td>
+      <td>-0.0212</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 26 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># things to look at:</span>
+
+<span class="c1">#y=portfolios[&#39;m9_me&#39;]</span>
+<span class="c1">#y=momportfolios[&#39;m9_vol&#39;]</span>
+<span class="c1">#y=momportfolios[&#39;m9_me&#39;]-momportfolios[&#39;m0_me&#39;]</span>
+
+
+<span class="n">y</span><span class="o">=</span><span class="n">portfolios</span><span class="p">[</span><span class="s1">&#39;m9_me&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">portfolios</span><span class="p">[</span><span class="s1">&#39;m0_me&#39;</span><span class="p">]</span>
+<span class="n">x</span><span class="o">=</span><span class="n">portfolios</span><span class="p">[</span><span class="s1">&#39;Mom&#39;</span><span class="p">]</span>
+<span class="n">x</span><span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">results</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>            <td>y</td>        <th>  R-squared:         </th> <td>   0.645</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.643</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   227.5</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Wed, 01 May 2024</td> <th>  Prob (F-statistic):</th> <td>6.34e-30</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>17:46:46</td>     <th>  Log-Likelihood:    </th> <td>  150.75</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>   127</td>      <th>  AIC:               </th> <td>  -297.5</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>   125</td>      <th>  BIC:               </th> <td>  -291.8</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>     <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+    <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>const</th> <td>   -0.0231</td> <td>    0.007</td> <td>   -3.504</td> <td> 0.001</td> <td>   -0.036</td> <td>   -0.010</td>
+</tr>
+<tr>
+  <th>Mom</th>   <td>    1.9579</td> <td>    0.130</td> <td>   15.085</td> <td> 0.000</td> <td>    1.701</td> <td>    2.215</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td>93.627</td> <th>  Durbin-Watson:     </th> <td>   2.091</td> 
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.000</td> <th>  Jarque-Bera (JB):  </th> <td> 691.904</td> 
+</tr>
+<tr>
+  <th>Skew:</th>          <td>-2.555</td> <th>  Prob(JB):          </th> <td>5.69e-151</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td>13.229</td> <th>  Cond. No.          </th> <td>    19.7</td> 
+</tr>
+</table><br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</div></div>
+</div>
+<p>why such a large difference even for the strategy that follows the Momentum strategy?</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="RiskManagement.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">15. </span>Risk Management</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="LeverageandShorting.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">17. </span>Levering up and Shorting</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-shortfall">16.1. Implementation Shortfall</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#absorption-capacity">16.2. Absorption capacity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-much-do-you-actually-need-to-trade">16.3. How much do you actually need to trade?</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
