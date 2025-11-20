@@ -493,12 +493,19 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#random-forest-regression">13.2. <strong>Random Forest Regression</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-boosted-regression-trees-gbrt">13.3. <strong>Gradient Boosted Regression Trees (GBRT)</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elastic-net-regression">13.4. <strong>Elastic Net Regression</strong></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#neural-network-regression">13.5. <strong>Neural Network Regression</strong></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-whole-shebang">13.5.1. The Whole Shebang</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#neural-network-regression">13.5. <strong>Neural Network Regression</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-whole-shebang">13.6. The Whole Shebang</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-up">13.7. Wrap up</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">13.8. 🧠 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-forecasted-vs-average-train-returns">13.9. Plot forecasted vs. average train returns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#subtask">13.9.1. Subtask:</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-up">13.6. Wrap up</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">13.7. 🧠 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">13.10. Summary:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-analysis-key-findings">13.10.1. Data Analysis Key Findings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#insights-or-next-steps">13.10.2. Insights or Next Steps</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -567,30 +574,30 @@ document.write(`
 <p>We will not use it today but I also reserved a test sample (2002-2016) for you to evaluate your favorite model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;../../assets/data/characteristics_raw.csv&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># url = &quot;../../assets/data/characteristics_raw.csv&quot;</span>
 
-<span class="n">df_X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-<span class="c1"># This simply shits the date to be in an end of month basis</span>
+<span class="c1"># df_X = pd.read_csv(url)</span>
+<span class="c1"># # This simply shits the date to be in an end of month basis</span>
 
 
-<span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%m/%Y&#39;</span><span class="p">)</span>
-<span class="n">df_X</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">],</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># df_X[&#39;date&#39;] = pd.to_datetime(df_X[&#39;date&#39;], format=&#39;%m/%Y&#39;)</span>
+<span class="c1"># df_X.set_index([&#39;date&#39;,&#39;permno&#39;],inplace=True)</span>
 
-<span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;1972&#39;</span><span class="p">:</span><span class="s1">&#39;1991&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_pickle</span><span class="p">(</span><span class="s1">&#39;../../assets/data/characteristics19721991.pkl&#39;</span><span class="p">)</span>
-<span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;1992&#39;</span><span class="p">:</span><span class="s1">&#39;2001&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_pickle</span><span class="p">(</span><span class="s1">&#39;../../assets/data/characteristics19922001.pkl&#39;</span><span class="p">)</span>
-<span class="n">df_X</span><span class="p">[</span><span class="s1">&#39;2002&#39;</span><span class="p">:]</span><span class="o">.</span><span class="n">to_pickle</span><span class="p">(</span><span class="s1">&#39;../../assets/data/characteristics20022016.pkl&#39;</span><span class="p">)</span>
+<span class="c1"># df_X[&#39;1972&#39;:&#39;1991&#39;].to_pickle(&#39;../../assets/data/characteristics19721991.pkl&#39;)</span>
+<span class="c1"># df_X[&#39;1992&#39;:&#39;2001&#39;].to_pickle(&#39;../../assets/data/characteristics19922001.pkl&#39;)</span>
+<span class="c1"># df_X[&#39;2002&#39;:].to_pickle(&#39;../../assets/data/characteristics20022016.pkl&#39;)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;../../assets/data/characteristics19721991.pkl&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/amoreira2/Fin418/blob/main/assets/data/characteristics19721991.pkl?raw=true&quot;</span>
 
 <span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="n">df_train</span><span class="o">=</span><span class="n">df_train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rf&#39;</span><span class="p">,</span><span class="s1">&#39;rme&#39;</span><span class="p">])</span>
 <span class="n">display</span><span class="p">(</span><span class="n">df_train</span><span class="p">)</span>
-<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;../../assets/data/characteristics19922001.pkl&quot;</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/amoreira2/Fin418/blob/main/assets/data/characteristics19922001.pkl?raw=true&quot;</span>
 <span class="n">df_tuning</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="n">df_tuning</span><span class="o">=</span><span class="n">df_tuning</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rf&#39;</span><span class="p">,</span><span class="s1">&#39;rme&#39;</span><span class="p">])</span>
 <span class="n">display</span><span class="p">(</span><span class="n">df_tuning</span><span class="p">)</span>
@@ -598,7 +605,9 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
+<div class="output text_html">
+  <div id="df-d36d031c-dd66-4aed-bfc3-69a968fda75b" class="colab-df-container">
+    <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -936,7 +945,274 @@ document.write(`
   </tbody>
 </table>
 <p>204284 rows × 30 columns</p>
-</div></div><div class="output text_html"><div>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-d36d031c-dd66-4aed-bfc3-69a968fda75b')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-d36d031c-dd66-4aed-bfc3-69a968fda75b button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-d36d031c-dd66-4aed-bfc3-69a968fda75b');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    <div id="df-2c352980-a722-44ff-b788-dc24d709481b">
+      <button class="colab-df-quickchart" onclick="quickchart('df-2c352980-a722-44ff-b788-dc24d709481b')"
+                title="Suggest charts"
+                style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+     width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+    </g>
+</svg>
+      </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+      <script>
+        async function quickchart(key) {
+          const quickchartButtonEl =
+            document.querySelector('#' + key + ' button');
+          quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+          quickchartButtonEl.classList.add('colab-df-spinner');
+          try {
+            const charts = await google.colab.kernel.invokeFunction(
+                'suggestCharts', [key], {});
+          } catch (error) {
+            console.error('Error during call to suggestCharts:', error);
+          }
+          quickchartButtonEl.classList.remove('colab-df-spinner');
+          quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+        }
+        (() => {
+          let quickchartButtonEl =
+            document.querySelector('#df-2c352980-a722-44ff-b788-dc24d709481b button');
+          quickchartButtonEl.style.display =
+            google.colab.kernel.accessAllowed ? 'block' : 'none';
+        })();
+      </script>
+    </div>
+
+  <div id="id_51bdf174-8d97-4df6-a9d0-9eeff6faf95d">
+    <style>
+      .colab-df-generate {
+        background-color: #E8F0FE;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        fill: #1967D2;
+        height: 32px;
+        padding: 0 0 0 0;
+        width: 32px;
+      }
+
+      .colab-df-generate:hover {
+        background-color: #E2EBFA;
+        box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+        fill: #174EA6;
+      }
+
+      [theme=dark] .colab-df-generate {
+        background-color: #3B4455;
+        fill: #D2E3FC;
+      }
+
+      [theme=dark] .colab-df-generate:hover {
+        background-color: #434B5C;
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+        filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+        fill: #FFFFFF;
+      }
+    </style>
+    <button class="colab-df-generate" onclick="generateWithVariable('df_train')"
+            title="Generate code using this dataframe."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M7,19H8.4L18.45,9,17,7.55,7,17.6ZM5,21V16.75L18.45,3.32a2,2,0,0,1,2.83,0l1.4,1.43a1.91,1.91,0,0,1,.58,1.4,1.91,1.91,0,0,1-.58,1.4L9.25,21ZM18.45,9,17,7.55Zm-12,3A5.31,5.31,0,0,0,4.9,8.1,5.31,5.31,0,0,0,1,6.5,5.31,5.31,0,0,0,4.9,4.9,5.31,5.31,0,0,0,6.5,1,5.31,5.31,0,0,0,8.1,4.9,5.31,5.31,0,0,0,12,6.5,5.46,5.46,0,0,0,6.5,12Z"/>
+  </svg>
+    </button>
+    <script>
+      (() => {
+      const buttonEl =
+        document.querySelector('#id_51bdf174-8d97-4df6-a9d0-9eeff6faf95d button.colab-df-generate');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      buttonEl.onclick = () => {
+        google.colab.notebook.generateWithVariable('df_train');
+      }
+      })();
+    </script>
+  </div>
+
+    </div>
+  </div>
+</div><div class="output text_html">
+  <div id="df-20ea5a71-a1fe-4497-94aa-1d84ca39db33" class="colab-df-container">
+    <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -1274,7 +1550,272 @@ document.write(`
   </tbody>
 </table>
 <p>99615 rows × 30 columns</p>
-</div></div></div>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-20ea5a71-a1fe-4497-94aa-1d84ca39db33')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-20ea5a71-a1fe-4497-94aa-1d84ca39db33 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-20ea5a71-a1fe-4497-94aa-1d84ca39db33');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    <div id="df-bb2a915f-9969-46c9-8aa8-d9632fe29ec4">
+      <button class="colab-df-quickchart" onclick="quickchart('df-bb2a915f-9969-46c9-8aa8-d9632fe29ec4')"
+                title="Suggest charts"
+                style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+     width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+    </g>
+</svg>
+      </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+      <script>
+        async function quickchart(key) {
+          const quickchartButtonEl =
+            document.querySelector('#' + key + ' button');
+          quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+          quickchartButtonEl.classList.add('colab-df-spinner');
+          try {
+            const charts = await google.colab.kernel.invokeFunction(
+                'suggestCharts', [key], {});
+          } catch (error) {
+            console.error('Error during call to suggestCharts:', error);
+          }
+          quickchartButtonEl.classList.remove('colab-df-spinner');
+          quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+        }
+        (() => {
+          let quickchartButtonEl =
+            document.querySelector('#df-bb2a915f-9969-46c9-8aa8-d9632fe29ec4 button');
+          quickchartButtonEl.style.display =
+            google.colab.kernel.accessAllowed ? 'block' : 'none';
+        })();
+      </script>
+    </div>
+
+  <div id="id_1b481989-d170-4db8-8f81-8d64da711515">
+    <style>
+      .colab-df-generate {
+        background-color: #E8F0FE;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        fill: #1967D2;
+        height: 32px;
+        padding: 0 0 0 0;
+        width: 32px;
+      }
+
+      .colab-df-generate:hover {
+        background-color: #E2EBFA;
+        box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+        fill: #174EA6;
+      }
+
+      [theme=dark] .colab-df-generate {
+        background-color: #3B4455;
+        fill: #D2E3FC;
+      }
+
+      [theme=dark] .colab-df-generate:hover {
+        background-color: #434B5C;
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+        filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+        fill: #FFFFFF;
+      }
+    </style>
+    <button class="colab-df-generate" onclick="generateWithVariable('df_tuning')"
+            title="Generate code using this dataframe."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M7,19H8.4L18.45,9,17,7.55,7,17.6ZM5,21V16.75L18.45,3.32a2,2,0,0,1,2.83,0l1.4,1.43a1.91,1.91,0,0,1,.58,1.4,1.91,1.91,0,0,1-.58,1.4L9.25,21ZM18.45,9,17,7.55Zm-12,3A5.31,5.31,0,0,0,4.9,8.1,5.31,5.31,0,0,0,1,6.5,5.31,5.31,0,0,0,4.9,4.9,5.31,5.31,0,0,0,6.5,1,5.31,5.31,0,0,0,8.1,4.9,5.31,5.31,0,0,0,12,6.5,5.46,5.46,0,0,0,6.5,12Z"/>
+  </svg>
+    </button>
+    <script>
+      (() => {
+      const buttonEl =
+        document.querySelector('#id_1b481989-d170-4db8-8f81-8d64da711515 button.colab-df-generate');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      buttonEl.onclick = () => {
+        google.colab.notebook.generateWithVariable('df_tuning');
+      }
+      })();
+    </script>
+  </div>
+
+    </div>
+  </div>
+</div></div>
 </div>
 <section id="lasso-regression">
 <h2><span class="section-number">13.1. </span><strong>Lasso Regression</strong><a class="headerlink" href="#lasso-regression" title="Link to this heading">#</a></h2>
@@ -1302,7 +1843,7 @@ document.write(`
 <p>Note that here we are implicitly using the tuning sample to pick the amount of regularization. So once we pick our favorite alpha, which looks like to 0.002, we need to look at some other sample to if that worked</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#We will start by standardizing our characteristics. This is done by subtracting the mean and dividing by the standard deviation. </span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#We will start by standardizing our characteristics. This is done by subtracting the mean and dividing by the standard deviation.</span>
 
 
 <span class="n">X_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
@@ -1324,9 +1865,9 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">r2_score</span>
 <span class="c1"># Extract Y (excess return) and X (characteristics)</span>
 
-<span class="n">Y_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>   <span class="c1"># Excess return </span>
+<span class="n">Y_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>   <span class="c1"># Excess return</span>
 
-<span class="n">Y_tuning</span> <span class="o">=</span> <span class="n">df_tuning</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>   <span class="c1"># Excess return </span>
+<span class="n">Y_tuning</span> <span class="o">=</span> <span class="n">df_tuning</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>   <span class="c1"># Excess return</span>
 
 
 <span class="c1"># # Perform Lasso regression</span>
@@ -1411,8 +1952,8 @@ R-squared (R2): -0.00030052087524023996
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/465d7aa93c93ec069d39c2358e44720a67cbadd437ac6d088bbca94db87e2270.png" src="../../_images/465d7aa93c93ec069d39c2358e44720a67cbadd437ac6d088bbca94db87e2270.png" />
-<img alt="../../_images/72f8b584d7dd48c0cd6de61c259483ba5923ebc9aa21700df178c08ee102745a.png" src="../../_images/72f8b584d7dd48c0cd6de61c259483ba5923ebc9aa21700df178c08ee102745a.png" />
+<img alt="../../_images/dfa616f222dab565118e17f1cdbe87f490ab4e21505b3ea7d7e89149fc37bbc1.png" src="../../_images/dfa616f222dab565118e17f1cdbe87f490ab4e21505b3ea7d7e89149fc37bbc1.png" />
+<img alt="../../_images/6ca0f9e41914c0385b79c4fbdd400f0a8595b03b7b69885c510ff6fe40c26967.png" src="../../_images/6ca0f9e41914c0385b79c4fbdd400f0a8595b03b7b69885c510ff6fe40c26967.png" />
 </div>
 </div>
 <p>Note we are using Mean-squared error as way to evaluate our model</p>
@@ -1457,7 +1998,7 @@ R-squared (R2): -0.00030052087524023996
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.011444912722223555
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.011451310991701803
 </pre></div>
 </div>
 </div>
@@ -1591,7 +2132,7 @@ Feature Names: [&#39;size&#39; &#39;value&#39; &#39;prof&#39; &#39;fscore&#39; &
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define a range of alpha values</span>
-<span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.002</span><span class="p">,</span><span class="mf">0.00225</span><span class="p">,</span><span class="mf">0.0025</span><span class="p">,</span><span class="mf">0.00275</span><span class="p">,</span><span class="mf">0.003</span><span class="p">,</span><span class="mf">0.0035</span><span class="p">]</span>  <span class="c1"># range for alphas</span>
+<span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0005</span><span class="p">,</span><span class="mf">0.00075</span><span class="p">,</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.0015</span><span class="p">,</span><span class="mf">0.002</span><span class="p">,</span><span class="mf">0.00225</span><span class="p">]</span>  <span class="c1"># range for alphas</span>
 <span class="n">coefficients</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">mses</span><span class="o">=</span><span class="p">[]</span>
 <span class="c1"># Perform Lasso regression for each alpha</span>
@@ -1608,7 +2149,7 @@ Feature Names: [&#39;size&#39; &#39;value&#39; &#39;prof&#39; &#39;fscore&#39; &
 <span class="n">coefficients</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span>
 
 
-<span class="n">alpha_index</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mf">0.00275</span><span class="p">)</span>
+<span class="n">alpha_index</span> <span class="o">=</span> <span class="n">alphas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
 <span class="n">surviving_features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">coefficients</span><span class="p">[</span><span class="n">alpha_index</span><span class="p">,</span> <span class="p">:]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="c1"># Plot the coefficients as a function of alpha</span>
@@ -1644,8 +2185,8 @@ Feature Names: [&#39;size&#39; &#39;value&#39; &#39;prof&#39; &#39;fscore&#39; &
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/7154ecd2f9997b8c19780401156fd31e406c872a48542f694f557afe74f907e6.png" src="../../_images/7154ecd2f9997b8c19780401156fd31e406c872a48542f694f557afe74f907e6.png" />
-<img alt="../../_images/f4b290c126e92f94541a6d238b9c98a069d7c2dc25d26d2e4d06c822f43fea09.png" src="../../_images/f4b290c126e92f94541a6d238b9c98a069d7c2dc25d26d2e4d06c822f43fea09.png" />
+<img alt="../../_images/b2915757b5ab6818638d2bacf3646a1b97368771a751a07722c33dc2e556fa6e.png" src="../../_images/b2915757b5ab6818638d2bacf3646a1b97368771a751a07722c33dc2e556fa6e.png" />
+<img alt="../../_images/c82bdad2322146f0aede6c419515024afc53c892d7541a52e89e156e6f871b42.png" src="../../_images/c82bdad2322146f0aede6c419515024afc53c892d7541a52e89e156e6f871b42.png" />
 </div>
 </div>
 <p>Note that there is virtually no improvement out of sample</p>
@@ -1667,9 +2208,8 @@ y_{i, t+1} = \beta \cdot size_{i, t}
 </ul>
 <p><strong>Non-Parametric Percentile-Based Model</strong></p>
 <p>To introduce non-linearity, we instead model <span class="math notranslate nohighlight">\( y_{i, t+1} \)</span> as a function of the percentiles of <span class="math notranslate nohighlight">\( size \)</span> within each time period. The model becomes:</p>
-<p>[
-y_{i, t+1} = \sum_p \beta_p \cdot 1_{{size_{i, t} \in \text{Percentile}(p, \text{size}_t)}}
-]</p>
+<div class="math notranslate nohighlight">
+\[y_{i, t+1} = \sum_p \beta_p \cdot 1_{\{size_{i, t} \in \text{Percentile}(p, \text{size}_t)\}}\]</div>
 <p>where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\( p \)</span>: The percentile group (e.g., <span class="math notranslate nohighlight">\( p = 1 \)</span> for the 0-20% percentile, <span class="math notranslate nohighlight">\( p = 2 \)</span> for the 20-40% percentile, etc.).</p></li>
@@ -1690,40 +2230,79 @@ y_{i, t+1} = \sum_p \beta_p \cdot 1_{{size_{i, t} \in \text{Percentile}(p, \text
 
 <span class="c1"># Initialize an empty list to store the new columns</span>
 <span class="n">new_columns</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">df</span><span class="o">=</span><span class="n">df_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df_processed</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="c1"># Loop through each characteristic</span>
-<span class="k">for</span> <span class="n">characteristic</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+<span class="k">for</span> <span class="n">characteristic</span> <span class="ow">in</span> <span class="n">df_processed</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
     <span class="c1"># Group by date and calculate percentiles</span>
-    <span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">characteristic</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
-    
+    <span class="n">grouped</span> <span class="o">=</span> <span class="n">df_processed</span><span class="p">[</span><span class="n">characteristic</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+
     <span class="c1"># Apply percentile binning for each date</span>
     <span class="n">percentile_bins</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
         <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">num_percentiles</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span>  <span class="c1"># Bins from 0 to 4</span>
     <span class="p">)</span>
-    
+
+    <span class="c1"># After grouped.apply, percentile_bins might have an extra &#39;date&#39; level in its MultiIndex.</span>
+    <span class="c1"># We need to drop this redundant outermost level to match the df_processed&#39;s index structure.</span>
+    <span class="k">if</span> <span class="n">percentile_bins</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">&gt;</span> <span class="n">df_processed</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">nlevels</span><span class="p">:</span>
+        <span class="n">percentile_bins</span> <span class="o">=</span> <span class="n">percentile_bins</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
     <span class="c1"># Create binary columns for each percentile</span>
     <span class="k">for</span> <span class="n">percentile</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_percentiles</span><span class="p">):</span>
         <span class="n">col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">characteristic</span><span class="si">}</span><span class="s2">_p</span><span class="si">{</span><span class="n">percentile</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">percentile_bins</span> <span class="o">==</span> <span class="n">percentile</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">df_processed</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">percentile_bins</span> <span class="o">==</span> <span class="n">percentile</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">df_processed</span><span class="o">=</span><span class="n">df_processed</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">new_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col_name</span><span class="p">)</span>
 
 <span class="c1"># Keep the new columns only for verification (if needed)</span>
-<span class="n">new_characteristics_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">new_columns</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">new_characteristics_train_df</span> <span class="o">=</span> <span class="n">df_processed</span><span class="p">[</span><span class="n">new_columns</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+
+<span class="c1"># Initialize an empty list to store the new columns</span>
+<span class="n">new_columns</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">df_processed</span> <span class="o">=</span> <span class="n">df_tuning</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="c1"># Loop through each characteristic</span>
+<span class="k">for</span> <span class="n">characteristic</span> <span class="ow">in</span> <span class="n">df_processed</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="c1"># Group by date and calculate percentiles</span>
+    <span class="n">grouped</span> <span class="o">=</span> <span class="n">df_processed</span><span class="p">[</span><span class="n">characteristic</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Apply percentile binning for each date</span>
+    <span class="n">percentile_bins</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">num_percentiles</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span>  <span class="c1"># Bins from 0 to 4</span>
+    <span class="p">)</span>
+
+    <span class="c1"># After grouped.apply, percentile_bins might have an extra &#39;date&#39; level in its MultiIndex.</span>
+    <span class="c1"># We need to drop this redundant outermost level to match the df_processed&#39;s index structure.</span>
+    <span class="k">if</span> <span class="n">percentile_bins</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">&gt;</span> <span class="n">df_processed</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">nlevels</span><span class="p">:</span>
+        <span class="n">percentile_bins</span> <span class="o">=</span> <span class="n">percentile_bins</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Create binary columns for each percentile</span>
+    <span class="k">for</span> <span class="n">percentile</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_percentiles</span><span class="p">):</span>
+        <span class="n">col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">characteristic</span><span class="si">}</span><span class="s2">_p</span><span class="si">{</span><span class="n">percentile</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">df_processed</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">percentile_bins</span> <span class="o">==</span> <span class="n">percentile</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">df_processed</span><span class="o">=</span><span class="n">df_processed</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">new_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col_name</span><span class="p">)</span>
+
+<span class="c1"># Keep the new columns only for verification (if needed)</span>
+<span class="n">new_characteristics_tuning_df</span> <span class="o">=</span> <span class="n">df_processed</span><span class="p">[</span><span class="n">new_columns</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+
 
 <span class="c1"># Output the shape of the new DataFrame</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original DataFrame shape:&quot;</span><span class="p">,</span> <span class="n">df_train</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;New DataFrame shape after adding percentiles:&quot;</span><span class="p">,</span> <span class="n">new_characteristics_df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">new_characteristics_df</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;New DataFrame shape after :&quot;</span><span class="p">,</span> <span class="n">new_characteristics_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">new_characteristics_train_df</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Original DataFrame shape: (204284, 29)
-New DataFrame shape after adding percentiles: (204284, 145)
+New DataFrame shape after : (204284, 144)
 </pre></div>
 </div>
-<div class="output text_html"><div>
+<div class="output text_html">
+  <div id="df-278962e8-a7b9-409a-b294-7a048e2387ae" class="colab-df-container">
+    <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
@@ -2061,19 +2640,287 @@ New DataFrame shape after adding percentiles: (204284, 145)
   </tbody>
 </table>
 <p>204284 rows × 145 columns</p>
-</div></div></div>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-278962e8-a7b9-409a-b294-7a048e2387ae')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-278962e8-a7b9-409a-b294-7a048e2387ae button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-278962e8-a7b9-409a-b294-7a048e2387ae');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    <div id="df-bd2c4a05-9bca-4e12-b7d6-2ba13dd7e871">
+      <button class="colab-df-quickchart" onclick="quickchart('df-bd2c4a05-9bca-4e12-b7d6-2ba13dd7e871')"
+                title="Suggest charts"
+                style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+     width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+    </g>
+</svg>
+      </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+      <script>
+        async function quickchart(key) {
+          const quickchartButtonEl =
+            document.querySelector('#' + key + ' button');
+          quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+          quickchartButtonEl.classList.add('colab-df-spinner');
+          try {
+            const charts = await google.colab.kernel.invokeFunction(
+                'suggestCharts', [key], {});
+          } catch (error) {
+            console.error('Error during call to suggestCharts:', error);
+          }
+          quickchartButtonEl.classList.remove('colab-df-spinner');
+          quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+        }
+        (() => {
+          let quickchartButtonEl =
+            document.querySelector('#df-bd2c4a05-9bca-4e12-b7d6-2ba13dd7e871 button');
+          quickchartButtonEl.style.display =
+            google.colab.kernel.accessAllowed ? 'block' : 'none';
+        })();
+      </script>
+    </div>
+
+  <div id="id_46b340bb-23e0-4f87-87cb-e67df2f9cedd">
+    <style>
+      .colab-df-generate {
+        background-color: #E8F0FE;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        fill: #1967D2;
+        height: 32px;
+        padding: 0 0 0 0;
+        width: 32px;
+      }
+
+      .colab-df-generate:hover {
+        background-color: #E2EBFA;
+        box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+        fill: #174EA6;
+      }
+
+      [theme=dark] .colab-df-generate {
+        background-color: #3B4455;
+        fill: #D2E3FC;
+      }
+
+      [theme=dark] .colab-df-generate:hover {
+        background-color: #434B5C;
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+        filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+        fill: #FFFFFF;
+      }
+    </style>
+    <button class="colab-df-generate" onclick="generateWithVariable('new_characteristics_df')"
+            title="Generate code using this dataframe."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M7,19H8.4L18.45,9,17,7.55,7,17.6ZM5,21V16.75L18.45,3.32a2,2,0,0,1,2.83,0l1.4,1.43a1.91,1.91,0,0,1,.58,1.4,1.91,1.91,0,0,1-.58,1.4L9.25,21ZM18.45,9,17,7.55Zm-12,3A5.31,5.31,0,0,0,4.9,8.1,5.31,5.31,0,0,0,1,6.5,5.31,5.31,0,0,0,4.9,4.9,5.31,5.31,0,0,0,6.5,1,5.31,5.31,0,0,0,8.1,4.9,5.31,5.31,0,0,0,12,6.5,5.46,5.46,0,0,0,6.5,12Z"/>
+  </svg>
+    </button>
+    <script>
+      (() => {
+      const buttonEl =
+        document.querySelector('#id_46b340bb-23e0-4f87-87cb-e67df2f9cedd button.colab-df-generate');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      buttonEl.onclick = () => {
+        google.colab.notebook.generateWithVariable('new_characteristics_df');
+      }
+      })();
+    </script>
+  </div>
+
+    </div>
+  </div>
+</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define a range of alpha values</span>
-<span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0001</span><span class="p">,</span><span class="mf">0.0005</span><span class="p">,</span><span class="mf">0.001</span><span class="p">]</span>  <span class="c1"># range for alphas</span>
+<span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0005</span><span class="p">,</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.0015</span><span class="p">,</span><span class="mf">0.002</span><span class="p">]</span>  <span class="c1"># range for alphas</span>
 <span class="n">coefficients</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">mses</span><span class="o">=</span><span class="p">[]</span>
 <span class="c1"># Perform Lasso regression for each alpha</span>
 <span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="n">alphas</span><span class="p">:</span>
     <span class="n">lasso</span> <span class="o">=</span> <span class="n">Lasso</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>  <span class="c1"># Ensure convergence with high iterations</span>
-    <span class="n">lasso</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">new_characteristics_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+    <span class="n">lasso</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">new_characteristics_train_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
     <span class="n">coefficients</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lasso</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
+    <span class="n">Y_pred</span> <span class="o">=</span> <span class="n">lasso</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">new_characteristics_tuning_df</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">Y_tuning</span><span class="p">,</span> <span class="n">Y_pred</span><span class="p">)</span>
+    <span class="n">mses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span>
 
 
 
@@ -2102,11 +2949,24 @@ New DataFrame shape after adding percentiles: (204284, 145)
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="c1"># Plot Mean-squared error for tuning sample</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">alphas</span><span class="p">,</span> <span class="n">mses</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Alpha (log scale)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Mean-squared error (tuning sample)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Mean-squared Error as a Function of Alpha&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/8bb06f06879adac582cb1ae9f1d8fd4eb584d8fe0b90a1a767ae6c208ea989f9.png" src="../../_images/8bb06f06879adac582cb1ae9f1d8fd4eb584d8fe0b90a1a767ae6c208ea989f9.png" />
+<img alt="../../_images/2d299357aaf987cc22097239bd345de5fca26ad62b174f574e61ebc859bffa0a.png" src="../../_images/2d299357aaf987cc22097239bd345de5fca26ad62b174f574e61ebc859bffa0a.png" />
+<img alt="../../_images/d2a90211b1ef412d740a34d1fd3d416072460329175b5e08ad9a85dc2167c12e.png" src="../../_images/d2a90211b1ef412d740a34d1fd3d416072460329175b5e08ad9a85dc2167c12e.png" />
 </div>
 </div>
 </section>
@@ -2114,7 +2974,7 @@ New DataFrame shape after adding percentiles: (204284, 145)
 <hr class="docutils" />
 <section id="random-forest-regression">
 <h2><span class="section-number">13.2. </span><strong>Random Forest Regression</strong><a class="headerlink" href="#random-forest-regression" title="Link to this heading">#</a></h2>
-<p><img alt="Neural Networks" src="../../_images/regressionTree.jpg" /></p>
+<p><img alt="Neural Networks" src="https://github.com/amoreira2/Fin418/blob/main/assets/plots/regressionTree.jpg?raw=1" /></p>
 <p>Random Forest is an ensemble method that combines multiple decision trees to make predictions. Each tree is trained on a bootstrap sample of the data, and predictions are averaged:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -2171,7 +3031,7 @@ New DataFrame shape after adding percentiles: (204284, 145)
 <span class="c1"># Build the Random Forest Regressor</span>
 <span class="n">random_forest</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
     <span class="n">n_estimators</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span>  <span class="c1"># Number of trees in the forest</span>
-    <span class="n">max_depth</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>    <span class="c1"># Maximum depth of the trees</span>
+    <span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>    <span class="c1"># Maximum depth of the trees</span>
     <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>   <span class="c1"># Ensures reproducibility</span>
     <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span>          <span class="c1"># Use all available cores for training</span>
 <span class="p">)</span>
@@ -2209,41 +3069,58 @@ New DataFrame shape after adding percentiles: (204284, 145)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mean Squared Error (MSE): 0.01148951126275974
-Mean Absolute Error (MAE): 0.07460830016978094
-R-squared (R2): -0.003371464811474878
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="nn">/tmp/ipython-input-3817352808.py</span> in <span class="ni">&lt;cell line: 0&gt;</span><span class="nt">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> 
+<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="c1"># Train the Random Forest model</span>
+<span class="ne">---&gt; </span><span class="mi">15</span> <span class="n">random_forest</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> 
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="c1"># Make predictions on the test set</span>
 
-Feature Importances:
-      Feature  Importance
-27        age    0.186314
-26      price    0.086422
-25    indrrev    0.065550
-16        mom    0.065456
-22      strev    0.064356
-19     momrev    0.053585
-18      mom12    0.052670
-10         ep    0.048531
-28      shvol    0.045249
-17     indmom    0.038484
-24    betaarb    0.034132
-23       ivol    0.030491
-0        size    0.029805
-20     valuem    0.028786
-8   aturnover    0.017810
-21      nissm    0.017426
-11    sgrowth    0.016147
-2        prof    0.014705
-1       value    0.013960
-15         sp    0.013442
-6       nissa    0.012874
-13       roaa    0.012841
-7      growth    0.012358
-9    gmargins    0.011966
-14       roea    0.011521
-12        lev    0.010726
-3      fscore    0.002920
-4     debtiss    0.000890
-5     repurch    0.000584
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/base.py</span> in <span class="ni">wrapper</span><span class="nt">(estimator, *args, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1387</span>                 <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1388</span>             <span class="p">):</span>
+<span class="ne">-&gt; </span><span class="mi">1389</span>                 <span class="k">return</span> <span class="n">fit_method</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1390</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1391</span>         <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/ensemble/_forest.py</span> in <span class="ni">fit</span><span class="nt">(self, X, y, sample_weight)</span>
+<span class="g g-Whitespace">    </span><span class="mi">485</span>             <span class="c1"># parallel_backend contexts set at a higher level,</span>
+<span class="g g-Whitespace">    </span><span class="mi">486</span>             <span class="c1"># since correctness does not rely on using threads.</span>
+<span class="ne">--&gt; </span><span class="mi">487</span>             <span class="n">trees</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">488</span>                 <span class="n">n_jobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">489</span>                 <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/utils/parallel.py</span> in <span class="ni">__call__</span><span class="nt">(self, iterable)</span>
+<span class="g g-Whitespace">     </span><span class="mi">75</span>             <span class="k">for</span> <span class="n">delayed_func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">iterable</span>
+<span class="g g-Whitespace">     </span><span class="mi">76</span>         <span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">77</span>         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">iterable_with_config</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">78</span> 
+<span class="g g-Whitespace">     </span><span class="mi">79</span> 
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/joblib/parallel.py</span> in <span class="ni">__call__</span><span class="nt">(self, iterable)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2070</span>         <span class="nb">next</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2071</span> 
+<span class="ne">-&gt; </span><span class="mi">2072</span>         <span class="k">return</span> <span class="n">output</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_generator</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2073</span> 
+<span class="g g-Whitespace">   </span><span class="mi">2074</span>     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/joblib/parallel.py</span> in <span class="ni">_get_outputs</span><span class="nt">(self, iterator, pre_dispatch)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1680</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1681</span>             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">retrieval_context</span><span class="p">():</span>
+<span class="ne">-&gt; </span><span class="mi">1682</span>                 <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve</span><span class="p">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">1683</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1684</span>         <span class="k">except</span> <span class="ne">GeneratorExit</span><span class="p">:</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/joblib/parallel.py</span> in <span class="ni">_retrieve</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1798</span>                     <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_status</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span> <span class="o">==</span> <span class="n">TASK_PENDING</span>
+<span class="g g-Whitespace">   </span><span class="mi">1799</span>                 <span class="p">):</span>
+<span class="ne">-&gt; </span><span class="mi">1800</span>                     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1801</span>                     <span class="k">continue</span>
+<span class="g g-Whitespace">   </span><span class="mi">1802</span> 
+
+<span class="ne">KeyboardInterrupt</span>: 
 </pre></div>
 </div>
 </div>
@@ -2305,7 +3182,7 @@ Feature Importances:
 <span class="n">gbrt</span> <span class="o">=</span> <span class="n">GradientBoostingRegressor</span><span class="p">(</span>
     <span class="n">n_estimators</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>       <span class="c1"># Number of boosting stages to perform</span>
     <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>      <span class="c1"># Shrinks the contribution of each tree</span>
-    <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>            <span class="c1"># Maximum depth of each tree</span>
+    <span class="n">max_depth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>            <span class="c1"># Maximum depth of each tree</span>
     <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>         <span class="c1"># Ensures reproducibility</span>
 <span class="p">)</span>
 
@@ -2342,41 +3219,65 @@ Feature Importances:
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mean Squared Error (MSE): 0.012230932833230374
-Mean Absolute Error (MAE): 0.07760391337870105
-R-squared (R2): -0.06811932311395719
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="nn">/tmp/ipython-input-3907412473.py</span> in <span class="ni">&lt;cell line: 0&gt;</span><span class="nt">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> 
+<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="c1"># Train the Gradient Boosting model</span>
+<span class="ne">---&gt; </span><span class="mi">15</span> <span class="n">gbrt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> 
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="c1"># Make predictions on the test set</span>
 
-Feature Importances:
-      Feature  Importance
-27        age    0.294144
-16        mom    0.057104
-22      strev    0.055204
-18      mom12    0.052066
-19     momrev    0.050959
-28      shvol    0.045834
-25    indrrev    0.045597
-26      price    0.040428
-17     indmom    0.040013
-24    betaarb    0.035627
-10         ep    0.029968
-20     valuem    0.027339
-23       ivol    0.027101
-0        size    0.024653
-21      nissm    0.018743
-8   aturnover    0.017848
-15         sp    0.016247
-11    sgrowth    0.016003
-6       nissa    0.015233
-7      growth    0.014040
-12        lev    0.013535
-1       value    0.013454
-9    gmargins    0.013224
-2        prof    0.013146
-14       roea    0.010066
-13       roaa    0.008488
-3      fscore    0.002793
-5     repurch    0.000652
-4     debtiss    0.000489
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/base.py</span> in <span class="ni">wrapper</span><span class="nt">(estimator, *args, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1387</span>                 <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1388</span>             <span class="p">):</span>
+<span class="ne">-&gt; </span><span class="mi">1389</span>                 <span class="k">return</span> <span class="n">fit_method</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1390</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1391</span>         <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/ensemble/_gb.py</span> in <span class="ni">fit</span><span class="nt">(self, X, y, sample_weight, monitor)</span>
+<span class="g g-Whitespace">    </span><span class="mi">785</span> 
+<span class="g g-Whitespace">    </span><span class="mi">786</span>         <span class="c1"># fit the boosting stages</span>
+<span class="ne">--&gt; </span><span class="mi">787</span>         <span class="n">n_stages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_stages</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">788</span>             <span class="n">X_train</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">789</span>             <span class="n">y_train</span><span class="p">,</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/ensemble/_gb.py</span> in <span class="ni">_fit_stages</span><span class="nt">(self, X, y, raw_predictions, sample_weight, random_state, X_val, y_val, sample_weight_val, begin_at_stage, monitor)</span>
+<span class="g g-Whitespace">    </span><span class="mi">881</span> 
+<span class="g g-Whitespace">    </span><span class="mi">882</span>             <span class="c1"># fit next stage of trees</span>
+<span class="ne">--&gt; </span><span class="mi">883</span>             <span class="n">raw_predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_stage</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">884</span>                 <span class="n">i</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">885</span>                 <span class="n">X</span><span class="p">,</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/ensemble/_gb.py</span> in <span class="ni">_fit_stage</span><span class="nt">(self, i, X, y, raw_predictions, sample_weight, sample_mask, random_state, X_csc, X_csr)</span>
+<span class="g g-Whitespace">    </span><span class="mi">487</span> 
+<span class="g g-Whitespace">    </span><span class="mi">488</span>             <span class="n">X</span> <span class="o">=</span> <span class="n">X_csc</span> <span class="k">if</span> <span class="n">X_csc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">X</span>
+<span class="ne">--&gt; </span><span class="mi">489</span>             <span class="n">tree</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">490</span>                 <span class="n">X</span><span class="p">,</span> <span class="n">neg_g_view</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">check_input</span><span class="o">=</span><span class="kc">False</span>
+<span class="g g-Whitespace">    </span><span class="mi">491</span>             <span class="p">)</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/base.py</span> in <span class="ni">wrapper</span><span class="nt">(estimator, *args, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1387</span>                 <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1388</span>             <span class="p">):</span>
+<span class="ne">-&gt; </span><span class="mi">1389</span>                 <span class="k">return</span> <span class="n">fit_method</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1390</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1391</span>         <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/tree/_classes.py</span> in <span class="ni">fit</span><span class="nt">(self, X, y, sample_weight, check_input)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1402</span>         <span class="s2">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">1403</span><span class="s2"> </span>
+<span class="ne">-&gt; </span><span class="mi">1404</span><span class="s2">         super()._fit(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1405</span><span class="s2">             X,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1406</span><span class="s2">             y,</span>
+
+<span class="nn">/usr/local/lib/python3.12/dist-packages/sklearn/tree/_classes.py</span> in <span class="ni">_fit</span><span class="nt">(self, X, y, sample_weight, check_input, missing_values_in_feature_mask)</span>
+<span class="g g-Whitespace">    </span><span class="mi">470</span><span class="s2">             )</span>
+<span class="g g-Whitespace">    </span><span class="mi">471</span><span class="s2"> </span>
+<span class="ne">--&gt; </span><span class="mi">472</span><span class="s2">         builder.build(self.tree_, X, y, sample_weight, missing_values_in_feature_mask)</span>
+<span class="g g-Whitespace">    </span><span class="mi">473</span><span class="s2"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">474</span><span class="s2">         if self.n_outputs_ == 1 and is_classifier(self):</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
 </pre></div>
 </div>
 </div>
@@ -2485,41 +3386,41 @@ Feature Importances:
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mean Squared Error (MSE): 0.01144784660786539
-Mean Absolute Error (MAE): 0.07444204750342037
-R-squared (R2): 0.0002670821080715813
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mean Squared Error (MSE): 0.011454356757352735
+Mean Absolute Error (MAE): 0.07446121102070162
+R-squared (R2): -0.00030144496656836495
 
 Coefficients:
       Feature  Coefficient
-20     valuem     0.002396
-17     indmom     0.000461
-15         sp     0.000052
-0        size    -0.000000
+18      mom12     0.000310
 1       value     0.000000
-27        age     0.000000
-26      price    -0.000000
-24    betaarb    -0.000000
-23       ivol     0.000000
-22      strev     0.000000
-21      nissm    -0.000000
-18      mom12     0.000000
-16        mom    -0.000000
-14       roea     0.000000
-13       roaa     0.000000
-12        lev     0.000000
-11    sgrowth     0.000000
-10         ep     0.000000
-9    gmargins    -0.000000
-8   aturnover     0.000000
-7      growth    -0.000000
-6       nissa    -0.000000
-5     repurch     0.000000
-4     debtiss    -0.000000
-3      fscore     0.000000
 2        prof     0.000000
+3      fscore     0.000000
+0        size    -0.000000
+5     repurch     0.000000
+6       nissa    -0.000000
+7      growth    -0.000000
+8   aturnover     0.000000
+9    gmargins    -0.000000
+10         ep     0.000000
+11    sgrowth    -0.000000
+4     debtiss    -0.000000
+12        lev     0.000000
+13       roaa    -0.000000
+15         sp     0.000000
+14       roea     0.000000
+16        mom     0.000000
+17     indmom     0.000000
+19     momrev    -0.000000
+20     valuem     0.000000
+21      nissm    -0.000000
+22      strev    -0.000000
+23       ivol    -0.000000
+24    betaarb    -0.000000
+26      price    -0.000000
+27        age     0.000000
 28      shvol    -0.000000
-19     momrev    -0.001270
-25    indrrev    -0.001636
+25    indrrev    -0.002231
 </pre></div>
 </div>
 </div>
@@ -2528,7 +3429,7 @@ Coefficients:
 <hr class="docutils" />
 <section id="neural-network-regression">
 <h2><span class="section-number">13.5. </span><strong>Neural Network Regression</strong><a class="headerlink" href="#neural-network-regression" title="Link to this heading">#</a></h2>
-<p><img alt="Neural Networks" src="../../_images/neural_networks.jpg" /></p>
+<p><img alt="Neural Networks" src="https://github.com/amoreira2/Fin418/blob/main/assets/plots/neural_networks.jpg?raw=1" /></p>
 <p>A neural network is a flexible, non-linear model that uses layers of neurons to approximate complex relationships between inputs (( X )) and outputs (( Y )). The simplest form of a feedforward neural network can be expressed as:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -2645,7 +3546,7 @@ In addition to the network structure (layers and neurons), you also have to pick
 
     <span class="c1"># Add hidden layers</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">neurons</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">neurons</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span> 
+        <span class="n">neurons</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">neurons</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span>
         <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="n">neurons</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">))</span>
 
     <span class="c1"># Add the output layer</span>
@@ -2659,7 +3560,7 @@ In addition to the network structure (layers and neurons), you also have to pick
         <span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span>
         <span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span>                <span class="c1"># You can adjust the number of epochs</span>
         <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>            <span class="c1"># You can adjust the batch size</span>
-        <span class="n">validation_data</span><span class="o">=</span><span class="n">validation_data</span><span class="p">,</span>    
+        <span class="n">validation_data</span><span class="o">=</span><span class="n">validation_data</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">model</span>
 
@@ -2675,26 +3576,30 @@ In addition to the network structure (layers and neurons), you also have to pick
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/local/lib/python3.12/dist-packages/keras/src/layers/core/dense.py:93: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(activity_regularizer=activity_regularizer, **kwargs)
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 1/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">3s</span> 1ms/step - loss: 0.0362 - val_loss: 0.0121
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">7s</span> 3ms/step - loss: 0.0672 - val_loss: 0.0118
 Epoch 2/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">2s</span> 1ms/step - loss: 0.0098 - val_loss: 0.0117
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">4s</span> 2ms/step - loss: 0.0097 - val_loss: 0.0115
 Epoch 3/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">2s</span> 1ms/step - loss: 0.0096 - val_loss: 0.0115
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">4s</span> 2ms/step - loss: 0.0098 - val_loss: 0.0115
 Epoch 4/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">2s</span> 1ms/step - loss: 0.0096 - val_loss: 0.0118
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">5s</span> 3ms/step - loss: 0.0096 - val_loss: 0.0115
 Epoch 5/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">2s</span> 1ms/step - loss: 0.0095 - val_loss: 0.0116
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">4s</span> 2ms/step - loss: 0.0095 - val_loss: 0.0115
 Epoch 6/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">2s</span> 1ms/step - loss: 0.0095 - val_loss: 0.0115
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">4s</span> 2ms/step - loss: 0.0095 - val_loss: 0.0115
 Epoch 7/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">2s</span> 1ms/step - loss: 0.0093 - val_loss: 0.0116
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">5s</span> 3ms/step - loss: 0.0096 - val_loss: 0.0115
 Epoch 8/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">2s</span> 1ms/step - loss: 0.0094 - val_loss: 0.0116
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">4s</span> 2ms/step - loss: 0.0095 - val_loss: 0.0115
 Epoch 9/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">2s</span> 1ms/step - loss: 0.0094 - val_loss: 0.0116
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">4s</span> 2ms/step - loss: 0.0095 - val_loss: 0.0115
 Epoch 10/10
-<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">2s</span> 1ms/step - loss: 0.0093 - val_loss: 0.0116
+<span class=" -Color -Color-Bold">1596/1596</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">5s</span> 3ms/step - loss: 0.0094 - val_loss: 0.0115
 </pre></div>
 </div>
 </div>
@@ -2709,13 +3614,332 @@ Epoch 10/10
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>You must install pydot (`pip install pydot`) for `plot_model` to work.
+<img alt="../../_images/92c74d1f0556c6a40ec15bd1c66412a576903dbd6a8788c20a6162c640431658.png" src="../../_images/92c74d1f0556c6a40ec15bd1c66412a576903dbd6a8788c20a6162c640431658.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">last_tuning_date</span> <span class="o">=</span> <span class="n">X_tuning</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">X_tuning_last_date</span> <span class="o">=</span> <span class="n">X_tuning</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">last_tuning_date</span><span class="p">]</span>
+<span class="n">predicted_returns_nn</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_tuning_last_date</span><span class="p">)</span>
+<span class="n">predicted_returns_nn_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">predicted_returns_nn</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">X_tuning_last_date</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Predicted_NN_Return&#39;</span><span class="p">])</span>
+<span class="n">average_historical_returns</span> <span class="o">=</span> <span class="n">Y_train</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">average_historical_returns_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">average_historical_returns</span><span class="p">)</span>
+<span class="n">average_historical_returns_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Average_Historical_Return&#39;</span><span class="p">]</span>
+
+<span class="n">combined_returns</span> <span class="o">=</span> <span class="n">predicted_returns_nn_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">average_historical_returns_df</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shape of combined_returns: </span><span class="si">{</span><span class="n">combined_returns</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">combined_returns</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+
+<span class="c1"># Create the scatter plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">combined_returns</span><span class="p">[</span><span class="s1">&#39;Average_Historical_Return&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="n">combined_returns</span><span class="p">[</span><span class="s1">&#39;Predicted_NN_Return&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Neural Network Predicted Returns vs. Average Historical Returns (Tuning Sample)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Average Historical Return (Training Sample)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Predicted Neural Network Return (Last Tuning Date)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.50</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="p">(</span><span class="n">combined_returns</span><span class="p">[</span><span class="s1">&#39;Average_Historical_Return&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="p">(</span><span class="n">combined_returns</span><span class="p">[</span><span class="s1">&#39;Predicted_NN_Return&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Bold">24/24</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">0s</span> 6ms/step
+Shape of combined_returns: (457, 2)
+</pre></div>
 </div>
+<div class="output text_html">
+  <div id="df-7f361c9e-5b1a-4b8f-bfda-81724ae50116" class="colab-df-container">
+    <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>Predicted_NN_Return</th>
+      <th>Average_Historical_Return</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th>permno</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="5" valign="top">2001-01-01</th>
+      <th>10078</th>
+      <td>0.000533</td>
+      <td>0.027460</td>
+    </tr>
+    <tr>
+      <th>10104</th>
+      <td>-0.003840</td>
+      <td>0.002824</td>
+    </tr>
+    <tr>
+      <th>10107</th>
+      <td>-0.003923</td>
+      <td>0.062721</td>
+    </tr>
+    <tr>
+      <th>10108</th>
+      <td>0.012406</td>
+      <td>-0.160686</td>
+    </tr>
+    <tr>
+      <th>10137</th>
+      <td>0.005208</td>
+      <td>0.005378</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-7f361c9e-5b1a-4b8f-bfda-81724ae50116')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-7f361c9e-5b1a-4b8f-bfda-81724ae50116 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-7f361c9e-5b1a-4b8f-bfda-81724ae50116');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    <div id="df-33043d91-d187-4f2d-bcab-75b36ccf247e">
+      <button class="colab-df-quickchart" onclick="quickchart('df-33043d91-d187-4f2d-bcab-75b36ccf247e')"
+                title="Suggest charts"
+                style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+     width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+    </g>
+</svg>
+      </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+      <script>
+        async function quickchart(key) {
+          const quickchartButtonEl =
+            document.querySelector('#' + key + ' button');
+          quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+          quickchartButtonEl.classList.add('colab-df-spinner');
+          try {
+            const charts = await google.colab.kernel.invokeFunction(
+                'suggestCharts', [key], {});
+          } catch (error) {
+            console.error('Error during call to suggestCharts:', error);
+          }
+          quickchartButtonEl.classList.remove('colab-df-spinner');
+          quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+        }
+        (() => {
+          let quickchartButtonEl =
+            document.querySelector('#df-33043d91-d187-4f2d-bcab-75b36ccf247e button');
+          quickchartButtonEl.style.display =
+            google.colab.kernel.accessAllowed ? 'block' : 'none';
+        })();
+      </script>
+    </div>
+
+    </div>
+  </div>
+</div><img alt="../../_images/dc71f425dba1ca4f18488418da5ae0812f23a5df4f096de8aecaaeb14c7f9315.png" src="../../_images/dc71f425dba1ca4f18488418da5ae0812f23a5df4f096de8aecaaeb14c7f9315.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
+</pre></div>
+</div>
+<img alt="../../_images/32638346c48371b24e66b44e3202151118be1ea048db3c6d6923eec11ae48f57.png" src="../../_images/32638346c48371b24e66b44e3202151118be1ea048db3c6d6923eec11ae48f57.png" />
+<img alt="../../_images/8152bbe03e55bf6026db256cbcc3eaf93e15e8b3ecaa95c633fd3971a77af720.png" src="../../_images/8152bbe03e55bf6026db256cbcc3eaf93e15e8b3ecaa95c633fd3971a77af720.png" />
+</div>
+</div>
+</section>
 <section id="the-whole-shebang">
-<h3><span class="section-number">13.5.1. </span>The Whole Shebang<a class="headerlink" href="#the-whole-shebang" title="Link to this heading">#</a></h3>
+<h2><span class="section-number">13.6. </span>The Whole Shebang<a class="headerlink" href="#the-whole-shebang" title="Link to this heading">#</a></h2>
 <p>You can potentially combine a non-parametric  Model with interactions.</p>
 <p>The key issue is tha as you make the model richer and richer the scope for the training to produce garabage increases–</p>
 <p>so you need</p>
@@ -2731,10 +3955,9 @@ Epoch 10/10
 <li><p>Ensembles: Ensembles combine predictions from multiple models, reducing variance and improving accuracy. They are effective for generalization but increase computational cost.</p></li>
 </ul>
 </section>
-</section>
 <hr class="docutils" />
 <section id="wrap-up">
-<h2><span class="section-number">13.6. </span>Wrap up<a class="headerlink" href="#wrap-up" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">13.7. </span>Wrap up<a class="headerlink" href="#wrap-up" title="Link to this heading">#</a></h2>
 <p>Comparison  Table across methods</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -2776,12 +3999,601 @@ Epoch 10/10
 <p>For an academic investigation of these methods see  “Empirical Asset Pricing via Machine Learning” (<a class="reference external" href="https://academic.oup.com/rfs/article/33/5/2223/5758276?login=true">https://academic.oup.com/rfs/article/33/5/2223/5758276?login=true</a>). The figures used in this notebook are also from that paper.</p>
 </section>
 <section id="key-takeaways">
-<h2><span class="section-number">13.7. </span>🧠 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">13.8. </span>🧠 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Start with <strong>simple, strong baselines</strong> (logistic/linear + regularization), then escalate to ensembles or deep nets if justified by data.</p></li>
 <li><p><strong>Pipelines</strong> with proper Cross Validation prevent leakage; evaluate <strong>out-of-sample</strong> with task-appropriate metrics.</p></li>
 <li><p>Use <strong>regularization and early stopping</strong> to control variance; track <strong>learning curves</strong> to diagnose bias vs. variance.</p></li>
 </ul>
+<p><strong>Reasoning</strong>:
+The previous code failed because the ‘date’ level was duplicated in the MultiIndex of <code class="docutils literal notranslate"><span class="pre">X_tuning</span></code>. To fix this, I will access the date values using their integer position (level 0) instead of the name ‘date’.</p>
+<p><strong>Reasoning</strong>:
+Now that the <code class="docutils literal notranslate"><span class="pre">last_tuning_date</span></code> has been identified, I will filter the <code class="docutils literal notranslate"><span class="pre">X_tuning</span></code> DataFrame to include only the rows corresponding to this last date. This will prepare the characteristics for making predictions for the latest period.</p>
+<p><strong>Reasoning</strong>:
+With <code class="docutils literal notranslate"><span class="pre">X_tuning_last_date</span></code> containing the characteristics for the latest period, I will now use the pre-trained neural network model to predict the returns for these characteristics. The neural network model expects a NumPy array as input.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shape of predicted_returns_nn_df: </span><span class="si">{</span><span class="n">predicted_returns_nn_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">predicted_returns_nn_df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Bold">24/24</span> <span class=" -Color -Color-Green">━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Bold">0s</span> 11ms/step
+Shape of predicted_returns_nn_df: (766, 1)
+</pre></div>
+</div>
+<div class="output text_html">
+  <div id="df-b268b59e-e4a2-4239-87b3-41a074219471" class="colab-df-container">
+    <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>Predicted_NN_Return</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th>permno</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="5" valign="top">2001-01-01</th>
+      <th>10078</th>
+      <td>0.000533</td>
+    </tr>
+    <tr>
+      <th>10104</th>
+      <td>-0.003840</td>
+    </tr>
+    <tr>
+      <th>10107</th>
+      <td>-0.003923</td>
+    </tr>
+    <tr>
+      <th>10108</th>
+      <td>0.012406</td>
+    </tr>
+    <tr>
+      <th>10137</th>
+      <td>0.005208</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-b268b59e-e4a2-4239-87b3-41a074219471')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-b268b59e-e4a2-4239-87b3-41a074219471 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-b268b59e-e4a2-4239-87b3-41a074219471');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    <div id="df-d6a87c1e-c552-493e-a03e-4d4f40d5da95">
+      <button class="colab-df-quickchart" onclick="quickchart('df-d6a87c1e-c552-493e-a03e-4d4f40d5da95')"
+                title="Suggest charts"
+                style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+     width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+    </g>
+</svg>
+      </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+      <script>
+        async function quickchart(key) {
+          const quickchartButtonEl =
+            document.querySelector('#' + key + ' button');
+          quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+          quickchartButtonEl.classList.add('colab-df-spinner');
+          try {
+            const charts = await google.colab.kernel.invokeFunction(
+                'suggestCharts', [key], {});
+          } catch (error) {
+            console.error('Error during call to suggestCharts:', error);
+          }
+          quickchartButtonEl.classList.remove('colab-df-spinner');
+          quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+        }
+        (() => {
+          let quickchartButtonEl =
+            document.querySelector('#df-d6a87c1e-c552-493e-a03e-4d4f40d5da95 button');
+          quickchartButtonEl.style.display =
+            google.colab.kernel.accessAllowed ? 'block' : 'none';
+        })();
+      </script>
+    </div>
+
+    </div>
+  </div>
+</div></div>
+</div>
+<p><strong>Reasoning</strong>:
+To provide a baseline for comparison, I will calculate the average historical excess return for each stock (<code class="docutils literal notranslate"><span class="pre">permno</span></code>) from the entire training dataset (<code class="docutils literal notranslate"><span class="pre">Y_train</span></code>). This involves grouping <code class="docutils literal notranslate"><span class="pre">Y_train</span></code> by <code class="docutils literal notranslate"><span class="pre">permno</span></code> and calculating the mean.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">average_historical_returns</span> <span class="o">=</span> <span class="n">Y_train</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">average_historical_returns_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">average_historical_returns</span><span class="p">)</span>
+<span class="n">average_historical_returns_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Average_Historical_Return&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shape of average_historical_returns_df: </span><span class="si">{</span><span class="n">average_historical_returns_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">average_historical_returns_df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Shape of average_historical_returns_df: (2247, 1)
+</pre></div>
+</div>
+<div class="output text_html">
+  <div id="df-c50ce797-af07-4765-b64c-6e458b74c329" class="colab-df-container">
+    <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Average_Historical_Return</th>
+    </tr>
+    <tr>
+      <th>permno</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>10006</th>
+      <td>0.006599</td>
+    </tr>
+    <tr>
+      <th>10016</th>
+      <td>-0.028107</td>
+    </tr>
+    <tr>
+      <th>10020</th>
+      <td>-0.023211</td>
+    </tr>
+    <tr>
+      <th>10048</th>
+      <td>-0.037154</td>
+    </tr>
+    <tr>
+      <th>10057</th>
+      <td>-0.053582</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-c50ce797-af07-4765-b64c-6e458b74c329')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-c50ce797-af07-4765-b64c-6e458b74c329 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-c50ce797-af07-4765-b64c-6e458b74c329');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    <div id="df-d27bab88-e83f-40c0-be30-3ea0e87b6086">
+      <button class="colab-df-quickchart" onclick="quickchart('df-d27bab88-e83f-40c0-be30-3ea0e87b6086')"
+                title="Suggest charts"
+                style="display:none;">
+
+<svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+     width="24px">
+    <g>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+    </g>
+</svg>
+      </button>
+
+<style>
+  .colab-df-quickchart {
+      --bg-color: #E8F0FE;
+      --fill-color: #1967D2;
+      --hover-bg-color: #E2EBFA;
+      --hover-fill-color: #174EA6;
+      --disabled-fill-color: #AAA;
+      --disabled-bg-color: #DDD;
+  }
+
+  [theme=dark] .colab-df-quickchart {
+      --bg-color: #3B4455;
+      --fill-color: #D2E3FC;
+      --hover-bg-color: #434B5C;
+      --hover-fill-color: #FFFFFF;
+      --disabled-bg-color: #3B4455;
+      --disabled-fill-color: #666;
+  }
+
+  .colab-df-quickchart {
+    background-color: var(--bg-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    fill: var(--fill-color);
+    height: 32px;
+    padding: 0;
+    width: 32px;
+  }
+
+  .colab-df-quickchart:hover {
+    background-color: var(--hover-bg-color);
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    fill: var(--button-hover-fill-color);
+  }
+
+  .colab-df-quickchart-complete:disabled,
+  .colab-df-quickchart-complete:disabled:hover {
+    background-color: var(--disabled-bg-color);
+    fill: var(--disabled-fill-color);
+    box-shadow: none;
+  }
+
+  .colab-df-spinner {
+    border: 2px solid var(--fill-color);
+    border-color: transparent;
+    border-bottom-color: var(--fill-color);
+    animation:
+      spin 1s steps(1) infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+      border-left-color: var(--fill-color);
+    }
+    20% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    30% {
+      border-color: transparent;
+      border-left-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+      border-right-color: var(--fill-color);
+    }
+    40% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-top-color: var(--fill-color);
+    }
+    60% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+    }
+    80% {
+      border-color: transparent;
+      border-right-color: var(--fill-color);
+      border-bottom-color: var(--fill-color);
+    }
+    90% {
+      border-color: transparent;
+      border-bottom-color: var(--fill-color);
+    }
+  }
+</style>
+
+      <script>
+        async function quickchart(key) {
+          const quickchartButtonEl =
+            document.querySelector('#' + key + ' button');
+          quickchartButtonEl.disabled = true;  // To prevent multiple clicks.
+          quickchartButtonEl.classList.add('colab-df-spinner');
+          try {
+            const charts = await google.colab.kernel.invokeFunction(
+                'suggestCharts', [key], {});
+          } catch (error) {
+            console.error('Error during call to suggestCharts:', error);
+          }
+          quickchartButtonEl.classList.remove('colab-df-spinner');
+          quickchartButtonEl.classList.add('colab-df-quickchart-complete');
+        }
+        (() => {
+          let quickchartButtonEl =
+            document.querySelector('#df-d27bab88-e83f-40c0-be30-3ea0e87b6086 button');
+          quickchartButtonEl.style.display =
+            google.colab.kernel.accessAllowed ? 'block' : 'none';
+        })();
+      </script>
+    </div>
+
+    </div>
+  </div>
+</div></div>
+</div>
+<p><strong>Reasoning</strong>:
+Now that both the predicted returns from the neural network and the average historical returns have been calculated, I will combine these two DataFrames using their common ‘permno’ index. This will create a single DataFrame that allows for direct comparison and visualization.</p>
+</section>
+<section id="plot-forecasted-vs-average-train-returns">
+<h2><span class="section-number">13.9. </span>Plot forecasted vs. average train returns<a class="headerlink" href="#plot-forecasted-vs-average-train-returns" title="Link to this heading">#</a></h2>
+<section id="subtask">
+<h3><span class="section-number">13.9.1. </span>Subtask:<a class="headerlink" href="#subtask" title="Link to this heading">#</a></h3>
+<p>Generate a scatter plot showing the forecasted expected returns against the average historical returns for each stock.</p>
+</section>
+</section>
+<section id="summary">
+<h2><span class="section-number">13.10. </span>Summary:<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<section id="data-analysis-key-findings">
+<h3><span class="section-number">13.10.1. </span>Data Analysis Key Findings<a class="headerlink" href="#data-analysis-key-findings" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The last unique date identified in the <code class="docutils literal notranslate"><span class="pre">X_tuning</span></code> dataset, used for forecasting, was <code class="docutils literal notranslate"><span class="pre">2001-01-01</span></code>.</p></li>
+<li><p>The neural network model generated 766 predicted returns for this last tuning date.</p></li>
+<li><p>Average historical excess returns were calculated for 2247 unique stocks (<code class="docutils literal notranslate"><span class="pre">permno</span></code>) from the training dataset.</p></li>
+<li><p>After merging the predicted returns with the average historical returns, a <code class="docutils literal notranslate"><span class="pre">combined_returns</span></code> DataFrame was formed, containing 457 common stocks. This indicates that 457 stocks had both a predicted return for <code class="docutils literal notranslate"><span class="pre">2001-01-01</span></code> and an average historical return from the training period.</p></li>
+<li><p>An initial attempt to access the ‘date’ level of <code class="docutils literal notranslate"><span class="pre">X_tuning</span></code>’s MultiIndex by name failed due to duplicate level names, necessitating access by integer position (level 0).</p></li>
+</ul>
+</section>
+<section id="insights-or-next-steps">
+<h3><span class="section-number">13.10.2. </span>Insights or Next Steps<a class="headerlink" href="#insights-or-next-steps" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">combined_returns</span></code> DataFrame is now ready to be used to generate the scatter plot, visualizing the relationship between the model’s forecasted returns and the historical average returns for each stock. This plot will help in understanding the model’s prediction distribution relative to a simple historical baseline.</p></li>
+</ul>
+</section>
 </section>
 </section>
 
@@ -2857,12 +4669,19 @@ Epoch 10/10
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#random-forest-regression">13.2. <strong>Random Forest Regression</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-boosted-regression-trees-gbrt">13.3. <strong>Gradient Boosted Regression Trees (GBRT)</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#elastic-net-regression">13.4. <strong>Elastic Net Regression</strong></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#neural-network-regression">13.5. <strong>Neural Network Regression</strong></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-whole-shebang">13.5.1. The Whole Shebang</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#neural-network-regression">13.5. <strong>Neural Network Regression</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-whole-shebang">13.6. The Whole Shebang</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-up">13.7. Wrap up</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">13.8. 🧠 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plot-forecasted-vs-average-train-returns">13.9. Plot forecasted vs. average train returns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#subtask">13.9.1. Subtask:</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-up">13.6. Wrap up</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">13.7. 🧠 Key Takeaways</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">13.10. Summary:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-analysis-key-findings">13.10.1. Data Analysis Key Findings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#insights-or-next-steps">13.10.2. Insights or Next Steps</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
