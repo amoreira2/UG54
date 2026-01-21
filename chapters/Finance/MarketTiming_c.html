@@ -1,0 +1,1837 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>6.5. Expected Returns Timing &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/MarketTiming_c';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/Fin418/chapters/Finance/MarketTiming_c.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="6.6. Volatility Timing" href="Volatilitytiming_c.html" />
+    <link rel="prev" title="5. Timing" href="Timing_c.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="IntrotoReturns_c.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency.html">4.11. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI.html">4.12. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="Timing_c.html">5. Timing</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="FactorModels_c.html">7. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="PortfolioMath_c.html">8. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1_c.html">8.13. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationI.html">9. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModelEstimation.html">10. Factor Model Estimation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="crosssectionalequitystrategies.html">11. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">11.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">11.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">12. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance_evaluation.html">13. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MachineLearning.html">14. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels.html">15. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">15.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="RiskManagement.html">16. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TradingCosts.html">17. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LeverageandShorting.html">18. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LLMs.html">19. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">20. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">21. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">21.1. Assignment 1</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/Fin418/blob/main/chapters/Finance/MarketTiming_c.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/MarketTiming_c.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/MarketTiming_c.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Expected Returns Timing</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">6.5.1. 🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">6.5.2. 📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">6.5.3. 🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-predictability-puzzle">6.5.4. The Predictability Puzzle <a id="predictability-puzzle"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-classic-finding">6.5.4.1. The Classic Finding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-is-this-surprising">6.5.4.2. Why is This Surprising?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-yield-as-a-signal">6.5.5. Dividend Yield as a Signal <a id="dividend-yield"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-market-data">6.5.5.1. Loading Market Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forecasting-regressions">6.5.6. Forecasting Regressions <a id="forecasting-regressions"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forecasting-framework">6.5.6.1. The Forecasting Framework</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#preparing-the-data">6.5.6.2. Preparing the Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-regression">6.5.6.3. Running the Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correcting-for-overlapping-returns">6.5.6.4. Correcting for Overlapping Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample-evaluation">6.5.7. Out-of-Sample Evaluation <a id="oos-evaluation"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-out-of-sample-matters">6.5.7.1. Why Out-of-Sample Matters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-going-wrong">6.5.7.2. What is going wrong?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trading-strategy-implementation">6.5.8. Trading Strategy Implementation <a id="trading-strategy"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">6.5.8.1. From Signal to Weights</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#strategy-returns">6.5.8.2. Strategy Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-evaluation">6.5.9. Performance Evaluation <a id="performance"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio-comparison">6.5.9.1. Sharpe Ratio Comparison</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample-r-squared">6.5.9.2. Out of Sample R-squared</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">6.5.10. Exercises <a id="exercises"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-overlapping-returns-problem">6.5.10.1. 🔧 Exercise 1: Overlapping Returns Problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-alternative-signals">6.5.10.2. 🔧 Exercise 2: Alternative Signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-break-the-sample">6.5.10.3. 🤔 Exercise 3: Break the Sample</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">6.5.11. 📝 Key Takeaways <a id="key-takeaways"></a></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="expected-returns-timing">
+<h1><span class="section-number">6.5. </span>Expected Returns Timing<a class="headerlink" href="#expected-returns-timing" title="Link to this heading">#</a></h1>
+<section id="learning-objectives">
+<h2><span class="section-number">6.5.1. </span>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of this notebook, you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Understand return predictability</strong> — Why dividend yields might forecast future stock returns</p></li>
+<li><p><strong>Run and interpret forecasting regressions</strong> — Test if a signal predicts returns using proper inference</p></li>
+<li><p><strong>Evaluate predictability out-of-sample</strong> — Use R² comparisons and trading strategies</p></li>
+<li><p><strong>Construct timing strategies</strong> — Convert signals into portfolio weights</p></li>
+<li><p><strong>Assess timing performance</strong> — Use alpha, Sharpe ratios, and proper benchmarks</p></li>
+</ol>
+</section>
+<section id="table-of-contents">
+<h2><span class="section-number">6.5.2. </span>📋 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#setup"><span class="xref myst">Setup</span></a></p></li>
+<li><p><a class="reference internal" href="#predictability-puzzle"><span class="xref myst">The Predictability Puzzle</span></a></p></li>
+<li><p><a class="reference internal" href="#dividend-yield"><span class="xref myst">Dividend Yield as a Signal</span></a></p></li>
+<li><p><a class="reference internal" href="#forecasting-regressions"><span class="xref myst">Forecasting Regressions</span></a></p></li>
+<li><p><a class="reference internal" href="#oos-evaluation"><span class="xref myst">Out-of-Sample Evaluation</span></a></p></li>
+<li><p><a class="reference internal" href="#trading-strategy"><span class="xref myst">Trading Strategy Implementation</span></a></p></li>
+<li><p><a class="reference internal" href="#performance"><span class="xref myst">Performance Evaluation</span></a></p></li>
+<li><p><a class="reference internal" href="#exercises"><span class="xref myst">Exercises</span></a></p></li>
+<li><p><a class="reference internal" href="#key-takeaways"><span class="xref myst">Key Takeaways</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2><span class="section-number">6.5.3. </span>🛠️ Setup <a id="setup"></a><a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🛠️ Setup: Run this cell first (click to expand)</span>
+
+<span class="c1"># Core libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="c1"># statsmodels: Statistical modeling for Python</span>
+<span class="c1"># Provides OLS regression with robust standard errors (HAC)</span>
+<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">statsmodels</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+
+<span class="c1"># pandas-datareader: Fetches financial data from online sources</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas_datareader</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span> <span class="k">as</span> <span class="n">DataReader</span>
+
+<span class="c1"># Set consistent plot style</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-whitegrid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+
+<span class="c1"># Suppress warnings for cleaner output</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Libraries loaded successfully!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: statsmodels in /usr/local/lib/python3.12/dist-packages (0.14.6)
+Requirement already satisfied: numpy&lt;3,&gt;=1.22.3 in /usr/local/lib/python3.12/dist-packages (from statsmodels) (2.0.2)
+Requirement already satisfied: scipy!=1.9.2,&gt;=1.8 in /usr/local/lib/python3.12/dist-packages (from statsmodels) (1.16.3)
+Requirement already satisfied: pandas!=2.1.0,&gt;=1.4 in /usr/local/lib/python3.12/dist-packages (from statsmodels) (2.2.2)
+Requirement already satisfied: patsy&gt;=0.5.6 in /usr/local/lib/python3.12/dist-packages (from statsmodels) (1.0.2)
+Requirement already satisfied: packaging&gt;=21.3 in /usr/local/lib/python3.12/dist-packages (from statsmodels) (25.0)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas!=2.1.0,&gt;=1.4-&gt;statsmodels) (2.9.0.post0)
+Requirement already satisfied: pytz&gt;=2020.1 in /usr/local/lib/python3.12/dist-packages (from pandas!=2.1.0,&gt;=1.4-&gt;statsmodels) (2025.2)
+Requirement already satisfied: tzdata&gt;=2022.7 in /usr/local/lib/python3.12/dist-packages (from pandas!=2.1.0,&gt;=1.4-&gt;statsmodels) (2025.3)
+Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil&gt;=2.8.2-&gt;pandas!=2.1.0,&gt;=1.4-&gt;statsmodels) (1.17.0)
+✅ Libraries loaded successfully!
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Helper Function: Get Factor Data</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;daily&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fetch Fama-French factor data from Ken French&#39;s website.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    factors : str</span>
+<span class="sd">        &#39;CAPM&#39; (RF, Mkt-RF), &#39;FF3&#39;, &#39;FF5&#39;, or &#39;FF6&#39;</span>
+<span class="sd">    freq : str</span>
+<span class="sd">        &#39;daily&#39; or &#39;monthly&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">freq_label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s1">&#39;monthly&#39;</span> <span class="k">else</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">freq</span>
+
+    <span class="k">if</span> <span class="n">factors</span> <span class="o">==</span> <span class="s1">&#39;CAPM&#39;</span><span class="p">:</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F-F_Research_Data_Factors</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">DataReader</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F-F_Research_Data_Factors</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span> <span class="s1">&#39;SMB&#39;</span><span class="p">,</span> <span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">()</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_factor</span> <span class="o">/</span> <span class="mi">100</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="the-predictability-puzzle">
+<h2><span class="section-number">6.5.4. </span>The Predictability Puzzle <a id="predictability-puzzle"></a><a class="headerlink" href="#the-predictability-puzzle" title="Link to this heading">#</a></h2>
+<section id="the-classic-finding">
+<h3><span class="section-number">6.5.4.1. </span>The Classic Finding<a class="headerlink" href="#the-classic-finding" title="Link to this heading">#</a></h3>
+<p>One of the most famous findings in finance:</p>
+<p><strong>High dividend yield periods are followed by above-average returns</strong></p>
+<p><img alt="Dividend Yield and Future Returns" src="https://github.com/amoreira2/Fin418/blob/main/assets/plots/Timing1.jpg?raw=1" /></p>
+<p>This finding earned Robert Shiller a Nobel Prize! 🏆</p>
+</section>
+<section id="why-is-this-surprising">
+<h3><span class="section-number">6.5.4.2. </span>Why is This Surprising?<a class="headerlink" href="#why-is-this-surprising" title="Link to this heading">#</a></h3>
+<p>When prices are low (relative to dividends), you might expect:</p>
+<ul class="simple">
+<li><p>❌ Future dividends will fall → “Bad news is priced in”</p></li>
+</ul>
+<p>But what actually happens:</p>
+<ul class="simple">
+<li><p>✅ Future <strong>prices go up</strong> → Expected returns were high!</p></li>
+</ul>
+<p>This suggests <strong>expected returns vary over time</strong>.</p>
+<p>Intution is super general but you can see it in the simple Gordon growth formula</p>
+<div class="math notranslate nohighlight">
+\[P=\frac{D}{r-g}\]</div>
+<p>Implies</p>
+<div class="math notranslate nohighlight">
+\[\frac{D}{P}=r-g\]</div>
+<p>So if dividend yield is low is either becasue</p>
+<ul class="simple">
+<li><p>Expected returns are low or expected growth is high</p></li>
+</ul>
+<blockquote>
+<div><p><strong>💡 Key Insight:</strong></p>
+<p>If expected returns are time-varying and predictable, you can build
+<strong>timing strategies</strong> that invest more when expected returns are high.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="dividend-yield-as-a-signal">
+<h2><span class="section-number">6.5.5. </span>Dividend Yield as a Signal <a id="dividend-yield"></a><a class="headerlink" href="#dividend-yield-as-a-signal" title="Link to this heading">#</a></h2>
+<section id="loading-market-data">
+<h3><span class="section-number">6.5.5.1. </span>Loading Market Data<a class="headerlink" href="#loading-market-data" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load CRSP market data with dividend yield</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/Markettiming_data1.csv&#39;</span>
+<span class="n">crsp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data range: </span><span class="si">{</span><span class="n">crsp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">crsp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">crsp</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Data range: 1925-12-31 to 2024-12-31
+</pre></div>
+</div>
+<div class="output text_html">
+  <div id="df-4e1a45aa-a47d-4368-80bd-8d69360dc709" class="colab-df-container">
+    <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>vwretd</th>
+      <th>vwretx</th>
+      <th>dp</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1925-12-31</th>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1926-01-30</th>
+      <td>0.000561</td>
+      <td>-0.001395</td>
+      <td>0.001959</td>
+    </tr>
+    <tr>
+      <th>1926-02-27</th>
+      <td>-0.033046</td>
+      <td>-0.036587</td>
+      <td>0.003675</td>
+    </tr>
+    <tr>
+      <th>1926-03-31</th>
+      <td>-0.064002</td>
+      <td>-0.070021</td>
+      <td>0.006472</td>
+    </tr>
+    <tr>
+      <th>1926-04-30</th>
+      <td>0.037029</td>
+      <td>0.034043</td>
+      <td>0.002888</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-4e1a45aa-a47d-4368-80bd-8d69360dc709')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-4e1a45aa-a47d-4368-80bd-8d69360dc709 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-4e1a45aa-a47d-4368-80bd-8d69360dc709');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    </div>
+  </div>
+</div></div>
+</div>
+<p>The data contains:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">vwretd</span></code>: Value-weighted market return (with dividends)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vwretx</span></code>: Value-weighted market return (without dividends)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dp</span></code>: Dividend yield (dividend/price ratio)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot annualized dividend yield (smoothed over 12 months)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">dp_annual</span> <span class="o">=</span> <span class="n">crsp</span><span class="p">[</span><span class="s1">&#39;dp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dp_annual</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Annualized Dividend Yield&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Market Dividend Yield Over Time&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/b87067147dc00a28e2fe34cf169e4df043d9a092860d662308071c937e7d9437.png" src="../../_images/b87067147dc00a28e2fe34cf169e4df043d9a092860d662308071c937e7d9437.png" />
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 Remember:</strong></p>
+<ul class="simple">
+<li><p>Dividend yields ranged from 4-7% in the 1930s to around 2% today.</p></li>
+<li><p>This secular decline is important for interpretation.</p></li>
+<li><p>Why ? In english what that means?</p></li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><p><strong>🤔 Think:</strong></p>
+<ol class="arabic simple">
+<li><p>Why might high dividend yields predict high future returns?</p></li>
+<li><p>Why might dividend yields NOT predict returns?</p></li>
+</ol>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="forecasting-regressions">
+<h2><span class="section-number">6.5.6. </span>Forecasting Regressions <a id="forecasting-regressions"></a><a class="headerlink" href="#forecasting-regressions" title="Link to this heading">#</a></h2>
+<section id="the-forecasting-framework">
+<h3><span class="section-number">6.5.6.1. </span>The Forecasting Framework<a class="headerlink" href="#the-forecasting-framework" title="Link to this heading">#</a></h3>
+<p>To test if a signal predicts returns, run:</p>
+<div class="math notranslate nohighlight">
+\[r_{t \rightarrow t+h} = a + b \cdot \text{signal}_t + u_{t+h}\]</div>
+<p>Key differences from factor models:</p>
+<ul class="simple">
+<li><p>Relationship is <strong>not contemporaneous</strong></p></li>
+<li><p>We <strong>know the signal ahead of time</strong></p></li>
+<li><p>We’re predicting returns over horizon <span class="math notranslate nohighlight">\(h\)</span></p></li>
+</ul>
+</section>
+<section id="preparing-the-data">
+<h3><span class="section-number">6.5.6.2. </span>Preparing the Data<a class="headerlink" href="#preparing-the-data" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get risk-free rate</span>
+<span class="n">df_factors</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">(</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;monthly&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="c1"># Align indices</span>
+<span class="n">crsp</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">crsp</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Merge with factors</span>
+<span class="n">merged</span> <span class="o">=</span> <span class="n">crsp</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_factors</span><span class="p">[[</span><span class="s1">&#39;RF&#39;</span><span class="p">]],</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Parameters</span>
+<span class="n">years</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Forecast horizon</span>
+
+<span class="c1"># Compute future 5-year returns (annualized)</span>
+<span class="n">merged</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;vwretd&#39;</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">years</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="n">years</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">years</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1"># Smooth dividend yield (annualized)</span>
+<span class="n">merged</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;dp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Correlation: </span><span class="si">{</span><span class="n">merged</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">merged</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Correlation: 0.357
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualize the relationship</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">merged</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Dividend Yield (×3)&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">merged</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Future 5-Year Return&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Return / Yield&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Dividend Yield vs Future Returns&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/95d6dc8cc014182b4491b8c4e7b64a78d8f6ca9f1c736f22ea1e66d182de0de2.png" src="../../_images/95d6dc8cc014182b4491b8c4e7b64a78d8f6ca9f1c736f22ea1e66d182de0de2.png" />
+</div>
+</div>
+</section>
+<section id="running-the-regression">
+<h3><span class="section-number">6.5.6.3. </span>Running the Regression<a class="headerlink" href="#running-the-regression" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Naive OLS regression</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">merged</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">])</span>
+<span class="n">model_naive</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">merged</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model_naive</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:               R_future   R-squared:                       0.127
+Model:                            OLS   Adj. R-squared:                  0.127
+Method:                 Least Squares   F-statistic:                     161.8
+Date:                Mon, 19 Jan 2026   Prob (F-statistic):           1.08e-34
+Time:                        18:50:41   Log-Likelihood:                 1299.2
+No. Observations:                1111   AIC:                            -2594.
+Df Residuals:                    1109   BIC:                            -2584.
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.0297      0.006      4.878      0.000       0.018       0.042
+dp_avg         1.9598      0.154     12.719      0.000       1.657       2.262
+==============================================================================
+Omnibus:                      234.961   Durbin-Watson:                   0.044
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              563.442
+Skew:                          -1.134   Prob(JB):                    4.47e-123
+Kurtosis:                       5.651   Cond. No.                         68.4
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>⚠️ Caution:</strong></p>
+<p>Look at that t-statistic! Seems too good to be true…</p>
+<p>The problem: <strong>overlapping windows</strong> inflate the t-statistic.
+With 5-year returns, consecutive observations share 59 out of 60 months!</p>
+</div></blockquote>
+</section>
+<section id="correcting-for-overlapping-returns">
+<h3><span class="section-number">6.5.6.4. </span>Correcting for Overlapping Returns<a class="headerlink" href="#correcting-for-overlapping-returns" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># HAC standard errors (Newey-West) to correct for overlap</span>
+<span class="n">model_hac</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">merged</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HAC&#39;</span><span class="p">,</span>
+    <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;maxlags&#39;</span><span class="p">:</span> <span class="n">years</span> <span class="o">*</span> <span class="mi">12</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model_hac</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:               R_future   R-squared:                       0.127
+Model:                            OLS   Adj. R-squared:                  0.127
+Method:                 Least Squares   F-statistic:                     11.89
+Date:                Mon, 19 Jan 2026   Prob (F-statistic):           0.000584
+Time:                        18:50:46   Log-Likelihood:                 1299.2
+No. Observations:                1111   AIC:                            -2594.
+Df Residuals:                    1109   BIC:                            -2584.
+Df Model:                           1                                         
+Covariance Type:                  HAC                                         
+==============================================================================
+                 coef    std err          z      P&gt;|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.0297      0.024      1.232      0.218      -0.018       0.077
+dp_avg         1.9598      0.568      3.449      0.001       0.846       3.074
+==============================================================================
+Omnibus:                      234.961   Durbin-Watson:                   0.044
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              563.442
+Skew:                          -1.134   Prob(JB):                    4.47e-123
+Kurtosis:                       5.651   Cond. No.                         68.4
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity and autocorrelation robust (HAC) using 60 lags and without small sample correction
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight:</strong></p>
+<p>After correcting for overlap, the t-statistic drops substantially.
+The relationship may still be significant, but with much more uncertainty.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="out-of-sample-evaluation">
+<h2><span class="section-number">6.5.7. </span>Out-of-Sample Evaluation <a id="oos-evaluation"></a><a class="headerlink" href="#out-of-sample-evaluation" title="Link to this heading">#</a></h2>
+<section id="why-out-of-sample-matters">
+<h3><span class="section-number">6.5.7.1. </span>Why Out-of-Sample Matters<a class="headerlink" href="#why-out-of-sample-matters" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>We can’t trade on data we haven’t seen yet</p></li>
+<li><p>Relationships may be spurious or unstable</p></li>
+</ul>
+<p>There are many ways of conducting an out of sample analysis. And there is a lot of science to it</p>
+<p>For now we will keep it simple and split in an arbitrary date</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Split into estimation and test samples</span>
+<span class="n">estimation</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;1950&#39;</span><span class="p">:</span><span class="s1">&#39;1990&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">test</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="s1">&#39;1991&#39;</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># Estimate model on estimation sample</span>
+<span class="n">X_est</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">estimation</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">])</span>
+<span class="n">model_est</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">estimation</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">],</span> <span class="n">X_est</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HAC&#39;</span><span class="p">,</span>
+    <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;maxlags&#39;</span><span class="p">:</span> <span class="n">years</span> <span class="o">*</span> <span class="mi">12</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Generate forecasts for test sample USING THE ESTIMATED PARAMETERS IN ESTIMATION SAMPLE</span>
+<span class="n">test</span><span class="p">[</span><span class="s1">&#39;forecast&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_est</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">model_est</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;dp_avg&#39;</span><span class="p">]</span>
+
+<span class="n">test</span><span class="p">[[</span><span class="s1">&#39;R_future&#39;</span><span class="p">,</span><span class="s1">&#39;forecast&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
+</pre></div>
+</div>
+<img alt="../../_images/c589d41f0e678ad9df24dab7691b8b0b40b8604ebb6a8635852b97e36e1fcc57.png" src="../../_images/c589d41f0e678ad9df24dab7691b8b0b40b8604ebb6a8635852b97e36e1fcc57.png" />
+</div>
+</div>
+</section>
+<section id="what-is-going-wrong">
+<h3><span class="section-number">6.5.7.2. </span>What is going wrong?<a class="headerlink" href="#what-is-going-wrong" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Structural breaks in dividend policy? Firms now returns capital usign buy-backs</p></li>
+<li><p>Maybe there was a one of reduction in risk-premia and now yields mean-revert around a different average?</p></li>
+<li><p>but timing the market is very hard</p></li>
+<li><p>good news is that you can easily test if any suggestion people give makes sense, e.g.  Does “Buy the Dip” works?</p></li>
+</ul>
+<p>How to fomally evaluate if it is working?</p>
+<ol class="arabic simple">
+<li><p>Form the trading strategy and look at the returns</p></li>
+<li><p>Out of Sample R-squared</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="trading-strategy-implementation">
+<h2><span class="section-number">6.5.8. </span>Trading Strategy Implementation <a id="trading-strategy"></a><a class="headerlink" href="#trading-strategy-implementation" title="Link to this heading">#</a></h2>
+<section id="from-signal-to-weights">
+<h3><span class="section-number">6.5.8.1. </span>From Signal to Weights<a class="headerlink" href="#from-signal-to-weights" title="Link to this heading">#</a></h3>
+<p>The optimal weight on the market is:</p>
+<div class="math notranslate nohighlight">
+\[x_t = \frac{\mu_t}{\gamma \sigma^2} = \frac{a + b \cdot \text{DP}_t}{\gamma \sigma^2}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu_t = a + b \cdot \text{DP}_t\)</span> is the forecasted premium</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span> is risk aversion</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma\)</span> is volatility (assumed constant for now)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Strategy parameters</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">vol</span> <span class="o">=</span> <span class="mf">0.16</span>  <span class="c1"># Annual volatility</span>
+
+<span class="c1"># Compute weights</span>
+<span class="n">test</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;forecast&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">vol</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Visualize weights</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Buy &amp; Hold&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Weight on Market&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Timing Strategy Weights&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/9defddcdf9ef28c374d39b2d28fe9f5a75940e97ad6e5ef0f38eab6de453a827.png" src="../../_images/9defddcdf9ef28c374d39b2d28fe9f5a75940e97ad6e5ef0f38eab6de453a827.png" />
+</div>
+</div>
+</section>
+<section id="strategy-returns">
+<h3><span class="section-number">6.5.8.2. </span>Strategy Returns<a class="headerlink" href="#strategy-returns" title="Link to this heading">#</a></h3>
+<p>The timing strategy return is:</p>
+<div class="math notranslate nohighlight">
+\[r^{\text{timing}}_{t+1} = r^f_{t+1} + x_t (r^{\text{mkt}}_{t+1} - r^f_{t+1})\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+  <div id="df-a15d5017-84bf-4c40-bffd-cfc88798f3aa" class="colab-df-container">
+    <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>vwretd</th>
+      <th>vwretx</th>
+      <th>dp</th>
+      <th>RF_x</th>
+      <th>R_future</th>
+      <th>dp_avg</th>
+      <th>forecast</th>
+      <th>weight</th>
+      <th>RF_y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1991-01-31</th>
+      <td>0.049083</td>
+      <td>0.046987</td>
+      <td>0.002002</td>
+      <td>0.0052</td>
+      <td>0.117732</td>
+      <td>0.035899</td>
+      <td>0.039267</td>
+      <td>0.766928</td>
+      <td>0.0052</td>
+    </tr>
+    <tr>
+      <th>1991-02-28</th>
+      <td>0.075848</td>
+      <td>0.071836</td>
+      <td>0.003743</td>
+      <td>0.0048</td>
+      <td>0.105225</td>
+      <td>0.035742</td>
+      <td>0.038513</td>
+      <td>0.752212</td>
+      <td>0.0048</td>
+    </tr>
+    <tr>
+      <th>1991-03-31</th>
+      <td>0.028922</td>
+      <td>0.026702</td>
+      <td>0.002162</td>
+      <td>0.0044</td>
+      <td>0.101422</td>
+      <td>0.035436</td>
+      <td>0.037044</td>
+      <td>0.723525</td>
+      <td>0.0044</td>
+    </tr>
+    <tr>
+      <th>1991-04-30</th>
+      <td>0.003311</td>
+      <td>0.001186</td>
+      <td>0.002122</td>
+      <td>0.0053</td>
+      <td>0.106441</td>
+      <td>0.035207</td>
+      <td>0.035950</td>
+      <td>0.702141</td>
+      <td>0.0053</td>
+    </tr>
+    <tr>
+      <th>1991-05-31</th>
+      <td>0.040737</td>
+      <td>0.037177</td>
+      <td>0.003432</td>
+      <td>0.0047</td>
+      <td>0.103558</td>
+      <td>0.034687</td>
+      <td>0.033456</td>
+      <td>0.653443</td>
+      <td>0.0047</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2024-08-31</th>
+      <td>0.021572</td>
+      <td>0.020203</td>
+      <td>0.001342</td>
+      <td>0.0048</td>
+      <td>NaN</td>
+      <td>0.016496</td>
+      <td>-0.053761</td>
+      <td>-1.050016</td>
+      <td>0.0048</td>
+    </tr>
+    <tr>
+      <th>2024-09-30</th>
+      <td>0.020969</td>
+      <td>0.019485</td>
+      <td>0.001456</td>
+      <td>0.0040</td>
+      <td>NaN</td>
+      <td>0.016407</td>
+      <td>-0.054187</td>
+      <td>-1.058334</td>
+      <td>0.0040</td>
+    </tr>
+    <tr>
+      <th>2024-10-31</th>
+      <td>-0.008298</td>
+      <td>-0.009139</td>
+      <td>0.000849</td>
+      <td>0.0039</td>
+      <td>NaN</td>
+      <td>0.016233</td>
+      <td>-0.055020</td>
+      <td>-1.074606</td>
+      <td>0.0039</td>
+    </tr>
+    <tr>
+      <th>2024-11-30</th>
+      <td>0.064855</td>
+      <td>0.063463</td>
+      <td>0.001309</td>
+      <td>0.0040</td>
+      <td>NaN</td>
+      <td>0.015693</td>
+      <td>-0.057611</td>
+      <td>-1.125224</td>
+      <td>0.0040</td>
+    </tr>
+    <tr>
+      <th>2024-12-31</th>
+      <td>-0.031582</td>
+      <td>-0.033470</td>
+      <td>0.001953</td>
+      <td>0.0037</td>
+      <td>NaN</td>
+      <td>0.015622</td>
+      <td>-0.057949</td>
+      <td>-1.131820</td>
+      <td>0.0037</td>
+    </tr>
+  </tbody>
+</table>
+<p>408 rows × 9 columns</p>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-a15d5017-84bf-4c40-bffd-cfc88798f3aa')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-a15d5017-84bf-4c40-bffd-cfc88798f3aa button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-a15d5017-84bf-4c40-bffd-cfc88798f3aa');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+  <div id="id_94d2a6e7-b4e0-45cf-b833-543e42bf4157">
+    <style>
+      .colab-df-generate {
+        background-color: #E8F0FE;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        fill: #1967D2;
+        height: 32px;
+        padding: 0 0 0 0;
+        width: 32px;
+      }
+
+      .colab-df-generate:hover {
+        background-color: #E2EBFA;
+        box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+        fill: #174EA6;
+      }
+
+      [theme=dark] .colab-df-generate {
+        background-color: #3B4455;
+        fill: #D2E3FC;
+      }
+
+      [theme=dark] .colab-df-generate:hover {
+        background-color: #434B5C;
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+        filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+        fill: #FFFFFF;
+      }
+    </style>
+    <button class="colab-df-generate" onclick="generateWithVariable('test')"
+            title="Generate code using this dataframe."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M7,19H8.4L18.45,9,17,7.55,7,17.6ZM5,21V16.75L18.45,3.32a2,2,0,0,1,2.83,0l1.4,1.43a1.91,1.91,0,0,1,.58,1.4,1.91,1.91,0,0,1-.58,1.4L9.25,21ZM18.45,9,17,7.55Zm-12,3A5.31,5.31,0,0,0,4.9,8.1,5.31,5.31,0,0,0,1,6.5,5.31,5.31,0,0,0,4.9,4.9,5.31,5.31,0,0,0,6.5,1,5.31,5.31,0,0,0,8.1,4.9,5.31,5.31,0,0,0,12,6.5,5.46,5.46,0,0,0,6.5,12Z"/>
+  </svg>
+    </button>
+    <script>
+      (() => {
+      const buttonEl =
+        document.querySelector('#id_94d2a6e7-b4e0-45cf-b833-543e42bf4157 button.colab-df-generate');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      buttonEl.onclick = () => {
+        google.colab.notebook.generateWithVariable('test');
+      }
+      })();
+    </script>
+  </div>
+
+    </div>
+  </div>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Merge with factors to get RF</span>
+
+
+<span class="c1"># Compute strategy returns</span>
+<span class="n">test</span><span class="p">[</span><span class="s1">&#39;ret_timing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;weight&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s1">&#39;vwretd&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])</span>
+
+<span class="c1"># Cumulative returns</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">cum_timing</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;ret_timing&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+<span class="n">cum_mkt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;vwretd&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">cum_mkt</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Buy &amp; Hold&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">cum_timing</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Timing Strategy&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Cumulative Return&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Timing Strategy vs Buy &amp; Hold&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/d266e308ad14ed802341390554bf7da8328cab2299cddad85bc78d2fb6adce88.png" src="../../_images/d266e308ad14ed802341390554bf7da8328cab2299cddad85bc78d2fb6adce88.png" />
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="performance-evaluation">
+<h2><span class="section-number">6.5.9. </span>Performance Evaluation <a id="performance"></a><a class="headerlink" href="#performance-evaluation" title="Link to this heading">#</a></h2>
+<p>How to evaluate if we “beat the market”?</p>
+<p>Is looking at the raw cumulative return enough?</p>
+<p>What differences we might want to account for?</p>
+<section id="sharpe-ratio-comparison">
+<h3><span class="section-number">6.5.9.1. </span>Sharpe Ratio Comparison<a class="headerlink" href="#sharpe-ratio-comparison" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute Sharpe ratios</span>
+<span class="n">excess_timing</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;ret_timing&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
+<span class="n">excess_mkt</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;vwretd&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
+
+<span class="n">sr_timing</span> <span class="o">=</span> <span class="p">(</span><span class="n">excess_timing</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">excess_timing</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+<span class="n">sr_mkt</span> <span class="o">=</span> <span class="p">(</span><span class="n">excess_mkt</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">excess_mkt</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sharpe Ratio (Timing):     </span><span class="si">{</span><span class="n">sr_timing</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sharpe Ratio (Buy &amp; Hold): </span><span class="si">{</span><span class="n">sr_mkt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sharpe Ratio (Timing):     0.748
+Sharpe Ratio (Buy &amp; Hold): 0.581
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight:</strong></p>
+<p>To the extent timing works, you harvest more premium per unit of risk.
+If beta just varies but timing doesn’t add value, Sharpe ratios will be similar or even go down if you are jsut adding noise to your trading strategy</p>
+</div></blockquote>
+<p>It has a higher Sharpe out of sample</p>
+<ul class="simple">
+<li><p>Can we exploit this fact to obtain construct a strategy that dominates buy and hold? How?</p></li>
+<li><p>Alternatively, can we adjust the buy and hold benchmark so we are comparing apples with apples?</p></li>
+</ul>
+</section>
+<section id="out-of-sample-r-squared">
+<h3><span class="section-number">6.5.9.2. </span>Out of Sample R-squared<a class="headerlink" href="#out-of-sample-r-squared" title="Link to this heading">#</a></h3>
+<p>One thing that people do to evaluate these forecasting regressions is look at the R-squared <strong>out of sample</strong> relative to some benchmark prediction for the expected returns.</p>
+<ul class="simple">
+<li><p>Typically a regression R-squared has the sample average</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[R^2_{Standard}=1-\frac{\sum(r_{t+1}-(a+b *signal_t))^2}{\sum(r_{t+1}-Average(r_{t+1}))^2}\]</div>
+<ul class="simple">
+<li><p>You compare the model explanatory power, i.e. reduction in <span class="math notranslate nohighlight">\(\sum(r_{t+1}-(a+b *signal_t))^2\)</span>, with the reduction in simply subtracting the sample average <span class="math notranslate nohighlight">\(\sum(r_{t+1}-Average(r_{t+1}))^2\)</span></p></li>
+<li><p>But we need a bechmark that also cannot see the future–knowign the future average would be amazing right?</p></li>
+<li><p>what people do is to use the estimation sample average–instead of using the signal–just use past average returns</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[R^2_{OOS}=1-\frac{\sum(r_{t+1}-(a+b *signal_t))^2}{\sum(r_{t+1}-r_{past average})^2}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">r_past_average</span><span class="o">=</span><span class="p">(</span><span class="n">estimation</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">R2_TS</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="p">((</span><span class="n">test</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">]</span><span class="o">-</span><span class="p">(</span><span class="n">test</span><span class="p">[</span><span class="s1">&#39;forecast&#39;</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="p">((</span><span class="n">test</span><span class="p">[</span><span class="s1">&#39;R_future&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">r_past_average</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">R2_TS</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(-0.6026909813375205)
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>How to interpret this negative number?</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercises">
+<h2><span class="section-number">6.5.10. </span>Exercises <a id="exercises"></a><a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<section id="exercise-1-overlapping-returns-problem">
+<h3><span class="section-number">6.5.10.1. </span>🔧 Exercise 1: Overlapping Returns Problem<a class="headerlink" href="#exercise-1-overlapping-returns-problem" title="Link to this heading">#</a></h3>
+<p>Explain why overlapping returns cause problems for standard errors.</p>
+<ol class="arabic simple">
+<li><p>If we use 5-year returns, how many months overlap between consecutive observations?</p></li>
+<li><p>What does this do to the effective sample size?</p></li>
+<li><p>How does HAC correction help?</p></li>
+</ol>
+<details>
+<summary>💡 Click for solution</summary>
+<ol class="arabic simple">
+<li><p>With 60-month returns, consecutive observations share 59 months of data.</p></li>
+<li><p>The effective sample size is much smaller than the raw count. If we have 100 years of monthly data (1200 months), we don’t have 1200 independent observations—we have closer to 20 (100/5).</p></li>
+<li><p>HAC (Heteroskedasticity and Autocorrelation Consistent) standard errors account for the serial correlation induced by overlapping windows, giving us proper inference.</p></li>
+</ol>
+</details></section>
+<section id="exercise-2-alternative-signals">
+<h3><span class="section-number">6.5.10.2. </span>🔧 Exercise 2: Alternative Signals<a class="headerlink" href="#exercise-2-alternative-signals" title="Link to this heading">#</a></h3>
+<p>Explain the economic intuition for why each signal might predict market returns:</p>
+<ol class="arabic simple">
+<li><p><strong>Credit spread</strong> (BBB yield - Treasury yield)</p></li>
+<li><p><strong>VIX</strong> (implied volatility index)</p></li>
+<li><p><strong>Aggregate short interest</strong> (fraction of market cap in short positions)</p></li>
+</ol>
+<details>
+<summary>💡 Click for solution</summary>
+<ol class="arabic simple">
+<li><p><strong>Credit spread</strong>: High spreads indicate economic stress and high risk premia. Investors demand more compensation → expect higher future returns.</p></li>
+<li><p><strong>VIX</strong>: High implied volatility may indicate high risk premia (though volatility itself doesn’t predict returns well). The variance risk premium (VIX² - RV) is a better predictor.</p></li>
+<li><p><strong>Short interest</strong>: High short interest may indicate overvaluation or pessimism. If shorts are informed, this predicts lower returns. If it’s excessive pessimism, it could mean mean-reversion (higher returns).</p></li>
+</ol>
+</details><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-3-break-the-sample">
+<h3><span class="section-number">6.5.10.3. </span>🤔 Exercise 3: Break the Sample<a class="headerlink" href="#exercise-3-break-the-sample" title="Link to this heading">#</a></h3>
+<p>Using the test sample data:</p>
+<ol class="arabic simple">
+<li><p>Split it into two sub-periods of similar size</p></li>
+<li><p>Compute Sharpe ratios for timing vs buy-and-hold in each sub-period</p></li>
+<li><p>Are the results stable across periods?</p></li>
+</ol>
+<details>
+<summary>💡 Click for solution</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Split test sample</span>
+<span class="n">period1</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;2011&#39;</span><span class="p">:</span><span class="s1">&#39;2017&#39;</span><span class="p">]</span>
+<span class="n">period2</span> <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="s1">&#39;2018&#39;</span><span class="p">:]</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;2011-2017&#39;</span><span class="p">,</span> <span class="n">period1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;2018-2024&#39;</span><span class="p">,</span> <span class="n">period2</span><span class="p">)]:</span>
+    <span class="n">sr_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret_timing&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">/</span> <span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret_timing&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+    <span class="n">sr_m</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;vwretd&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">/</span> <span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;vwretd&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: Timing SR = </span><span class="si">{</span><span class="n">sr_t</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, Market SR = </span><span class="si">{</span><span class="n">sr_m</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Results often vary significantly across periods, highlighting the instability of return predictability.</p>
+</details><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2><span class="section-number">6.5.11. </span>📝 Key Takeaways <a id="key-takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>To time a factor, you need a signal that predicts future returns.</strong> Dividend yield is the classic example, but many others exist.</p></li>
+<li><p><strong>In-sample predictability is just the start.</strong> The relationship must be stable enough to work out-of-sample.</p></li>
+<li><p><strong>Overlapping returns require special care.</strong> Use HAC standard errors or non-overlapping samples for proper inference.</p></li>
+<li><p><strong>Evaluate with out-of-sample R² or trading strategies.</strong> Use the historical average as your benchmark.</p></li>
+<li><p><strong>The right benchmark has the same average beta.</strong> Regress timing returns on the factor and look at alpha.</p></li>
+<li><p><strong>Dividend yield predictability is weak and unstable.</strong> The signal is so persistent that even long samples have few independent observations.</p></li>
+<li><p><strong>Sharpe ratios isolate timing skill.</strong> Pure beta variation is SR-neutral; only alpha improves the Sharpe ratio.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Timing_c.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">5. </span>Timing</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="Volatilitytiming_c.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">6.6. </span>Volatility Timing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">6.5.1. 🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">6.5.2. 📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">6.5.3. 🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-predictability-puzzle">6.5.4. The Predictability Puzzle <a id="predictability-puzzle"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-classic-finding">6.5.4.1. The Classic Finding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-is-this-surprising">6.5.4.2. Why is This Surprising?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-yield-as-a-signal">6.5.5. Dividend Yield as a Signal <a id="dividend-yield"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-market-data">6.5.5.1. Loading Market Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forecasting-regressions">6.5.6. Forecasting Regressions <a id="forecasting-regressions"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forecasting-framework">6.5.6.1. The Forecasting Framework</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#preparing-the-data">6.5.6.2. Preparing the Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-regression">6.5.6.3. Running the Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#correcting-for-overlapping-returns">6.5.6.4. Correcting for Overlapping Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample-evaluation">6.5.7. Out-of-Sample Evaluation <a id="oos-evaluation"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-out-of-sample-matters">6.5.7.1. Why Out-of-Sample Matters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-going-wrong">6.5.7.2. What is going wrong?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trading-strategy-implementation">6.5.8. Trading Strategy Implementation <a id="trading-strategy"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">6.5.8.1. From Signal to Weights</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#strategy-returns">6.5.8.2. Strategy Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-evaluation">6.5.9. Performance Evaluation <a id="performance"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio-comparison">6.5.9.1. Sharpe Ratio Comparison</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample-r-squared">6.5.9.2. Out of Sample R-squared</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">6.5.10. Exercises <a id="exercises"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-overlapping-returns-problem">6.5.10.1. 🔧 Exercise 1: Overlapping Returns Problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-alternative-signals">6.5.10.2. 🔧 Exercise 2: Alternative Signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-break-the-sample">6.5.10.3. 🤔 Exercise 3: Break the Sample</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">6.5.11. 📝 Key Takeaways <a id="key-takeaways"></a></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

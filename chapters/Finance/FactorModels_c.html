@@ -1,0 +1,1776 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>7. Factor Models &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/FactorModels_c';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/Fin418/chapters/Finance/FactorModels_c.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="8. Portfolios" href="PortfolioMath_c.html" />
+    <link rel="prev" title="6.6. Volatility Timing" href="Volatilitytiming_c.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="IntrotoReturns_c.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency.html">4.11. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI.html">4.12. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="Timing_c.html">5. Timing</a></li>
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">7. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="PortfolioMath_c.html">8. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1_c.html">8.13. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationI.html">9. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModelEstimation.html">10. Factor Model Estimation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="crosssectionalequitystrategies.html">11. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">11.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">11.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">12. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance_evaluation.html">13. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MachineLearning.html">14. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels.html">15. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">15.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="RiskManagement.html">16. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TradingCosts.html">17. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LeverageandShorting.html">18. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LLMs.html">19. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">20. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">21. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">21.1. Assignment 1</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/Fin418/blob/main/chapters/Finance/FactorModels_c.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/Fin418/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/FactorModels_c.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/FactorModels_c.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Factor Models</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">7.1. 🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">7.2. 📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">7.3. 🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#towards-a-factor-model">7.4. Towards a Factor Model <a id="towards-a-factor-model"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-core-insight">7.4.1. The Core Insight</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-factor-model-equation">7.4.2. The Factor Model Equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-return-data">7.4.3. Loading Return Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-beta-with-regression">7.4.4. Estimating Beta with Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-co-movement">7.4.5. Visualizing Co-movement</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-models-vs-expected-return-models">7.5. Risk Models vs Expected Return Models <a id="risk-vs-expected-return"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-models">7.5.1. 👉 Risk Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-return-models">7.5.2. 👉 Expected Return Models</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-the-organization-of-wall-street">7.6. Alpha and Beta: The Organization of Wall Street <a id="alpha-beta"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-the-industry-is-organized">7.6.1. How the Industry is Organized</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-factor-exposure-to-expected-returns">7.6.2. From Factor Exposure to Expected Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-and-hedged-portfolios">7.7. Tracking and Hedged Portfolios <a id="tracking-hedging"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-msft-data-for-hedging-example">7.7.1. Loading MSFT Data for Hedging Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-factor-regression">7.7.2. Running the Factor Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-tracking-portfolio-also-called-mimicking-portfolio-factor-mimicking-portfolio-or-hedging-portfolio">7.7.3. The Tracking Portfolio (also called mimicking portfolio, factor-mimicking portfolio or Hedging Portfolio)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-hedged-portfolio">7.7.4. The Hedged Portfolio</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-budgets-and-position-sizing">7.8. Risk Budgets and Position Sizing <a id="risk-budgets"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#position-sizing-under-a-volatility-budget">7.8.1. Position Sizing Under a Volatility Budget</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-p-l">7.8.2. Expected P&amp;L</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hedging-allows-larger-positions">7.8.3. Hedging Allows Larger Positions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio-and-appraisal-ratio">7.9. Sharpe Ratio and Appraisal Ratio <a id="performance-metrics"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio">7.9.1. Sharpe Ratio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-ratio">7.9.2. Appraisal Ratio</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-decomposition">7.10. Variance Decomposition <a id="variance-decomposition"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#breaking-down-total-risk">7.10.1. Breaking Down Total Risk</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">7.11. Exercises <a id="exercises"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-estimate-factor-model-for-jpm">7.11.1. 🔧 Exercise 1: Estimate Factor Model for JPM</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-build-a-hedged-portfolio">7.11.2. 🔧 Exercise 2: Build a Hedged Portfolio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-position-sizing-challenge">7.11.3. 🤔 Exercise 3: Position Sizing Challenge</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">7.12. 📝 Key Takeaways <a id="key-takeaways"></a></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="factor-models">
+<h1><span class="section-number">7. </span>Factor Models<a class="headerlink" href="#factor-models" title="Link to this heading">#</a></h1>
+<section id="learning-objectives">
+<h2><span class="section-number">7.1. </span>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of this notebook, you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Decode the α / β decomposition</strong> — Split any asset’s excess return into factor-driven and idiosyncratic pieces</p></li>
+<li><p><strong>Estimate factor exposure with regression</strong> — Use OLS to obtain α, β, and residual statistics</p></li>
+<li><p><strong>Create tracking and hedged portfolios</strong> — Build factor-neutral “portable alpha” positions</p></li>
+<li><p><strong>Apply risk budgets to position sizing</strong> — Determine capital allocation under volatility constraints</p></li>
+<li><p><strong>Evaluate performance with Sharpe and Appraisal ratios</strong> — Distinguish skill from factor exposure</p></li>
+</ol>
+</section>
+<section id="table-of-contents">
+<h2><span class="section-number">7.2. </span>📋 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#setup"><span class="xref myst">Setup</span></a></p></li>
+<li><p><a class="reference internal" href="#towards-a-factor-model"><span class="xref myst">Towards a Factor Model</span></a></p></li>
+<li><p><a class="reference internal" href="#risk-vs-expected-return"><span class="xref myst">Risk Models vs Expected Return Models</span></a></p></li>
+<li><p><a class="reference internal" href="#alpha-beta"><span class="xref myst">Alpha and Beta: The Organization of Wall Street</span></a></p></li>
+<li><p><a class="reference internal" href="#tracking-hedging"><span class="xref myst">Tracking and Hedged Portfolios</span></a></p></li>
+<li><p><a class="reference internal" href="#risk-budgets"><span class="xref myst">Risk Budgets and Position Sizing</span></a></p></li>
+<li><p><a class="reference internal" href="#performance-metrics"><span class="xref myst">Sharpe Ratio and Appraisal Ratio</span></a></p></li>
+<li><p><a class="reference internal" href="#variance-decomposition"><span class="xref myst">Variance Decomposition</span></a></p></li>
+<li><p><a class="reference internal" href="#exercises"><span class="xref myst">Exercises</span></a></p></li>
+<li><p><a class="reference internal" href="#key-takeaways"><span class="xref myst">Key Takeaways</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2><span class="section-number">7.3. </span>🛠️ Setup <a id="setup"></a><a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🛠️ Setup: Run this cell first (click to expand)</span>
+
+<span class="c1"># Core libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+
+
+<span class="c1"># Set consistent plot style</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-whitegrid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+
+<span class="c1"># Suppress warnings for cleaner output</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Libraries loaded successfully!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>✅ Libraries loaded successfully!
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Helper Function: Get Factor Data</span>
+<span class="c1"># pandas-datareader: Fetches financial data from various online sources</span>
+<span class="c1"># We&#39;ll use it to get Fama-French factor data from Ken French&#39;s website</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataReader</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="s1">&#39;CAPM&#39;</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;daily&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download Fama-French factor data.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    - factors: &#39;CAPM&#39;, &#39;FF3&#39;, &#39;FF5&#39;, or &#39;FF6&#39;</span>
+<span class="sd">    - freq: &#39;daily&#39; or &#39;monthly&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    Returns: DataFrame with factor returns (as decimals)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">freq_label</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s1">&#39;monthly&#39;</span> <span class="k">else</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">freq</span>
+    
+    <span class="k">if</span> <span class="n">factors</span> <span class="o">==</span> <span class="s1">&#39;CAPM&#39;</span><span class="p">:</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F-F_Research_Data_Factors</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]]</span>
+    <span class="k">elif</span> <span class="n">factors</span> <span class="o">==</span> <span class="s1">&#39;FF3&#39;</span><span class="p">:</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F-F_Research_Data_Factors</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span> <span class="s1">&#39;SMB&#39;</span><span class="p">,</span> <span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+    <span class="k">elif</span> <span class="n">factors</span> <span class="o">==</span> <span class="s1">&#39;FF5&#39;</span><span class="p">:</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F-F_Research_Data_Factors</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span> <span class="s1">&#39;SMB&#39;</span><span class="p">,</span> <span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+        <span class="n">ff2</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">ff2</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span> <span class="s1">&#39;CMA&#39;</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># FF6</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F-F_Research_Data_Factors</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span> <span class="s1">&#39;SMB&#39;</span><span class="p">,</span> <span class="s1">&#39;HML&#39;</span><span class="p">]]</span>
+        <span class="n">ff2</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F-F_Research_Data_5_Factors_2x3</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">ff2</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span> <span class="s1">&#39;CMA&#39;</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+        <span class="n">ff_mom</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;F-F_Momentum_Factor</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;famafrench&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">&quot;1921-01-01&quot;</span><span class="p">)</span>
+        <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df_factor</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">ff_mom</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span> <span class="s1">&#39;SMB&#39;</span><span class="p">,</span> <span class="s1">&#39;HML&#39;</span><span class="p">,</span> <span class="s1">&#39;RMW&#39;</span><span class="p">,</span> <span class="s1">&#39;CMA&#39;</span><span class="p">,</span> <span class="s1">&#39;MOM&#39;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s1">&#39;monthly&#39;</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df_factor</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_factor</span> <span class="o">/</span> <span class="mi">100</span>  <span class="c1"># Convert from percent to decimal</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="towards-a-factor-model">
+<h2><span class="section-number">7.4. </span>Towards a Factor Model <a id="towards-a-factor-model"></a><a class="headerlink" href="#towards-a-factor-model" title="Link to this heading">#</a></h2>
+<section id="the-core-insight">
+<h3><span class="section-number">7.4.1. </span>The Core Insight<a class="headerlink" href="#the-core-insight" title="Link to this heading">#</a></h3>
+<p>Stocks don’t move independently—they co-move with the market.</p>
+<p>But the <strong>degree of co-movement varies</strong>:</p>
+<ul class="simple">
+<li><p><strong>Defensive stocks</strong> (utilities, groceries) → less sensitive to market swings</p></li>
+<li><p><strong>Cyclical stocks</strong> (luxury goods, banks) → more sensitive to market swings</p></li>
+<li><p><strong>High-leverage stocks</strong> → particularly vulnerable in downturns</p></li>
+</ul>
+</section>
+<section id="the-factor-model-equation">
+<h3><span class="section-number">7.4.2. </span>The Factor Model Equation<a class="headerlink" href="#the-factor-model-equation" title="Link to this heading">#</a></h3>
+<p>We decompose any asset’s excess return as:</p>
+<div class="math notranslate nohighlight">
+\[r^e = \alpha + \beta \cdot f + \epsilon\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r^e\)</span> = asset’s excess return over risk-free rate</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span> = intercept (skill/mispricing)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span> = sensitivity to factor</p></li>
+<li><p><span class="math notranslate nohighlight">\(f\)</span> = factor excess return (e.g., market)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon\)</span> = idiosyncratic (asset-specific) risk</p></li>
+</ul>
+<blockquote>
+<div><p><strong>💡 Key Insight:</strong></p>
+<p>This decomposition is always valid—it’s just statistics.
+The power comes from <em>interpreting</em> each piece:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\beta \cdot f\)</span> is the return you could get by investing in the factor in a way that tracks the asset as well as possible</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha+\epsilon\)</span> is the return specific to the asset only. Alpha is the mean. Epsilon is the noise.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="loading-return-data">
+<h3><span class="section-number">7.4.3. </span>Loading Return Data<a class="headerlink" href="#loading-return-data" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load excess returns for SPY, WMT, JPM</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModels_data1.csv&#39;</span>
+<span class="n">df_re</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data range: </span><span class="si">{</span><span class="n">df_re</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">df_re</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stocks: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">df_re</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">df_re</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Data range: 1969-03-05 to 2024-12-31
+Stocks: [&#39;SPY&#39;, &#39;WMT&#39;, &#39;JPM&#39;]
+</pre></div>
+</div>
+<div class="output text_html">
+  <div id="df-d69f9b81-cf56-4ce0-b028-9559dfce9c1e" class="colab-df-container">
+    <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>SPY</th>
+      <th>WMT</th>
+      <th>JPM</th>
+    </tr>
+    <tr>
+      <th>date</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2024-12-24</th>
+      <td>0.010940</td>
+      <td>0.025614</td>
+      <td>0.016269</td>
+    </tr>
+    <tr>
+      <th>2024-12-26</th>
+      <td>-0.000106</td>
+      <td>0.001014</td>
+      <td>0.003252</td>
+    </tr>
+    <tr>
+      <th>2024-12-27</th>
+      <td>-0.010698</td>
+      <td>-0.012349</td>
+      <td>-0.008273</td>
+    </tr>
+    <tr>
+      <th>2024-12-30</th>
+      <td>-0.011585</td>
+      <td>-0.012065</td>
+      <td>-0.007844</td>
+    </tr>
+    <tr>
+      <th>2024-12-31</th>
+      <td>-0.003811</td>
+      <td>-0.002602</td>
+      <td>0.001457</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-d69f9b81-cf56-4ce0-b028-9559dfce9c1e')"
+            title="Convert this dataframe to an interactive table."
+            style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"/>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-d69f9b81-cf56-4ce0-b028-9559dfce9c1e button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-d69f9b81-cf56-4ce0-b028-9559dfce9c1e');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    </div>
+  </div>
+</div></div>
+</div>
+<blockquote>
+<div><p><strong>🤔 Think and Code:</strong></p>
+<ol class="arabic simple">
+<li><p>How do we estimate <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\alpha\)</span> from data?</p></li>
+<li><p>What should we plot to visualize if the factor model “works”?</p></li>
+<li><p>What do you expect the correlation between residuals and factor to be?</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="estimating-beta-with-regression">
+<h3><span class="section-number">7.4.4. </span>Estimating Beta with Regression<a class="headerlink" href="#estimating-beta-with-regression" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># statsmodels: Statistical modeling library for Python</span>
+<span class="c1"># Provides OLS regression, hypothesis testing, and model diagnostics</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.formula.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">smf</span>
+
+<span class="c1"># Prepare data (drop missing values)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">df_re</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="s1">&#39;WMT&#39;</span><span class="p">,</span> <span class="s1">&#39;JPM&#39;</span><span class="p">])</span>
+
+<span class="c1"># Run regressions for WMT and JPM on SPY</span>
+<span class="n">model_wmt</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;WMT ~ SPY&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">model_jpm</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;JPM ~ SPY&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">alpha_wmt</span><span class="p">,</span> <span class="n">beta_wmt</span> <span class="o">=</span> <span class="n">model_wmt</span><span class="o">.</span><span class="n">params</span>
+<span class="n">alpha_jpm</span><span class="p">,</span> <span class="n">beta_jpm</span> <span class="o">=</span> <span class="n">model_jpm</span><span class="o">.</span><span class="n">params</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WMT: α = </span><span class="si">{</span><span class="n">alpha_wmt</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">, β = </span><span class="si">{</span><span class="n">beta_wmt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;JPM: α = </span><span class="si">{</span><span class="n">alpha_jpm</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">, β = </span><span class="si">{</span><span class="n">beta_jpm</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WMT: α = 0.000203, β = 0.674
+JPM: α = 0.000159, β = 1.395
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 Remember:</strong></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\beta &lt; 1\)</span>: Less sensitive than market (defensive)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta = 1\)</span>: Same sensitivity as market</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta &gt; 1\)</span>: More sensitive than market (aggressive)</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="visualizing-co-movement">
+<h3><span class="section-number">7.4.5. </span>Visualizing Co-movement<a class="headerlink" href="#visualizing-co-movement" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create residuals</span>
+<span class="n">wmt</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;WMT&#39;</span><span class="p">]</span>
+<span class="n">jpm</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span>
+
+<span class="c1"># Plot residuals vs factor</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span> <span class="n">wmt</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span><span class="n">alpha_wmt</span><span class="o">+</span><span class="n">beta_wmt</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;SPY Excess Return&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;WMT &#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WMT  vs SPY (β = </span><span class="si">{</span><span class="n">beta_wmt</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span> <span class="n">jpm</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span><span class="n">alpha_jpm</span><span class="o">+</span><span class="n">beta_jpm</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;SPY Excess Return&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;JPM &#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;JPM vs SPY (β = </span><span class="si">{</span><span class="n">beta_jpm</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Verify residuals are uncorrelated with factor</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Correlation of SPY with WMT : </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">wmt</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Correlation of SPY with JPM: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">jpm</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/40f8a06a3994593d17f251645e0c8464a9e2b8892640e5ab3adff188535d0ca0.png" src="../../_images/40f8a06a3994593d17f251645e0c8464a9e2b8892640e5ab3adff188535d0ca0.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Correlation of SPY with WMT : 0.492221
+Correlation of SPY with JPM: 0.707302
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create residuals</span>
+<span class="n">resid_wmt</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;WMT&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">beta_wmt</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span>
+<span class="n">resid_jpm</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">beta_jpm</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span>
+
+<span class="c1"># Plot residuals vs factor</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span> <span class="n">resid_wmt</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;SPY Excess Return&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;WMT Residual&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;WMT Residuals vs SPY (β = </span><span class="si">{</span><span class="n">beta_wmt</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span> <span class="n">resid_jpm</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;SPY Excess Return&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;JPM Residual&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;JPM Residuals vs SPY (β = </span><span class="si">{</span><span class="n">beta_jpm</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Verify residuals are uncorrelated with factor</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Correlation of SPY with WMT residuals: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">resid_wmt</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Correlation of SPY with JPM residuals: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">resid_jpm</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/f4ca91f1f49c24b284ad510e615954104034cdc811a0690f0e122567bf01aaab.png" src="../../_images/f4ca91f1f49c24b284ad510e615954104034cdc811a0690f0e122567bf01aaab.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Correlation of SPY with WMT residuals: 0.000000
+Correlation of SPY with JPM residuals: 0.000000
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="risk-models-vs-expected-return-models">
+<h2><span class="section-number">7.5. </span>Risk Models vs Expected Return Models <a id="risk-vs-expected-return"></a><a class="headerlink" href="#risk-models-vs-expected-return-models" title="Link to this heading">#</a></h2>
+<p>Factor models serve two distinct purposes:</p>
+<section id="risk-models">
+<h3><span class="section-number">7.5.1. </span>👉 Risk Models<a class="headerlink" href="#risk-models" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Goal: Explain <strong>realized return variation</strong></p></li>
+<li><p>Assumption: <span class="math notranslate nohighlight">\(\epsilon\)</span> is uncorrelated across assets</p></li>
+<li><p>Key metric: <strong>R-squared</strong> (how much variance is explained?)</p></li>
+<li><p>Can it explain realized returns?</p></li>
+<li><p>Use case: Risk management, covariance estimation</p></li>
+</ul>
+</section>
+<section id="expected-return-models">
+<h3><span class="section-number">7.5.2. </span>👉 Expected Return Models<a class="headerlink" href="#expected-return-models" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Goal: Explain <strong>expected return differences</strong></p></li>
+<li><p>Assumption: <span class="math notranslate nohighlight">\(\alpha = 0\)</span> for all assets</p></li>
+<li><p>Key metric: <strong>Alpha</strong> (is it close to zero?)</p></li>
+<li><p>can it explain differences in Average returns  across assets and strategies as a function of factor loadings (i.e. betas?)</p></li>
+<li><p>Use case: Performance evaluation, asset pricing tests</p></li>
+</ul>
+<blockquote>
+<div><p><strong>💡 Key Insight:</strong></p>
+<p>A model can be great for risk but poor for expected returns.
+For stocks, factor models explain lots of variance but still leave
+substantial uncertainty about expected returns.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="alpha-and-beta-the-organization-of-wall-street">
+<h2><span class="section-number">7.6. </span>Alpha and Beta: The Organization of Wall Street <a id="alpha-beta"></a><a class="headerlink" href="#alpha-and-beta-the-organization-of-wall-street" title="Link to this heading">#</a></h2>
+<section id="how-the-industry-is-organized">
+<h3><span class="section-number">7.6.1. </span>How the Industry is Organized<a class="headerlink" href="#how-the-industry-is-organized" title="Link to this heading">#</a></h3>
+<p>The <span class="math notranslate nohighlight">\(\alpha\)</span>- <span class="math notranslate nohighlight">\(\beta\)</span> decomposition is how Wall Street operates:</p>
+<ul class="simple">
+<li><p><strong>Big bonuses</strong> only come from perceied <span class="math notranslate nohighlight">\(\alpha\)</span> (skill)</p></li>
+<li><p><strong>Beta exposure</strong> is close to a commodity—exact commodity for  market exposure, closer to commodity for other factors</p></li>
+<li><p><strong>Pod shops</strong> require traders to be factor-neutral (not only market but across many factors):</p>
+<ul>
+<li><p><a class="reference external" href="https://www.wsj.com/finance/investing/citadel-ken-griffin-hedge-funds-c9ddf51d">Citadel</a></p></li>
+<li><p><a class="reference external" href="https://www.wsj.com/finance/investing-the-giant-hedge-fund-that-hates-risk-and-still-wins-1110e90a">Millennium</a></p></li>
+<li><p><a class="reference external" href="https://www.bamfunds.com/">Balyasny</a></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="from-factor-exposure-to-expected-returns">
+<h3><span class="section-number">7.6.2. </span>From Factor Exposure to Expected Returns<a class="headerlink" href="#from-factor-exposure-to-expected-returns" title="Link to this heading">#</a></h3>
+<p>Taking expectations of our factor model:</p>
+<div class="math notranslate nohighlight">
+\[E[r] = r_f + \alpha + \beta \cdot E[f]\]</div>
+<p>Expected return decomposes into:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r_f\)</span>: Risk-free rate (time value of money)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta \cdot E[f]\)</span>: Premium from factor exposure</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: Abnormal return (skill or mispricing)</p></li>
+</ul>
+<blockquote>
+<div><p><strong>⚠️ Caution:</strong></p>
+<p>If you have a good model of expected returns, <span class="math notranslate nohighlight">\(\alpha\)</span> should be zero.
+A significant <span class="math notranslate nohighlight">\(\alpha\)</span> means either:</p>
+<ol class="arabic simple">
+<li><p>You found skill/mispricing, OR</p></li>
+<li><p>Your factor model is missing something</p></li>
+</ol>
+</div></blockquote>
+<ul class="simple">
+<li><p>So it is all about interepretation.</p></li>
+<li><p>In the industry, a trader often takes the factor model as given and try to beat it</p></li>
+<li><p>The factor model can come from clients or the central book.</p></li>
+<li><p>If you are a family office, managing money for a sovereign wealth fund, or giving advice to a client it will be your job to determine what factors to include</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="tracking-and-hedged-portfolios">
+<h2><span class="section-number">7.7. </span>Tracking and Hedged Portfolios <a id="tracking-hedging"></a><a class="headerlink" href="#tracking-and-hedged-portfolios" title="Link to this heading">#</a></h2>
+<section id="loading-msft-data-for-hedging-example">
+<h3><span class="section-number">7.7.1. </span>Loading MSFT Data for Hedging Example<a class="headerlink" href="#loading-msft-data-for-hedging-example" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load MSFT returns</span>
+<span class="n">url_msft</span> <span class="o">=</span> <span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModels_data2.csv&#39;</span>
+<span class="n">df_returns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url_msft</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get factor data</span>
+<span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">()</span>
+
+<span class="c1"># Align the two DataFrames on common dates</span>
+<span class="n">df_returns</span><span class="p">,</span> <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df_returns</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">join</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data range: </span><span class="si">{</span><span class="n">df_returns</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">df_returns</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Observations: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_returns</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Data range: 1986-03-14 to 2024-12-31
+Observations: 9778
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="running-the-factor-regression">
+<h3><span class="section-number">7.7.2. </span>Running the Factor Regression<a class="headerlink" href="#running-the-factor-regression" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+
+<span class="c1"># Compute MSFT excess returns</span>
+<span class="n">df_eret</span> <span class="o">=</span> <span class="n">df_returns</span><span class="p">[</span><span class="s1">&#39;MSFT&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
+
+<span class="c1"># Prepare regression</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">])</span>  <span class="c1"># Add intercept</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df_eret</span>
+
+<span class="c1"># Fit OLS model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.415
+Model:                            OLS   Adj. R-squared:                  0.415
+Method:                 Least Squares   F-statistic:                     6940.
+Date:                Mon, 19 Jan 2026   Prob (F-statistic):               0.00
+Time:                        20:45:46   Log-Likelihood:                 26516.
+No. Observations:                9778   AIC:                        -5.303e+04
+Df Residuals:                    9776   BIC:                        -5.301e+04
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.0006      0.000      3.597      0.000       0.000       0.001
+Mkt-RF         1.1876      0.014     83.309      0.000       1.160       1.216
+==============================================================================
+Omnibus:                     1452.828   Durbin-Watson:                   1.929
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):            22202.613
+Skew:                           0.141   Prob(JB):                         0.00
+Kurtosis:                      10.377   Cond. No.                         87.7
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extract key statistics</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
+<span class="n">var_r</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+<span class="n">var_f</span> <span class="o">=</span> <span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+<span class="n">var_e</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+<span class="n">mu_f</span> <span class="o">=</span> <span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alpha :     </span><span class="si">{</span><span class="n">alpha</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Beta:              </span><span class="si">{</span><span class="n">beta</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variance of MSFT:  </span><span class="si">{</span><span class="n">var_r</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variance of MKT:   </span><span class="si">{</span><span class="n">var_f</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variance of resid: </span><span class="si">{</span><span class="n">var_e</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean MKT excess:   </span><span class="si">{</span><span class="n">mu_f</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Alpha :     0.000585
+Beta:              1.188
+Variance of MSFT:  0.000442
+Variance of MKT:   0.000130
+Variance of resid: 0.000258
+Mean MKT excess:   0.000359
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>🤔 Think and Code:</strong></p>
+<ul class="simple">
+<li><p>Is this alpha economically significant?</p></li>
+<li><p>What shoudl I do to have a sense of it?</p></li>
+<li><p>IS it a good bet on a risk-reward sense? What should I look at?</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="the-tracking-portfolio-also-called-mimicking-portfolio-factor-mimicking-portfolio-or-hedging-portfolio">
+<h3><span class="section-number">7.7.3. </span>The Tracking Portfolio (also called mimicking portfolio, factor-mimicking portfolio or Hedging Portfolio)<a class="headerlink" href="#the-tracking-portfolio-also-called-mimicking-portfolio-factor-mimicking-portfolio-or-hedging-portfolio" title="Link to this heading">#</a></h3>
+<p>The <strong>tracking portfolio</strong> replicates the factor-driven component:</p>
+<div class="math notranslate nohighlight">
+\[\text{Tracking Return} = \beta \times f\]</div>
+<p>For MSFT with <span class="math notranslate nohighlight">\(\beta \approx 1.2\)</span>:</p>
+<ul class="simple">
+<li><p>For every 1 dollar in MSFT, hold  <span class="math notranslate nohighlight">\(\beta\)</span> dollars in the market factor</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute tracking portfolio returns</span>
+<span class="n">MKT</span> <span class="o">=</span> <span class="n">df_factor</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
+<span class="n">Portfolio</span> <span class="o">=</span> <span class="n">df_eret</span>
+<span class="n">Tracking</span> <span class="o">=</span> <span class="n">MKT</span> <span class="o">*</span> <span class="n">beta</span>
+
+<span class="c1"># Plot actual vs tracking</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">MKT</span><span class="p">,</span> <span class="n">Portfolio</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;MSFT Excess Return&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">MKT</span><span class="p">,</span> <span class="n">Tracking</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Tracking Portfolio&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Market Excess Return&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Return&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;MSFT vs Tracking Portfolio&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/a8d3dcb76fb8c53ece22b5dc3f2450435c717cd84f56842b4269fa3b958ecd4a.png" src="../../_images/a8d3dcb76fb8c53ece22b5dc3f2450435c717cd84f56842b4269fa3b958ecd4a.png" />
+</div>
+</div>
+</section>
+<section id="the-hedged-portfolio">
+<h3><span class="section-number">7.7.4. </span>The Hedged Portfolio<a class="headerlink" href="#the-hedged-portfolio" title="Link to this heading">#</a></h3>
+<p>The <strong>hedged portfolio</strong> removes all factor exposure:</p>
+<div class="math notranslate nohighlight">
+\[r^{\text{hedged}} = r^e - \beta \cdot f = \alpha + \epsilon\]</div>
+<p>Properties:</p>
+<ul class="simple">
+<li><p>Mean return = <span class="math notranslate nohighlight">\(\alpha\)</span> (pure skill)</p></li>
+<li><p>Volatility = <span class="math notranslate nohighlight">\(\sigma_{\epsilon}\)</span> (only idiosyncratic risk), often that is the compoentn that people call Tracking error</p></li>
+<li><p>Beta = 0 (by construction, we already stripped out all factor exposure!)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute hedged portfolio</span>
+<span class="n">Hedged</span> <span class="o">=</span> <span class="n">Portfolio</span> <span class="o">-</span> <span class="n">Tracking</span>
+
+<span class="c1"># Visualize</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">MKT</span><span class="p">,</span> <span class="n">MKT</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Market (β=1)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">MKT</span><span class="p">,</span> <span class="n">Hedged</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hedged MSFT (β=0)&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Market Excess Return&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Return&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Hedged Portfolio Has Zero Beta&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Verify</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hedged portfolio mean (annualized): </span><span class="si">{</span><span class="n">Hedged</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">252</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alpha (annualized):                 </span><span class="si">{</span><span class="n">alpha</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">252</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/9bfe1a0fd7ca4ee3c670819ac44400fdb2e37cc65289708225c8520f2807bbce.png" src="../../_images/9bfe1a0fd7ca4ee3c670819ac44400fdb2e37cc65289708225c8520f2807bbce.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hedged portfolio mean (annualized): 0.1474
+Alpha (annualized):                 0.1474
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="risk-budgets-and-position-sizing">
+<h2><span class="section-number">7.8. </span>Risk Budgets and Position Sizing <a id="risk-budgets"></a><a class="headerlink" href="#risk-budgets-and-position-sizing" title="Link to this heading">#</a></h2>
+<section id="position-sizing-under-a-volatility-budget">
+<h3><span class="section-number">7.8.1. </span>Position Sizing Under a Volatility Budget<a class="headerlink" href="#position-sizing-under-a-volatility-budget" title="Link to this heading">#</a></h3>
+<p>Suppose you have a <strong>$1 million/month volatility budget</strong>.</p>
+<p>How much MSFT can you buy?</p>
+<p>What is the math?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Monthly volatility of MSFT</span>
+<span class="n">vol_monthly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_r</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">21</span><span class="p">)</span>  <span class="c1"># ~21 trading days per month</span>
+
+<span class="c1"># Volatility budget</span>
+<span class="n">budget</span> <span class="o">=</span> <span class="mi">1_000_000</span>  <span class="c1"># $1M</span>
+
+<span class="c1"># Position size</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MSFT monthly volatility: </span><span class="si">{</span><span class="n">vol_monthly</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Position size: $</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MSFT monthly volatility: 0.0963
+Position size: $10,383,575
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="expected-p-l">
+<h3><span class="section-number">7.8.2. </span>Expected P&amp;L<a class="headerlink" href="#expected-p-l" title="Link to this heading">#</a></h3>
+<p>Your expected P&amp;L has two components:</p>
+<ul class="simple">
+<li><p><strong>Total</strong>: <span class="math notranslate nohighlight">\(x \times (\beta \cdot \mu_f + \alpha) \times 252\)</span></p></li>
+<li><p><strong>Risk-adjusted</strong>: <span class="math notranslate nohighlight">\(x \times \alpha \times 252\)</span> (what you get paid for)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected annual P&amp;L (total):         $</span><span class="si">{</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">beta</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mu_f</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">alpha</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">252</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected annual P&amp;L (risk-adjusted): $</span><span class="si">{</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">252</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Expected annual P&amp;L (total):         $2,644,594
+Expected annual P&amp;L (risk-adjusted): $1,530,371
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="hedging-allows-larger-positions">
+<h3><span class="section-number">7.8.3. </span>Hedging Allows Larger Positions<a class="headerlink" href="#hedging-allows-larger-positions" title="Link to this heading">#</a></h3>
+<p>With hedging, volatility = <span class="math notranslate nohighlight">\(\sigma_\epsilon\)</span> (smaller than <span class="math notranslate nohighlight">\(\sigma_r\)</span>).</p>
+<p>You can take a <strong>larger position</strong> for the same risk budget!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Hedged volatility (annual)</span>
+<span class="n">vol_hedged_annual</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_e</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">21</span><span class="p">)</span>
+
+<span class="c1"># Annual budget</span>
+<span class="n">budget_annual</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+
+<span class="c1"># Hedged position size</span>
+<span class="n">xe</span> <span class="o">=</span> <span class="n">budget_annual</span> <span class="o">/</span> <span class="n">vol_hedged_annual</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unhedged vol (annual): </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_r</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hedged vol (annual):   </span><span class="si">{</span><span class="n">vol_hedged_annual</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Unhedged position: $</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hedged position:   $</span><span class="si">{</span><span class="n">xe</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Hedged P&amp;L:        $</span><span class="si">{</span><span class="n">xe</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">252</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Unhedged vol (annual): 0.3336
+Hedged vol (annual):   0.0736
+
+Unhedged position: $10,383,575
+Hedged position:   $13,578,071
+
+Hedged P&amp;L:        $2,001,189
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight:</strong></p>
+<p>Hedging reduces volatility, which allows larger position sizes.
+If your alpha is genuine, hedging lets you earn more of it!</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="sharpe-ratio-and-appraisal-ratio">
+<h2><span class="section-number">7.9. </span>Sharpe Ratio and Appraisal Ratio <a id="performance-metrics"></a><a class="headerlink" href="#sharpe-ratio-and-appraisal-ratio" title="Link to this heading">#</a></h2>
+<section id="sharpe-ratio">
+<h3><span class="section-number">7.9.1. </span>Sharpe Ratio<a class="headerlink" href="#sharpe-ratio" title="Link to this heading">#</a></h3>
+<p>Measures excess return per unit of <strong>total</strong> risk:</p>
+<div class="math notranslate nohighlight">
+\[\text{Sharpe} = \frac{E[r^e]}{\sigma(r^e)}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sharpe ratios (annualized)</span>
+<span class="n">sharpe_unhedged</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_eret</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">252</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">df_eret</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">))</span>
+<span class="n">sharpe_hedged</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hedged</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">252</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Hedged</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sharpe Ratio (unhedged): </span><span class="si">{</span><span class="n">sharpe_unhedged</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sharpe Ratio (hedged):   </span><span class="si">{</span><span class="n">sharpe_hedged</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Sharpe Ratio (unhedged): 0.763
+Sharpe Ratio (hedged):   0.578
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="appraisal-ratio">
+<h3><span class="section-number">7.9.2. </span>Appraisal Ratio<a class="headerlink" href="#appraisal-ratio" title="Link to this heading">#</a></h3>
+<p>Measures <strong>alpha</strong> per unit of <strong>idiosyncratic</strong> risk:</p>
+<div class="math notranslate nohighlight">
+\[\text{Appraisal Ratio} = \frac{\alpha}{\sigma(\epsilon)}\]</div>
+<p>This is the Sharpe ratio of the hedged portfolio—the “true” skill measure.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Appraisal ratio (annualized)</span>
+<span class="n">appraisal</span> <span class="o">=</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="mi">252</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var_e</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Appraisal Ratio: </span><span class="si">{</span><span class="n">appraisal</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Appraisal Ratio: 0.578
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>⚠️ Caution:</strong></p>
+<p>Hedging doesn’t always improve your Sharpe ratio!
+If the factor has a high premium and your alpha is small,
+you might be better off keeping the factor exposure.</p>
+</div></blockquote>
+<blockquote>
+<div><p>But of course–exposure to factors are fundamentally different then expsoure to <span class="math notranslate nohighlight">\(\epsilon\)</span>. Why?</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="variance-decomposition">
+<h2><span class="section-number">7.10. </span>Variance Decomposition <a id="variance-decomposition"></a><a class="headerlink" href="#variance-decomposition" title="Link to this heading">#</a></h2>
+<section id="breaking-down-total-risk">
+<h3><span class="section-number">7.10.1. </span>Breaking Down Total Risk<a class="headerlink" href="#breaking-down-total-risk" title="Link to this heading">#</a></h3>
+<p>Total variance decomposes into factor and idiosyncratic parts:</p>
+<div class="math notranslate nohighlight">
+\[\text{Var}(r^e) = \beta^2 \cdot \text{Var}(f) + \text{Var}(\epsilon)\]</div>
+<p>The <strong>factor risk share</strong> is:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\beta^2 \cdot \text{Var}(f)}{\text{Var}(r^e)}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Variance decomposition</span>
+<span class="n">factor_var</span> <span class="o">=</span> <span class="n">beta</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">var_f</span>
+<span class="n">idio_var</span> <span class="o">=</span> <span class="n">var_e</span>
+<span class="n">total_var</span> <span class="o">=</span> <span class="n">var_r</span>
+
+<span class="n">factor_share</span> <span class="o">=</span> <span class="n">factor_var</span> <span class="o">/</span> <span class="n">total_var</span>
+<span class="n">idio_share</span> <span class="o">=</span> <span class="n">idio_var</span> <span class="o">/</span> <span class="n">total_var</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Factor variance contribution: </span><span class="si">{</span><span class="n">factor_var</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">factor_share</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Idiosyncratic variance:       </span><span class="si">{</span><span class="n">idio_var</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">idio_share</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total variance:               </span><span class="si">{</span><span class="n">total_var</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># This should equal R-squared</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">R-squared from regression: </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Factor share:              </span><span class="si">{</span><span class="n">factor_share</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Factor variance contribution: 0.000183 (41.5%)
+Idiosyncratic variance:       0.000258 (58.5%)
+Total variance:               0.000442
+
+R-squared from regression: 0.415
+Factor share:              0.415
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualize variance decomposition</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MSFT</span><span class="se">\n</span><span class="s1">Total Risk&#39;</span><span class="p">]</span>
+<span class="n">factor_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">factor_share</span> <span class="o">*</span> <span class="mi">100</span><span class="p">]</span>
+<span class="n">idio_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">idio_share</span> <span class="o">*</span> <span class="mi">100</span><span class="p">]</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">factor_vals</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Factor Risk&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">idio_vals</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="n">factor_vals</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Idiosyncratic Risk&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;coral&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Percentage of Total Variance&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Variance Decomposition&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">105</span><span class="p">)</span>
+
+<span class="c1"># Add percentage labels</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">factor_share</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">factor_share</span><span class="si">:</span><span class="s1">.0%</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">factor_share</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">idio_share</span> <span class="o">*</span> <span class="mi">50</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idio_share</span><span class="si">:</span><span class="s1">.0%</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+        <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/4f56ce43532a8c8f5418a648b8c9631281c03e4119d37130603b2991d993d327.png" src="../../_images/4f56ce43532a8c8f5418a648b8c9631281c03e4119d37130603b2991d993d327.png" />
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercises">
+<h2><span class="section-number">7.11. </span>Exercises <a id="exercises"></a><a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<section id="exercise-1-estimate-factor-model-for-jpm">
+<h3><span class="section-number">7.11.1. </span>🔧 Exercise 1: Estimate Factor Model for JPM<a class="headerlink" href="#exercise-1-estimate-factor-model-for-jpm" title="Link to this heading">#</a></h3>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">df_re</span></code> DataFrame loaded earlier:</p>
+<ol class="arabic simple">
+<li><p>Run a regression of JPM excess returns on SPY</p></li>
+<li><p>Report the <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\(\beta\)</span>, and R-squared</p></li>
+<li><p>Is JPM more or less sensitive to the market than WMT?</p></li>
+</ol>
+<details>
+<summary>💡 Click for solution</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+
+<span class="c1"># Prepare data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">df_re</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span>
+
+<span class="c1"># Fit model</span>
+<span class="n">model_jpm</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alpha: </span><span class="si">{</span><span class="n">model_jpm</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Beta: </span><span class="si">{</span><span class="n">model_jpm</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;R-squared: </span><span class="si">{</span><span class="n">model_jpm</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>JPM has a higher beta than WMT, making it more sensitive to market movements.</p>
+</details><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-2-build-a-hedged-portfolio">
+<h3><span class="section-number">7.11.2. </span>🔧 Exercise 2: Build a Hedged Portfolio<a class="headerlink" href="#exercise-2-build-a-hedged-portfolio" title="Link to this heading">#</a></h3>
+<p>Using your JPM regression results:</p>
+<ol class="arabic simple">
+<li><p>Compute the hedged portfolio returns: <span class="math notranslate nohighlight">\(r^{\text{hedged}} = r^e_{JPM} - \beta \times r^e_{SPY}\)</span></p></li>
+<li><p>Verify that the hedged portfolio has zero correlation with SPY</p></li>
+<li><p>Calculate the Sharpe ratio of the hedged vs unhedged portfolio</p></li>
+</ol>
+<details>
+<summary>💡 Click for solution</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">beta_jpm</span> <span class="o">=</span> <span class="n">model_jpm</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span>
+
+<span class="c1"># Hedged portfolio</span>
+<span class="n">hedged_jpm</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">beta_jpm</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span>
+
+<span class="c1"># Verify zero correlation</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Correlation with SPY: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">hedged_jpm</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Sharpe ratios</span>
+<span class="n">sharpe_unhedged</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">252</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">))</span>
+<span class="n">sharpe_hedged</span> <span class="o">=</span> <span class="p">(</span><span class="n">hedged_jpm</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">252</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">hedged_jpm</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sharpe (unhedged): </span><span class="si">{</span><span class="n">sharpe_unhedged</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sharpe (hedged): </span><span class="si">{</span><span class="n">sharpe_hedged</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</details><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-3-position-sizing-challenge">
+<h3><span class="section-number">7.11.3. </span>🤔 Exercise 3: Position Sizing Challenge<a class="headerlink" href="#exercise-3-position-sizing-challenge" title="Link to this heading">#</a></h3>
+<p>You have a $5 million annual volatility budget.</p>
+<ol class="arabic simple">
+<li><p>How much can you invest in JPM (unhedged)?</p></li>
+<li><p>How much can you invest in the hedged JPM strategy?</p></li>
+<li><p>What is the expected risk-adjusted P&amp;L for each?</p></li>
+</ol>
+<details>
+<summary>💡 Click for solution</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">budget</span> <span class="o">=</span> <span class="mi">5_000_000</span>
+
+<span class="c1"># Volatilities</span>
+<span class="n">vol_jpm</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span>
+<span class="n">vol_hedged</span> <span class="o">=</span> <span class="n">hedged_jpm</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span>
+
+<span class="c1"># Position sizes</span>
+<span class="n">pos_unhedged</span> <span class="o">=</span> <span class="n">budget</span> <span class="o">/</span> <span class="n">vol_jpm</span>
+<span class="n">pos_hedged</span> <span class="o">=</span> <span class="n">budget</span> <span class="o">/</span> <span class="n">vol_hedged</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unhedged position: $</span><span class="si">{</span><span class="n">pos_unhedged</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hedged position:   $</span><span class="si">{</span><span class="n">pos_hedged</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Risk-adjusted P&amp;L (alpha only)</span>
+<span class="n">alpha_jpm</span> <span class="o">=</span> <span class="n">model_jpm</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span>
+<span class="n">pnl_unhedged</span> <span class="o">=</span> <span class="n">pos_unhedged</span> <span class="o">*</span> <span class="n">alpha_jpm</span> <span class="o">*</span> <span class="mi">252</span>
+<span class="n">pnl_hedged</span> <span class="o">=</span> <span class="n">pos_hedged</span> <span class="o">*</span> <span class="n">alpha_jpm</span> <span class="o">*</span> <span class="mi">252</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Risk-adjusted P&amp;L (unhedged): $</span><span class="si">{</span><span class="n">pnl_unhedged</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Risk-adjusted P&amp;L (hedged):   $</span><span class="si">{</span><span class="n">pnl_hedged</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</details><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2><span class="section-number">7.12. </span>📝 Key Takeaways <a id="key-takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Factor models separate what you earn from what you ride.</strong> Beta captures common market movements; alpha is the slice of return not explained by those movements.</p></li>
+<li><p><strong>Hedging out β turns views into “portable” alpha.</strong> Going long the asset and short β units of the factor neutralizes systematic risk.</p></li>
+<li><p><strong>Risk budgets shrink once you hedge intelligently.</strong> A hedged position’s lower volatility allows you to deploy more capital for the same risk cap.</p></li>
+<li><p><strong>Variance decomposition is your monitoring dashboard.</strong> It tells you how much of today’s risk is coming from factors versus idiosyncratic shocks.</p></li>
+<li><p><strong>Tracking portfolios clarify performance attribution.</strong> By explicitly matching the factor component, you can assess whether outperformance is genuine skill or hidden beta.</p></li>
+<li><p><strong>All numbers are frequency-specific.</strong> Alpha, variances, and Sharpe ratios must be annualized consistently. Beta is theoretically invariant to frequency.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Volatilitytiming_c.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">6.6. </span>Volatility Timing</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="PortfolioMath_c.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">8. </span>Portfolios</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">7.1. 🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">7.2. 📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">7.3. 🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#towards-a-factor-model">7.4. Towards a Factor Model <a id="towards-a-factor-model"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-core-insight">7.4.1. The Core Insight</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-factor-model-equation">7.4.2. The Factor Model Equation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-return-data">7.4.3. Loading Return Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-beta-with-regression">7.4.4. Estimating Beta with Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-co-movement">7.4.5. Visualizing Co-movement</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-models-vs-expected-return-models">7.5. Risk Models vs Expected Return Models <a id="risk-vs-expected-return"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-models">7.5.1. 👉 Risk Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-return-models">7.5.2. 👉 Expected Return Models</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-and-beta-the-organization-of-wall-street">7.6. Alpha and Beta: The Organization of Wall Street <a id="alpha-beta"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-the-industry-is-organized">7.6.1. How the Industry is Organized</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-factor-exposure-to-expected-returns">7.6.2. From Factor Exposure to Expected Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracking-and-hedged-portfolios">7.7. Tracking and Hedged Portfolios <a id="tracking-hedging"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-msft-data-for-hedging-example">7.7.1. Loading MSFT Data for Hedging Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-factor-regression">7.7.2. Running the Factor Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-tracking-portfolio-also-called-mimicking-portfolio-factor-mimicking-portfolio-or-hedging-portfolio">7.7.3. The Tracking Portfolio (also called mimicking portfolio, factor-mimicking portfolio or Hedging Portfolio)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-hedged-portfolio">7.7.4. The Hedged Portfolio</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-budgets-and-position-sizing">7.8. Risk Budgets and Position Sizing <a id="risk-budgets"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#position-sizing-under-a-volatility-budget">7.8.1. Position Sizing Under a Volatility Budget</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-p-l">7.8.2. Expected P&amp;L</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hedging-allows-larger-positions">7.8.3. Hedging Allows Larger Positions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio-and-appraisal-ratio">7.9. Sharpe Ratio and Appraisal Ratio <a id="performance-metrics"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-ratio">7.9.1. Sharpe Ratio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-ratio">7.9.2. Appraisal Ratio</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variance-decomposition">7.10. Variance Decomposition <a id="variance-decomposition"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#breaking-down-total-risk">7.10.1. Breaking Down Total Risk</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">7.11. Exercises <a id="exercises"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-estimate-factor-model-for-jpm">7.11.1. 🔧 Exercise 1: Estimate Factor Model for JPM</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-build-a-hedged-portfolio">7.11.2. 🔧 Exercise 2: Build a Hedged Portfolio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-position-sizing-challenge">7.11.3. 🤔 Exercise 3: Position Sizing Challenge</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">7.12. 📝 Key Takeaways <a id="key-takeaways"></a></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
