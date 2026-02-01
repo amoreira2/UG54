@@ -1,0 +1,1381 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Introduction to Asset Returns &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/IntrotoReturns_cc';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/IntrotoReturns_cc.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="IntrotoReturns_c.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">4.11. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">4.12. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Timing_c.html">5. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">5.6. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">5.7. Volatility Timing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModels_c.html">6. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="PortfolioMath_c.html">7. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1_c.html">7.13. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationI.html">8. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModelEstimation.html">9. Factor Model Estimation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="crosssectionalequitystrategies.html">10. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">10.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">10.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">11. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance_evaluation.html">12. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MachineLearning.html">13. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels.html">14. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">14.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="RiskManagement.html">15. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TradingCosts.html">16. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LeverageandShorting.html">17. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LLMs.html">18. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">19. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">20. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">20.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment2.html">20.2. Assignment 2</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Finance/IntrotoReturns_cc.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/IntrotoReturns_cc.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/IntrotoReturns_cc.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Introduction to Asset Returns</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-a-return">What is a Return? <a id="what-is-a-return"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-return-formula">The Return Formula</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-price-and-dividend-data">Loading Price and Dividend Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-returns">Computing Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decomposing-returns">Decomposing Returns <a id="decomposing-returns"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#excess-returns">Excess Returns <a id="excess-returns"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stripping-out-the-time-value-of-money">Stripping out the Time-Value of Money</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-with-stock-returns">Merging with Stock Returns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-excess-returns">Computing Excess Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-premiums">Risk Premiums <a id="risk-premiums"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stripping-the-common-factor">Stripping the Common Factor <a id="stripping-the-common-factor"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-a-simple-model">Building a Simple Model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-spy-as-a-market-proxy">Using SPY as a Market Proxy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-co-movement">Visualizing Co-movement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cleaning-up-co-movement">Cleaning Up Co-movement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#did-it-work">Did It Work?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">📝 Exercises <a id="exercises"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-computing-cumulative-returns">Exercise 1: Computing Cumulative Returns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-value-at-risk">Exercise 2: Value at Risk</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-comparing-correlations">Exercise 3: Comparing Correlations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="key-takeaways"></a></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="introduction-to-asset-returns">
+<h1>Introduction to Asset Returns<a class="headerlink" href="#introduction-to-asset-returns" title="Link to this heading">#</a></h1>
+<section id="learning-objectives">
+<h2>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of this notebook, you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Define and compute total returns</strong> — Build returns from price and dividend data, recognizing that “return” is the normalized gain relative to the initial price</p></li>
+<li><p><strong>Strip out the risk-free rate</strong> — Convert raw returns to <em>excess returns</em> so that every subsequent statistic measures compensation over a truly “safe” alternative</p></li>
+<li><p><strong>Introduce the idea of a risk premium</strong> — Understand that the expected value of excess return is the reward for bearing risk</p></li>
+<li><p><strong>Motivate the need for a factor model</strong> — See why differing betas demand a formal model and set the stage for multi-factor extensions</p></li>
+</ol>
+</section>
+<section id="table-of-contents">
+<h2>📋 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#setup"><span class="xref myst">Setup</span></a></p></li>
+<li><p><a class="reference internal" href="#what-is-a-return"><span class="xref myst">What is a Return?</span></a></p></li>
+<li><p><a class="reference internal" href="#decomposing-returns"><span class="xref myst">Decomposing Returns</span></a></p></li>
+<li><p><a class="reference internal" href="#excess-returns"><span class="xref myst">Excess Returns</span></a></p></li>
+<li><p><a class="reference internal" href="#risk-premiums"><span class="xref myst">Risk Premiums</span></a></p></li>
+<li><p><a class="reference internal" href="#stripping-the-common-factor"><span class="xref myst">Stripping the Common Factor</span></a></p></li>
+<li><p><a class="reference internal" href="#exercises"><span class="xref myst">Exercises</span></a></p></li>
+<li><p><a class="reference internal" href="#key-takeaways"><span class="xref myst">Key Takeaways</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2>🛠️ Setup <a id="setup"></a><a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🛠️ Setup: Run this cell first (click to expand)</span>
+
+<span class="c1"># Uncomment the following line if running in Colab and you need wrds</span>
+<span class="c1"># !pip install wrds</span>
+
+<span class="c1"># Core libraries</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="c1"># Set consistent plot style</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-whitegrid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+
+<span class="c1"># Suppress warnings for cleaner output</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Libraries loaded successfully!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔧 Helper Functions for WRDS (click to expand)</span>
+
+<span class="c1"># Functions that we will use in this notebook that you don&#39;t need to worry about for now</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_daily_wrds_single_ticker</span><span class="p">(</span><span class="n">ticker</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">dividends</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get daily price and dividend data for a single ticker from WRDS.&quot;&quot;&quot;</span>
+    <span class="n">tickers</span> <span class="o">=</span> <span class="p">[</span><span class="n">ticker</span><span class="p">]</span>
+    <span class="c1"># Retrieve PERMNOs for the specified tickers</span>
+    <span class="n">permnos</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">library</span><span class="o">=</span><span class="s1">&#39;crsp&#39;</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s1">&#39;stocknames&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;namedt&#39;</span><span class="p">,</span> <span class="s1">&#39;nameenddt&#39;</span><span class="p">])</span>
+    <span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">])</span>
+    <span class="n">permnos</span> <span class="o">=</span> <span class="n">permnos</span><span class="p">[(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tickers</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())]</span>
+    <span class="c1"># Extract unique PERMNOs</span>
+    <span class="n">permno_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">permno_list</span><span class="p">)</span>
+
+    <span class="c1"># Query daily stock file for the specified PERMNOs</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        SELECT permno, date, ret, retx, prc       </span>
+<span class="s2">        FROM crsp.dsf</span>
+<span class="s2">        WHERE permno IN (</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">permno_list</span><span class="p">))</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">        ORDER BY date</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">permnos</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">dividends</span><span class="p">:</span>
+        <span class="n">daily_returns</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">daily_returns</span><span class="o">.</span><span class="n">ret</span> <span class="o">-</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">retx</span><span class="p">)</span> <span class="o">*</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">prc</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">daily_returns</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">prc</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+        <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="p">[[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="p">[[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;ret&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>    
+
+    <span class="k">return</span> <span class="n">daily_returns</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_daily_wrds</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">tickers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get daily return data for multiple tickers from WRDS.&quot;&quot;&quot;</span>
+    <span class="c1"># Retrieve PERMNOs for the specified tickers</span>
+    <span class="n">permnos</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">library</span><span class="o">=</span><span class="s1">&#39;crsp&#39;</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s1">&#39;stocknames&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;namedt&#39;</span><span class="p">,</span> <span class="s1">&#39;nameenddt&#39;</span><span class="p">])</span>
+    <span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">])</span>
+    <span class="n">permnos</span> <span class="o">=</span> <span class="n">permnos</span><span class="p">[(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tickers</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())]</span>
+    <span class="c1"># Extract unique PERMNOs</span>
+    <span class="n">permno_list</span> <span class="o">=</span> <span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">permno_list</span><span class="p">)</span>
+
+    <span class="c1"># Query daily stock file for the specified PERMNOs</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        SELECT permno, date, ret, retx, prc       </span>
+<span class="s2">        FROM crsp.dsf</span>
+<span class="s2">        WHERE permno IN (</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">permno_list</span><span class="p">))</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">        ORDER BY date, permno</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">permnos</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+    <span class="c1"># Pivot data to have dates as index and tickers as columns</span>
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;ret&#39;</span><span class="p">)</span>    
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="p">[</span><span class="n">tickers</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">daily_returns</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="what-is-a-return">
+<h2>What is a Return? <a id="what-is-a-return"></a><a class="headerlink" href="#what-is-a-return" title="Link to this heading">#</a></h2>
+<section id="the-return-formula">
+<h3>The Return Formula<a class="headerlink" href="#the-return-formula" title="Link to this heading">#</a></h3>
+<p>Let’s say you paid <span class="math notranslate nohighlight">\(P_t\)</span> at date <span class="math notranslate nohighlight">\(t\)</span> for an asset. At date <span class="math notranslate nohighlight">\(t+1\)</span> the price is <span class="math notranslate nohighlight">\(P_{t+1}\)</span> and you earn some dividend <span class="math notranslate nohighlight">\(D_{t+1}\)</span>.</p>
+<p>Then we say that your <strong>return</strong> is:</p>
+<div class="math notranslate nohighlight">
+\[R_{t+1} = \frac{P_{t+1} + D_{t+1} - P_t}{P_t}\]</div>
+<p>It is the gain you made (everything you got at date <span class="math notranslate nohighlight">\(t+1\)</span>), divided by how much you put in (the price of the asset).</p>
+<blockquote>
+<div><p><strong>💡 Key Insight:</strong></p>
+<p>This definition works for <strong>ANY asset</strong> that has a positive price:</p>
+<ul class="simple">
+<li><p>Stocks, bonds, commodities, crypto, most real assets</p></li>
+<li><p>The return simply normalizes the “dollar gain” by the cost of the asset</p></li>
+</ul>
+<p>In practice there are many types of distributions that are economically like a dividend but have different names: cash dividends, stock dividends, capital gain distributions, rights offerings, acquisition-related distributions, splits.</p>
+</div></blockquote>
+</section>
+<section id="loading-price-and-dividend-data">
+<h3>Loading Price and Dividend Data<a class="headerlink" href="#loading-price-and-dividend-data" title="Link to this heading">#</a></h3>
+<p>Let’s start by loading price and dividend data on a single stock.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># If you have WRDS access, you can connect to the database:</span>
+<span class="c1"># import wrds</span>
+<span class="c1"># conn = wrds.Connection()</span>
+<span class="c1"># df = get_daily_wrds_single_ticker(&#39;UNH&#39;, conn)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 Remember:</strong></p>
+<p>Since most of you probably don’t have the WRDS setup yet, I have saved the data for UNH for you to access directly.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load UNH data directly from GitHub</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/UNH_data.csv&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data range: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of observations: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="computing-returns">
+<h3>Computing Returns<a class="headerlink" href="#computing-returns" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>🔧 Exercise:</strong></p>
+<p>How do you construct returns from price and dividend data?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute returns using the formula: R = (P_t + D_t - P_{t-1}) / P_{t-1}</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Average daily return</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If I had invested 100 dollars on a random day in the sample, on average I would have 100.09 dollars the next day.</p>
+<p>A return of:
+$<span class="math notranslate nohighlight">\(\frac{100.09 - 100}{100} = 0.09\%\)</span>$</p>
+<blockquote>
+<div><p><strong>🔧 Exercise:</strong></p>
+<p>Suppose that at the start of the sample we invested 1 dollar in this stock and got all the dividends and used them to buy more of the stock:</p>
+<ol class="arabic simple">
+<li><p>How many dollars would we have at the end of the sample?</p></li>
+<li><p>What is the cumulative return on our investment?</p></li>
+<li><p>What is the annualized return?</p></li>
+<li><p>What is the dividend yield of the asset?</p></li>
+</ol>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>🤔 Think and Code:</strong></p>
+<p>Suppose we are now at the end of the sample:</p>
+<ol class="arabic simple">
+<li><p>You have 1 million dollars invested in this stock. The next day there’s a 16% chance your portfolio’s value will fall below a certain amount. How would you estimate that amount?</p>
+<ul class="simple">
+<li><p>Now suppose you want to know this value in one year. What is your estimate?</p></li>
+<li><p>What is the EXPECTED value of your holdings in one year? How should you think about estimating this?</p></li>
+</ul>
+</li>
+<li><p>What can you plot:</p>
+<ul class="simple">
+<li><p>To have a sense of the distribution of 1-day returns? And 1-year returns?</p></li>
+<li><p>To give you a sense of how these returns vary over time?</p></li>
+</ul>
+</li>
+<li><p>What drives these returns? Why do they vary over time?</p></li>
+</ol>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="decomposing-returns">
+<h2>Decomposing Returns <a id="decomposing-returns"></a><a class="headerlink" href="#decomposing-returns" title="Link to this heading">#</a></h2>
+<p>Returns of an individual stock can be driven by many things:</p>
+<ul class="simple">
+<li><p><strong>Time-value of money</strong>: There are periods where you can get very high returns even in perfectly safe assets</p></li>
+<li><p><strong>Common factors</strong>: All stocks went up because of a stronger economy, all stocks went down because of a financial crisis</p></li>
+<li><p><strong>Individual factors</strong>: A new drug/technology that the firm sells. Anything specific to the firm</p></li>
+</ul>
+<blockquote>
+<div><p><strong>💡 Key Insight:</strong></p>
+<p>When investing, it is essential to understand <strong>where your performance comes from</strong>.</p>
+<p>We will build towards a framework of investing that thinks differently about investing in systematic risk vs. idiosyncratic risk.</p>
+</div></blockquote>
+<p>The first step will be to build this decomposition, which will start now and culminate in our factor models lecture.</p>
+</section>
+<hr class="docutils" />
+<section id="excess-returns">
+<h2>Excess Returns <a id="excess-returns"></a><a class="headerlink" href="#excess-returns" title="Link to this heading">#</a></h2>
+<section id="stripping-out-the-time-value-of-money">
+<h3>Stripping out the Time-Value of Money<a class="headerlink" href="#stripping-out-the-time-value-of-money" title="Link to this heading">#</a></h3>
+<p>In this class we will do a lot of decomposing, but let’s start by stripping down the “time-value of money” piece.</p>
+<p>We first define an <strong>excess return</strong>: the return minus the risk-free rate</p>
+<div class="math notranslate nohighlight">
+\[\text{excess return}^{\text{stock } i} = \text{return}^{\text{stock } i} - \text{risk-free rate}\]</div>
+<ul class="simple">
+<li><p>We typically use the returns of a 3-month treasury bill to measure the risk-free rate</p></li>
+<li><p>This obviously should be currency dependent</p></li>
+<li><p>We will denote <span class="math notranslate nohighlight">\(rf\)</span> for the risk-free rate</p></li>
+<li><p>We often add superscript “e” to denote an excess return</p></li>
+<li><p>So if <span class="math notranslate nohighlight">\(r^i\)</span> stands for the return of stock <span class="math notranslate nohighlight">\(i\)</span>, then <span class="math notranslate nohighlight">\(r^{e,i}\)</span> is its excess return</p></li>
+</ul>
+<blockquote>
+<div><p><strong>📌 Remember:</strong></p>
+<p>Conceptually you want to use the risk-free asset for the relevant holding period you are evaluating, but for this class you can think of the “Fed Funds Rate” or the “3-month treasury-bill rate”.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load risk-free rate data from FRED</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataReader</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+
+<span class="c1"># Define the date range</span>
+<span class="n">start_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1960</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+<span class="c1"># Get 3-month treasury bill rate</span>
+<span class="n">df_rf</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;DGS3MO&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
+<span class="n">df_rf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_rf</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;rf&quot;</span><span class="p">]</span>
+<span class="n">df_rf</span><span class="o">.</span><span class="n">rf</span> <span class="o">=</span> <span class="n">df_rf</span><span class="o">.</span><span class="n">rf</span> <span class="o">/</span> <span class="mi">100</span>  <span class="c1"># Convert from percentage to decimal</span>
+<span class="n">df_rf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">df_rf</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;3-Month Treasury Bill Rate&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Rate&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>🤔 Think and Code:</strong></p>
+<p>How do we interpret this rate?</p>
+<p>If I invested in the T-bill in 2005, how much money would I have at the end of 3 months? And at the end of the year?</p>
+</div></blockquote>
+</section>
+<section id="merging-with-stock-returns">
+<h3>Merging with Stock Returns<a class="headerlink" href="#merging-with-stock-returns" title="Link to this heading">#</a></h3>
+<p>Let’s get the return column of our dataframe and merge it together with our risk-free return.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Merge stock returns with risk-free rate</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_rf</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="computing-excess-returns">
+<h3>Computing Excess Returns<a class="headerlink" href="#computing-excess-returns" title="Link to this heading">#</a></h3>
+<p>Now let’s construct another column called ‘ret_e’ for excess returns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute excess returns (need to convert annual rf to daily)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret_e&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;rf&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">252</span>
+
+<span class="n">df</span><span class="p">[[</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="s1">&#39;rf&#39;</span><span class="p">,</span> <span class="s1">&#39;ret_e&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Concept Check:</strong></p>
+<ul class="simple">
+<li><p>What is the trading interpretation of such series?</p></li>
+<li><p>Is it the “return” to which strategy exactly?</p></li>
+<li><p>How do the historical distributions of ret and ret_e compare?</p></li>
+<li><p>Are their averages similar?</p></li>
+<li><p>Are their historical standard deviations similar?</p></li>
+<li><p>Is the standard deviation of risk-free rate useful to tell you the distribution of your returns at the end of 3 months for an investment in the risk-free asset?</p></li>
+</ul>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compare statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Comparison of Returns vs Excess Returns&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;━&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean return:         </span><span class="si">{</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">&gt;12.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean excess return:  </span><span class="si">{</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret_e&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">&gt;12.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mean rf (daily):     </span><span class="si">{</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;rf&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">252</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">&gt;12.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;━&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Std return:          </span><span class="si">{</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">&gt;12.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Std excess return:   </span><span class="si">{</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret_e&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2">&gt;12.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="risk-premiums">
+<h2>Risk Premiums <a id="risk-premiums"></a><a class="headerlink" href="#risk-premiums" title="Link to this heading">#</a></h2>
+<p>We call the <strong>risk premium</strong> what we earn in excess of what a risk-free investment pays.</p>
+<p>So the risk premium of an asset is the expected value of the excess return:</p>
+<div class="math notranslate nohighlight">
+\[\text{risk premium of stock } i = E[r^{e,i}]\]</div>
+<p>So the expected return of a stock is:</p>
+<div class="math notranslate nohighlight">
+\[E[r^i] = rf + E[r^{e,i}]\]</div>
+<p>The realized return is obviously volatile, hence the risk:</p>
+<div class="math notranslate nohighlight">
+\[u_i = r^{e,i} - E[r^{e,i}]\]</div>
+<p>will be negative 50% of the time and sometimes quite negative!</p>
+<blockquote>
+<div><p><strong>💡 Key Insight:</strong></p>
+<p>Big picture: the goal of quant investing is to harvest these risk-premia while managing the risk.</p>
+<ul class="simple">
+<li><p>We know the risk-free rate (it is the yield on a short-term government bond)</p></li>
+<li><p>How do we figure out the risk-premium of an asset?</p></li>
+</ul>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="stripping-the-common-factor">
+<h2>Stripping the Common Factor <a id="stripping-the-common-factor"></a><a class="headerlink" href="#stripping-the-common-factor" title="Link to this heading">#</a></h2>
+<section id="building-a-simple-model">
+<h3>Building a Simple Model<a class="headerlink" href="#building-a-simple-model" title="Link to this heading">#</a></h3>
+<p>We will build a simple model to help us both think about this risk-premium and also the risk that we need to manage.</p>
+<p>It will be useful to decompose the excess returns further to better understand its risk and its premium.</p>
+<p>We know that the overall market portfolio moves around, so it is natural to strip that market-wide movement from the stock returns.</p>
+<p>Suppose <span class="math notranslate nohighlight">\(f\)</span> is this common factor. One possibility is to write:</p>
+<div class="math notranslate nohighlight">
+\[r^i = r^i - rf + rf\]</div>
+<div class="math notranslate nohighlight">
+\[r^i = r^i - rf + rf - f + f\]</div>
+<p>Reorganizing, we have that the return can be written as:</p>
+<div class="math notranslate nohighlight">
+\[r^i = rf + f + (r^{e,i} - f)\]</div>
+<div class="math notranslate nohighlight">
+\[r^i = \underbrace{rf}_{\text{risk-free rate}} + \underbrace{f}_{\text{factor}} + \underbrace{(r^{e,i} - f)}_{\text{firm-specific component}}\]</div>
+<blockquote>
+<div><p><strong>🤔 Think and Code:</strong></p>
+<ul class="simple">
+<li><p>What is this common factor?</p></li>
+<li><p>Will this work? When will it work?</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="using-spy-as-a-market-proxy">
+<h3>Using SPY as a Market Proxy<a class="headerlink" href="#using-spy-as-a-market-proxy" title="Link to this heading">#</a></h3>
+<p>I will use the returns on the SPY ETF as a market proxy:</p>
+<div class="math notranslate nohighlight">
+\[f = \text{return}^{SPY}\]</div>
+<p>This fund holds a market-capitalization weighted portfolio of the largest 500 US stocks (roughly) — this consists of about 85% of the total universe of investable US equities.</p>
+<blockquote>
+<div><p><strong>⚠️ Caution:</strong></p>
+<p>The press often cites the <strong>DOW JONES</strong> as another proxy for the overall movement in stocks — but it is a terrible proxy, since it is an equal-weighted portfolio of 30 arbitrarily chosen stocks. <strong>Please never ever use that!</strong></p>
+</div></blockquote>
+<p>If you really want to use a portfolio that tracks the entirety of the US stock market universe, you can use <strong>VTI</strong>, which is an ETF that holds a market-capitalization weighted portfolio of all publicly traded US stocks (about $60 trillion investment universe).</p>
+<p>For reasons that will be clear later — but don’t matter for now — I will also strip the risk-free rate from our common factor:</p>
+<div class="math notranslate nohighlight">
+\[f = \text{return}^{SPY} - rf\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># If you have WRDS access:</span>
+<span class="c1"># conn = wrds.Connection()</span>
+<span class="c1"># df = get_daily_wrds(conn, tickers=[&#39;SPY&#39;, &#39;WMT&#39;, &#39;JPM&#39;])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 WRDS Workaround:</strong></p>
+<p>You can load this data directly if you don’t have WRDS access.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load multi-stock data directly from GitHub</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/df_SPYWMTJPM_data.csv&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>🤔 Calculation check:</strong></p>
+<p>Why divide the risk-free rate by 252?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create excess returns</span>
+<span class="c1"># The rf is annual, so we divide by 252 to get daily</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_rf</span> <span class="o">/</span> <span class="mi">252</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute excess returns for all stocks</span>
+<span class="n">df_re</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="s1">&#39;WMT&#39;</span><span class="p">,</span> <span class="s1">&#39;JPM&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;rf&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">df_re</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="visualizing-co-movement">
+<h3>Visualizing Co-movement<a class="headerlink" href="#visualizing-co-movement" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>🔧 Exercise:</strong></p>
+<p>How can we visualize co-movement between stocks?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Scatter plots to visualize co-movement</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">df_re</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;WMT&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;SPY vs WMT Excess Returns&#39;</span><span class="p">)</span>
+
+<span class="n">df_re</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;JPM&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;SPY vs JPM Excess Returns&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>🤔 Think and Code:</strong></p>
+<p>What is a quantitative way to measure co-movement?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Correlation matrix</span>
+<span class="n">df_re</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="cleaning-up-co-movement">
+<h3>Cleaning Up Co-movement<a class="headerlink" href="#cleaning-up-co-movement" title="Link to this heading">#</a></h3>
+<p>Let’s try to clean the stock from exposure to the common factor by subtracting it out.</p>
+<p>I am using ‘m_spy’ to denote the returns minus the return on the factor.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Subtract SPY returns to &quot;clean&quot; the factor exposure</span>
+<span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;WMT_m_spy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;WMT&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span>
+<span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;JPM_m_spy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">]</span>
+
+<span class="n">df_re</span><span class="p">[[</span><span class="s1">&#39;WMT&#39;</span><span class="p">,</span> <span class="s1">&#39;WMT_m_spy&#39;</span><span class="p">,</span> <span class="s1">&#39;JPM&#39;</span><span class="p">,</span> <span class="s1">&#39;JPM_m_spy&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Concept Check:</strong></p>
+<ul class="simple">
+<li><p>What is the trading interpretation in this case?</p></li>
+<li><p>What is the portfolio that yields the ‘ret_m_spy’ payoff?</p></li>
+<li><p>What is the theoretical “cost” of implementing this portfolio (if you want to have $100 exposure to it)?</p></li>
+<li><p>In practice, how much capital do you need? What does it depend on?</p></li>
+</ul>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the &quot;cleaned&quot; returns against SPY</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">df_re</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;WMT_m_spy&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;SPY vs WMT (minus SPY)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">df_re</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;JPM_m_spy&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;SPY vs JPM (minus SPY)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="did-it-work">
+<h3>Did It Work?<a class="headerlink" href="#did-it-work" title="Link to this heading">#</a></h3>
+<p>What is going on?</p>
+<p>The “model” motivating our decomposition was:</p>
+<div class="math notranslate nohighlight">
+\[r = r - rf - f + f + rf\]</div>
+<p>with the <span class="math notranslate nohighlight">\(r - f - rf\)</span> picking up the stock-specific movement and <span class="math notranslate nohighlight">\(f\)</span> the common movement.</p>
+<p>But it seems that the residual still has factor exposure!</p>
+<ul class="simple">
+<li><p>For <strong>Walmart</strong>, the residual is negatively correlated, so it seems we are taking out <strong>too much</strong></p></li>
+<li><p>For <strong>JPMorgan</strong>, it is still positive, so we are taking out <strong>too little</strong></p></li>
+<li><p>Taking out 1 dollar of factor exposure for each 1 dollar of stock exposure reduced the factor exposure and the asset volatilities, but we can do better</p></li>
+</ul>
+<blockquote>
+<div><p><strong>🤔 Think and Code:</strong></p>
+<p>What should we do? How do we fix this?</p>
+<p><em>Hint: This motivates the need for a <strong>factor model</strong> with betas!</em></p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercises">
+<h2>📝 Exercises <a id="exercises"></a><a class="headerlink" href="#exercises" title="Link to this heading">#</a></h2>
+<section id="exercise-1-computing-cumulative-returns">
+<h3>Exercise 1: Computing Cumulative Returns<a class="headerlink" href="#exercise-1-computing-cumulative-returns" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>🔧 Exercise:</strong></p>
+<p>Using the UNH data:</p>
+<ol class="arabic simple">
+<li><p>Compute the cumulative return from start to end of sample</p></li>
+<li><p>Plot the cumulative wealth growth of a $1 investment</p></li>
+<li><p>What is the annualized return over the entire period?</p></li>
+</ol>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>💡 Click to see solution</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reload UNH data</span>
+<span class="n">df_unh</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/UNH_data.csv&#39;</span><span class="p">)</span>
+<span class="n">df_unh</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_unh</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+<span class="n">df_unh</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Cumulative return</span>
+<span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;cum_ret&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+<span class="n">total_return</span> <span class="o">=</span> <span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;cum_ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total cumulative return: </span><span class="si">{</span><span class="n">total_return</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Annualized return</span>
+<span class="n">n_years</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_unh</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_unh</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mf">365.25</span>
+<span class="n">annual_return</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">total_return</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n_years</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Annualized return: </span><span class="si">{</span><span class="n">annual_return</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;cum_ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;UNH Cumulative Wealth Growth ($1 Initial)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Wealth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</details></section>
+<section id="exercise-2-value-at-risk">
+<h3>Exercise 2: Value at Risk<a class="headerlink" href="#exercise-2-value-at-risk" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>🤔 Think and Code:</strong></p>
+<p>You have $1 million invested in UNH:</p>
+<ol class="arabic simple">
+<li><p>Estimate the 5th percentile of daily returns (Value at Risk proxy)</p></li>
+<li><p>What dollar amount could you lose on a “bad day” (5% probability)?</p></li>
+<li><p>Find the worst single-day loss in the sample</p></li>
+<li><p>Plot the distribution with the 5th percentile marked</p></li>
+</ol>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>💡 Click to see solution</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">portfolio_value</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+
+<span class="c1"># 5th percentile</span>
+<span class="n">var_5</span> <span class="o">=</span> <span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;5th percentile return: </span><span class="si">{</span><span class="n">var_5</span><span class="si">:</span><span class="s2">.4%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Dollar loss</span>
+<span class="n">dollar_loss</span> <span class="o">=</span> <span class="n">portfolio_value</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">var_5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;5% daily VaR: $</span><span class="si">{</span><span class="n">dollar_loss</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Worst day</span>
+<span class="n">worst_day</span> <span class="o">=</span> <span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">worst_date</span> <span class="o">=</span> <span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Worst day: </span><span class="si">{</span><span class="n">worst_day</span><span class="si">:</span><span class="s2">.4%</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">worst_date</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">df_unh</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">var_5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;5% VaR: </span><span class="si">{</span><span class="n">var_5</span><span class="si">:</span><span class="s1">.2%</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">worst_day</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Worst: </span><span class="si">{</span><span class="n">worst_day</span><span class="si">:</span><span class="s1">.2%</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;UNH Return Distribution with Risk Measures&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Daily Return&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</details></section>
+<section id="exercise-3-comparing-correlations">
+<h3>Exercise 3: Comparing Correlations<a class="headerlink" href="#exercise-3-comparing-correlations" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>🔧 Exercise:</strong></p>
+<p>Using the SPY, WMT, JPM data:</p>
+<ol class="arabic simple">
+<li><p>Compute the correlation of each stock with SPY (before cleaning)</p></li>
+<li><p>Compute the correlation of the “cleaned” returns (stock - SPY) with SPY</p></li>
+<li><p>Explain why the correlations changed the way they did</p></li>
+</ol>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<details>
+<summary>💡 Click to see solution</summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Original correlations</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original correlations with SPY:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WMT: </span><span class="si">{</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;WMT&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;JPM: </span><span class="si">{</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;JPM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Cleaned correlations</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Cleaned correlations with SPY:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WMT_m_spy: </span><span class="si">{</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;WMT_m_spy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;JPM_m_spy: </span><span class="si">{</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;JPM_m_spy&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">df_re</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">])</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Explanation: </span>
+<span class="c1"># - WMT has a beta &lt; 1, so subtracting SPY removes &quot;too much&quot; market exposure</span>
+<span class="c1">#   The residual is negatively correlated with SPY</span>
+<span class="c1"># - JPM has a beta &gt; 1, so subtracting SPY removes &quot;too little&quot; market exposure</span>
+<span class="c1">#   The residual is still positively correlated with SPY</span>
+</pre></div>
+</div>
+</details></section>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2>🧠 Key Takeaways <a id="key-takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Return = price change + income, normalized.</strong> Whether for stocks, bonds, or crypto, total return compares what you end with to what you put in.</p></li>
+<li><p><strong>Excess return is the correct performance yardstick.</strong> Subtracting the risk-free rate lets you focus on compensation for taking risk, not for simply waiting.</p></li>
+<li><p><strong>Risk premiums are expectations, not guarantees.</strong> The historical average of excess returns is noisy and must be interpreted with care.</p></li>
+<li><p><strong>Stocks do not share the same market sensitivity.</strong> Removing one dollar of market exposure from each asset under- or over-hedges depending on its true beta.</p></li>
+<li><p><strong>This motivates factor models.</strong> In the next notebook, we’ll learn how to properly estimate betas and build a formal factor model framework.</p></li>
+</ol>
+<hr class="docutils" />
+<p><strong>Next Notebook:</strong> Factor Models — where we’ll learn how to properly estimate betas and decompose returns into systematic and idiosyncratic components.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-a-return">What is a Return? <a id="what-is-a-return"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-return-formula">The Return Formula</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-price-and-dividend-data">Loading Price and Dividend Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-returns">Computing Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decomposing-returns">Decomposing Returns <a id="decomposing-returns"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#excess-returns">Excess Returns <a id="excess-returns"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stripping-out-the-time-value-of-money">Stripping out the Time-Value of Money</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-with-stock-returns">Merging with Stock Returns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-excess-returns">Computing Excess Returns</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-premiums">Risk Premiums <a id="risk-premiums"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stripping-the-common-factor">Stripping the Common Factor <a id="stripping-the-common-factor"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#building-a-simple-model">Building a Simple Model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-spy-as-a-market-proxy">Using SPY as a Market Proxy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-co-movement">Visualizing Co-movement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cleaning-up-co-movement">Cleaning Up Co-movement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#did-it-work">Did It Work?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">📝 Exercises <a id="exercises"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-computing-cumulative-returns">Exercise 1: Computing Cumulative Returns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-value-at-risk">Exercise 2: Value at Risk</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-comparing-correlations">Exercise 3: Comparing Correlations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="key-takeaways"></a></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
