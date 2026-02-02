@@ -704,11 +704,11 @@ If the Sharpe ratio is zero, you can’t increase it by managing risk!</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Data range: 1926-07-01 to 2025-11-28
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Data range: 1926-07-01 to 2025-12-31
 </pre></div>
 </div>
 <div class="output text_html">
-  <div id="df-3a6a366b-a54c-4291-af29-ccc4d3d852f4" class="colab-df-container">
+  <div id="df-800fa81a-c489-40e3-8072-29904b563b94" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -768,7 +768,7 @@ If the Sharpe ratio is zero, you can’t increase it by managing risk!</p>
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-3a6a366b-a54c-4291-af29-ccc4d3d852f4')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-800fa81a-c489-40e3-8072-29904b563b94')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -820,12 +820,12 @@ If the Sharpe ratio is zero, you can’t increase it by managing risk!</p>
 
     <script>
       const buttonEl =
-        document.querySelector('#df-3a6a366b-a54c-4291-af29-ccc4d3d852f4 button.colab-df-convert');
+        document.querySelector('#df-800fa81a-c489-40e3-8072-29904b563b94 button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-3a6a366b-a54c-4291-af29-ccc4d3d852f4');
+        const element = document.querySelector('#df-800fa81a-c489-40e3-8072-29904b563b94');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -914,7 +914,7 @@ If the Sharpe ratio is zero, you can’t increase it by managing risk!</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Average annualized variance: 0.0287
-Average annualized volatility: 16.96%
+Average annualized volatility: 16.95%
 </pre></div>
 </div>
 </div>
@@ -939,7 +939,7 @@ Average annualized volatility: 16.96%
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/e621766088cf7651d523c029cbcf936efef98a12b67da988ff5a7b108731ced6.png" src="../../_images/e621766088cf7651d523c029cbcf936efef98a12b67da988ff5a7b108731ced6.png" />
+<img alt="../../_images/e33fa8c93ed393207d8a49f97e1dde64a49598b7fb549b08bd643e97f7804236.png" src="../../_images/e33fa8c93ed393207d8a49f97e1dde64a49598b7fb549b08bd643e97f7804236.png" />
 </div>
 </div>
 </section>
@@ -961,22 +961,25 @@ Average annualized volatility: 16.96%
 
 <span class="c1"># Compute means by quintile</span>
 <span class="n">quantile_stats</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Quantile&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span>
+        <span class="s1">&#39;RV_lag&#39;</span><span class="p">:</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
     <span class="s1">&#39;RV&#39;</span><span class="p">:</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
     <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">:</span> <span class="s1">&#39;mean&#39;</span>
+
 <span class="p">})</span>
 
 <span class="c1"># Compute price of risk (return per unit variance)</span>
 <span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Price_of_Risk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">/</span> <span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;RV&#39;</span><span class="p">]</span>
-<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Vol_t1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;RV&#39;</span><span class="p">])</span>
-<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Return_t1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">12</span>
-
+<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;RV**0.5&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;RV_lag&#39;</span><span class="p">])</span>
+<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;RV(t+1)**05&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;RV&#39;</span><span class="p">])</span>
+<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Return(t+1)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">12</span>
+<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;SharpeRatio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">/</span> <span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;RV(t+1)**05&#39;</span><span class="p">]</span>
 <span class="n">quantile_stats</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output text_html">
-  <div id="df-370013fb-17fa-4517-ac0d-5a4c143f1bd0" class="colab-df-container">
+  <div id="df-161823d5-f67c-421e-aca5-06873896ae76" class="colab-df-container">
     <div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -995,14 +998,20 @@ Average annualized volatility: 16.96%
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>RV_lag</th>
       <th>RV</th>
       <th>Mkt-RF</th>
       <th>Price_of_Risk</th>
-      <th>Vol_t1</th>
-      <th>Return_t1</th>
+      <th>RV**0.5</th>
+      <th>RV(t+1)**05</th>
+      <th>Return(t+1)</th>
+      <th>SharpeRatio</th>
     </tr>
     <tr>
       <th>Quantile</th>
+      <th></th>
+      <th></th>
+      <th></th>
       <th></th>
       <th></th>
       <th></th>
@@ -1013,43 +1022,58 @@ Average annualized volatility: 16.96%
   <tbody>
     <tr>
       <th>Q1 (Low)</th>
+      <td>0.004163</td>
       <td>0.008515</td>
       <td>0.006555</td>
       <td>9.237906</td>
+      <td>0.064518</td>
       <td>0.092278</td>
       <td>0.078663</td>
+      <td>0.852456</td>
     </tr>
     <tr>
       <th>Q2</th>
+      <td>0.008063</td>
       <td>0.012690</td>
       <td>0.007419</td>
       <td>7.015934</td>
+      <td>0.089792</td>
       <td>0.112651</td>
       <td>0.089034</td>
+      <td>0.790352</td>
     </tr>
     <tr>
       <th>Q3</th>
-      <td>0.015370</td>
-      <td>0.004989</td>
-      <td>3.895362</td>
-      <td>0.123977</td>
-      <td>0.059873</td>
+      <td>0.012829</td>
+      <td>0.015471</td>
+      <td>0.004881</td>
+      <td>3.786062</td>
+      <td>0.113264</td>
+      <td>0.124383</td>
+      <td>0.058575</td>
+      <td>0.470923</td>
     </tr>
     <tr>
       <th>Q4</th>
-      <td>0.029784</td>
-      <td>0.007048</td>
-      <td>2.839784</td>
-      <td>0.172579</td>
-      <td>0.084579</td>
+      <td>0.022829</td>
+      <td>0.029652</td>
+      <td>0.007121</td>
+      <td>2.882005</td>
+      <td>0.151092</td>
+      <td>0.172198</td>
+      <td>0.085458</td>
+      <td>0.496276</td>
     </tr>
     <tr>
       <th>Q5 (High)</th>
+      <td>0.095745</td>
       <td>0.077360</td>
       <td>0.008520</td>
       <td>1.321600</td>
+      <td>0.309427</td>
       <td>0.278137</td>
       <td>0.102239</td>
+      <td>0.367585</td>
     </tr>
   </tbody>
 </table>
@@ -1057,7 +1081,7 @@ Average annualized volatility: 16.96%
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-370013fb-17fa-4517-ac0d-5a4c143f1bd0')"
+    <button class="colab-df-convert" onclick="convertToInteractive('df-161823d5-f67c-421e-aca5-06873896ae76')"
             title="Convert this dataframe to an interactive table."
             style="display:none;">
 
@@ -1109,12 +1133,12 @@ Average annualized volatility: 16.96%
 
     <script>
       const buttonEl =
-        document.querySelector('#df-370013fb-17fa-4517-ac0d-5a4c143f1bd0 button.colab-df-convert');
+        document.querySelector('#df-161823d5-f67c-421e-aca5-06873896ae76 button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-370013fb-17fa-4517-ac0d-5a4c143f1bd0');
+        const element = document.querySelector('#df-161823d5-f67c-421e-aca5-06873896ae76');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -1134,7 +1158,7 @@ Average annualized volatility: 16.96%
   </div>
 
 
-  <div id="id_3e4a0884-278a-42b1-951e-0ba1159a567c">
+  <div id="id_366aa579-9d2c-45c8-b007-22382df4a7f8">
     <style>
       .colab-df-generate {
         background-color: #E8F0FE;
@@ -1178,7 +1202,7 @@ Average annualized volatility: 16.96%
     <script>
       (() => {
       const buttonEl =
-        document.querySelector('#id_3e4a0884-278a-42b1-951e-0ba1159a567c button.colab-df-generate');
+        document.querySelector('#id_366aa579-9d2c-45c8-b007-22382df4a7f8 button.colab-df-generate');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
@@ -1196,33 +1220,38 @@ Average annualized volatility: 16.96%
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualize the pattern</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 
 <span class="c1"># Volatility by quintile</span>
-<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Vol_t1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Future Vol by Past Vol Quintile&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Volatility (t+1)&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;RV(t+1)**05&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Future Vol by Past Vol Quintile&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Volatility (t+1)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
 
 <span class="c1"># Returns by quintile</span>
-<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Return_t1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;coral&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Future Return by Past Vol Quintile&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Return (t+1)&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Return(t+1)&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;coral&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Future Return by Past Vol Quintile&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Return (t+1)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
 
 <span class="c1"># Price of risk by quintile</span>
-<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Price_of_Risk&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Price of Risk by Past Vol Quintile&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;E[r]/Var(r)&#39;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;Price_of_Risk&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Price of Risk by Past Vol Quintile&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;E[r]/Var(r)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
 
+
+<span class="n">quantile_stats</span><span class="p">[</span><span class="s1">&#39;SharpeRatio&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Sharpe Ration by Past Vol Quintile&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;E[r]/STD(r)&#39;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/7408b6d2bcb8fba9e8e854b5a02177cb07c35f54d31db9d7138c91b2d72eaa15.png" src="../../_images/7408b6d2bcb8fba9e8e854b5a02177cb07c35f54d31db9d7138c91b2d72eaa15.png" />
+<img alt="../../_images/af5aaf27bc985a179c57b2f0f73ecee0525a8b5fb4160c01816c2b7f7a17a733.png" src="../../_images/af5aaf27bc985a179c57b2f0f73ecee0525a8b5fb4160c01816c2b7f7a17a733.png" />
 </div>
 </div>
 <blockquote>
@@ -1258,7 +1287,7 @@ is much higher when volatility is low.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Scaling constant c: 0.009074
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Scaling constant c: 0.009079
 Average weight: 1.00
 </pre></div>
 </div>
@@ -1283,7 +1312,7 @@ Average weight: 1.00
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/af6f7c3b8408a1514b6779ca285bc4f569f38cf7c886f0597e3b84039d0655fb.png" src="../../_images/af6f7c3b8408a1514b6779ca285bc4f569f38cf7c886f0597e3b84039d0655fb.png" />
+<img alt="../../_images/e2262b010df93282eb0bcd618eaa3c12fd8c1314c6d0d4603dd205aecdcaa8b5.png" src="../../_images/e2262b010df93282eb0bcd618eaa3c12fd8c1314c6d0d4603dd205aecdcaa8b5.png" />
 </div>
 </div>
 <blockquote>
@@ -1320,7 +1349,7 @@ In practice, you’d want leverage limits.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/bdb1aeb1f6d72e4e76cdc500d8991c8c1cb5455afd9b84e61b14f397f95534e6.png" src="../../_images/bdb1aeb1f6d72e4e76cdc500d8991c8c1cb5455afd9b84e61b14f397f95534e6.png" />
+<img alt="../../_images/0b63687aa8d08a3b1af7f3fce39d72366665050961337f2709a29dc7141442f4.png" src="../../_images/0b63687aa8d08a3b1af7f3fce39d72366665050961337f2709a29dc7141442f4.png" />
 </div>
 </div>
 </section>
@@ -1402,7 +1431,7 @@ Improvement: 15.0%
     <span class="c1"># Sharpe ratios</span>
     <span class="n">sr_managed</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">factor_name</span><span class="si">}</span><span class="s1">_managed&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">factor_name</span><span class="si">}</span><span class="s1">_managed&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
     <span class="n">sr_unmanaged</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">factor_name</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="n">factor_name</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
-    <span class="p">((</span><span class="n">df</span><span class="p">[[</span><span class="n">factor_name</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">factor_name</span><span class="si">}</span><span class="s1">_managed&#39;</span><span class="p">]]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">logy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">((</span><span class="n">df</span><span class="p">[[</span><span class="n">factor_name</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">factor_name</span><span class="si">}</span><span class="s1">_managed&#39;</span><span class="p">]]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">df</span><span class="p">,</span> <span class="n">sr_managed</span><span class="p">,</span> <span class="n">sr_unmanaged</span>
 </pre></div>
 </div>
@@ -1428,7 +1457,7 @@ Improvement: 15.0%
   Managed SR:   0.520
 </pre></div>
 </div>
-<img alt="../../_images/c56eab0f3b7cc7f83c3e7cf85ecc31fc0e113c32bb839615d098a86e892abf00.png" src="../../_images/c56eab0f3b7cc7f83c3e7cf85ecc31fc0e113c32bb839615d098a86e892abf00.png" />
+<img alt="../../_images/7d4188810b6386896739c87ae3c40ad49b697a9c3843624c9f657a7f3b3a16d3.png" src="../../_images/7d4188810b6386896739c87ae3c40ad49b697a9c3843624c9f657a7f3b3a16d3.png" />
 </div>
 </div>
 </section>
