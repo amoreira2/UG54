@@ -1,0 +1,936 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Assignment 4 — Solution &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Assignments/Assignment4_c_solution';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Assignments/Assignment4_c_solution.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/IntrotoReturns_c.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/TheChoiceofFrequency_c.html">4.11. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/UsingAPI_c.html">4.12. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/Timing_c.html">5. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/MarketTiming_c.html">5.6. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Volatilitytiming_c.html">5.7. Volatility Timing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/FactorModels_c.html">6. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/PortfolioMath_c.html">7. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1_c.html">7.13. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/CapitalAllocationI_cc.html">8. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/FactorModelEstimation_c.html">9. Factor Model Estimation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/crosssectionalequitystrategies.html">10. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Momentum.html">10.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Factors.html">10.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/CapitalAllocationII.html">11. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/Performance_evaluation.html">12. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/MachineLearning.html">13. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/MultiFactorModels.html">14. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/InterpretingFactorModels.html">14.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/RiskManagement.html">15. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/TradingCosts.html">16. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/LeverageandShorting.html">17. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/LLMs.html">18. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">19. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Assignments.html">20. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Assignment1.html">20.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Assignment2.html">20.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Assignment3.html">20.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="Assignment4_c.html">20.6. Assignment 4</a></li>
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Assignments/Assignment4_c_solution.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Assignments/Assignment4_c_solution.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Assignments/Assignment4_c_solution.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Assignment 4 — Solution</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-import-the-data">Exercise 1 — Import the data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-mve-portfolio">Exercise 2 — MVE portfolio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-choosing-leverage">Exercise 3 — Choosing leverage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-3c-and-3d">Discussion — 3c and 3d</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-4-alternative-allocation-rules">Exercise 4 — Alternative allocation rules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-5-in-sample-comparison">Exercise 5 — In-sample comparison</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-exercise-5">Discussion — Exercise 5</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-6-rolling-out-of-sample-evaluation">Exercise 6 — Rolling out-of-sample evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-7-out-of-sample-performance-analysis">Exercise 7 — Out-of-sample performance analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-exercise-7">Discussion — Exercise 7</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="assignment-4-solution">
+<h1>Assignment 4 — Solution<a class="headerlink" href="#assignment-4-solution" title="Link to this heading">#</a></h1>
+<section id="exercise-1-import-the-data">
+<h2>Exercise 1 — Import the data<a class="headerlink" href="#exercise-1-import-the-data" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_5_Factors_2x3&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>                                       <span class="c1"># key 0 = monthly table</span>
+<span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span>
+
+<span class="n">factors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span> <span class="s1">&#39;SMB&#39;</span><span class="p">,</span> <span class="s1">&#39;HML&#39;</span><span class="p">,</span> <span class="s1">&#39;RMW&#39;</span><span class="p">,</span> <span class="s1">&#39;CMA&#39;</span><span class="p">]</span>
+<span class="n">Re</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">factors</span><span class="p">]</span>          <span class="c1"># excess returns in percent; RF is in df[&#39;RF&#39;]</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-2-mve-portfolio">
+<h2>Exercise 2 — MVE portfolio<a class="headerlink" href="#exercise-2-mve-portfolio" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── Sample moments ────────────────────────────────────────────────────────────</span>
+<span class="n">ERe</span>   <span class="o">=</span> <span class="n">Re</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>          <span class="c1"># monthly expected excess returns (percent)</span>
+<span class="n">CovRe</span> <span class="o">=</span> <span class="n">Re</span><span class="o">.</span><span class="n">cov</span><span class="p">()</span>           <span class="c1"># monthly covariance matrix (percent^2)</span>
+
+<span class="c1"># ── Helper functions (reused in all subsequent exercises) ─────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mve_weights</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unit-normalised MVE weights. mu and Sigma must be numpy arrays.&quot;&quot;&quot;</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span> <span class="o">@</span> <span class="n">mu</span>
+    <span class="k">return</span> <span class="n">raw</span> <span class="o">/</span> <span class="n">raw</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">leverage_to_vol</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">target_ann_vol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale weights w so annualised portfolio vol equals target_ann_vol (percent).&quot;&quot;&quot;</span>
+    <span class="n">port_vol</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">w</span> <span class="o">@</span> <span class="n">Sigma</span> <span class="o">@</span> <span class="n">w</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="k">return</span> <span class="n">w</span> <span class="o">*</span> <span class="n">target_ann_vol</span> <span class="o">/</span> <span class="n">port_vol</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sharpe_ratio</span><span class="p">(</span><span class="n">port_returns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Annualised Sharpe Ratio from a monthly return series (in percent).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">port_returns</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">port_returns</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1"># ── MVE weights ────────────────────────────────────────────────────────────────</span>
+<span class="n">N</span>     <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">factors</span><span class="p">)</span>
+<span class="n">Sigma</span> <span class="o">=</span> <span class="n">CovRe</span><span class="o">.</span><span class="n">values</span>
+<span class="n">mu</span>    <span class="o">=</span> <span class="n">ERe</span><span class="o">.</span><span class="n">values</span>
+
+<span class="n">w_mve</span> <span class="o">=</span> <span class="n">mve_weights</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">)</span>          <span class="c1"># unit-normalised (sums to 1)</span>
+
+<span class="c1"># Leverage to match market in-sample annualised vol</span>
+<span class="n">target_vol</span> <span class="o">=</span> <span class="p">(</span><span class="n">Re</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>          <span class="c1"># market ann. vol (%)</span>
+<span class="n">W_mve</span>      <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_mve</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>  <span class="c1"># levered weights</span>
+
+<span class="c1"># In-sample Sharpe Ratio</span>
+<span class="n">port_ret_mve</span> <span class="o">=</span> <span class="n">Re</span><span class="p">[</span><span class="n">factors</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">@</span> <span class="n">W_mve</span>
+<span class="n">SR_mve</span>       <span class="o">=</span> <span class="n">sharpe_ratio</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">port_ret_mve</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target (market) annualised vol : </span><span class="si">{</span><span class="n">target_vol</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MVE portfolio annualised vol   : </span><span class="si">{</span><span class="p">(</span><span class="mi">12</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">W_mve</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">Sigma</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">W_mve</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In-sample Sharpe Ratio (MVE)   : </span><span class="si">{</span><span class="n">SR_mve</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weights:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">W_mve</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">factors</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-3-choosing-leverage">
+<h2>Exercise 3 — Choosing leverage<a class="headerlink" href="#exercise-3-choosing-leverage" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># w_mve is the unit-normalised portfolio (sums to 1).</span>
+<span class="c1"># All leverage variants differ only in the scalar x; composition is unchanged.</span>
+
+<span class="n">port_ERe_monthly</span> <span class="o">=</span> <span class="n">w_mve</span> <span class="o">@</span> <span class="n">mu</span>          <span class="c1"># monthly E[Re] of unit portfolio (%)</span>
+<span class="n">port_vol_monthly</span> <span class="o">=</span> <span class="p">(</span><span class="n">w_mve</span> <span class="o">@</span> <span class="n">Sigma</span> <span class="o">@</span> <span class="n">w_mve</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>   <span class="c1"># monthly vol (%)</span>
+
+<span class="c1"># ── 3a: Target 10% annual expected excess return ───────────────────────────────</span>
+<span class="c1"># 12 * x * port_ERe_monthly = 10</span>
+<span class="n">target_ERe_ann</span> <span class="o">=</span> <span class="mf">10.0</span>     <span class="c1"># percent</span>
+<span class="n">x_3a</span>  <span class="o">=</span> <span class="n">target_ERe_ann</span> <span class="o">/</span> <span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">port_ERe_monthly</span><span class="p">)</span>
+<span class="n">W_3a</span>  <span class="o">=</span> <span class="n">x_3a</span> <span class="o">*</span> <span class="n">w_mve</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;── 3a: target 10</span><span class="si">% a</span><span class="s2">nnual excess return ──&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">W_3a</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">factors</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Achieved annual E[Re]: </span><span class="si">{</span><span class="mi">12</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">W_3a</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">mu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="c1"># ── 3b: Target 10% annual volatility ─────────────────────────────────────────</span>
+<span class="c1"># x * port_vol_monthly * sqrt(12) = 10</span>
+<span class="n">target_vol_ann</span> <span class="o">=</span> <span class="mf">10.0</span>     <span class="c1"># percent</span>
+<span class="n">x_3b</span>  <span class="o">=</span> <span class="n">target_vol_ann</span> <span class="o">/</span> <span class="p">(</span><span class="n">port_vol_monthly</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">W_3b</span>  <span class="o">=</span> <span class="n">x_3b</span> <span class="o">*</span> <span class="n">w_mve</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">── 3b: target 10</span><span class="si">% a</span><span class="s2">nnual volatility ──&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">W_3b</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">factors</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Achieved annual vol : </span><span class="si">{</span><span class="p">(</span><span class="n">W_3b</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">Sigma</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">W_3b</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">12</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="c1"># ── 3c: Target 10% annual total return ───────────────────────────────────────</span>
+<span class="c1"># rf_ann + 12 * x * port_ERe_monthly = 10</span>
+<span class="n">rf_ann</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span>          <span class="c1"># average annualised risk-free rate (%)</span>
+<span class="n">target_total_ann</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">x_3c</span>  <span class="o">=</span> <span class="p">(</span><span class="n">target_total_ann</span> <span class="o">-</span> <span class="n">rf_ann</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">port_ERe_monthly</span><span class="p">)</span>
+<span class="n">W_3c</span>  <span class="o">=</span> <span class="n">x_3c</span> <span class="o">*</span> <span class="n">w_mve</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">── 3c: target 10</span><span class="si">% a</span><span class="s2">nnual total return ──&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average annual RF used: </span><span class="si">{</span><span class="n">rf_ann</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">W_3c</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">factors</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Achieved annual total return: </span><span class="si">{</span><span class="n">rf_ann</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">W_3c</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">mu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="c1"># ── 3d: Sharpe ratio invariance ───────────────────────────────────────────────</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">── 3d: Sharpe ratios across leverage choices ──&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">W</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">&quot;3a&quot;</span><span class="p">,</span> <span class="n">W_3a</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;3b&quot;</span><span class="p">,</span> <span class="n">W_3b</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;3c&quot;</span><span class="p">,</span> <span class="n">W_3c</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;MVE (Ex2)&quot;</span><span class="p">,</span> <span class="n">W_mve</span><span class="p">)]:</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">Re</span><span class="p">[</span><span class="n">factors</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">@</span> <span class="n">W</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  SR (</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">sharpe_ratio</span><span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="discussion-3c-and-3d">
+<h3>Discussion — 3c and 3d<a class="headerlink" href="#discussion-3c-and-3d" title="Link to this heading">#</a></h3>
+<p><strong>3c:</strong> Targeting a <em>total</em> return requires knowing the risk-free rate <span class="math notranslate nohighlight">\(r_f\)</span>, which is an additional
+piece of information beyond what is needed for the excess-return or vol targets.
+In practice, <span class="math notranslate nohighlight">\(r_f\)</span> is directly observable (e.g. from T-bills), so this is not a hard constraint —
+but it does mean the leverage depends on the level of interest rates, not just on the portfolio itself.</p>
+<p><strong>3d:</strong> Leverage does not change the Sharpe Ratio.
+The scalar <span class="math notranslate nohighlight">\(x\)</span> appears in both the numerator (<span class="math notranslate nohighlight">\(E[R^e_p] \propto x\)</span>) and the denominator
+(<span class="math notranslate nohighlight">\(\sigma_p \propto x\)</span>), so it cancels:</p>
+<div class="math notranslate nohighlight">
+\[SR = \frac{12 \, x \, w^\top\mu}{\sqrt{12} \, x \sqrt{w^\top\Sigma w}} = \frac{\sqrt{12} \, w^\top\mu}{\sqrt{w^\top\Sigma w}}\]</div>
+<p>The leverage choice is purely about <em>scale</em> — how much capital or risk you want to take —
+not about improving the risk-adjusted return.</p>
+</section>
+</section>
+<section id="exercise-4-alternative-allocation-rules">
+<h2>Exercise 4 — Alternative allocation rules<a class="headerlink" href="#exercise-4-alternative-allocation-rules" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sigma_vec</span> <span class="o">=</span> <span class="n">Re</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>   <span class="c1"># sample standard deviations</span>
+
+<span class="c1"># ── Rule 1: Equal Weight ───────────────────────────────────────────────────────</span>
+<span class="n">w_ew</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span>
+<span class="n">W_ew</span>     <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_ew</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>
+
+<span class="c1"># ── Rule 2: Risk Parity 1 (estimated Sigma, mu_i = c * sigma_i) ───────────────</span>
+<span class="c1"># Substitute sigma_vec for ERe in the MVE formula</span>
+<span class="n">w_rp1</span>    <span class="o">=</span> <span class="n">mve_weights</span><span class="p">(</span><span class="n">sigma_vec</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">)</span>
+<span class="n">W_rp1</span>    <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_rp1</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>
+
+<span class="c1"># ── Rule 3: Risk Parity 2 (diagonal Sigma + mu_i = c * sigma_i → 1/sigma_i) ──</span>
+<span class="n">w_rp2_raw</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">sigma_vec</span>
+<span class="n">w_rp2</span>     <span class="o">=</span> <span class="n">w_rp2_raw</span> <span class="o">/</span> <span class="n">w_rp2_raw</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">W_rp2</span>     <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_rp2</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>
+
+<span class="c1"># ── Rule 4: Minimum Variance (mu_i = constant → Sigma^{-1} 1) ─────────────────</span>
+<span class="n">w_minvar</span>  <span class="o">=</span> <span class="n">mve_weights</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">),</span> <span class="n">Sigma</span><span class="p">)</span>
+<span class="n">W_minvar</span>  <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_minvar</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>
+
+<span class="c1"># ── Collect ────────────────────────────────────────────────────────────────────</span>
+<span class="n">Weights</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;MVE&#39;</span><span class="p">:</span>    <span class="n">W_mve</span><span class="p">,</span>
+    <span class="s1">&#39;EW&#39;</span><span class="p">:</span>     <span class="n">W_ew</span><span class="p">,</span>
+    <span class="s1">&#39;RP1&#39;</span><span class="p">:</span>    <span class="n">W_rp1</span><span class="p">,</span>
+    <span class="s1">&#39;RP2&#39;</span><span class="p">:</span>    <span class="n">W_rp2</span><span class="p">,</span>
+    <span class="s1">&#39;MinVar&#39;</span><span class="p">:</span> <span class="n">W_minvar</span><span class="p">,</span>
+<span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">factors</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">Weights</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">Weights</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Weights by strategy&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Weight&#39;</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-5-in-sample-comparison">
+<h2>Exercise 5 — In-sample comparison<a class="headerlink" href="#exercise-5-in-sample-comparison" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">is_stats</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">Weights</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">Re</span><span class="p">[</span><span class="n">factors</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="o">@</span> <span class="n">Weights</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">is_stats</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">sharpe_ratio</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+<span class="n">is_stats</span><span class="p">[</span><span class="s1">&#39;Market&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sharpe_ratio</span><span class="p">(</span><span class="n">Re</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">])</span>
+
+<span class="n">sr_is</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">is_stats</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;In-sample SR&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sr_is</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">sr_is</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;In-sample Sharpe Ratios&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="discussion-exercise-5">
+<h3>Discussion — Exercise 5<a class="headerlink" href="#discussion-exercise-5" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>MVE wins by construction.</strong> In-sample, MVE maximises the Sharpe Ratio by definition — it is
+the portfolio that solves that exact optimisation on this data. Comparing in-sample SRs across
+strategies tells us nothing useful about which is better out-of-sample.</p></li>
+<li><p><strong>The main problem is look-ahead bias.</strong> The weights for every strategy were estimated using the
+same observations used to evaluate them. The MVE weights are tuned to the sample noise as well as
+the true signal, so its in-sample SR is optimistically biased.</p></li>
+<li><p><strong>The degree of bias is largest for MVE</strong> because it has the most free parameters (N means +
+N(N+1)/2 covariance entries). EW has zero estimation error; MinVar and RP rules lie in between.
+Out-of-sample, the ranking often reverses because simpler rules overfit less.</p></li>
+</ol>
+</section>
+</section>
+<section id="exercise-6-rolling-out-of-sample-evaluation">
+<h2>Exercise 6 — Rolling out-of-sample evaluation<a class="headerlink" href="#exercise-6-rolling-out-of-sample-evaluation" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Rp</span>         <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">start_date</span> <span class="o">=</span> <span class="n">Re</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">Re</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">Re</span><span class="p">[</span><span class="n">start_date</span><span class="p">:]</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+    <span class="n">est</span>        <span class="o">=</span> <span class="n">Re</span><span class="p">[:</span><span class="n">date</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">mu_t</span>       <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">Sigma_t</span>    <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">cov</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">sigma_t</span>    <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">tgt_vol_t</span>  <span class="o">=</span> <span class="p">(</span><span class="n">est</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">ret_t</span>      <span class="o">=</span> <span class="n">Re</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="n">factors</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># MVE</span>
+    <span class="n">Rp</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;MVE&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">mve_weights</span><span class="p">(</span><span class="n">mu_t</span><span class="p">,</span> <span class="n">Sigma_t</span><span class="p">),</span>    <span class="n">Sigma_t</span><span class="p">,</span> <span class="n">tgt_vol_t</span><span class="p">)</span> <span class="o">@</span> <span class="n">ret_t</span>
+    <span class="c1"># EW</span>
+    <span class="n">Rp</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;EW&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="p">,</span>                <span class="n">Sigma_t</span><span class="p">,</span> <span class="n">tgt_vol_t</span><span class="p">)</span> <span class="o">@</span> <span class="n">ret_t</span>
+    <span class="c1"># RP1</span>
+    <span class="n">Rp</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;RP1&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">mve_weights</span><span class="p">(</span><span class="n">sigma_t</span><span class="p">,</span> <span class="n">Sigma_t</span><span class="p">),</span> <span class="n">Sigma_t</span><span class="p">,</span> <span class="n">tgt_vol_t</span><span class="p">)</span> <span class="o">@</span> <span class="n">ret_t</span>
+    <span class="c1"># RP2</span>
+    <span class="n">w_rp2_t</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">sigma_t</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">sigma_t</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">Rp</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;RP2&#39;</span><span class="p">]</span>    <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_rp2_t</span><span class="p">,</span>                        <span class="n">Sigma_t</span><span class="p">,</span> <span class="n">tgt_vol_t</span><span class="p">)</span> <span class="o">@</span> <span class="n">ret_t</span>
+    <span class="c1"># MinVar</span>
+    <span class="n">Rp</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;MinVar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">mve_weights</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N</span><span class="p">),</span> <span class="n">Sigma_t</span><span class="p">),</span> <span class="n">Sigma_t</span><span class="p">,</span> <span class="n">tgt_vol_t</span><span class="p">)</span> <span class="o">@</span> <span class="n">ret_t</span>
+
+<span class="c1"># Market benchmark over the same OOS period</span>
+<span class="n">Rp</span><span class="p">[</span><span class="s1">&#39;Market&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Re</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start_date</span><span class="p">:,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OOS period: </span><span class="si">{</span><span class="n">Rp</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">Rp</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">Rp</span><span class="p">)</span><span class="si">}</span><span class="s2"> months)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-7-out-of-sample-performance-analysis">
+<h2>Exercise 7 — Out-of-sample performance analysis<a class="headerlink" href="#exercise-7-out-of-sample-performance-analysis" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="c1"># ── Summary statistics ────────────────────────────────────────────────────────</span>
+<span class="n">oos</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;Ann. Return (%)&#39;</span> <span class="p">:</span> <span class="n">Rp</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="s1">&#39;Ann. Vol (%)&#39;</span>    <span class="p">:</span> <span class="n">Rp</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="s1">&#39;Sharpe Ratio&#39;</span>    <span class="p">:</span> <span class="n">Rp</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">sharpe_ratio</span><span class="p">),</span>
+<span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">oos</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+
+<span class="c1"># ── Cumulative returns ─────────────────────────────────────────────────────────</span>
+<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">Rp</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Cumulative OOS returns&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── t-tests: is each strategy&#39;s OOS return significantly different from Market? ─</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;H0: E[strategy return] = E[market return]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">Rp</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="s1">&#39;Market&#39;</span><span class="p">]:</span>
+    <span class="n">diff</span>   <span class="o">=</span> <span class="p">(</span><span class="n">Rp</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">-</span> <span class="n">Rp</span><span class="p">[</span><span class="s1">&#39;Market&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">t</span><span class="p">,</span> <span class="n">p</span>   <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">ttest_1samp</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">:</span><span class="s2">8s</span><span class="si">}</span><span class="s2">  mean diff = </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">%/yr  t = </span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">  p = </span><span class="si">{</span><span class="n">p</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="discussion-exercise-7">
+<h3>Discussion — Exercise 7<a class="headerlink" href="#discussion-exercise-7" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Is there a clear winner?</strong>
+OOS Sharpe Ratios tend to be much closer together than in-sample, and differences are typically
+not statistically significant. MVE often no longer leads; simpler rules (EW, RP2) can match or
+beat it OOS because they do not overfit expected-return estimates.</p></li>
+<li><p><strong>Statistical test:</strong> A paired t-test on the monthly return difference between two strategies
+tests whether the mean difference is zero. With ~35 years of monthly data (≈420 observations) the
+test has modest power — a 1–2%/year difference in returns requires many years to be statistically
+detectable.</p></li>
+<li><p><strong>Sources of return differences that might not interest an investor:</strong></p>
+<ul class="simple">
+<li><p>All five strategies are <strong>long-only combinations of long-short factors</strong>. They can have very
+different net market exposure depending on how much <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span></code> they hold. A higher return from
+more market exposure is not “skill.”</p></li>
+<li><p>Differences in effective leverage: even after matching vol in-sample, OOS vol can diverge,
+making raw-return comparisons misleading.</p></li>
+<li><p>Transaction costs: more extreme weights (MVE can have large short-like positions within the
+factor space) imply higher rebalancing costs.</p></li>
+</ul>
+</li>
+<li><p><strong>Beyond Sharpe Ratios:</strong> drawdown analysis, turnover, tail risk (CVaR), performance in
+crisis periods (2001, 2008, 2020), and the information ratio relative to the market are all
+important complements to a single summary statistic.</p></li>
+</ol>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Assignments"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-1-import-the-data">Exercise 1 — Import the data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-2-mve-portfolio">Exercise 2 — MVE portfolio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-3-choosing-leverage">Exercise 3 — Choosing leverage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-3c-and-3d">Discussion — 3c and 3d</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-4-alternative-allocation-rules">Exercise 4 — Alternative allocation rules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-5-in-sample-comparison">Exercise 5 — In-sample comparison</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-exercise-5">Discussion — Exercise 5</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-6-rolling-out-of-sample-evaluation">Exercise 6 — Rolling out-of-sample evaluation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercise-7-out-of-sample-performance-analysis">Exercise 7 — Out-of-sample performance analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#discussion-exercise-7">Discussion — Exercise 7</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
