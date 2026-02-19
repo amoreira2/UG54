@@ -1,0 +1,978 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>20.6. Assignment 4 &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Assignments/Assignment4_c';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Assignments/Assignment4_c.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="20.3. Assignment 3" href="Assignment3.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/IntrotoReturns_c.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/TheChoiceofFrequency_c.html">4.11. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/UsingAPI_c.html">4.12. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/Timing_c.html">5. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/MarketTiming_c.html">5.6. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Volatilitytiming_c.html">5.7. Volatility Timing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/FactorModels_c.html">6. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/PortfolioMath_c.html">7. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1_c.html">7.13. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/CapitalAllocationI_cc.html">8. Capital Allocation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/FactorModelEstimation_c.html">9. Factor Model Estimation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/crosssectionalequitystrategies.html">10. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Momentum.html">10.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/Factors.html">10.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/CapitalAllocationII.html">11. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/Performance_evaluation.html">12. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/MachineLearning.html">13. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Finance/MultiFactorModels.html">14. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Finance/InterpretingFactorModels.html">14.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/RiskManagement.html">15. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/TradingCosts.html">16. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/LeverageandShorting.html">17. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Finance/LLMs.html">18. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">19. Additional Statistics Material</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="Assignments.html">20. Assignments</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Assignment1.html">20.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Assignment2.html">20.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Assignment3.html">20.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">20.6. Assignment 4</a></li>
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Assignments/Assignment4_c.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Assignments/Assignment4_c.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Assignments/Assignment4_c.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Assignment 4</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">20.6. Assignment 4</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">20.7. Exercises</a></li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="assignment-4">
+<h1><span class="section-number">20.6. </span>Assignment 4<a class="headerlink" href="#assignment-4" title="Link to this heading">#</a></h1>
+<p>Please write your name below</p>
+<p>In this assignment we explore different portfolio allocation rules applied to the Fama-French five-factor model.</p>
+<p>The five factors are excess-return portfolios:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Factor</p></th>
+<th class="head"><p>Long</p></th>
+<th class="head"><p>Short</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Mkt-RF</strong></p></td>
+<td><p>Market</p></td>
+<td><p>Risk-free rate</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>SMB</strong></p></td>
+<td><p>Small caps</p></td>
+<td><p>Large caps</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>HML</strong></p></td>
+<td><p>High book-to-market (value)</p></td>
+<td><p>Low book-to-market (growth)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>RMW</strong></p></td>
+<td><p>High profitability</p></td>
+<td><p>Low profitability</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>CMA</strong></p></td>
+<td><p>Low investment</p></td>
+<td><p>High investment</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each factor is already an <strong>excess return</strong> (no need to subtract rf again). Returns are in <strong>percent</strong> (5% appears as 5, not 0.05).</p>
+</section>
+<hr class="docutils" />
+<section class="tex2jax_ignore mathjax_ignore" id="exercises">
+<h1><span class="section-number">20.7. </span>Exercises<a class="headerlink" href="#exercises" title="Link to this heading">#</a></h1>
+<p><strong>Exercise 1 — Import the data</strong></p>
+<p>Download the Fama-French 5-factor monthly returns from Ken French’s website via <code class="docutils literal notranslate"><span class="pre">pandas_datareader</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas_datareader.famafrench</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_available_datasets</span>
+<span class="n">datasets</span> <span class="o">=</span> <span class="n">get_available_datasets</span><span class="p">()</span>   <span class="c1"># inspect this list to find the right name</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="o">&lt;</span><span class="n">name</span><span class="o">&gt;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="c1"># ds is a dict; key 0 is the monthly table</span>
+</pre></div>
+</div>
+<p>Steps:</p>
+<ol class="arabic simple">
+<li><p>Import <code class="docutils literal notranslate"><span class="pre">pandas</span></code>, <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code>, and <code class="docutils literal notranslate"><span class="pre">pandas_datareader</span></code>.</p></li>
+<li><p>Load the monthly 5-factor dataset. The result should have 6 columns: <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span></code>, <code class="docutils literal notranslate"><span class="pre">SMB</span></code>, <code class="docutils literal notranslate"><span class="pre">HML</span></code>, <code class="docutils literal notranslate"><span class="pre">RMW</span></code>, <code class="docutils literal notranslate"><span class="pre">CMA</span></code>, <code class="docutils literal notranslate"><span class="pre">RF</span></code>.</p></li>
+<li><p>Convert the index to <code class="docutils literal notranslate"><span class="pre">datetime</span></code> using <code class="docutils literal notranslate"><span class="pre">.to_timestamp()</span></code>.</p></li>
+<li><p>Confirm by calling <code class="docutils literal notranslate"><span class="pre">df.head()</span></code>.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+
+<span class="c1"># your code below</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Exercise 2 — Mean-Variance Efficient (MVE) portfolio</strong></p>
+<p>The portfolio that maximises the Sharpe ratio has weights proportional to</p>
+<div class="math notranslate nohighlight">
+\[w^{\text{MVE}} \propto \Sigma^{-1} \mu\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the vector of expected excess returns and <span class="math notranslate nohighlight">\(\Sigma\)</span> is the covariance matrix — both estimated from the full sample.</p>
+<p>Steps:</p>
+<ol class="arabic simple">
+<li><p>Estimate <span class="math notranslate nohighlight">\(\mu\)</span> (<code class="docutils literal notranslate"><span class="pre">ERe</span></code>) as the sample mean of each factor.</p></li>
+<li><p>Estimate <span class="math notranslate nohighlight">\(\Sigma\)</span> (<code class="docutils literal notranslate"><span class="pre">CovRe</span></code>) using <code class="docutils literal notranslate"><span class="pre">.cov()</span></code>.</p></li>
+<li><p>Compute the <strong>raw</strong> weights: <code class="docutils literal notranslate"><span class="pre">raw</span> <span class="pre">=</span> <span class="pre">np.linalg.inv(CovRe)</span> <span class="pre">&#64;</span> <span class="pre">ERe</span></code>.</p></li>
+<li><p><strong>Normalise</strong> so they sum to 1: divide by <code class="docutils literal notranslate"><span class="pre">raw.sum()</span></code>. Call these <code class="docutils literal notranslate"><span class="pre">w_mve</span></code>.</p></li>
+<li><p><strong>Leverage</strong> the normalised weights so the portfolio’s in-sample annualised volatility matches the in-sample annualised volatility of the market factor (<code class="docutils literal notranslate"><span class="pre">Mkt-RF</span></code>).</p>
+<ul class="simple">
+<li><p>Portfolio monthly variance: <span class="math notranslate nohighlight">\(w^T \Sigma w\)</span></p></li>
+<li><p>Market monthly variance: <code class="docutils literal notranslate"><span class="pre">df['Mkt-RF'].var()</span></code></p></li>
+<li><p>Required leverage: <span class="math notranslate nohighlight">\(x = \sigma_{\text{mkt}} / \sigma_{\text{mve}}\)</span></p></li>
+<li><p>Levered weights: <span class="math notranslate nohighlight">\(W = x \cdot w^{\text{mve}}\)</span></p></li>
+</ul>
+</li>
+<li><p>Report the weights and the in-sample Sharpe Ratio of the levered portfolio.</p></li>
+</ol>
+<p>Store the levered weights in a Series or DataFrame column called <code class="docutils literal notranslate"><span class="pre">mve</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code below</span>
+
+<span class="c1"># 1-2. Sample moments</span>
+<span class="n">ERe</span>   <span class="o">=</span>
+<span class="n">CovRe</span> <span class="o">=</span>
+
+<span class="c1"># 3. Raw MVE weights</span>
+<span class="n">raw_weights</span> <span class="o">=</span>
+
+<span class="c1"># 4. Normalise to sum to 1</span>
+<span class="n">w_mve</span> <span class="o">=</span>
+
+<span class="c1"># 5. Leverage to match market vol</span>
+<span class="n">sigma_mkt</span> <span class="o">=</span>   <span class="c1"># annualised: df[&#39;Mkt-RF&#39;].std() * 12**0.5</span>
+<span class="n">sigma_mve</span> <span class="o">=</span>   <span class="c1"># annualised: (w_mve @ CovRe @ w_mve)**0.5 * 12**0.5</span>
+<span class="n">x</span>         <span class="o">=</span>
+<span class="n">W_mve</span>     <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">w_mve</span>      <span class="c1"># these are the final weights</span>
+
+<span class="c1"># 6. In-sample Sharpe Ratio</span>
+<span class="n">port_returns</span> <span class="o">=</span>   <span class="c1"># W_mve @ df[factors].T  → time series</span>
+<span class="n">SR_mve</span>       <span class="o">=</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weights:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">W_mve</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">In-sample SR: </span><span class="si">{</span><span class="n">SR_mve</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Exercise 3 — Choosing leverage</strong></p>
+<p>The composition of the MVE portfolio (i.e., the <strong>relative</strong> weights across factors) is fixed by the ratio <span class="math notranslate nohighlight">\(\Sigma^{-1}\mu\)</span>.<br />
+Leverage is a <strong>separate</strong> decision that scales all weights up or down without changing the portfolio’s Sharpe ratio.</p>
+<p>Use the <strong>unit-normalised</strong> weights <code class="docutils literal notranslate"><span class="pre">w_mve</span></code> from Exercise 2 as your starting point.<br />
+In this exercise you choose different values of the scalar <span class="math notranslate nohighlight">\(x\)</span> to hit specific targets.</p>
+<hr class="docutils" />
+<p><strong>3a. Target a 10% annual expected excess return</strong></p>
+<p>The portfolio’s expected excess return (annualised, in percent) is</p>
+<div class="math notranslate nohighlight">
+\[E[R^e_p]^{\text{ann}} = 12 \times x \cdot w^{\text{mve}\top} \mu\]</div>
+<p>Set this equal to 10 (remember returns are in percent) and solve for <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>Report the weights and the annualised expected excess return. Verify it equals 10%.</p>
+<hr class="docutils" />
+<p><strong>3b. Target a 10% annual volatility</strong></p>
+<p>The portfolio’s annualised volatility is</p>
+<div class="math notranslate nohighlight">
+\[\sigma_p^{\text{ann}} = \sqrt{12} \times x \times \sqrt{w^{\text{mve}\top} \Sigma\, w^{\text{mve}}}\]</div>
+<p>Set this equal to 10 (percent) and solve for <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>Report the weights and verify the annualised vol equals 10%.</p>
+<hr class="docutils" />
+<p><strong>3c. Target a 10% annual <em>total</em> expected return</strong></p>
+<p>The total (not excess) expected return is</p>
+<div class="math notranslate nohighlight">
+\[E[R_p]^{\text{ann}} = 12 \times rf + E[R^e_p]^{\text{ann}}\]</div>
+<p>To hit a 10% total return target you also need an estimate of the risk-free rate <span class="math notranslate nohighlight">\(rf\)</span>.</p>
+<ul class="simple">
+<li><p>Use the average monthly <code class="docutils literal notranslate"><span class="pre">RF</span></code> from your data and annualise it.</p></li>
+<li><p>Solve for <span class="math notranslate nohighlight">\(x\)</span> such that <span class="math notranslate nohighlight">\(12 \times rf + 12 \times x \cdot w^{\text{mve}\top}\mu = 10\)</span>.</p></li>
+<li><p>Report the weights and discuss: why does targeting a total return require more information than targeting an excess return?</p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>3d. Key insight</strong></p>
+<p>Compute the Sharpe Ratio of the portfolio under each of the three leverage choices (3a, 3b, 3c).</p>
+<p>What do you notice? Explain why this must always be the case.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3a — target 10% annual expected excess return</span>
+<span class="n">target_ERe</span> <span class="o">=</span> <span class="mi">10</span>          <span class="c1"># percent per year</span>
+<span class="n">x_3a</span> <span class="o">=</span>                   <span class="c1"># solve: 12 * x * (w_mve @ ERe) = target_ERe</span>
+<span class="n">W_3a</span> <span class="o">=</span> <span class="n">x_3a</span> <span class="o">*</span> <span class="n">w_mve</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;3a weights:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">W_3a</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Annual E[Re]: </span><span class="si">{</span><span class="mi">12</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">W_3a</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">ERe</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3b — target 10% annual volatility</span>
+<span class="n">target_vol</span> <span class="o">=</span> <span class="mi">10</span>          <span class="c1"># percent per year</span>
+<span class="n">x_3b</span> <span class="o">=</span>                   <span class="c1"># solve: 12**0.5 * x * (w_mve @ CovRe @ w_mve)**0.5 = target_vol</span>
+<span class="n">W_3b</span> <span class="o">=</span> <span class="n">x_3b</span> <span class="o">*</span> <span class="n">w_mve</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">3b weights:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">W_3b</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Annual vol: </span><span class="si">{</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">W_3b</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">CovRe</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">W_3b</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3c — target 10% annual total return</span>
+<span class="n">rf_annual</span> <span class="o">=</span>              <span class="c1"># 12 * df[&#39;RF&#39;].mean()</span>
+<span class="n">target_total</span> <span class="o">=</span> <span class="mi">10</span>        <span class="c1"># percent per year</span>
+<span class="n">x_3c</span> <span class="o">=</span>                   <span class="c1"># solve: rf_annual + 12 * x * (w_mve @ ERe) = target_total</span>
+<span class="n">W_3c</span> <span class="o">=</span> <span class="n">x_3c</span> <span class="o">*</span> <span class="n">w_mve</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">3c weights:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">W_3c</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Annual total return: </span><span class="si">{</span><span class="n">rf_annual</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">W_3c</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">ERe</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3d — Sharpe ratios (should all be equal)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sharpe</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">ERe</span><span class="p">,</span> <span class="n">CovRe</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">w</span> <span class="o">@</span> <span class="n">ERe</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">@</span> <span class="n">CovRe</span> <span class="o">@</span> <span class="n">w</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">SR 3a: </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">W_3a</span><span class="p">,</span><span class="w"> </span><span class="n">ERe</span><span class="p">,</span><span class="w"> </span><span class="n">CovRe</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SR 3b: </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">W_3b</span><span class="p">,</span><span class="w"> </span><span class="n">ERe</span><span class="p">,</span><span class="w"> </span><span class="n">CovRe</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SR 3c: </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">W_3c</span><span class="p">,</span><span class="w"> </span><span class="n">ERe</span><span class="p">,</span><span class="w"> </span><span class="n">CovRe</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Your discussion for 3c and 3d here.</p>
+<p><strong>Exercise 4 — Alternative allocation rules</strong></p>
+<p>The MVE formula <span class="math notranslate nohighlight">\(w \propto \Sigma^{-1}\mu\)</span> requires estimating both <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\Sigma\)</span>.<br />
+Practitioners often use simplified rules that relax one or both of these estimation steps.<br />
+Below are four common alternatives. For each one:</p>
+<ul class="simple">
+<li><p>Derive or motivate the weights analytically</p></li>
+<li><p>Implement the weights in code</p></li>
+<li><p>Leverage to match the same volatility target as in Exercise 2 (market vol)</p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Rule 1 — Equal Weight (EW)</strong></p>
+<p><em>Assumption:</em> We have no useful information to distinguish expected returns or risks across factors.<br />
+Assign the same weight to every factor.</p>
+<div class="math notranslate nohighlight">
+\[w_i^{\text{EW}} = \frac{1}{N}\]</div>
+<p>Implementation: create a vector of <span class="math notranslate nohighlight">\(1/N\)</span> and normalise (trivially already normalised).</p>
+<hr class="docutils" />
+<p><strong>Rule 2 — Risk Parity, estimated covariance (RP1)</strong></p>
+<p><em>Assumption:</em> Expected returns are exactly proportional to volatility: <span class="math notranslate nohighlight">\(\mu_i = c \cdot \sigma_i\)</span>.<br />
+Substituting into the MVE formula:</p>
+<div class="math notranslate nohighlight">
+\[w^{\text{RP1}} \propto \Sigma^{-1} \sigma\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma\)</span> is the vector of sample standard deviations (replace <code class="docutils literal notranslate"><span class="pre">ERe</span></code> with <code class="docutils literal notranslate"><span class="pre">df.std()</span></code>).</p>
+<p>Implementation: use the same MVE formula as Exercise 2 but replace <code class="docutils literal notranslate"><span class="pre">ERe</span></code> with the vector of standard deviations.</p>
+<p><em>Intuition:</em> You believe higher-vol factors earn proportionally higher returns (constant Sharpe ratio across factors), but you still use the full covariance matrix to exploit correlations.</p>
+<hr class="docutils" />
+<p><strong>Rule 3 — Risk Parity, diagonal covariance (RP2)</strong></p>
+<p><em>Assumption:</em> Same as RP1 (<span class="math notranslate nohighlight">\(\mu_i \propto \sigma_i\)</span>) <strong>plus</strong> assume zero correlation across factors.</p>
+<p>With a diagonal covariance matrix <span class="math notranslate nohighlight">\(\Sigma = \text{diag}(\sigma_1^2, \ldots, \sigma_N^2)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\Sigma^{-1}\sigma = \text{diag}(1/\sigma_1^2, \ldots) \cdot \sigma = \left(\frac{1}{\sigma_1}, \ldots, \frac{1}{\sigma_N}\right)\]</div>
+<p>So weights become <strong>inverse-volatility</strong> weights:</p>
+<div class="math notranslate nohighlight">
+\[w_i^{\text{RP2}} \propto \frac{1}{\sigma_i}\]</div>
+<p>Implementation: compute <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">df.std()</span></code> and normalise.</p>
+<p><em>Intuition:</em> Allocate more to lower-vol factors; ignore correlations entirely.</p>
+<hr class="docutils" />
+<p><strong>Rule 4 — Minimum Variance (MinVar)</strong></p>
+<p><em>Assumption:</em> We have no view on expected returns — treat them as equal across all factors.<br />
+Setting <span class="math notranslate nohighlight">\(\mu = \mathbf{1}\)</span> in the MVE formula:</p>
+<div class="math notranslate nohighlight">
+\[w^{\text{MinVar}} \propto \Sigma^{-1} \mathbf{1}\]</div>
+<p>Implementation: use the MVE formula with <code class="docutils literal notranslate"><span class="pre">ERe</span></code> replaced by <code class="docutils literal notranslate"><span class="pre">np.ones(N)</span></code>.</p>
+<p><em>Intuition:</em> You use the full covariance structure but ignore differences in expected returns. The portfolio minimises portfolio variance for a given sum of weights.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">factors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">]</span>
+<span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">factors</span><span class="p">)</span>
+<span class="n">Re</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">factors</span><span class="p">]</span>          <span class="c1"># returns in percent</span>
+
+<span class="n">sigma_vec</span> <span class="o">=</span> <span class="n">Re</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>      <span class="c1"># standard deviations (used in RP rules)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mve_weights</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return unit-normalised MVE weights given mu and Sigma.&quot;&quot;&quot;</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span> <span class="o">@</span> <span class="n">mu</span>
+    <span class="k">return</span> <span class="n">raw</span> <span class="o">/</span> <span class="n">raw</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">leverage_to_vol</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">target_ann_vol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scale w so annualised portfolio vol equals target_ann_vol (in percent).&quot;&quot;&quot;</span>
+    <span class="n">port_vol</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">w</span> <span class="o">@</span> <span class="n">Sigma</span> <span class="o">@</span> <span class="n">w</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="k">return</span> <span class="n">w</span> <span class="o">*</span> <span class="n">target_ann_vol</span> <span class="o">/</span> <span class="n">port_vol</span>
+
+<span class="n">target_vol</span> <span class="o">=</span> <span class="p">(</span><span class="n">Re</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>   <span class="c1"># market annualised vol</span>
+
+<span class="c1"># Rule 1 — Equal Weight</span>
+<span class="n">w_ew</span>   <span class="o">=</span>
+<span class="n">W_ew</span>   <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_ew</span><span class="p">,</span>   <span class="n">CovRe</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>
+
+<span class="c1"># Rule 2 — RP1 (estimated covariance, vol-proportional mu)</span>
+<span class="n">w_rp1</span>  <span class="o">=</span>
+<span class="n">W_rp1</span>  <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_rp1</span><span class="p">,</span>  <span class="n">CovRe</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>
+
+<span class="c1"># Rule 3 — RP2 (diagonal covariance, inverse-vol weights)</span>
+<span class="n">w_rp2</span>  <span class="o">=</span>
+<span class="n">W_rp2</span>  <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_rp2</span><span class="p">,</span>  <span class="n">CovRe</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>
+
+<span class="c1"># Rule 4 — Minimum Variance</span>
+<span class="n">w_minvar</span> <span class="o">=</span>
+<span class="n">W_minvar</span> <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_minvar</span><span class="p">,</span> <span class="n">CovRe</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>
+
+<span class="c1"># Collect in a DataFrame for comparison</span>
+<span class="n">Weights</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;MVE&#39;</span><span class="p">:</span>    <span class="n">W_mve</span><span class="p">,</span>
+    <span class="s1">&#39;EW&#39;</span><span class="p">:</span>     <span class="n">W_ew</span><span class="p">,</span>
+    <span class="s1">&#39;RP1&#39;</span><span class="p">:</span>    <span class="n">W_rp1</span><span class="p">,</span>
+    <span class="s1">&#39;RP2&#39;</span><span class="p">:</span>    <span class="n">W_rp2</span><span class="p">,</span>
+    <span class="s1">&#39;MinVar&#39;</span><span class="p">:</span> <span class="n">W_minvar</span><span class="p">,</span>
+<span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">factors</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">Weights</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">Weights</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Weights by strategy&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Exercise 5 — In-sample comparison</strong></p>
+<p>Compute the <strong>full-sample</strong> annualised Sharpe Ratio for all five strategies (MVE, EW, RP1, RP2, MinVar) plus the market portfolio (<code class="docutils literal notranslate"><span class="pre">Mkt-RF</span></code>) as a benchmark.</p>
+<p>Report them in a table and plot a bar chart.</p>
+<p>Then discuss:</p>
+<ol class="arabic simple">
+<li><p>Which strategy performs best in-sample? Is this surprising?</p></li>
+<li><p>What is the main problem with comparing in-sample Sharpe Ratios across strategies?</p></li>
+<li><p>Why is in-sample performance a biased measure when the weights were estimated from the same data?</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Your discussion here.</p>
+<p><strong>Exercise 6 — Rolling out-of-sample evaluation</strong></p>
+<p>In-sample performance is optimistic because the weights were estimated from the same data used to evaluate them.<br />
+A fairer test: <strong>estimate weights using only past data, then evaluate on the next month</strong>.</p>
+<p>We split the sample at the midpoint: the first half is the initial estimation window; then we expand it one month at a time.</p>
+<p>The code below implements this for the MVE strategy. Extend it for all four alternative strategies.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="n">Rp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([],</span> <span class="n">index</span><span class="o">=</span><span class="p">[],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">Re</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">factors</span><span class="p">]</span>
+<span class="n">start_date</span> <span class="o">=</span> <span class="n">Re</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">Re</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>   <span class="c1"># midpoint of sample</span>
+
+<span class="k">for</span> <span class="n">date</span> <span class="ow">in</span> <span class="n">Re</span><span class="p">[</span><span class="n">start_date</span><span class="p">:]</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+    <span class="c1"># Estimation sample: everything strictly before this month</span>
+    <span class="n">est</span> <span class="o">=</span> <span class="n">Re</span><span class="p">[:</span><span class="n">date</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">ERe_t</span>  <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">CovRe_t</span> <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">cov</span><span class="p">()</span>
+    <span class="n">target_vol</span> <span class="o">=</span> <span class="p">(</span><span class="n">est</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+    <span class="c1"># MVE</span>
+    <span class="n">w_mve_t</span> <span class="o">=</span> <span class="n">mve_weights</span><span class="p">(</span><span class="n">ERe_t</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">CovRe_t</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">W_mve_t</span> <span class="o">=</span> <span class="n">leverage_to_vol</span><span class="p">(</span><span class="n">w_mve_t</span><span class="p">,</span> <span class="n">CovRe_t</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">target_vol</span><span class="p">)</span>
+    <span class="n">Rp</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;MVE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">W_mve_t</span> <span class="o">@</span> <span class="n">Re</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">date</span><span class="p">,</span> <span class="n">factors</span><span class="p">]</span>
+
+    <span class="c1"># --- add EW, RP1, RP2, MinVar below ---</span>
+</pre></div>
+</div>
+<p>Notes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mve_weights</span></code> and <code class="docutils literal notranslate"><span class="pre">leverage_to_vol</span></code> are the helper functions from Exercise 4.</p></li>
+<li><p>The leverage target is re-estimated each month from the expanding window.</p></li>
+<li><p>Store each strategy’s return for that month in <code class="docutils literal notranslate"><span class="pre">Rp</span></code>.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Exercise 7 — Out-of-sample performance analysis</strong></p>
+<p>Using the rolling returns in <code class="docutils literal notranslate"><span class="pre">Rp</span></code>, compute for each strategy:</p>
+<ul class="simple">
+<li><p>Annualised expected excess return: <span class="math notranslate nohighlight">\(12 \times \bar{R}^e_p\)</span></p></li>
+<li><p>Annualised volatility: <span class="math notranslate nohighlight">\(\sqrt{12} \times \sigma(R^e_p)\)</span></p></li>
+<li><p>Sharpe Ratio: ratio of the two</p></li>
+</ul>
+<p>Also add the market factor (<code class="docutils literal notranslate"><span class="pre">Mkt-RF</span></code>) evaluated over the same out-of-sample period as a benchmark.</p>
+<p>Report everything in a table and plot the cumulative returns of each strategy.</p>
+<p>Then discuss:</p>
+<ol class="arabic simple">
+<li><p>Is there a clear winner? Can you conclude one strategy is better?</p></li>
+<li><p>What statistical test could you use to check whether differences in expected returns are significant? Apply it.</p></li>
+<li><p>Even if expected returns differ significantly, what other sources of return differences might not interest a long-only investor? (Hint: think about what the factor portfolios are.)</p></li>
+<li><p>What would you want to see beyond Sharpe Ratios to fully evaluate these strategies?</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># your code here</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Your discussion here.</p>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Assignments"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="Assignment3.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">20.3. </span>Assignment 3</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">20.6. Assignment 4</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">20.7. Exercises</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
