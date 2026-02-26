@@ -26,6 +26,11 @@
   padding: 0;
 }
 
+html, body {
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
 body {
   font-family: 'Segoe UI', 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
   overflow: hidden;
@@ -33,7 +38,9 @@ body {
   background: #1a1a2e;
   color: #333;
   width: 100vw;
+  width: 100dvw;
   height: 100vh;
+  height: 100dvh;
 }
 
 .screen {
@@ -41,7 +48,10 @@ body {
   position: fixed;
   top: 0; left: 0;
   width: 100vw;
+  width: 100dvw;
   height: 100vh;
+  height: 100dvh;
+  height: -webkit-fill-available;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -57,7 +67,9 @@ body {
   position: fixed;
   top: 0; left: 0;
   width: 100vw;
+  width: 100dvw;
   height: 100vh;
+  height: 100dvh;
   z-index: 100;
   align-items: center;
   justify-content: center;
@@ -98,6 +110,7 @@ body {
 
 .setup-section {
   background: rgba(255,255,255,0.15);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-radius: 20px;
   padding: 20px 30px;
@@ -731,12 +744,21 @@ body {
 .badge-easy { background: var(--correct-green); }
 .badge-medium { background: #F39C12; }
 .badge-hard { background: var(--wrong-red); }
+.badge-word { background: #8E44AD; }
 
 .question-text {
   font-size: clamp(28px, 6vw, 44px);
   font-weight: 900;
   color: #333;
   margin: 16px 0 6px;
+}
+
+.question-text.word-problem {
+  font-size: clamp(15px, 3.2vw, 20px);
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: left;
+  padding: 0 8px;
 }
 
 .reward-text {
@@ -931,7 +953,7 @@ body {
 
 @keyframes confetti-fall {
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  100% { transform: translateY(110dvh) rotate(720deg); opacity: 0; }
 }
 
 /* ===== STAR PARTICLES ===== */
@@ -1025,7 +1047,9 @@ body {
     <div class="setup-label">Difficulty</div>
     <div class="btn-row" id="difficulty-row">
       <button class="btn-choice selected" onclick="selectDifficulty('easy')">Easy</button>
+      <button class="btn-choice" onclick="selectDifficulty('medium')">Medium</button>
       <button class="btn-choice" onclick="selectDifficulty('hard')">Hard</button>
+      <button class="btn-choice" onclick="selectDifficulty('word')">Word Problems</button>
     </div>
   </div>
 
@@ -1142,10 +1166,17 @@ const ZONE_COLORS = {
   kai: 'linear-gradient(90deg, #cb2d3e, #ef473a)',
 };
 
-const ENCOURAGE_MESSAGES = [
-  'Amazing!', 'Super Star!', 'You Rock!', 'Brilliant!',
-  'Awesome!', 'Fantastic!', 'Incredible!', 'Way to Go!',
-  'Math Wizard!', 'Genius!', 'On Fire!', 'Unstoppable!'
+const ENCOURAGE_TEMPLATES = [
+  'Way to go {name}!', '{name} is amazing!', 'Super {name}!',
+  '{name} the Math Wizard!', 'Go {name} go!', '{name} is on fire!',
+  'Incredible {name}!', '{name} you rock!', 'Brilliant {name}!',
+  '{name} is unstoppable!', 'Keep it up {name}!', '{name} is a star!'
+];
+
+const WRONG_ANSWER_TEMPLATES = [
+  'Try again {name}!', "You'll get it {name}!", 'Keep trying {name}!',
+  'Almost {name}!', "Don't give up {name}!", '{name} can do it!',
+  'Next time {name}!', 'So close {name}!'
 ];
 
 const TOTAL_TILES = 40;
@@ -1173,6 +1204,7 @@ let audioCtx = null;
 let selectingPlayerIndex = 0;
 let tempSelectedChar = null;
 let takenCharacters = [];
+let answerProcessing = false; // guard against re-entry
 
 // ===== AUDIO =====
 function ensureAudio() {
@@ -1281,6 +1313,21 @@ function playSound(type) {
   }
 }
 
+// ===== VOICE (SPEECH SYNTHESIS) =====
+function speakText(message) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel(); // stop any currently-speaking utterance
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.rate = 1.0;
+    utterance.pitch = 1.2; // slightly higher = more fun/kid-friendly
+    utterance.volume = 1.0;
+    speechSynthesis.speak(utterance);
+  } catch (e) {
+    // Speech not available, silently continue
+  }
+}
+
 // ===== SCREEN MANAGEMENT =====
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1305,8 +1352,12 @@ function selectPlayerCount(n) {
 
 function selectDifficulty(d) {
   gameState.difficulty = d;
+  const diffMap = { 'easy': 'easy', 'medium': 'medium', 'hard': 'hard', 'word problems': 'word' };
   const btns = document.querySelectorAll('#difficulty-row .btn-choice');
-  btns.forEach(b => b.classList.toggle('selected', b.textContent.toLowerCase() === d));
+  btns.forEach(b => {
+    const btnVal = diffMap[b.textContent.toLowerCase()] || b.textContent.toLowerCase();
+    b.classList.toggle('selected', btnVal === d);
+  });
   playSound('click');
 }
 
@@ -1606,6 +1657,12 @@ function updateHUD() {
 
 // ===== TURN MANAGEMENT =====
 function startTurn() {
+  // Safety: force-hide any leftover modals and reset guard
+  hideModal('modal-question');
+  hideModal('modal-feedback');
+  clearTimer();
+  answerProcessing = false;
+
   gameState.turnPhase = 'waiting';
   updateHUD();
 
@@ -1617,6 +1674,7 @@ function startTurn() {
 
   const player = gameState.players[gameState.currentPlayerIndex];
   const btn = document.getElementById('btn-get-question');
+  btn.disabled = false;
   btn.textContent = gameState.numPlayers === 1
     ? 'Answer a Question!'
     : `${player.charName}'s Turn!`;
@@ -1638,6 +1696,12 @@ function shuffleArray(arr) {
 
 function generateQuestion() {
   const difficulty = gameState.difficulty;
+
+  // Word problems have their own generator
+  if (difficulty === 'word') {
+    return generateWordProblem();
+  }
+
   const operations = ['add', 'subtract', 'multiply'];
   const operation = operations[randInt(0, 2)];
 
@@ -1667,7 +1731,33 @@ function generateQuestion() {
         qDiff = (a <= 3 && b <= 3) ? 'easy' : 'medium';
         break;
     }
+  } else if (difficulty === 'medium') {
+    // Medium: harder add/subtract (up to 40) but easy multiply (up to 5×5)
+    switch (operation) {
+      case 'add':
+        a = randInt(5, 25);
+        b = randInt(5, 40 - a);
+        answer = a + b;
+        text = `${a} + ${b} = ?`;
+        qDiff = (a + b <= 20) ? 'medium' : 'hard';
+        break;
+      case 'subtract':
+        a = randInt(10, 40);
+        b = randInt(1, a);
+        answer = a - b;
+        text = `${a} − ${b} = ?`;
+        qDiff = (a <= 20) ? 'medium' : 'hard';
+        break;
+      case 'multiply':
+        a = randInt(1, 5);
+        b = randInt(1, 5);
+        answer = a * b;
+        text = `${a} × ${b} = ?`;
+        qDiff = (a <= 3 && b <= 3) ? 'easy' : 'medium';
+        break;
+    }
   } else {
+    // Hard: everything big
     switch (operation) {
       case 'add':
         a = randInt(5, 25);
@@ -1699,7 +1789,73 @@ function generateQuestion() {
 
   const choices = generateChoices(answer);
 
-  return { text, correctAnswer: answer, choices, qDiff, reward };
+  return { text, correctAnswer: answer, choices, qDiff, reward, isWordProblem: false };
+}
+
+function generateWordProblem() {
+  const charNames = ['Gabby', 'Pepper', 'Marina', 'Kai'];
+  // Pick 2 different characters
+  const idx1 = randInt(0, 3);
+  let idx2 = randInt(0, 2);
+  if (idx2 >= idx1) idx2++;
+  const name1 = charNames[idx1];
+  const name2 = charNames[idx2];
+
+  const templates = [
+    // Addition
+    { op: 'add', maxA: 15, maxSum: 20,
+      tpl: (a,b,n1,n2) => `${n1} had ${a} cookies. ${n2} gave ${n1} ${b} more cookies. How many cookies does ${n1} have now?` },
+    { op: 'add', maxA: 12, maxSum: 20,
+      tpl: (a,b,n1,n2) => `${n1} found ${a} shells on the beach. ${n2} found ${b} more shells. How many shells do they have together?` },
+    { op: 'add', maxA: 10, maxSum: 18,
+      tpl: (a,b,n1,n2) => `${n1} drew ${a} pictures in the morning and ${b} pictures after lunch. How many pictures did ${n1} draw in total?` },
+    { op: 'add', maxA: 12, maxSum: 20,
+      tpl: (a,b,n1,n2) => `${n1} has ${a} stickers. ${n2} gives ${n1} ${b} more stickers. How many stickers does ${n1} have now?` },
+    // Subtraction
+    { op: 'sub', maxA: 18, maxSum: 20,
+      tpl: (a,b,n1,n2) => `${n1} had ${a} cupcakes and gave ${b} to ${n2}. How many cupcakes does ${n1} have left?` },
+    { op: 'sub', maxA: 15, maxSum: 20,
+      tpl: (a,b,n1,n2) => `${n1} had ${a} balloons. ${b} balloons popped! How many balloons does ${n1} have left?` },
+    { op: 'sub', maxA: 20, maxSum: 20,
+      tpl: (a,b,n1,n2) => `There were ${a} apples on a tree. ${n2} picked ${b} apples. How many apples are still on the tree?` },
+    { op: 'sub', maxA: 16, maxSum: 20,
+      tpl: (a,b,n1,n2) => `${n1} had ${a} crayons but lost ${b}. How many crayons does ${n1} have now?` },
+    // Multiplication
+    { op: 'mul', maxA: 5, maxSum: 25,
+      tpl: (a,b,n1,n2) => `${n1} has ${a} bags. Each bag has ${b} toys inside. How many toys does ${n1} have in total?` },
+    { op: 'mul', maxA: 5, maxSum: 25,
+      tpl: (a,b,n1,n2) => `${n1} planted ${a} rows of flowers with ${b} flowers in each row. How many flowers did ${n1} plant?` },
+    { op: 'mul', maxA: 4, maxSum: 20,
+      tpl: (a,b,n1,n2) => `${n2} made ${a} plates of sandwiches. Each plate has ${b} sandwiches. How many sandwiches are there?` },
+    { op: 'mul', maxA: 5, maxSum: 25,
+      tpl: (a,b,n1,n2) => `${n1} invited ${a} friends. Each friend brought ${b} presents. How many presents are there?` },
+  ];
+
+  const tmpl = templates[randInt(0, templates.length - 1)];
+  let a, b, answer, text;
+
+  if (tmpl.op === 'add') {
+    a = randInt(2, tmpl.maxA);
+    b = randInt(1, tmpl.maxSum - a);
+    answer = a + b;
+    text = tmpl.tpl(a, b, name1, name2);
+  } else if (tmpl.op === 'sub') {
+    a = randInt(4, tmpl.maxA);
+    b = randInt(1, a - 1);
+    answer = a - b;
+    text = tmpl.tpl(a, b, name1, name2);
+  } else {
+    a = randInt(2, tmpl.maxA);
+    b = randInt(2, 5);
+    answer = a * b;
+    text = tmpl.tpl(a, b, name1, name2);
+  }
+
+  const qDiff = 'medium';
+  const reward = randInt(2, 3);
+  const choices = generateChoices(answer);
+
+  return { text, correctAnswer: answer, choices, qDiff, reward, isWordProblem: true };
 }
 
 function generateChoices(correct) {
@@ -1726,8 +1882,12 @@ function generateChoices(correct) {
 
 // ===== QUESTION PRESENTATION =====
 function presentQuestion() {
+  if (answerProcessing || gameState.turnPhase !== 'waiting') return;
   ensureAudio();
   playSound('click');
+
+  // Disable button to prevent double-clicks
+  document.getElementById('btn-get-question').disabled = true;
 
   const question = generateQuestion();
   gameState.currentQuestion = question;
@@ -1741,11 +1901,18 @@ function presentQuestion() {
 
   // Badge
   const badge = document.getElementById('question-badge');
-  badge.textContent = question.qDiff.charAt(0).toUpperCase() + question.qDiff.slice(1);
-  badge.className = 'question-difficulty-badge badge-' + question.qDiff;
+  if (question.isWordProblem) {
+    badge.textContent = 'Word Problem';
+    badge.className = 'question-difficulty-badge badge-word';
+  } else {
+    badge.textContent = question.qDiff.charAt(0).toUpperCase() + question.qDiff.slice(1);
+    badge.className = 'question-difficulty-badge badge-' + question.qDiff;
+  }
 
   // Question text
-  document.getElementById('question-text').textContent = question.text;
+  const qTextEl = document.getElementById('question-text');
+  qTextEl.textContent = question.text;
+  qTextEl.classList.toggle('word-problem', !!question.isWordProblem);
   document.getElementById('reward-text').textContent = `Worth ${question.reward} space${question.reward > 1 ? 's' : ''}!`;
 
   // Answer buttons
@@ -1765,6 +1932,7 @@ function presentQuestion() {
 
 // ===== TIMER =====
 function startTimer() {
+  clearTimer(); // ensure no leftover timer
   timerStart = Date.now();
   const bar = document.getElementById('timer-bar');
   const txt = document.getElementById('timer-text');
@@ -1773,6 +1941,12 @@ function startTimer() {
   txt.textContent = TIMER_SECONDS;
 
   timerInterval = setInterval(() => {
+    // Guard: only tick while in question phase
+    if (gameState.turnPhase !== 'question') {
+      clearTimer();
+      return;
+    }
+
     const elapsed = (Date.now() - timerStart) / 1000;
     const remaining = Math.max(0, TIMER_SECONDS - elapsed);
     const pct = (remaining / TIMER_SECONDS) * 100;
@@ -1786,7 +1960,8 @@ function startTimer() {
 
     if (remaining <= 0) {
       clearTimer();
-      submitAnswer(null, null);
+      // Use setTimeout to avoid calling submitAnswer from within setInterval
+      setTimeout(() => submitAnswer(null, null), 0);
     }
   }, 100);
 }
@@ -1800,20 +1975,23 @@ function clearTimer() {
 
 // ===== ANSWER SUBMISSION =====
 function submitAnswer(chosen, clickedBtn) {
-  if (gameState.turnPhase !== 'question') return;
+  if (gameState.turnPhase !== 'question' || answerProcessing) return;
+  answerProcessing = true;
   clearTimer();
   gameState.turnPhase = 'feedback';
 
   const question = gameState.currentQuestion;
-  const isCorrect = (chosen === question.correctAnswer);
+  const timedOut = (chosen === null);
+  const isCorrect = (!timedOut && chosen === question.correctAnswer);
 
   gameState.questionsAnswered++;
 
   // Disable all answer buttons and highlight correct/wrong
-  const btns = document.querySelectorAll('.answer-btn');
+  const btns = document.querySelectorAll('#answers-grid .answer-btn');
   btns.forEach(btn => {
     btn.disabled = true;
-    if (parseInt(btn.textContent) === question.correctAnswer) {
+    btn.onclick = null;
+    if (Number(btn.textContent) === question.correctAnswer) {
       btn.classList.add('correct-reveal');
     }
   });
@@ -1826,10 +2004,7 @@ function submitAnswer(chosen, clickedBtn) {
     gameState.streak++;
     playSound('correct');
     spawnStars();
-
-    if (gameState.streak > 1 && gameState.streak % 3 === 0) {
-      showEncourageMessage();
-    }
+    showEncourageMessage();
 
     setTimeout(() => {
       hideModal('modal-question');
@@ -1842,36 +2017,38 @@ function submitAnswer(chosen, clickedBtn) {
   } else {
     gameState.streak = 0;
     playSound('wrong');
+    speakWrongEncouragement();
 
     // Penalty: go back 1 space (easy/medium questions) or 2 spaces (hard questions)
     const penalty = question.qDiff === 'hard' ? 2 : 1;
 
     setTimeout(() => {
       hideModal('modal-question');
-      showFeedback(false, question.correctAnswer, penalty);
+      showFeedback(false, question.correctAnswer, penalty, timedOut);
       setTimeout(() => {
         hideModal('modal-feedback');
         movePlayerBack(gameState.currentPlayerIndex, penalty);
       }, 1800);
-    }, 800);
+    }, timedOut ? 200 : 800);
   }
 }
 
-function showFeedback(isCorrect, correctAnswer, reward) {
+function showFeedback(isCorrect, correctAnswer, reward, timedOut) {
   const box = document.getElementById('feedback-box');
   const icon = document.getElementById('feedback-icon');
   const msg = document.getElementById('feedback-message');
   const detail = document.getElementById('feedback-detail');
 
   if (isCorrect) {
+    const player = gameState.players[gameState.currentPlayerIndex];
     box.className = 'feedback-box feedback-correct';
     icon.textContent = '✓';
-    msg.textContent = 'Correct!';
+    msg.textContent = `Correct, ${player.charName}!`;
     detail.textContent = `Move forward ${reward} space${reward > 1 ? 's' : ''}!`;
   } else {
     box.className = 'feedback-box feedback-wrong';
-    icon.textContent = '✗';
-    msg.textContent = 'Not quite!';
+    icon.textContent = timedOut ? '⏰' : '✗';
+    msg.textContent = timedOut ? "Time's up!" : 'Not quite!';
     const player = gameState.players[gameState.currentPlayerIndex];
     const actualBack = Math.min(reward, player.position);
     if (actualBack > 0) {
@@ -2057,11 +2234,23 @@ function spawnConfetti() {
 }
 
 function showEncourageMessage() {
+  const player = gameState.players[gameState.currentPlayerIndex];
+  const template = ENCOURAGE_TEMPLATES[randInt(0, ENCOURAGE_TEMPLATES.length - 1)];
+  const message = template.replace('{name}', player.charName);
   const el = document.createElement('div');
   el.className = 'encourage-msg';
-  el.textContent = ENCOURAGE_MESSAGES[randInt(0, ENCOURAGE_MESSAGES.length - 1)];
+  el.textContent = message;
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 1600);
+  // Speak the encouragement aloud
+  speakText(message);
+}
+
+function speakWrongEncouragement() {
+  const player = gameState.players[gameState.currentPlayerIndex];
+  const template = WRONG_ANSWER_TEMPLATES[randInt(0, WRONG_ANSWER_TEMPLATES.length - 1)];
+  const message = template.replace('{name}', player.charName);
+  speakText(message);
 }
 
 // ===== RESET =====
