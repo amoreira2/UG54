@@ -711,8 +711,8 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">=</span><span class="n">crsp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;1+ret&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
-<span class="n">temp</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">__</span><span class="p">)[[</span><span class="s1">&#39;1+ret&#39;</span><span class="p">]])</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">__</span><span class="p">,</span><span class="n">min_periods</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">__</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">temp</span><span class="o">=</span><span class="n">temp</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;1+ret&#39;</span><span class="p">:</span><span class="s1">&#39;cumret11&#39;</span><span class="p">})</span>
+<span class="n">temp</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[[</span><span class="s1">&#39;1+ret&#39;</span><span class="p">]])</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">prod</span><span class="p">(),</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">temp</span><span class="o">=</span><span class="n">temp</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;1+ret&#39;</span><span class="p">:</span><span class="s1">&#39;cumret12&#39;</span><span class="p">})</span>
 <span class="n">temp</span> <span class="o">=</span><span class="n">temp</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 <span class="n">temp</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
@@ -739,7 +739,7 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
       <th></th>
       <th>permno</th>
       <th>date</th>
-      <th>cumret11</th>
+      <th>cumret12</th>
     </tr>
   </thead>
   <tbody>
@@ -747,31 +747,31 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
       <th>1130765</th>
       <td>93436</td>
       <td>2024-08-31</td>
-      <td>0.855687</td>
+      <td>0.829626</td>
     </tr>
     <tr>
       <th>1130766</th>
       <td>93436</td>
       <td>2024-09-30</td>
-      <td>1.302678</td>
+      <td>1.045600</td>
     </tr>
     <tr>
       <th>1130767</th>
       <td>93436</td>
       <td>2024-10-31</td>
-      <td>1.040695</td>
+      <td>1.244025</td>
     </tr>
     <tr>
       <th>1130768</th>
       <td>93436</td>
       <td>2024-11-30</td>
-      <td>1.389087</td>
+      <td>1.437688</td>
     </tr>
     <tr>
       <th>1130769</th>
       <td>93436</td>
       <td>2024-12-31</td>
-      <td>2.156229</td>
+      <td>1.625242</td>
     </tr>
   </tbody>
 </table>
@@ -787,7 +787,7 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">temp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;cumret11&#39;</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">temp</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;cumret12&#39;</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -809,11 +809,11 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;permno&#39;</span><span class="p">])</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;mom&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;cumret11&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;mom&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;cumret12&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="c1"># why I am groupby permno here befroe lagging?</span>
 <span class="c1"># drop the row if any of &#39;mom&#39; is missing</span>
 <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mom&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;any&#39;</span><span class="p">)</span>
-<span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;1+ret&#39;</span><span class="p">,</span><span class="s1">&#39;cumret11&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;1+ret&#39;</span><span class="p">,</span><span class="s1">&#39;cumret12&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="c1"># lag market cap</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;me_l1&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">()</span>
@@ -858,7 +858,7 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
       <td>FAF</td>
       <td>-0.102210</td>
       <td>6.431570e+06</td>
-      <td>1.114413</td>
+      <td>1.291193</td>
       <td>7.225731e+06</td>
     </tr>
     <tr>
@@ -869,7 +869,7 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
       <td>LMNR</td>
       <td>-0.117446</td>
       <td>4.410872e+05</td>
-      <td>1.710240</td>
+      <td>1.819149</td>
       <td>5.013174e+05</td>
     </tr>
     <tr>
@@ -880,7 +880,7 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
       <td>VPG</td>
       <td>0.021768</td>
       <td>2.867095e+05</td>
-      <td>0.761234</td>
+      <td>0.775736</td>
       <td>2.806015e+05</td>
     </tr>
     <tr>
@@ -891,7 +891,7 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
       <td>SANW</td>
       <td>0.133333</td>
       <td>1.824916e+04</td>
-      <td>0.184251</td>
+      <td>0.180757</td>
       <td>1.610220e+04</td>
     </tr>
     <tr>
@@ -902,7 +902,7 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
       <td>TSLA</td>
       <td>0.170008</td>
       <td>1.296351e+09</td>
-      <td>1.040695</td>
+      <td>1.244025</td>
       <td>1.107984e+09</td>
     </tr>
   </tbody>
@@ -934,7 +934,9 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\Alan.Moreira\AppData\Local\Temp\ipykernel_45468\3636907694.py:3: RuntimeWarning: invalid value encountered in scalar divide
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/ft/hpl8ntq506jgz116vbqnwqj40000gp/T/ipykernel_81286/3636907694.py:3: RuntimeWarning: invalid value encountered in scalar divide
+  ret =df.groupby([&#39;date&#39;,&#39;X_group&#39;]).apply(lambda x:(x[y]*x[&#39;me_l1&#39;]).sum()/x[&#39;me_l1&#39;].sum())
+/var/folders/ft/hpl8ntq506jgz116vbqnwqj40000gp/T/ipykernel_81286/3636907694.py:3: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
   ret =df.groupby([&#39;date&#39;,&#39;X_group&#39;]).apply(lambda x:(x[y]*x[&#39;me_l1&#39;]).sum()/x[&#39;me_l1&#39;].sum())
 </pre></div>
 </div>
@@ -1062,73 +1064,73 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
     </tr>
     <tr>
       <th>2024-08-31</th>
-      <td>-0.120313</td>
-      <td>-0.031392</td>
-      <td>0.001111</td>
-      <td>-0.024248</td>
-      <td>0.012486</td>
-      <td>0.009185</td>
-      <td>0.031679</td>
-      <td>0.034088</td>
-      <td>0.007724</td>
-      <td>0.045985</td>
+      <td>-0.113229</td>
+      <td>-0.024316</td>
+      <td>0.023114</td>
+      <td>-0.019515</td>
+      <td>0.011487</td>
+      <td>0.014669</td>
+      <td>0.028635</td>
+      <td>0.032678</td>
+      <td>-0.001370</td>
+      <td>0.044632</td>
     </tr>
     <tr>
       <th>2024-09-30</th>
-      <td>0.023907</td>
-      <td>0.049337</td>
-      <td>0.013426</td>
-      <td>0.052623</td>
-      <td>0.006125</td>
-      <td>0.014734</td>
-      <td>0.019235</td>
-      <td>0.025015</td>
-      <td>0.003189</td>
-      <td>0.043364</td>
+      <td>0.016725</td>
+      <td>0.048126</td>
+      <td>0.024836</td>
+      <td>0.065729</td>
+      <td>0.003556</td>
+      <td>0.012473</td>
+      <td>0.021077</td>
+      <td>0.017939</td>
+      <td>0.021768</td>
+      <td>0.024202</td>
     </tr>
     <tr>
       <th>2024-10-31</th>
-      <td>-0.046328</td>
-      <td>-0.021620</td>
-      <td>-0.029084</td>
-      <td>-0.014452</td>
-      <td>-0.019741</td>
-      <td>-0.017264</td>
-      <td>-0.020819</td>
-      <td>-0.000511</td>
-      <td>0.005709</td>
-      <td>0.032563</td>
+      <td>-0.045007</td>
+      <td>-0.014535</td>
+      <td>-0.031926</td>
+      <td>-0.012691</td>
+      <td>-0.026328</td>
+      <td>-0.015257</td>
+      <td>-0.014802</td>
+      <td>-0.017944</td>
+      <td>0.011650</td>
+      <td>0.028295</td>
     </tr>
     <tr>
       <th>2024-11-30</th>
-      <td>0.082092</td>
-      <td>0.110147</td>
-      <td>0.093987</td>
-      <td>0.066592</td>
-      <td>0.058021</td>
-      <td>0.083176</td>
-      <td>0.053043</td>
-      <td>0.073858</td>
-      <td>0.074791</td>
-      <td>0.075265</td>
+      <td>0.079460</td>
+      <td>0.105816</td>
+      <td>0.120220</td>
+      <td>0.053275</td>
+      <td>0.105133</td>
+      <td>0.071458</td>
+      <td>0.047216</td>
+      <td>0.082817</td>
+      <td>0.066339</td>
+      <td>0.070766</td>
     </tr>
     <tr>
       <th>2024-12-31</th>
-      <td>0.001590</td>
-      <td>-0.027492</td>
-      <td>-0.079237</td>
-      <td>-0.069759</td>
-      <td>-0.021428</td>
-      <td>-0.016910</td>
-      <td>-0.007464</td>
-      <td>-0.062759</td>
-      <td>-0.047893</td>
-      <td>0.006328</td>
+      <td>-0.018761</td>
+      <td>-0.063070</td>
+      <td>-0.060842</td>
+      <td>-0.057389</td>
+      <td>-0.075196</td>
+      <td>-0.009594</td>
+      <td>0.010479</td>
+      <td>-0.058944</td>
+      <td>-0.046404</td>
+      <td>0.004959</td>
     </tr>
   </tbody>
 </table>
 <p>268 rows × 10 columns</p>
-</div></div><img alt="../../_images/47a78110bb11101388297184eeeebad45b29191343576375edb68de258e00b89.png" src="../../_images/47a78110bb11101388297184eeeebad45b29191343576375edb68de258e00b89.png" />
+</div></div><img alt="../../_images/e8f89bcf6edf04ede51e3bd886acbbd57548bf34c82d1d53d443643299419d46.png" src="../../_images/e8f89bcf6edf04ede51e3bd886acbbd57548bf34c82d1d53d443643299419d46.png" />
 </div>
 </div>
 </section>
@@ -1153,7 +1155,7 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># put it all together in a fuction</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">momentum</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">ngroups</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">lookback</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span><span class="n">extraskip</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">momentum</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">ngroups</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">lookback</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span><span class="n">extraskip</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">df</span><span class="p">[</span><span class="s1">&#39;1+ret&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
     <span class="n">temp</span><span class="o">=</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[[</span><span class="s1">&#39;1+ret&#39;</span><span class="p">]])</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">lookback</span><span class="p">,</span><span class="n">min_periods</span><span class="o">=</span><span class="n">lookback</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1173,11 +1175,15 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">momentum</span><span class="p">(</span><span class="n">crsp</span><span class="p">,</span><span class="n">ngroups</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">lookback</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span><span class="n">extraskip</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">momentum</span><span class="p">(</span><span class="n">crsp</span><span class="p">,</span><span class="n">ngroups</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">lookback</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span><span class="n">extraskip</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/ft/hpl8ntq506jgz116vbqnwqj40000gp/T/ipykernel_81286/3636907694.py:3: DeprecationWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  ret =df.groupby([&#39;date&#39;,&#39;X_group&#39;]).apply(lambda x:(x[y]*x[&#39;me_l1&#39;]).sum()/x[&#39;me_l1&#39;].sum())
+</pre></div>
+</div>
 <div class="output text_html"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -1223,69 +1229,69 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
   </thead>
   <tbody>
     <tr>
-      <th>2003-01-31</th>
-      <td>0.009158</td>
-      <td>-0.033513</td>
-      <td>-0.012609</td>
-      <td>-0.035892</td>
-      <td>-0.030035</td>
-      <td>-0.028069</td>
-      <td>-0.027867</td>
-      <td>-0.015245</td>
-      <td>-0.004282</td>
-      <td>-0.015345</td>
-    </tr>
-    <tr>
       <th>2003-02-28</th>
-      <td>-0.050593</td>
-      <td>0.016807</td>
-      <td>-0.014006</td>
-      <td>-0.019663</td>
-      <td>-0.027808</td>
-      <td>-0.013673</td>
-      <td>-0.019918</td>
-      <td>-0.019084</td>
-      <td>-0.011432</td>
-      <td>0.006978</td>
+      <td>-0.044453</td>
+      <td>-0.028858</td>
+      <td>0.007149</td>
+      <td>-0.029527</td>
+      <td>-0.021365</td>
+      <td>-0.016318</td>
+      <td>-0.008955</td>
+      <td>-0.020221</td>
+      <td>-0.027356</td>
+      <td>0.001433</td>
     </tr>
     <tr>
       <th>2003-03-31</th>
-      <td>0.055390</td>
-      <td>-0.013165</td>
-      <td>0.005488</td>
-      <td>-0.009718</td>
-      <td>0.022451</td>
-      <td>0.018792</td>
-      <td>0.010307</td>
-      <td>0.009793</td>
-      <td>0.027086</td>
-      <td>0.034779</td>
+      <td>0.039009</td>
+      <td>-0.018667</td>
+      <td>-0.018015</td>
+      <td>0.008300</td>
+      <td>0.013862</td>
+      <td>0.024158</td>
+      <td>0.006449</td>
+      <td>0.018332</td>
+      <td>0.025599</td>
+      <td>0.020758</td>
     </tr>
     <tr>
       <th>2003-04-30</th>
-      <td>0.222184</td>
-      <td>0.159312</td>
-      <td>0.159679</td>
-      <td>0.132757</td>
-      <td>0.083171</td>
-      <td>0.060253</td>
-      <td>0.054827</td>
-      <td>0.056334</td>
-      <td>0.034029</td>
-      <td>0.073473</td>
+      <td>0.217844</td>
+      <td>0.173348</td>
+      <td>0.143080</td>
+      <td>0.127393</td>
+      <td>0.080637</td>
+      <td>0.047118</td>
+      <td>0.055315</td>
+      <td>0.057230</td>
+      <td>0.037749</td>
+      <td>0.081613</td>
     </tr>
     <tr>
       <th>2003-05-31</th>
-      <td>0.214208</td>
-      <td>0.189297</td>
-      <td>0.134637</td>
-      <td>0.096022</td>
-      <td>0.073724</td>
-      <td>0.043873</td>
-      <td>0.026037</td>
-      <td>0.047442</td>
-      <td>0.061743</td>
-      <td>0.090643</td>
+      <td>0.282895</td>
+      <td>0.177494</td>
+      <td>0.111001</td>
+      <td>0.112369</td>
+      <td>0.058234</td>
+      <td>0.030266</td>
+      <td>0.045033</td>
+      <td>0.038495</td>
+      <td>0.053586</td>
+      <td>0.087331</td>
+    </tr>
+    <tr>
+      <th>2003-06-30</th>
+      <td>0.007658</td>
+      <td>0.037203</td>
+      <td>0.030406</td>
+      <td>0.021019</td>
+      <td>0.004246</td>
+      <td>0.007020</td>
+      <td>0.018084</td>
+      <td>0.011128</td>
+      <td>0.004526</td>
+      <td>0.048356</td>
     </tr>
     <tr>
       <th>...</th>
@@ -1302,73 +1308,73 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
     </tr>
     <tr>
       <th>2024-08-31</th>
-      <td>-0.121623</td>
-      <td>-0.032603</td>
-      <td>0.001479</td>
-      <td>-0.024347</td>
-      <td>0.012539</td>
-      <td>0.010668</td>
-      <td>0.031008</td>
-      <td>0.034119</td>
-      <td>0.007720</td>
-      <td>0.045979</td>
+      <td>-0.113011</td>
+      <td>-0.017932</td>
+      <td>0.015203</td>
+      <td>-0.018115</td>
+      <td>0.011436</td>
+      <td>0.014057</td>
+      <td>0.029033</td>
+      <td>0.033110</td>
+      <td>0.000013</td>
+      <td>0.043012</td>
     </tr>
     <tr>
       <th>2024-09-30</th>
-      <td>0.019904</td>
-      <td>0.050513</td>
-      <td>0.014613</td>
-      <td>0.052698</td>
-      <td>0.006031</td>
-      <td>0.014736</td>
-      <td>0.019235</td>
-      <td>0.025015</td>
-      <td>0.003221</td>
-      <td>0.043354</td>
+      <td>0.013679</td>
+      <td>0.048270</td>
+      <td>0.023013</td>
+      <td>0.066484</td>
+      <td>0.003841</td>
+      <td>0.012194</td>
+      <td>0.021077</td>
+      <td>0.017986</td>
+      <td>0.021735</td>
+      <td>0.024223</td>
     </tr>
     <tr>
       <th>2024-10-31</th>
-      <td>-0.044786</td>
-      <td>-0.020529</td>
-      <td>-0.030179</td>
-      <td>-0.014448</td>
-      <td>-0.019646</td>
-      <td>-0.017093</td>
-      <td>-0.020829</td>
-      <td>-0.000529</td>
-      <td>0.005618</td>
-      <td>0.032594</td>
+      <td>-0.043546</td>
+      <td>-0.015442</td>
+      <td>-0.031454</td>
+      <td>-0.012811</td>
+      <td>-0.026328</td>
+      <td>-0.014821</td>
+      <td>-0.023754</td>
+      <td>-0.005186</td>
+      <td>0.011622</td>
+      <td>0.028227</td>
     </tr>
     <tr>
       <th>2024-11-30</th>
-      <td>0.092213</td>
-      <td>0.109820</td>
-      <td>0.092730</td>
-      <td>0.064826</td>
-      <td>0.058672</td>
-      <td>0.083389</td>
-      <td>0.052749</td>
-      <td>0.074340</td>
-      <td>0.074962</td>
-      <td>0.075089</td>
+      <td>0.086038</td>
+      <td>0.104725</td>
+      <td>0.119969</td>
+      <td>0.053923</td>
+      <td>0.105346</td>
+      <td>0.071177</td>
+      <td>0.047194</td>
+      <td>0.082832</td>
+      <td>0.066352</td>
+      <td>0.070899</td>
     </tr>
     <tr>
       <th>2024-12-31</th>
-      <td>0.004509</td>
-      <td>-0.027252</td>
-      <td>-0.080408</td>
-      <td>-0.068744</td>
-      <td>-0.021532</td>
-      <td>-0.016844</td>
-      <td>-0.007563</td>
-      <td>-0.062828</td>
-      <td>-0.047753</td>
-      <td>0.006330</td>
+      <td>-0.018010</td>
+      <td>-0.060378</td>
+      <td>-0.061811</td>
+      <td>-0.057484</td>
+      <td>-0.075506</td>
+      <td>-0.009269</td>
+      <td>0.010485</td>
+      <td>-0.057843</td>
+      <td>-0.048558</td>
+      <td>0.006712</td>
     </tr>
   </tbody>
 </table>
-<p>264 rows × 10 columns</p>
-</div></div><img alt="../../_images/0030429c070d3fe9d823add51ec13fbd240b538cfc77acc0c4ccbe3e5bf9f5e6.png" src="../../_images/0030429c070d3fe9d823add51ec13fbd240b538cfc77acc0c4ccbe3e5bf9f5e6.png" />
+<p>263 rows × 10 columns</p>
+</div></div><img alt="../../_images/2b28679c8187bbc041861e153ceecfe09eee0e9bd6d8824cbcfa2564d280f5ef.png" src="../../_images/2b28679c8187bbc041861e153ceecfe09eee0e9bd6d8824cbcfa2564d280f5ef.png" />
 </div>
 </div>
 </section>
@@ -1425,7 +1431,7 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 <ul class="simple">
 <li><p>Can you reproduce this plot?</p></li>
 </ul>
-<p>⚡ ⏰ Question: Group D-G ⚡</p>
+<p>⚡ ⏰ Question 1 ⚡</p>
 <ul class="simple">
 <li><p>Building on a function above, create a for loop that reproduces this plot above.</p></li>
 <li><p>Start by telling me what do you want to do</p></li>
@@ -1445,8 +1451,12 @@ the start of the holding period <strong>to avoid the short-term reversals</stron
 </div>
 </div>
 </div>
-<p>⚡ ⏰ Question: All groups ⚡</p>
+<p>⚡ ⏰ Question 2 ⚡</p>
 <p>Modify the Momentum function to create a trading strategy that goes long the 10% stocks with lowest volatility in the previous 24 months and goes short the 10% stocks with the highest volatility in the previous 24 months</p>
+<p>⚡ ⏰ Question 3 ⚡</p>
+<p>Modify the Momentum function to create a trading strategy that signal weights using the momentum signal. The strategy must still have a blanced long and short portfolio, i.e. the long and the short must have portfolios that add up to 1. But within each portfolio you are taking positions proportional to the signal</p>
+<p>⚡ ⏰ Question 4 ⚡</p>
+<p>It this portfolio easy to trade? Is it likely to be easier of harder than then signal-sorted, market-cap wegithed portfolios?</p>
 </section>
 <section id="key-takeaways">
 <h2><span class="section-number">9.18.8. </span>📝 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
