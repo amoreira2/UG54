@@ -232,7 +232,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Performance_evaluation.html">11. Performance Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MachineLearning.html">12. Machine Learning in Finance</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels.html">13. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">13.7. 📊 Interpreting Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">13.10. 📊 Interpreting Factor Models</a></li>
 
 
 
@@ -1157,34 +1157,34 @@ c:\Users\alan.moreira\Anaconda3\lib\site-packages\pandas_datareader\famafrench.p
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># THE DATA IS MONTHLY SO i WILL ADJUST  THE VOL TARGET TO HIT 16% ANNUALIZED</span>
-<span class="n">VolTarget</span><span class="o">=</span><span class="mf">0.16</span><span class="o">/</span><span class="mi">12</span><span class="o">**</span><span class="mi">0</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># THE DATA IS MONTHLY SO WE ADJUST THE VOL TARGET TO HIT 16% ANNUALIZED</span>
+<span class="n">VolTarget</span> <span class="o">=</span> <span class="mf">0.16</span> <span class="o">/</span> <span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
 
-<span class="c1"># optimal RELATIVE weights, need to calibrate the volatility</span>
-<span class="n">W</span><span class="o">=</span><span class="n">MU</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
+<span class="c1"># optimal RELATIVE weights</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">MU</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
 
-<span class="c1"># compute the variance of the W portoflio</span>
-<span class="n">VarW</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">VarW</span><span class="p">)</span>
-<span class="c1">#adjusting the weights to meet the volatility target</span>
-<span class="n">w</span><span class="o">=</span> <span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-<span class="c1"># Ww is our final weights with the volatility target</span>
-<span class="n">Ww</span><span class="o">=</span><span class="n">w</span><span class="o">*</span><span class="n">W</span>
+<span class="c1"># variance of the unscaled portfolio</span>
+<span class="n">VarW</span> <span class="o">=</span> <span class="n">W</span> <span class="o">@</span> <span class="n">Sigma</span> <span class="o">@</span> <span class="n">W</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unscaled portfolio variance: </span><span class="si">{</span><span class="n">VarW</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># scaling factor to meet vol target</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">VolTarget</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">VarW</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scaling factor: </span><span class="si">{</span><span class="n">w</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
 <span class="c1"># final weights</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">Ww</span><span class="p">)</span>
+<span class="n">Ww</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">W</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Weights: </span><span class="si">{</span><span class="n">Ww</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="c1"># check vol </span>
+<span class="c1"># check vol and compute performance</span>
+<span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Ww</span> <span class="o">@</span> <span class="n">Sigma</span> <span class="o">@</span> <span class="n">Ww</span><span class="p">)</span>
+<span class="n">ER</span> <span class="o">=</span> <span class="n">Ww</span> <span class="o">@</span> <span class="n">MU</span>
+<span class="n">SR</span> <span class="o">=</span> <span class="p">(</span><span class="n">ER</span> <span class="o">/</span> <span class="n">vol</span><span class="p">)</span> <span class="o">*</span> <span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
 
-<span class="n">vol</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-
-
-<span class="n">ER</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-<span class="n">SR</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;your volatility is </span><span class="si">{</span><span class="n">vol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Your Sharpe  Ratio is </span><span class="si">{</span><span class="n">SR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;So your optimal portfolio e is </span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> in MKT, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> in SMB, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> in HML, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2"> in RMW, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2"> in CMA, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2"> in MOM&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Annualized volatility: </span><span class="si">{</span><span class="n">vol</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Annualized Sharpe Ratio: </span><span class="si">{</span><span class="n">SR</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Optimal portfolio:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">wt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">df_ff6</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">Ww</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">wt</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1203,24 +1203,23 @@ So your optimal portfolio with market neutral exposure is
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># lets wrap it up in a function</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">sizing</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">MU</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">VolTarget</span><span class="o">=</span><span class="mf">0.16</span><span class="o">/</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">):</span>
+    <span class="n">VarW</span> <span class="o">=</span> <span class="n">W</span> <span class="o">@</span> <span class="n">Sigma</span> <span class="o">@</span> <span class="n">W</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">VolTarget</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">VarW</span><span class="p">)</span>
+    <span class="n">Ww</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">W</span>
+    <span class="n">vol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Ww</span> <span class="o">@</span> <span class="n">Sigma</span> <span class="o">@</span> <span class="n">Ww</span><span class="p">)</span>
+    <span class="n">ER</span> <span class="o">=</span> <span class="n">Ww</span> <span class="o">@</span> <span class="n">MU</span>
+    <span class="n">SR</span> <span class="o">=</span> <span class="p">(</span><span class="n">ER</span> <span class="o">/</span> <span class="n">vol</span><span class="p">)</span> <span class="o">*</span> <span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">sizing</span><span class="p">(</span><span class="n">W</span><span class="p">,</span><span class="n">MU</span><span class="p">,</span><span class="n">Sigma</span><span class="p">,</span><span class="n">VolTarget</span><span class="o">=</span><span class="mf">0.16</span><span class="o">/</span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">):</span>
-    <span class="n">VarW</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-    <span class="n">w</span><span class="o">=</span> <span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-    <span class="c1"># Ww is our final weights with the volatility target</span>
-    <span class="n">Ww</span><span class="o">=</span><span class="n">w</span><span class="o">*</span><span class="n">W</span>
-    <span class="n">vol</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-    <span class="n">ER</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-    <span class="n">SR</span><span class="o">=</span><span class="mi">0</span> <span class="c1"># to be replaced by the actual formula</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;your volatility is </span><span class="si">{</span><span class="n">vol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Your Sharpe  Ratio is </span><span class="si">{</span><span class="n">SR</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> portfolio is </span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> in MKT, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> in SMB, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> in HML, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2"> in RMW, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2"> in CMA, </span><span class="si">{</span><span class="n">Ww</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2"> in MOM&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Annualized volatility: </span><span class="si">{</span><span class="n">vol</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">12</span><span class="o">**</span><span class="mf">0.5</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Annualized Sharpe Ratio: </span><span class="si">{</span><span class="n">SR</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> portfolio weights:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name_i</span><span class="p">,</span> <span class="n">wt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span> <span class="s1">&#39;SMB&#39;</span><span class="p">,</span> <span class="s1">&#39;HML&#39;</span><span class="p">,</span> <span class="s1">&#39;RMW&#39;</span><span class="p">,</span> <span class="s1">&#39;CMA&#39;</span><span class="p">,</span> <span class="s1">&#39;MOM&#39;</span><span class="p">],</span> <span class="n">Ww</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">name_i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">wt</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">SR</span><span class="p">,</span> <span class="n">Ww</span>
 
-<span class="n">W</span><span class="o">=</span><span class="n">MU</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
-<span class="n">sr</span><span class="p">,</span><span class="n">W</span><span class="o">=</span><span class="n">sizing</span><span class="p">(</span><span class="n">W</span><span class="p">,</span><span class="n">MU</span><span class="p">,</span><span class="n">Sigma</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mean-Variance&#39;</span><span class="p">)</span>
+<span class="n">W</span> <span class="o">=</span> <span class="n">MU</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
+<span class="n">sr</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">sizing</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">MU</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mean-Variance&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1236,7 +1235,7 @@ Your Appraisal Ratio is 0
 <p>1/N rule</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="mi">5</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span>
 <span class="n">sr</span><span class="p">,</span><span class="n">W</span><span class="o">=</span><span class="n">sizing</span><span class="p">(</span><span class="n">W</span><span class="p">,</span><span class="n">MU</span><span class="p">,</span><span class="n">Sigma</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;1/N&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1270,7 +1269,7 @@ Your Appraisal Ratio is 0
 <p>Risky Parity rule</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">))</span>
 <span class="n">sr</span><span class="p">,</span><span class="n">W</span><span class="o">=</span><span class="n">sizing</span><span class="p">(</span><span class="n">W</span><span class="p">,</span><span class="n">MU</span><span class="p">,</span><span class="n">Sigma</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Risk Parity&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1287,7 +1286,7 @@ Your Appraisal Ratio is 0
 <p>Minimum Variance rule</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
 <span class="n">sr</span><span class="p">,</span><span class="n">W</span><span class="o">=</span><span class="n">sizing</span><span class="p">(</span><span class="n">W</span><span class="p">,</span><span class="n">MU</span><span class="p">,</span><span class="n">Sigma</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Minimum Variance&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1312,7 +1311,7 @@ Your Appraisal Ratio is 0
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tau</span><span class="o">=</span><span class="mf">0.2</span>
 <span class="n">sigma_bar</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">Sigma</span><span class="p">))</span>
-<span class="n">Sigma_hat</span><span class="o">=</span><span class="n">Sigma</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">tau</span><span class="p">)</span><span class="o">+</span><span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">sigma_bar</span>
+<span class="n">Sigma_hat</span><span class="o">=</span><span class="n">Sigma</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">tau</span><span class="p">)</span><span class="o">+</span><span class="n">tau</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="n">sigma_bar</span>
 <span class="n">W</span><span class="o">=</span><span class="n">MU</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma_hat</span><span class="p">)</span>
 <span class="n">sr</span><span class="p">,</span><span class="n">W</span><span class="o">=</span><span class="n">sizing</span><span class="p">(</span><span class="n">W</span><span class="p">,</span><span class="n">MU</span><span class="p">,</span><span class="n">Sigma</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mean-variance Shrinkage&#39;</span><span class="p">)</span>
 </pre></div>
@@ -1335,7 +1334,7 @@ c:\Users\alan.moreira\Anaconda3\lib\site-packages\numpy\core\_methods.py:129: Ru
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma_hat</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">W</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="nd">@np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma_hat</span><span class="p">)</span>
 <span class="n">sr</span><span class="p">,</span><span class="n">W</span><span class="o">=</span><span class="n">sizing</span><span class="p">(</span><span class="n">W</span><span class="p">,</span><span class="n">MU</span><span class="p">,</span><span class="n">Sigma</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Minimum-variance Shrinkage&#39;</span><span class="p">)</span>
 </pre></div>
 </div>

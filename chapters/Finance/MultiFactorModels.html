@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>13. Multi-factor models &#8212; Data Driven Investing with Python</title>
+    <title>13. Multi-Factor Models &#8212; Data Driven Investing with Python</title>
   
   
   
@@ -65,7 +65,7 @@
     <link rel="icon" href="../../_static/figuremain2.jpg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="13.7. 📊 Interpreting Factor Models" href="InterpretingFactorModels.html" />
+    <link rel="next" title="13.10. 📊 Interpreting Factor Models" href="InterpretingFactorModels.html" />
     <link rel="prev" title="12. Machine Learning" href="MachineLearning.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -232,7 +232,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Performance_evaluation.html">11. Performance Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MachineLearning.html">12. Machine Learning in Finance</a></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">13. Multi Factor Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">13.7. 📊 Interpreting Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">13.10. 📊 Interpreting Factor Models</a></li>
 
 
 
@@ -472,7 +472,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Multi-factor models</h1>
+    <h1>Multi-Factor Models</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -482,16 +482,19 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-a-multi-factor-model-the-time-series-approach">13.1. Estimating a multi-factor model: The Time-series approach</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application">13.2. Application</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-attribution">13.3. Performance Attribution</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#application-what-does-cathie-wood-likes">13.3.1. Application: What does Cathie Wood  Likes ?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">13.1. Libraries and Auxiliary Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-factors-models">13.2. Multi-factors models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-a-multi-factor-model-the-time-series-approach">13.3. Estimating a multi-factor model: The Time-series approach</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application">13.4. Application</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-attribution">13.5. Performance Attribution</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#application-what-does-cathie-wood-likes">13.5.1. Application: What does Cathie Wood  Likes ?</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bottom-up-from-assets-factor-risk-to-portfolio-factor-risk">13.4. Bottom up: from assets factor risk to portfolio factor risk</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-down-approach">13.5. TOP DOWN Approach</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cross-sectional-approach-or-characteristic-based-model">13.6. The Cross-Sectional Approach ( or Characteristic-based model)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-characteristic-adjusted-returns">13.6.1. Constructing Characteristic adjusted returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-does-warren-buffett-beat-the-market">13.6. Application: Does Warren Buffett beat the market?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bottom-up-from-assets-factor-risk-to-portfolio-factor-risk">13.7. Bottom up: from assets factor risk to portfolio factor risk</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-down-approach">13.8. TOP DOWN Approach</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cross-sectional-approach-or-characteristic-based-model">13.9. The Cross-Sectional Approach ( or Characteristic-based model)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-characteristic-adjusted-returns">13.9.1. Constructing Characteristic adjusted returns</a></li>
 </ul>
 </li>
 </ul>
@@ -505,39 +508,24 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="cell docutils container">
+  <section class="tex2jax_ignore mathjax_ignore" id="multi-factor-models">
+<h1><span class="section-number">13. </span>Multi-Factor Models<a class="headerlink" href="#multi-factor-models" title="Link to this heading">#</a></h1>
+<hr class="docutils" />
+<p><strong>🎯 Learning Objectives</strong></p>
+<p>By the end of this chapter, you should be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Understand why investors move beyond CAPM</strong> to multi-factor models and articulate the limitations of a single-market factor.</p></li>
+<li><p><strong>Estimate multi-factor models</strong> using the time-series approach: regress asset/fund returns on factor portfolios and interpret loadings, alphas, and <span class="math notranslate nohighlight">\(R^2\)</span>.</p></li>
+<li><p><strong>Evaluate fund performance</strong> using factor regressions — distinguish genuine alpha from factor exposure.</p></li>
+<li><p><strong>Decompose portfolio risk</strong> into systematic (factor) and idiosyncratic components using both top-down and bottom-up approaches.</p></li>
+<li><p><strong>Estimate factor premia</strong> using the cross-sectional approach: run Fama–MacBeth regressions and interpret characteristic-based risk prices.</p></li>
+<li><p><strong>Construct characteristic-adjusted returns</strong> for any portfolio, separating skill from style.</p></li>
+</ol>
+<section id="libraries-and-auxiliary-functions">
+<h2><span class="section-number">13.1. </span>Libraries and Auxiliary Functions<a class="headerlink" href="#libraries-and-auxiliary-functions" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>wrds
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting wrds
-  Downloading wrds-3.4.0-py3-none-any.whl.metadata (5.7 kB)
-Collecting packaging&lt;=24.2 (from wrds)
-  Downloading packaging-24.2-py3-none-any.whl.metadata (3.2 kB)
-Requirement already satisfied: pandas&lt;2.3,&gt;=2.2 in /usr/local/lib/python3.12/dist-packages (from wrds) (2.2.2)
-Collecting psycopg2-binary&lt;2.10,&gt;=2.9 (from wrds)
-  Downloading psycopg2_binary-2.9.11-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
-Requirement already satisfied: sqlalchemy&lt;2.1,&gt;=2 in /usr/local/lib/python3.12/dist-packages (from wrds) (2.0.44)
-Requirement already satisfied: numpy&gt;=1.26.0 in /usr/local/lib/python3.12/dist-packages (from pandas&lt;2.3,&gt;=2.2-&gt;wrds) (2.0.2)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas&lt;2.3,&gt;=2.2-&gt;wrds) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /usr/local/lib/python3.12/dist-packages (from pandas&lt;2.3,&gt;=2.2-&gt;wrds) (2025.2)
-Requirement already satisfied: tzdata&gt;=2022.7 in /usr/local/lib/python3.12/dist-packages (from pandas&lt;2.3,&gt;=2.2-&gt;wrds) (2025.2)
-Requirement already satisfied: greenlet&gt;=1 in /usr/local/lib/python3.12/dist-packages (from sqlalchemy&lt;2.1,&gt;=2-&gt;wrds) (3.2.4)
-Requirement already satisfied: typing-extensions&gt;=4.6.0 in /usr/local/lib/python3.12/dist-packages (from sqlalchemy&lt;2.1,&gt;=2-&gt;wrds) (4.15.0)
-Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&lt;2.3,&gt;=2.2-&gt;wrds) (1.17.0)
-Downloading wrds-3.4.0-py3-none-any.whl (14 kB)
-Downloading packaging-24.2-py3-none-any.whl (65 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">65.5/65.5 kB</span> <span class=" -Color -Color-Red">1.9 MB/s</span> eta <span class=" -Color -Color-Cyan">0:00:00</span>
-?25hDownloading psycopg2_binary-2.9.11-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">4.2/4.2 MB</span> <span class=" -Color -Color-Red">18.8 MB/s</span> eta <span class=" -Color -Color-Cyan">0:00:00</span>
-?25hInstalling collected packages: psycopg2-binary, packaging, wrds
-  Attempting uninstall: packaging
-    Found existing installation: packaging 25.0
-    Uninstalling packaging-25.0:
-      Successfully uninstalled packaging-25.0
-Successfully installed packaging-24.2 psycopg2-binary-2.9.11 wrds-3.4.0
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="ch">#!pip install wrds</span>
 </pre></div>
 </div>
 </div>
@@ -662,30 +650,9 @@ Successfully installed packaging-24.2 psycopg2-binary-2.9.11 wrds-3.4.0
 </div>
 </details>
 </div>
-<section class="tex2jax_ignore mathjax_ignore" id="multi-factor-models">
-<h1><span class="section-number">13. </span>Multi-factor models<a class="headerlink" href="#multi-factor-models" title="Link to this heading">#</a></h1>
-<hr class="docutils" />
-<p><strong>🎯 Learning Objectives</strong></p>
-<p>By the end of this chapter, you should be able to:</p>
-<ol class="arabic simple">
-<li><p><strong>Understand why investors move beyond CAPM.</strong><br />
-Explain how adding multiple systematic factors (size, value, profitability, investment, momentum, etc.) sharpens alpha measurement, improves risk control, and better reflects real‐world return drivers.</p></li>
-<li><p><strong>Estimate factor betas with a time-series regression.</strong><br />
-Learn to regress an asset’s excess returns on a panel of factor returns, interpret coefficients as exposures, and judge statistical reliability.</p></li>
-<li><p><strong>Translate betas into economic insight through variance decomposition.</strong><br />
-Decompose each asset’s total variance into contributions from individual factors and idiosyncratic noise, revealing which risks truly matter.</p></li>
-<li><p><strong>Build cleaner covariance matrices using a factor structure.</strong><br />
-Combine factor loadings with the factor covariance matrix and asset-specific variances to obtain a stable, low-dimensional estimate suitable for portfolio optimization.</p></li>
-<li><p><strong>Apply multi-factor analysis to real portfolios and ETFs.</strong><br />
-Perform step-by-step alpha/beta evaluation of momentum ETFs, ranking funds on both skill (alpha) and risk profile.</p></li>
-<li><p><strong>Attribute portfolio risk when holdings change.</strong><br />
-Project how reallocating capital between strategies alters overall volatility, using factor exposures rather than naïve variance estimates.</p></li>
-<li><p><strong>Contrast top-down versus bottom-up factor measurement.</strong><br />
-Weigh the pros and cons of estimating betas from portfolio returns versus aggregating betas of individual holdings.</p></li>
-<li><p><strong>Explore the characteristic-based (cross-sectional) alternative.</strong><br />
-See how pricing firm-level attributes with cross-sectional regressions yields “characteristic-implied” returns and characteristic-adjusted performance.</p></li>
-</ol>
-<hr class="docutils" />
+</section>
+<section id="multi-factors-models">
+<h2><span class="section-number">13.2. </span>Multi-factors models<a class="headerlink" href="#multi-factors-models" title="Link to this heading">#</a></h2>
 <p>So far we have focused on the market as our single factor.</p>
 <p>In practice it is standard to use factor models with many factors</p>
 <p>Additional factors</p>
@@ -720,14 +687,15 @@ See how pricing firm-level attributes with cross-sectional regressions yields �
 <li><p>typically this is not done contractually but implicitly: You will allocate to the different funds based on their alpha</p></li>
 <li><p>Captures the idea that one should pay different prices for alpha (very hard to get) and beta( easier, the gains are in implementation)</p></li>
 </ul>
+</section>
 <section id="estimating-a-multi-factor-model-the-time-series-approach">
-<h2><span class="section-number">13.1. </span>Estimating a multi-factor model: The Time-series approach<a class="headerlink" href="#estimating-a-multi-factor-model-the-time-series-approach" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">13.3. </span>Estimating a multi-factor model: The Time-series approach<a class="headerlink" href="#estimating-a-multi-factor-model-the-time-series-approach" title="Link to this heading">#</a></h2>
 <p>We start with the factors and estimate the betas using time-series data</p>
 <p>This works particularly well when the factors are excess returns themselves</p>
 <p>For each asset We run a tim-series regression with the excess returns of the asset as the the dependent variable and the excess returns on the factors as the independent variables</p>
 </section>
 <section id="application">
-<h2><span class="section-number">13.2. </span>Application<a class="headerlink" href="#application" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">13.4. </span>Application<a class="headerlink" href="#application" title="Link to this heading">#</a></h2>
 <p>What do you get when you invest in a Momentum ETF?</p>
 <ol class="arabic simple">
 <li><p>Get daily return data on the larger ETFs claiming to implement the momentum factor</p></li>
@@ -751,23 +719,12 @@ See how pricing firm-level attributes with cross-sectional regressions yields �
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Enter your WRDS username [root]:am16634
-Enter your password:··········
-WRDS recommends setting up a .pgpass file.
-Create .pgpass file now [y/n]?: y
-Created .pgpass file successfully.
-You can create this file yourself at any time with the create_pgpass_file() function.
-Loading library list...
-Done
-[13512, 13851, 15161, 15725, 17085, 17392, 17622, 90621, 90622, 90623, 91876]
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">Cannot</span> <span class="n">execute</span> <span class="n">code</span><span class="p">,</span> <span class="n">session</span> <span class="n">has</span> <span class="n">been</span> <span class="n">disposed</span><span class="o">.</span> <span class="n">Please</span> <span class="k">try</span> <span class="n">restarting</span> <span class="n">the</span> <span class="n">Kernel</span><span class="o">.</span>
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipython-input-1923617899.py:41: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  fama_french = web.DataReader(&quot;F-F_Research_Data_Factors&quot;+freq_label, &quot;famafrench&quot;,start=&quot;1921-01-01&quot;)
-/tmp/ipython-input-1923617899.py:45: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  fama_french2 = web.DataReader(&quot;F-F_Research_Data_5_Factors_2x3&quot;+freq_label, &quot;famafrench&quot;,start=&quot;1921-01-01&quot;)
-/tmp/ipython-input-1923617899.py:50: FutureWarning: The argument &#39;date_parser&#39; is deprecated and will be removed in a future version. Please use &#39;date_format&#39; instead, or read your data in as &#39;object&#39; dtype and then call &#39;to_datetime&#39;.
-  fama_french = web.DataReader(&quot;F-F_Momentum_Factor&quot;+freq_label, &quot;famafrench&quot;,start=&quot;1921-01-01&quot;)
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">Cannot</span> <span class="n">execute</span> <span class="n">code</span><span class="p">,</span> <span class="n">session</span> <span class="n">has</span> <span class="n">been</span> <span class="n">disposed</span><span class="o">.</span> <span class="n">Please</span> <span class="k">try</span> <span class="n">restarting</span> <span class="n">the</span> <span class="n">Kernel</span><span class="o">.</span> 
+
+<span class="n">View</span> <span class="n">Jupyter</span> <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s1">&#39;command:jupyter.viewOutput&#39;</span><span class="o">&gt;</span><span class="n">log</span><span class="o">&lt;/</span><span class="n">a</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">further</span> <span class="n">details</span><span class="o">.</span>
 </pre></div>
 </div>
 </div>
@@ -1295,14 +1252,14 @@ Notes:
 <p>Is this table providing a fair comparison across funds?</p>
 </section>
 <section id="performance-attribution">
-<h2><span class="section-number">13.3. </span>Performance Attribution<a class="headerlink" href="#performance-attribution" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">13.5. </span>Performance Attribution<a class="headerlink" href="#performance-attribution" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>We can use factor models to decompose a manager strategy</p></li>
 <li><p>What explains their returns?</p></li>
 <li><p>What tilts they have?  What kind of stocks they like?</p></li>
 </ul>
 <section id="application-what-does-cathie-wood-likes">
-<h3><span class="section-number">13.3.1. </span>Application: What does Cathie Wood  Likes ?<a class="headerlink" href="#application-what-does-cathie-wood-likes" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">13.5.1. </span>Application: What does Cathie Wood  Likes ?<a class="headerlink" href="#application-what-does-cathie-wood-likes" title="Link to this heading">#</a></h3>
 <p><img alt="Cathie Wood" src="https://github.com/amoreira2/Fin418/blob/main/assets/plots/CW_image.jfif?raw=1" /></p>
 <p>Cathie Wood is a renowned stock-picker and the founder of ARK Invest, which manages around 60 billion in assets and invests in innovative technologies such as self-driving cars and genomics. She gained fame for her success in the male-dominated world of investing, her persuasive investment arguments, and her proven track record in the stock market. Prior to founding ARK Invest, she gained experience at The Capital Group, Jennison Associates, and AllianceBernstein, and co-founded Tupelo Capital Management, a hedge fund. Wood is known for her unconventional investment strategies and her advocacy for investing in disruptive technologies, which has garnered her a large following in the investing world. Her estimated net worth is around $250 million.</p>
 <p>Citations:
@@ -1369,8 +1326,51 @@ Notes:
 </ul>
 </section>
 </section>
+<section id="application-does-warren-buffett-beat-the-market">
+<h2><span class="section-number">13.6. </span>Application: Does Warren Buffett beat the market?<a class="headerlink" href="#application-does-warren-buffett-beat-the-market" title="Link to this heading">#</a></h2>
+<p><img alt="fig" src="../../_images/WB_image.jpg" /></p>
+<p>Warren Buffett is the chairman and CEO of Berkshire Hathaway, a multinational conglomerate holding company. Berkshire Hathaway’s portfolio includes a diverse range of companies, but its five largest positions are in Apple Inc., Bank of America Corp, Chevron, The Coca-Cola Company, and American Express Company. Buffett is known for his extraordinary performance record and his transparent, straightforward investment model, which involves investing in large, blue-chip companies with strong balance sheets and attractive valuations. His investment strategy focuses on long-term investments and he is recognized for making significant new investments while also being unafraid to drop longtime holdings.</p>
+<p>Let’s apply the same factor regression framework to Berkshire Hathaway’s returns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Berkshire Hathaway excess returns</span>
+<span class="n">BrK</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">BRK</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">RF</span>
+
+<span class="c1"># Single-factor CAPM regression</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">])</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">BrK</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">results</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>What do we learn? Is the alpha large economically? Statistically?</p></li>
+<li><p>How to think about this alpha?</p></li>
+</ul>
+<p>Now let’s use the full multi-factor model:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Multi-factor regression: FF5 + Momentum</span>
+<span class="n">Factors</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;BRK&#39;</span><span class="p">,</span> <span class="s1">&#39;RF&#39;</span><span class="p">,</span> <span class="s1">&#39;ARKK&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">Factors</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">BRK</span> <span class="o">-</span> <span class="n">df</span><span class="o">.</span><span class="n">RF</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">results</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>What do we learn now? Did adding factors make a difference?</p></li>
+<li><p>What kind of stocks does Warren like? (look at the factor loadings)</p></li>
+<li><p>What do we learn about Warren’s investment style?</p></li>
+<li><p>What do we learn about Warren’s specific stock-picking skills?</p></li>
+<li><p>How does this compare to Cathie Wood’s profile?</p></li>
+</ul>
+</section>
 <section id="bottom-up-from-assets-factor-risk-to-portfolio-factor-risk">
-<h2><span class="section-number">13.4. </span>Bottom up: from assets factor risk to portfolio factor risk<a class="headerlink" href="#bottom-up-from-assets-factor-risk-to-portfolio-factor-risk" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">13.7. </span>Bottom up: from assets factor risk to portfolio factor risk<a class="headerlink" href="#bottom-up-from-assets-factor-risk-to-portfolio-factor-risk" title="Link to this heading">#</a></h2>
 <p>Above we estimated fund factor exposures by looking at how the fund co-move with the different factors</p>
 <p>An alternative is to look through the fund and compute asset factor loadings and from them compute the fund factor loadings</p>
 <p>Consider portfolio with weights  <span class="math notranslate nohighlight">\(X\)</span> that earns excess returns <span class="math notranslate nohighlight">\(r=X&#64;R\)</span> where R is the vector of asset excess returns.</p>
@@ -1840,7 +1840,7 @@ Notes:
 </div>
 </section>
 <section id="top-down-approach">
-<h2><span class="section-number">13.5. </span>TOP DOWN Approach<a class="headerlink" href="#top-down-approach" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">13.8. </span>TOP DOWN Approach<a class="headerlink" href="#top-down-approach" title="Link to this heading">#</a></h2>
 <p>For comparison lets estimate this fund factor exposure using the top down approach</p>
 <p>Lets construct the portfolio return and then run the multi-factor regression</p>
 <div class="cell docutils container">
@@ -2431,7 +2431,7 @@ Notes:
 <p>The general recipe that people use is 1-2 years when using daily data. 5 years when using monthly</p>
 </section>
 <section id="the-cross-sectional-approach-or-characteristic-based-model">
-<h2><span class="section-number">13.6. </span>The Cross-Sectional Approach ( or Characteristic-based model)<a class="headerlink" href="#the-cross-sectional-approach-or-characteristic-based-model" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">13.9. </span>The Cross-Sectional Approach ( or Characteristic-based model)<a class="headerlink" href="#the-cross-sectional-approach-or-characteristic-based-model" title="Link to this heading">#</a></h2>
 <p>In the time-series approach, we start from the factors and estimate the betas</p>
 <p>Now we will flip this: we will start from the betas–which are the characteristic–and use a regression to tell us what is the return associated with this characteristic</p>
 <p>That is, we will estimate the factors themselves!</p>
@@ -4213,7 +4213,7 @@ Notes:
 <li><p>Essentially I would run a for loop and get a sequence of betas <span class="math notranslate nohighlight">\([\beta_t,\beta_{t+1},...]\)</span> and these would be the returns on the factors</p></li>
 </ul>
 <section id="constructing-characteristic-adjusted-returns">
-<h3><span class="section-number">13.6.1. </span>Constructing Characteristic adjusted returns<a class="headerlink" href="#constructing-characteristic-adjusted-returns" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">13.9.1. </span>Constructing Characteristic adjusted returns<a class="headerlink" href="#constructing-characteristic-adjusted-returns" title="Link to this heading">#</a></h3>
 <p>We can get the portfolio characteristics and based on that construct the return implied by these characteristics</p>
 <p>We then subtract these characteristic returns from the portfolio returns</p>
 <p>It is the equivalent of the “hedged portfolios” that uses the betas to hedge. Here we simply use the characterisitc–instead of makign “factor” neutral we make them characteristic neutral</p>
@@ -5905,7 +5905,7 @@ dtype: float64
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">13.7. </span>📊 Interpreting Factor Models</p>
+        <p class="prev-next-title"><span class="section-number">13.10. </span>📊 Interpreting Factor Models</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -5925,16 +5925,19 @@ dtype: float64
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-a-multi-factor-model-the-time-series-approach">13.1. Estimating a multi-factor model: The Time-series approach</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application">13.2. Application</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-attribution">13.3. Performance Attribution</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#application-what-does-cathie-wood-likes">13.3.1. Application: What does Cathie Wood  Likes ?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#libraries-and-auxiliary-functions">13.1. Libraries and Auxiliary Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-factors-models">13.2. Multi-factors models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-a-multi-factor-model-the-time-series-approach">13.3. Estimating a multi-factor model: The Time-series approach</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application">13.4. Application</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-attribution">13.5. Performance Attribution</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#application-what-does-cathie-wood-likes">13.5.1. Application: What does Cathie Wood  Likes ?</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bottom-up-from-assets-factor-risk-to-portfolio-factor-risk">13.4. Bottom up: from assets factor risk to portfolio factor risk</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-down-approach">13.5. TOP DOWN Approach</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cross-sectional-approach-or-characteristic-based-model">13.6. The Cross-Sectional Approach ( or Characteristic-based model)</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-characteristic-adjusted-returns">13.6.1. Constructing Characteristic adjusted returns</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#application-does-warren-buffett-beat-the-market">13.6. Application: Does Warren Buffett beat the market?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bottom-up-from-assets-factor-risk-to-portfolio-factor-risk">13.7. Bottom up: from assets factor risk to portfolio factor risk</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#top-down-approach">13.8. TOP DOWN Approach</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cross-sectional-approach-or-characteristic-based-model">13.9. The Cross-Sectional Approach ( or Characteristic-based model)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-characteristic-adjusted-returns">13.9.1. Constructing Characteristic adjusted returns</a></li>
 </ul>
 </li>
 </ul>
