@@ -1,0 +1,490 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme{default}
+\usecolortheme{default}
+
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{appendixnumberbeamer}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{items}[circle]
+
+\setbeamertemplate{footline}{
+  \hbox{%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,left]{author in head/foot}%
+      \hspace*{2ex}\insertshortauthor, \insertshortinstitute\ (\insertdate)
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,right]{date in head/foot}%
+      \insertframenumber/\inserttotalframenumber\hspace*{2ex}
+    \end{beamercolorbox}%
+  }
+}
+
+\setbeamercolor{box1}{bg=red!12,fg=black}
+
+\title{Capital Allocation II}
+\subtitle{Estimation Risk, Bet Sizing, and Factor Decomposition}
+\author[Moreira]{Alan Moreira}
+\institute[UG54]{UG54}
+\date{2026}
+
+\begin{document}
+
+% ============================================================
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ============================================================
+% SECTION: Capital allocation under uncertainty
+% ============================================================
+
+\begin{frame}{Capital allocation under uncertainty}
+
+We know how to maximize the Sharpe ratio given known moments:
+$$W^* \propto E[R^e] \, \text{Var}(R^e)^{-1}$$
+
+\vskip 10pt
+
+\textbf{The problem:} in practice, we don't know the true moments.
+
+\vskip 8pt
+
+\begin{itemize}
+\item MV optimization loads heavily on assets with extreme sample means and attractive covariance properties
+\vskip 6pt
+\item We observe only \textit{sample} estimates --- the ex-post tangency portfolio, not the ex-ante one
+\vskip 6pt
+\item The portfolio that did best in-sample may be a statistical fluke
+\end{itemize}
+
+\vskip 10pt
+
+\begin{beamercolorbox}[rounded=true,sep=8pt]{box1}
+Whatever your research process, you are likely to end up quite uncertain about the alphas of your trading strategies.
+\end{beamercolorbox}
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{Capital allocation under uncertainty}
+
+\textbf{Our approach:}
+
+\vskip 8pt
+
+\begin{enumerate}
+\item Measure the uncertainty in our risk premia estimates for each asset
+\vskip 6pt
+\item Show how weights change as we perturb estimates within plausible error bands
+\vskip 6pt
+\item Show how sensitive the benefits of optimization are to these perturbations
+\end{enumerate}
+
+\vskip 10pt
+
+\textit{See notebook: data loading and initial MV weights.}
+
+\end{frame}
+
+% ============================================================
+% SECTION: Weights sensitivity to uncertainty
+% ============================================================
+
+\begin{frame}{Weights sensitivity to uncertainty}
+
+\textbf{Experiment:} perturb each asset's expected return by $\pm 2$ standard errors of the sample mean, one at a time. Recompute MV weights.
+
+\vskip 10pt
+
+The standard error of the sample mean:
+$$\text{SE}(\hat{\mu}_i) = \frac{\hat{\sigma}_i}{\sqrt{T}}$$
+
+\vskip 10pt
+
+\begin{beamercolorbox}[rounded=true,sep=8pt]{box1}
+Small changes in inputs can flip signs of portfolio weights.
+
+Large uncertainty means your weights can be way off.
+\end{beamercolorbox}
+
+\vskip 10pt
+
+\textit{See notebook: perturbation loop over assets, weight table.}
+
+\end{frame}
+
+% ============================================================
+% SECTION: Performance sensitivity to uncertainty
+% ============================================================
+
+\begin{frame}{Performance sensitivity to uncertainty}
+
+Compute the Sharpe ratio for each perturbed weight vector (evaluated at sample moments):
+
+\vskip 8pt
+
+$$\text{SR} = \frac{W' \hat{\mu}}{\sqrt{W' \hat{\Sigma} \, W}} \times \sqrt{12}$$
+
+\vskip 10pt
+
+\begin{itemize}
+\item This only perturbs \textit{one} mean at a time
+\item In practice, you are also off on correlations, variances, and \textit{several} means simultaneously
+\item With a long sample and constant-mean assumption, standard errors understate true uncertainty
+\end{itemize}
+
+\vskip 10pt
+
+The real test: \textbf{out-of-sample performance} (coming in Performance Evaluation lecture).
+
+\vskip 5pt
+
+\textit{See notebook: SR sensitivity table.}
+
+\end{frame}
+
+% ============================================================
+% SECTION: Bet sizing under uncertainty
+% ============================================================
+
+\begin{frame}{Bet sizing under uncertainty}
+
+MV optimization is sensitive to inputs $\Rightarrow$ the industry developed many \textbf{ad-hoc bet-sizing rules}.
+
+\vskip 10pt
+
+Bet sizing is one of the great skills in portfolio management --- it requires instinct for uncertainty.
+
+\vskip 10pt
+
+All rules share the structure: compute relative weights $W_i$, then scale by $w$ to hit a volatility target.
+
+\vskip 10pt
+
+\textbf{Best applied after hedging common factors} (market, size, value, etc.) --- i.e., to residual ``alpha'' strategies where $\alpha_i$ is the expected excess return.
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{Mean-Variance rule}
+
+$$W_i = w \; \alpha_i \; [\Sigma_\varepsilon^{-1}]_i$$
+
+\vskip 8pt
+
+If strategies are uncorrelated:
+$$W_i = w \; \frac{\alpha_i}{\sigma_{\varepsilon,i}^2}$$
+
+\vskip 10pt
+
+\begin{itemize}
+\item Optimal when moments are known
+\item In practice, highly sensitive to estimation error in $\alpha$
+\end{itemize}
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{$1/N$ rule}
+
+$$W_i = \frac{1}{N} \; \text{sign}(\alpha_i)$$
+
+\vskip 10pt
+
+\begin{itemize}
+\item Ignore the magnitude of alpha --- just bet on the direction
+\item Good if you have reliable sign information but noisy magnitude estimates
+\item Surprisingly hard to beat out of sample (DeMiguel, Garlappi \& Uppal, 2009)
+\end{itemize}
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{Proportional rule}
+
+$$W_i = w \; \alpha_i$$
+
+\vskip 10pt
+
+\begin{itemize}
+\item Weight proportional to expected return
+\item Ignores variance information entirely
+\item May be relevant if you cannot take leverage (long-only constraint)
+\end{itemize}
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{Risk Parity rule}
+
+Assume all strategies have the same appraisal ratio: $\;\dfrac{\alpha_i}{\sigma_i} = \dfrac{\alpha_j}{\sigma_j}$
+
+\vskip 8pt
+
+Substituting into the MV rule:
+$$W_i = w \; \frac{1}{\sigma_{\varepsilon,i}}$$
+
+\vskip 8pt
+
+This equalizes the volatility contribution of each strategy:
+$$W_i \, \sigma_{\varepsilon,i} = W_j \, \sigma_{\varepsilon,j}$$
+
+\vskip 10pt
+
+\begin{itemize}
+\item Robust when you trust variance estimates but not return estimates
+\item Very popular in practice (Bridgewater, AQR)
+\end{itemize}
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{Minimum Variance rule}
+
+$$W_i = w \; [\Sigma_\varepsilon^{-1} \mathbf{1}]_i$$
+
+\vskip 8pt
+
+If uncorrelated: $\;W_i = w / \sigma_{\varepsilon,i}^2$
+
+\vskip 10pt
+
+\begin{itemize}
+\item Assumes all alphas are the same --- uses only variance information
+\item Solution to: $\;\min_W \text{Var}(W' R^e) \;\;\text{s.t.}\;\; \mathbf{1}'W = 1$
+\item Flip strategies so all have positive alpha before applying
+\end{itemize}
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{Variance Shrinkage rule}
+
+Shrink $\Sigma$ toward a simpler target:
+$$\hat{\Sigma}_\tau = (1 - \tau) \, \Sigma + \tau \, \bar{\sigma}^2 \, I$$
+
+\vskip 5pt
+
+where $\tau \in [0,1]$ and $\bar{\sigma}^2$ is the average idiosyncratic variance.
+
+\vskip 8pt
+
+Then apply MV or Min-Variance with $\hat{\Sigma}_\tau$:
+
+$$W_i = w \; \alpha \, \hat{\Sigma}_\tau^{-1}[i] \qquad \text{or} \qquad W_i = w \; \mathbf{1} \, \hat{\Sigma}_\tau^{-1}[i]$$
+
+\vskip 10pt
+
+\begin{itemize}
+\item Shrinks all variances toward the average, all correlations toward zero
+\item Stabilizes the covariance matrix --- fewer extreme weights
+\item Generally a good idea; in some sense this \textit{is} MV with a better $\Sigma$ estimator
+\end{itemize}
+
+\vskip 5pt
+
+\textit{See notebook: all six rules applied to FF6 factors, targeted at 16\% annual vol.}
+
+\end{frame}
+
+% ============================================================
+% SECTION: Portfolios and Factor models
+% ============================================================
+
+\begin{frame}{Portfolios and Factor models}
+
+Given $N$ assets with excess returns $R$, a factor model decomposes:
+$$R = A + B f + U$$
+
+\vskip 5pt
+
+where $A$ = alphas, $B$ = loadings, $f$ = factor return, $U$ = residuals ($E[U] = 0$).
+
+\vskip 10pt
+
+A portfolio with weights $W$ has return:
+$$r_p = W' R = W'(A + Bf + U)$$
+
+\vskip 10pt
+
+\textbf{Expected return:}
+$$E[r_p] = W' A + (W' B) \, E[f]$$
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{Variance decomposition}
+
+$$\text{Var}(r_p) = \underbrace{(W' B)^2 \, \text{Var}(f)}_{\text{systematic risk}} + \underbrace{W' \text{Var}(U) \, W}_{\text{idiosyncratic risk}}$$
+
+\vskip 10pt
+
+\begin{itemize}
+\item \textbf{Systematic share:} $(W'B)^2 \text{Var}(f) \;/\; \text{Var}(r_p)$
+\vskip 6pt
+\item Why not just use the in-sample variance of $r_p$ directly?
+
+$\Rightarrow$ Factor structure lets you estimate the covariance matrix with far fewer parameters --- critical when $N$ is large
+\vskip 6pt
+\item \textbf{Key assumption that fails:} residuals are uncorrelated across assets
+
+$\Rightarrow$ In practice, use multiple factors or allow for residual correlation structure
+\end{itemize}
+
+\vskip 5pt
+
+\textit{See notebook: CAPM regressions for SMB, HML, RMW, CMA, MOM; residual covariance matrix.}
+
+\end{frame}
+
+% ============================================================
+% SECTION: The rise of "pod shops"
+% ============================================================
+
+\begin{frame}{The rise of ``pod shops''}
+
+Traditional hedge funds: principal traders (Soros, Robertson, Tepper, Cohen, \ldots)
+
+\vskip 8pt
+
+Modern structure: \textbf{pod shops} (Citadel, Millennium)
+\begin{itemize}
+\item Ideas generated at the pod level (5--10 people per pod)
+\item Capital allocated by the principal; factor risk hedged centrally
+\end{itemize}
+
+\vskip 10pt
+
+\textbf{Why do pod traders work for Citadel instead of running their own fund?}
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{Pod shop math --- the $\sqrt{N}$ law}
+
+$N$ pods, each with Sharpe ratio $\text{sr}$ and uncorrelated residuals.
+
+\vskip 8pt
+
+Pool expected return: $\;E\left[\sum W_i^* r_i\right] = N \cdot \text{sr}^2$
+
+\vskip 5pt
+
+Pool variance: $\;\text{Var}\left[\sum W_i^* r_i\right] = N \cdot \text{sr}^2$
+
+\vskip 10pt
+
+\begin{beamercolorbox}[rounded=true,sep=8pt]{box1}
+$$\text{SR}_{\text{pool}} = \sqrt{N} \;\cdot\; \text{sr}_{\text{pod}}$$
+\end{beamercolorbox}
+
+\vskip 8pt
+
+\begin{itemize}
+\item Individually: wealth grows at rate $\sigma \cdot \text{sr}$
+\item In the pool: each pod's effective rate is $\sqrt{N} \cdot \sigma \cdot \text{sr}$
+\vskip 6pt
+\item \textcolor{red}{Finding a new uncorrelated idea is super valuable!}
+\vskip 6pt
+\item Marginal value of pod $N{+}1$: $\;\sigma \cdot \text{sr}_{\text{pool}} / N$ --- decreasing, but always positive
+\end{itemize}
+
+\end{frame}
+
+% ============================================================
+
+\begin{frame}{Pod shops --- caveats}
+
+This calculation \textbf{understates} the value of pooling:
+\begin{itemize}
+\item Higher SR $\Rightarrow$ more vol capacity without significant loss risk
+\item Wealth compounds faster
+\end{itemize}
+
+\vskip 10pt
+
+But it is also \textbf{not realistic}:
+\begin{itemize}
+\item Marginal pods are likely worse (lower SR)
+\item Pods are likely correlated with each other (shared factor exposures)
+\item Capital constraints and operational costs
+\end{itemize}
+
+\end{frame}
+
+% ============================================================
+% KEY TAKEAWAYS
+% ============================================================
+
+\begin{frame}{Key Takeaways}
+
+\begin{itemize}
+\item \textbf{Estimation risk matters.} MV weights are highly sensitive when signals are weak or assets are collinear --- always stress-test inputs.
+\vskip 6pt
+\item \textbf{Robust bet sizing.} Simple baselines ($1/N$, vol targeting, risk parity) often outperform noisy MV out of sample.
+\vskip 6pt
+\item \textbf{Shrinkage helps.} Regularizing $\Sigma$ (and sometimes $\mu$) stabilizes weights and improves out-of-sample SR.
+\vskip 6pt
+\item \textbf{Factor lens.} Decomposing risk by factor clarifies whether diversification is \textit{true} (low common exposures) or \textit{illusory} (correlated bets).
+\vskip 6pt
+\item \textbf{Pod shops.} Aggregating uncorrelated strategies scales SR by $\sqrt{N}$ --- the key economic logic behind the multi-PM model.
+\end{itemize}
+
+\end{frame}
+
+% ============================================================
+% APPENDIX
+% ============================================================
+\appendix
+\begin{frame}
+\begin{center}
+{\Large Appendix}
+\end{center}
+\end{frame}
+
+\begin{frame}{Bet sizing rules --- summary}
+
+\small
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Rule} & \textbf{Formula (uncorrelated)} & \textbf{When to use} \\
+\midrule
+Mean-Variance & $W_i = w \, \alpha_i / \sigma_i^2$ & Known moments \\
+$1/N$ & $W_i = \text{sign}(\alpha_i)/N$ & Reliable sign, noisy magnitude \\
+Proportional & $W_i = w \, \alpha_i$ & No leverage, trust means \\
+Risk Parity & $W_i = w / \sigma_i$ & Trust vol, not returns \\
+Min-Variance & $W_i = w / \sigma_i^2$ & All alphas similar \\
+Shrinkage & $W_i = w \, \alpha_i / \hat{\sigma}_{\tau,i}^2$ & Regularize noisy $\Sigma$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+\begin{frame}{References}
+
+\small
+\begin{itemize}
+\item DeMiguel, Garlappi \& Uppal (2009) --- Optimal versus naive diversification
+\item Ledoit \& Wolf (2004) --- Honey, I shrunk the sample covariance matrix
+\item Black \& Litterman (1992) --- Global portfolio optimization
+\item Asness, Frazzini \& Pedersen (2012) --- Leverage aversion and risk parity
+\end{itemize}
+
+\end{frame}
+
+\end{document}
