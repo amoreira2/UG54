@@ -231,8 +231,8 @@
 <li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">10. Capital Allocation II</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">11. Performance Evaluation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="MachineLearning_cc.html">12. Machine Learning in Finance</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels.html">13. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">13.10. 📊 Interpreting Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels_c.html">13. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">13.12. 📊 Interpreting Factor Models</a></li>
 
 
 
@@ -918,24 +918,19 @@ dates are doing all the heavy lifting. That is <strong>fragile</strong> performa
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">fractiontohalf</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fraction of observations to remove (greedily) to halve the Sharpe ratio.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fraction of highest returns you must remove to halve the Sharpe ratio.&quot;&quot;&quot;</span>
     <span class="n">SR_original</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">R</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
     <span class="n">target</span> <span class="o">=</span> <span class="n">SR_original</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
     <span class="n">R_rem</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># Remove from the highest return downward</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="n">R_rem</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">index</span>
     <span class="n">removed</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">while</span> <span class="n">R_rem</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">R_rem</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">target</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">R_rem</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="c1"># Try dropping each observation; find the one that lowers SR the most</span>
-        <span class="n">best_idx</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">best_sr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">R_rem</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
-            <span class="n">R_temp</span> <span class="o">=</span> <span class="n">R_rem</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-            <span class="n">sr_temp</span> <span class="o">=</span> <span class="n">R_temp</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">R_temp</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">sr_temp</span> <span class="o">&lt;</span> <span class="n">best_sr</span><span class="p">:</span>
-                <span class="n">best_sr</span> <span class="o">=</span> <span class="n">sr_temp</span>
-                <span class="n">best_idx</span> <span class="o">=</span> <span class="n">idx</span>
-        <span class="n">R_rem</span> <span class="o">=</span> <span class="n">R_rem</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">best_idx</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">R_rem</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">R_rem</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">target</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">R_rem</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">R_rem</span> <span class="o">=</span> <span class="n">R_rem</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
         <span class="n">removed</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">return</span> <span class="n">removed</span> <span class="o">/</span> <span class="n">T</span>
