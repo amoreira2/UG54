@@ -416,7 +416,7 @@ print(f"Bootstrap SE:  {SR_vol_boot(df_est['Mkt-RF'])[0]:.4f}")"""))
 # Fraction to half
 cells.append(mk_md("""### Fraction to Half
 
-How many observations must you remove to halve the Sharpe ratio? The algorithm is **greedy**: at each step, remove the single observation whose deletion decreases the SR the most. Repeat until SR drops below half its original value.
+How many of the best return observations must you remove to halve the Sharpe ratio? Sort returns from highest to lowest, then remove them one at a time starting from the top until SR drops below half its original value.
 
 > **💡 Key Insight:**
 >
@@ -424,24 +424,19 @@ How many observations must you remove to halve the Sharpe ratio? The algorithm i
 > dates are doing all the heavy lifting. That is **fragile** performance."""))
 
 cells.append(mk_code("""def fractiontohalf(R):
-    \"\"\"Fraction of observations to remove (greedily) to halve the Sharpe ratio.\"\"\"
+    \"\"\"Fraction of highest returns you must remove to halve the Sharpe ratio.\"\"\"
     SR_original = R.mean() / R.std()
     target = SR_original / 2
     T = len(R)
     R_rem = R.copy()
+    # Remove from the highest return downward
+    order = R_rem.sort_values(ascending=False).index
     removed = 0
 
-    while R_rem.mean() / R_rem.std() > target and len(R_rem) > 2:
-        # Try dropping each observation; find the one that lowers SR the most
-        best_idx = None
-        best_sr = np.inf
-        for idx in R_rem.index:
-            R_temp = R_rem.drop(idx)
-            sr_temp = R_temp.mean() / R_temp.std()
-            if sr_temp < best_sr:
-                best_sr = sr_temp
-                best_idx = idx
-        R_rem = R_rem.drop(best_idx)
+    for idx in order:
+        if R_rem.mean() / R_rem.std() <= target or len(R_rem) <= 2:
+            break
+        R_rem = R_rem.drop(idx)
         removed += 1
 
     return removed / T
