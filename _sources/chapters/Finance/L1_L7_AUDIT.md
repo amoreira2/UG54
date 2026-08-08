@@ -289,3 +289,80 @@ One pass over all seven notebooks can set both.
 5. **Language pass** (§3) — replacements, so roughly word-count-neutral, and several *shorten* the current text.
 6. **Prompt-it moments** (§4), one lecture at a time, starting with **P5 (L4)** — L4 is the longest lecture and the regression is the cleanest audit exercise in the course, so it buys the most.
 7. Content gaps M1–M7 as room allows; M8–M11 to the Appendix chapter and assignments.
+
+
+---
+
+## 5. Build log — prompt-it moments shipped 2026-08-08
+
+All eight are in and all seven notebooks execute. Structure per moment:
+
+```
+MD     transition + the question, no spec         [60–90 s, cold-call]
+CODE   MY_PROMPT = """…"""  then paste below      [visible, empty]
+CODE   🔒 the check — always runs                  [hidden]
+CODE   🔒 reference implementation                 [hidden, only where downstream needs it]
+MD     what the room got, and why answers differ
+```
+
+Hidden cells carry `#@title` (Colab collapses them in form mode) **and**
+`metadata.tags = ["hide-input"]` (JupyterBook). Reference cells are present in
+L2 (P3), L3, L4, L5, L6 and L7 because later cells depend on their variables;
+P1, P2 and P8 need none.
+
+### What the checks actually print — measured, not predicted
+
+| | Lecture | The trap | Wrong | Right |
+|---|---|---|---|---|
+| P1 | L1 | `auto_adjust` — dividends or not | price return | total return (their own stock, both printed) |
+| P2 | L2 | `shift(-1)` without `groupby` | **19,156** rows wrong | 1,357 (the calendar-gap rule) |
+| P3 | L2 | `ret` instead of `ret_fwd` | market = **25.49%/yr** | **15.74%/yr** |
+| P4 | L3 | NYSE cutoffs applied only to NYSE | **150** in the small bucket | **3,106** |
+| P5 | L4 | total instead of excess returns | α = **+13.83%/yr** | α = **+7.12%/yr** |
+| P6 | L5 | correlating characteristics, not strategies | Illiquidity vs Size = **0.07** | **0.92** |
+| P7 | L6 | one pooled regression instead of 251 | size t = **−11.69** | t = **−1.81** |
+| P8 | L7 | no renormalization after the merge | implied **−10.67%/yr** | **−16.38%/yr** |
+
+### Two predictions from §4c that the data corrected
+
+- **P5 was supposed to be about `add_constant`.** It isn't. Dropping the
+  intercept moves GE's β from 1.07 to 1.09 — worth a sentence, not a demo.
+  *Excess vs total returns* is the one that bites: α nearly doubles, because the
+  risk-free rate averaged 6.64%/yr over the sample and α absorbs it whole. The
+  cell prints all three specifications and leads with that.
+- **P8 was supposed to be `b = B′w`.** Both snapshots have full beta coverage
+  (16/16 and 9/9), so the renormalization never bites there. Approach C is where
+  it does: 8 of 16 holdings match, carrying 0.6515 of the book.
+
+**P6 turned out to be the best of the eight.** Illiquidity and Size correlate
+**0.07 as characteristics and 0.92 as strategies** — the raw numbers say two
+unrelated ideas, the portfolios say one trade. That single row is the lecture.
+
+### Cost
+
+| | start | after language | after prompts | lectures |
+|---|---|---|---|---|
+| L1 | 2,689 | 2,883 | 3,010 | 1.90 → 2.12 |
+| L2 | 2,965 | 3,224 | 3,280 | 2.09 → 2.31 |
+| L3 | 3,198 | 3,536 | 3,681 | 2.26 → 2.60 |
+| L4 | 3,468 | 3,985 | 4,095 | 2.45 → **2.89** |
+| L5 | 1,719 | 1,886 | 2,043 | 1.21 → 1.44 |
+| L6 | 2,198 | 2,276 | 2,436 | 1.55 → 1.72 |
+| L7 | 2,460 | 2,973 | 3,140 | 1.74 → **2.22** |
+| **total** | **18,697** | **20,763** | **21,685** | **13.19 → 15.30** |
+
+The prompt moments cost **+922 words** — about half what the language pass cost,
+because each one replaced a "here's what competent AI code looks like" block. But
+the block now holds **15.3 lectures of material in 7 slots**, up from 13.2. The
+word metric also cannot see that a prompt moment consumes *clock* well beyond its
+word count: 8–10 minutes each of writing, running and arguing. On that basis
+L1–L7 is closer to **17 lectures of wall-clock**, and a trim is no longer
+optional.
+
+### Before this is used in class
+
+**Pilot every prompt against Gemini-in-Colab.** The traps above are measured on
+*our* data — the wrong answers are real and the numbers are exact. What is not
+measured is whether the model actually falls into them. If Gemini writes
+`ret_fwd` and `groupby` unprompted, P2 and P3 have no payoff and need weaker
+prompts or different targets.

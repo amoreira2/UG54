@@ -495,7 +495,8 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#long-not-wide">Long, not wide</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-columns">The columns</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-there-are-two-return-columns">Why there are two return columns</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-ret-fwd-was-built-and-the-trap-it-hides">How <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> was built, and the trap it hides</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-build-it-yourself">Now build it yourself</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-answers-14-apart">Two answers, 14× apart</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-returns-actually-look-like">3. What Returns Actually Look Like <a id="distributions"></a></a><ul class="nav section-nav flex-column">
@@ -508,8 +509,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-portfolio-returns">🔄 Live Demo: Portfolio Returns <a id="demo1"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1 — The specification</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2 — Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-room-got">What the room got</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">Step 3 — Validate</a></li>
 </ul>
 </li>
@@ -744,48 +744,72 @@ look brilliant.</p>
 </div>
 </div>
 </section>
-<section id="how-ret-fwd-was-built-and-the-trap-it-hides">
-<h3>How <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> was built, and the trap it hides<a class="headerlink" href="#how-ret-fwd-was-built-and-the-trap-it-hides" title="Link to this heading">#</a></h3>
-<p>We gave you this column. When you build your own signal for the project you
-will have to shift a series yourself, and there is a trap waiting.</p>
-<p>The panel is <strong>stacked</strong> — one long column with every stock’s history end to
-end. A plain <code class="docutils literal notranslate"><span class="pre">df['ret'].shift(-1)</span></code> walks off the end of one stock and into the
-beginning of the next, so the last month of stock <em>n</em> silently becomes the
-first month of stock <em>n+1</em>.</p>
+<section id="now-build-it-yourself">
+<h3>Now build it yourself<a class="headerlink" href="#now-build-it-yourself" title="Link to this heading">#</a></h3>
+<p>We handed you <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>. For your own project you will have to make one, and
+there is a trap in the way.</p>
+<blockquote>
+<div><p><strong>🤔 The question.</strong> The panel is <strong>stacked</strong> — every stock’s history, end to
+end, in one column. You want, for each row, that stock’s return next month.
+What do you have to tell an AI so it doesn’t walk off the end of one company
+and into the beginning of the next?</p>
+</div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The wrong way and the right way, on the seam between two stocks</span>
-<span class="n">tiny</span> <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">permno</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10001</span><span class="p">])]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                    ← write your prompt here</span>
+<span class="s2">&quot;&quot;&quot;</span>
 
-<span class="n">tiny</span> <span class="o">=</span> <span class="n">tiny</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
-    <span class="n">naive</span>   <span class="o">=</span> <span class="n">tiny</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>                       <span class="c1"># ❌ ignores permno</span>
-    <span class="n">grouped</span> <span class="o">=</span> <span class="n">tiny</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>     <span class="c1"># ✅ resets each stock</span>
-
-<span class="n">seam</span> <span class="o">=</span> <span class="n">tiny</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">index</span>        <span class="c1"># last row of stock 1</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tiny</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">seam</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">seam</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span><span class="s1">&#39;naive&#39;</span><span class="p">,</span><span class="s1">&#39;grouped&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">On the last row of the first stock, `naive` reaches across into the next&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;company&#39;s first return. `grouped` correctly returns NaN.&quot;</span><span class="p">)</span>
+<span class="c1"># ---- paste the AI&#39;s code below. Call the result `my_fwd`. ----</span>
 </pre></div>
 </div>
 </div>
 </div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — run after you&#39;ve pasted yours</span>
+<span class="c1"># Both candidate implementations, scored against the column we shipped.</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">cand</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;df[&quot;ret&quot;].shift(-1)&#39;</span>                  <span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s1">&#39;df.groupby(&quot;permno&quot;)[&quot;ret&quot;].shift(-1)&#39;</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)}</span>
+<span class="k">try</span><span class="p">:</span>    <span class="n">cand</span><span class="p">[</span><span class="s1">&#39;your my_fwd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">my_fwd</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span> <span class="k">pass</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;implementation&#39;</span><span class="si">:</span><span class="s2">40s</span><span class="si">}{</span><span class="s1">&#39;rows wrong&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">52</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cand</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s2">40s</span><span class="si">}{</span><span class="nb">int</span><span class="p">(((</span><span class="n">a</span><span class="o">!=</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">~</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="o">.</span><span class="n">isna</span><span class="p">()))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="si">:</span><span class="s2">&gt;12,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">permno</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> stocks -&gt; </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">permno</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> places to leak.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+<section id="two-answers-14-apart">
+<h3>Two answers, 14× apart<a class="headerlink" href="#two-answers-14-apart" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">shift(-1)</span></code> without the <code class="docutils literal notranslate"><span class="pre">groupby</span></code> is wrong on <strong>19,156 rows</strong>. Not because it
+errors — it doesn’t — but because at every one of the 17,800 stock boundaries it
+reaches across into the next company’s first return.</p>
+<p>Grouping first leaves <strong>1,357</strong> differences, and those are not mistakes: our
+build only fills <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> when the next observation is the very next <em>calendar</em>
+month, so it also refuses to splice across a gap in a stock’s history. That is a
+second, stricter rule you would have to ask for explicitly.</p>
 <blockquote>
-<div><p><strong>⚠️ Caution: <code class="docutils literal notranslate"><span class="pre">groupby</span></code> before you <code class="docutils literal notranslate"><span class="pre">shift</span></code></strong></p>
+<div><p><strong>📌 Remember</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;permno&#39;</span><span class="p">)[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># ✅</span>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>                     <span class="c1"># ❌ crosses stocks</span>
 </pre></div>
 </div>
-<p>The mechanism is worth saying out loud: because the data is stacked, when you
-shift the first month of security <em>n</em> you get back the last month of security
-<em>n−1</em>. Grouping by <code class="docutils literal notranslate"><span class="pre">permno</span></code> correctly puts a missing value there instead,
-because that firm has no earlier row.</p>
-<p>The wrong version produces a full column of plausible numbers with a handful
-of nonsense values buried at every stock boundary — roughly 18,000 of them in
-this panel. Nothing errors, and the contamination is invisible in any summary
-statistic.</p>
-<p>Our build went further: it only fills <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> when the next observation is
-the very <strong>next calendar month</strong>, so a gap in a stock’s history never splices
-returns across a missing period either.</p>
+<p>19,156 plausible numbers scattered through 1.5 million rows. No summary
+statistic will show you they are there.</p>
 </div></blockquote>
 </section>
 </section>
@@ -994,39 +1018,69 @@ the names least able to absorb it.</p>
 <hr class="docutils" />
 <section id="live-demo-portfolio-returns">
 <h2>🔄 Live Demo: Portfolio Returns <a id="demo1"></a><a class="headerlink" href="#live-demo-portfolio-returns" title="Link to this heading">#</a></h2>
-<section id="step-1-the-specification">
-<h3>Step 1 — The specification<a class="headerlink" href="#step-1-the-specification" title="Link to this heading">#</a></h3>
+<p>We want, for each month, the return of a portfolio holding every stock in the
+market weighted by size. That is the US stock market, and you are about to build
+it from 1.5 million rows.</p>
 <blockquote>
-<div><p><strong>📝 Spec</strong></p>
-<p>Using <code class="docutils literal notranslate"><span class="pre">panel</span></code>, for each month compute the return of a portfolio that holds
-every available stock, weighted by market equity <code class="docutils literal notranslate"><span class="pre">me</span></code> observed at that month
-end, and earns each stock’s <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>. Return a monthly series indexed by
-date. Drop stock-months where either <code class="docutils literal notranslate"><span class="pre">me</span></code> or <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> is missing, <strong>before</strong>
-forming weights.</p>
+<div><p><strong>🤔 Before anyone writes anything.</strong> Say the request out loud, precisely
+enough that someone who has never seen this panel could implement it without
+asking you a question. What do they need to be told?</p>
 </div></blockquote>
-<p>What’s pinned down here, and what would a vague version have left open?</p>
-<ul class="simple">
-<li><p>✅ Which return column — the whole ballgame (pitfall 1)</p></li>
-<li><p>✅ Drop-then-weight ordering (pitfall 4)</p></li>
-<li><p>✅ What the output looks like</p></li>
-</ul>
-</section>
-<section id="step-2-implementation">
-<h3>Step 2 — Implementation<a class="headerlink" href="#step-2-implementation" title="Link to this heading">#</a></h3>
-<blockquote>
-<div><p><strong>🤖 AI prompt:</strong></p>
-<p><em>“Given a long DataFrame <code class="docutils literal notranslate"><span class="pre">panel</span></code> with columns permno, date, ret_fwd, me, group
-by date and compute the market-cap-weighted average of ret_fwd using me as
-weights. Drop rows with missing ret_fwd or me first. Return a Series indexed
-by date.”</em></p>
-</div></blockquote>
+<p>Three things, and only one of them is obvious:</p>
+<ol class="arabic simple">
+<li><p>Weight by <code class="docutils literal notranslate"><span class="pre">me</span></code> — obvious</p></li>
+<li><p><strong>Which return column</strong> — and this is the whole ballgame</p></li>
+<li><p>Whether you drop missing values <em>before</em> or <em>after</em> forming the weights</p></li>
+</ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># What competent AI-generated code looks like:</span>
-<span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">])</span>          <span class="c1"># drop FIRST (pitfall 4)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="c1"># Write the prompt first. Then paste what the AI gives you underneath.</span>
 
-<span class="n">vw</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-        <span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span>
+<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                    ← write your prompt here</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># ---- paste the AI&#39;s code below this line ----</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — run after you&#39;ve pasted yours</span>
+<span class="c1"># Two implementations of &quot;the value-weighted market return&quot;. One is right.</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">])</span>
+<span class="n">right</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span>
+
+<span class="n">d2</span>   <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">])</span>
+<span class="n">wrong</span> <span class="o">=</span> <span class="n">d2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;weights me at t, earn ret_fwd (t+1)&#39;</span><span class="si">:</span><span class="s2">40s</span><span class="si">}{</span><span class="n">right</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;8.2%</span><span class="si">}</span><span class="s2">/yr&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;weights me at t, earn ret     (t)  &#39;</span><span class="si">:</span><span class="s2">40s</span><span class="si">}{</span><span class="n">wrong</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;8.2%</span><span class="si">}</span><span class="s2">/yr&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  difference: </span><span class="si">{</span><span class="p">(</span><span class="n">wrong</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">-</span><span class="n">right</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">/yr of pure look-ahead&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Did your prompt rule the second one out?&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Reference implementation — needed by the rest of the notebook</span>
+<span class="c1"># The reference implementation. Later cells use `d`, `vw` and `ew`.</span>
+<span class="n">d</span>  <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">])</span>          <span class="c1"># drop FIRST (pitfall 4)</span>
+<span class="n">vw</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span>
 <span class="n">ew</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vw</span><span class="p">)</span><span class="si">}</span><span class="s2"> monthly observations&quot;</span><span class="p">)</span>
@@ -1035,7 +1089,21 @@ by date.”</em></p>
 </pre></div>
 </div>
 </div>
+</details>
 </div>
+<section id="what-the-room-got">
+<h3>What the room got<a class="headerlink" href="#what-the-room-got" title="Link to this heading">#</a></h3>
+<p>The two lines differ by <strong>9.75 percentage points a year</strong>. The look-ahead
+version says the US stock market returned <strong>25.5%/yr</strong> over 1980–2000 — a number
+that should stop you dead, and which nothing in the code or the output flags.</p>
+<p>Ask an AI to “compute the value-weighted market return from this panel” and you
+will very often get <code class="docutils literal notranslate"><span class="pre">np.average(g['ret'],</span> <span class="pre">weights=g['me'])</span></code>. It is elegant, it
+runs, and it is a time machine.</p>
+<blockquote>
+<div><p><strong>📌 The general form of this bug</strong></p>
+<p>Weights formed at <em>t</em>, returns earned at <em>t</em>. It will appear in every strategy
+you build this term, and it always makes the strategy look better.</p>
+</div></blockquote>
 </section>
 <section id="step-3-validate">
 <h3>Step 3 — Validate<a class="headerlink" href="#step-3-validate" title="Link to this heading">#</a></h3>
@@ -1427,7 +1495,8 @@ end, where this data really came from and how you’d pull it yourself.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#long-not-wide">Long, not wide</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-columns">The columns</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-there-are-two-return-columns">Why there are two return columns</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-ret-fwd-was-built-and-the-trap-it-hides">How <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> was built, and the trap it hides</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-build-it-yourself">Now build it yourself</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-answers-14-apart">Two answers, 14× apart</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-returns-actually-look-like">3. What Returns Actually Look Like <a id="distributions"></a></a><ul class="nav section-nav flex-column">
@@ -1440,8 +1509,7 @@ end, where this data really came from and how you’d pull it yourself.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-portfolio-returns">🔄 Live Demo: Portfolio Returns <a id="demo1"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1 — The specification</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2 — Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-room-got">What the room got</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">Step 3 — Validate</a></li>
 </ul>
 </li>

@@ -515,6 +515,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-your-stock-since-you-were-born">🔄 Live Demo: Your Stock Since You Were Born <a id="demo"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-specify">Step 1 — Specify</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implement">Step 2 — Implement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-gap-is">What the gap is</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">Step 3 — Validate</a></li>
 </ul>
 </li>
@@ -958,6 +959,8 @@ JPM, WMT, DIS.</p>
 </section>
 <section id="step-2-implement">
 <h3>Step 2 — Implement<a class="headerlink" href="#step-2-implement" title="Link to this heading">#</a></h3>
+<p>The prompt below is deliberately explicit. Read it against your three answers
+above and notice which of them it settles.</p>
 <blockquote>
 <div><p><strong>🤖 AI prompt</strong> <em>(paste into Gemini, then edit):</em></p>
 <p><em>“Using yfinance, download daily data for {STOCK} from {BIRTH_DATE} to
@@ -973,6 +976,49 @@ investment made at the first close. Print both, and plot the growth of
 </div>
 </div>
 </div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — run after you&#39;ve pasted yours</span>
+<span class="c1"># Your own stock, priced two ways: with dividends and splits, and without.</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">yfinance</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">yf</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">STOCK</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">BIRTH_DATE</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">END_DATE</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">auto_adjust</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">STOCK</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">BIRTH_DATE</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">END_DATE</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">auto_adjust</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">&#39;Close&#39;</span><span class="p">]</span>
+    <span class="n">tot</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">px</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">px</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">prc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">pr</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">pr</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">STOCK</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">px</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">px</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  total return  (auto_adjust=True) : </span><span class="si">{</span><span class="n">tot</span><span class="si">:</span><span class="s2">&gt;9.1%</span><span class="si">}</span><span class="s2">   $</span><span class="si">{</span><span class="n">INVESTMENT</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">tot</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;12,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  price return  (auto_adjust=False): </span><span class="si">{</span><span class="n">prc</span><span class="si">:</span><span class="s2">&gt;9.1%</span><span class="si">}</span><span class="s2">   $</span><span class="si">{</span><span class="n">INVESTMENT</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">prc</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;12,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  the dividends you&#39;d have dropped : $</span><span class="si">{</span><span class="n">INVESTMENT</span><span class="o">*</span><span class="p">(</span><span class="n">tot</span><span class="o">-</span><span class="n">prc</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;12,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  Which one did the AI give you? Check the argument, not the number.&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;yfinance unavailable right now —&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The point stands: ask which of the two you were handed.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+<section id="what-the-gap-is">
+<h3>What the gap is<a class="headerlink" href="#what-the-gap-is" title="Link to this heading">#</a></h3>
+<p>Same ticker, same dates, one keyword apart. Over a twenty-year horizon dividends
+are roughly a third of what US equities returned, and the two numbers above will
+not be close.</p>
+<p>Neither call errors. Neither prints a warning. <code class="docutils literal notranslate"><span class="pre">Close</span></code> and <code class="docutils literal notranslate"><span class="pre">Adj</span> <span class="pre">Close</span></code> are both
+perfectly good column names, and an AI asked for “the return of AAPL” has no way
+to know which one you meant unless you said.</p>
+<blockquote>
+<div><p><strong>🤔 Compare with your neighbour</strong></p>
+<p>Different stocks, different answers. Who would have done better — and could
+either of you have known that in advance? Hold onto that question; it’s most
+of the course.</p>
+</div></blockquote>
 </section>
 <section id="step-3-validate">
 <h3>Step 3 — Validate<a class="headerlink" href="#step-3-validate" title="Link to this heading">#</a></h3>
@@ -1449,6 +1495,7 @@ stock returns into a portfolio.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-your-stock-since-you-were-born">🔄 Live Demo: Your Stock Since You Were Born <a id="demo"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-specify">Step 1 — Specify</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implement">Step 2 — Implement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-gap-is">What the gap is</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">Step 3 — Validate</a></li>
 </ul>
 </li>

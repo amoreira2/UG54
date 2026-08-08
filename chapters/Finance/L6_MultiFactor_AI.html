@@ -501,6 +501,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-ways-to-estimate-the-same-thing">3. Two Ways to Estimate the Same Thing <a id="twoways"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fama-macbeth">4. Fama-MacBeth <a id="fm"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#three-to-six-times-too-confident">Three to six times too confident</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-the-output">Reading the output</a></li>
 </ul>
 </li>
@@ -909,13 +910,34 @@ characteristics. Keep the slopes.</p></li>
 <li><p><strong>Average the slopes over time.</strong> The t-statistic comes from the <em>time series</em>
 of monthly slopes — not from any single regression.</p></li>
 </ol>
-<p>Step 2 is the clever part. Each monthly regression has thousands of observations
-and would report absurdly tight standard errors, but those observations are
-correlated within the month. Using the variation of the slope <strong>across months</strong>
-sidesteps that entirely.</p>
+<blockquote>
+<div><p><strong>🤔 Before we run it — why not just do it in one go?</strong></p>
+<p>You have a million stock-months. Stack them all and run <strong>one</strong> regression of
+<code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> on the characteristics. Same coefficients, far simpler, and a
+million observations instead of 251.</p>
+<p>What is wrong with that? Say what step 2 is protecting you from.</p>
+</div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                    ← write your prompt here</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># ---- paste the AI&#39;s code below ----</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Reference implementation — later cells use `d`, `Z` and `G`</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;BM&#39;</span><span class="p">,</span><span class="s1">&#39;GP&#39;</span><span class="p">,</span><span class="s1">&#39;Mom12m&#39;</span><span class="p">]:</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">),</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;logME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
@@ -949,7 +971,48 @@ sidesteps that entirely.</p>
 </pre></div>
 </div>
 </div>
+</details>
 </div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — run after the Fama-MacBeth cell above</span>
+<span class="c1"># Same characteristics, same sample. Fama-MacBeth vs one pooled regression.</span>
+<span class="n">pooled</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">Z</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;characteristic&#39;</span><span class="si">:</span><span class="s2">14s</span><span class="si">}{</span><span class="s1">&#39;slope/yr&#39;</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}{</span><span class="s1">&#39;FM t&#39;</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}{</span><span class="s1">&#39;pooled t&#39;</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}{</span><span class="s1">&#39;inflation&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">57</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">Z</span><span class="p">:</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">G</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+    <span class="n">ft</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">v</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+    <span class="n">pt</span> <span class="o">=</span> <span class="n">pooled</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="si">:</span><span class="s2">14s</span><span class="si">}{</span><span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;10.2%</span><span class="si">}{</span><span class="n">ft</span><span class="si">:</span><span class="s2">&gt;9.2f</span><span class="si">}{</span><span class="n">pt</span><span class="si">:</span><span class="s2">&gt;11.2f</span><span class="si">}{</span><span class="nb">abs</span><span class="p">(</span><span class="n">pt</span><span class="o">/</span><span class="n">ft</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;11.1f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  pooled uses </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> observations; Fama-MacBeth uses </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">G</span><span class="p">)</span><span class="si">}</span><span class="s2"> monthly slopes.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="three-to-six-times-too-confident">
+<h3>Three to six times too confident<a class="headerlink" href="#three-to-six-times-too-confident" title="Link to this heading">#</a></h3>
+<p>The slopes barely move. The <strong>t-statistics inflate by 3–6×</strong>, and one of them
+changes the answer: size goes from <strong>t = −1.81</strong>, which does not clear the bar,
+to <strong>t = −11.69</strong>, which would be among the most certain facts in finance.</p>
+<p>The pooled regression believes it has a million independent observations. It
+does not. Within any single month, stocks move together — that is the entire
+premise of this course — so those thousands of rows carry far less information
+than their count suggests. Averaging the <em>monthly</em> slopes and taking the
+standard error across months prices that in, because months really are close to
+independent.</p>
+<blockquote>
+<div><p><strong>📌 Remember</strong></p>
+<p>Step 2 is not a formality. It is the only thing standing between you and a
+t-statistic six times larger than the data supports.</p>
+</div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
@@ -968,6 +1031,7 @@ sidesteps that entirely.</p>
 </div>
 </div>
 </div>
+</section>
 <section id="reading-the-output">
 <h3>Reading the output<a class="headerlink" href="#reading-the-output" title="Link to this heading">#</a></h3>
 <p>Each row is the return to a portfolio that is <strong>+1 standard deviation</strong> of that
@@ -1289,6 +1353,7 @@ and how you would ever know whether any of it is real.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-ways-to-estimate-the-same-thing">3. Two Ways to Estimate the Same Thing <a id="twoways"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fama-macbeth">4. Fama-MacBeth <a id="fm"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#three-to-six-times-too-confident">Three to six times too confident</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-the-output">Reading the output</a></li>
 </ul>
 </li>

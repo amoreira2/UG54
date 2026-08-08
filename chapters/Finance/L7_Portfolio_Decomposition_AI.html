@@ -508,6 +508,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-c-characteristic-adjusted">6. Approach C — Characteristic-Adjusted <a id="chars"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-by-0-65-and-nothing-says-so">Scaled by 0.65 and nothing says so</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-value-investor-was-holding-growth">The value investor was holding growth</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-practitioners-like-this-and-where-it-breaks">Why practitioners like this, and where it breaks</a></li>
 </ul>
@@ -986,9 +987,33 @@ profitable. So:</p>
 </ol>
 <p>Subtract it from the actual return and you have a <strong>characteristic-adjusted
 return</strong>. It is hedging, without ever estimating a time-series beta.</p>
+<blockquote>
+<div><p><strong>🤔 One thing to settle first.</strong> You are about to merge 16 holdings onto a
+characteristics table. Some of them will not match — Wesco and GATX are not in
+the signal files. What do you do with the weights of the names that survive,
+and what happens to your answer if you don’t?</p>
+</div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                    ← write your prompt here</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># ---- paste the AI&#39;s code below ----</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Reference implementation — defines `snap`, `Z`, `prem`</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">s_</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;BM&#39;</span><span class="p">,</span><span class="s1">&#39;GP&#39;</span><span class="p">,</span><span class="s1">&#39;Mom12m&#39;</span><span class="p">]:</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">s_</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">),</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="p">[</span><span class="s1">&#39;logME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
@@ -1017,7 +1042,45 @@ return</strong>. It is hedging, without ever estimating a time-series beta.</p>
 </pre></div>
 </div>
 </div>
+</details>
 </div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — run after the cell above</span>
+<span class="c1"># The characteristic score, with and without renormalizing over matched names.</span>
+<span class="n">raw</span>  <span class="o">=</span> <span class="p">(</span><span class="n">snap</span><span class="p">[</span><span class="n">Z</span><span class="p">]</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>          <span class="c1"># weights as-is</span>
+<span class="n">norm</span> <span class="o">=</span> <span class="n">raw</span> <span class="o">/</span> <span class="n">snap</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>                           <span class="c1"># renormalized</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;matched </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">snap</span><span class="p">)</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="si">}</span><span class="s2"> holdings, carrying </span><span class="si">{</span><span class="n">snap</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> of the book</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">16s</span><span class="si">}{</span><span class="s1">&#39;size z&#39;</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}{</span><span class="s1">&#39;value z&#39;</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}{</span><span class="s1">&#39;implied return&#39;</span><span class="si">:</span><span class="s2">&gt;17s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">53</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;renormalized&#39;</span><span class="si">:</span><span class="s2">16s</span><span class="si">}{</span><span class="n">norm</span><span class="p">[</span><span class="s1">&#39;logME_z&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;10.2f</span><span class="si">}{</span><span class="n">norm</span><span class="p">[</span><span class="s1">&#39;BM_z&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;10.2f</span><span class="si">}{</span><span class="p">(</span><span class="n">norm</span><span class="o">*</span><span class="n">prem</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;16.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;as-is&#39;</span><span class="si">:</span><span class="s2">16s</span><span class="si">}{</span><span class="n">raw</span><span class="p">[</span><span class="s1">&#39;logME_z&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;10.2f</span><span class="si">}{</span><span class="n">raw</span><span class="p">[</span><span class="s1">&#39;BM_z&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;10.2f</span><span class="si">}{</span><span class="p">(</span><span class="n">raw</span><span class="o">*</span><span class="n">prem</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;16.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="scaled-by-0-65-and-nothing-says-so">
+<h3>Scaled by 0.65 and nothing says so<a class="headerlink" href="#scaled-by-0-65-and-nothing-says-so" title="Link to this heading">#</a></h3>
+<p>The eight matched holdings carry <strong>65% of the book</strong>. Leave the weights alone and
+every characteristic score is multiplied by 0.65: the portfolio’s size score
+reads <strong>1.59</strong> instead of <strong>2.45</strong>, and the implied return comes out
+<strong>−10.7%/yr</strong> instead of <strong>−16.4%</strong>.</p>
+<p>Both are plausible. Neither errors. The difference is one division that an AI
+has no reason to insert unless you asked for it, because nothing in “compute the
+weighted average characteristic” implies the weights are incomplete.</p>
+<blockquote>
+<div><p><strong>📌 The habit</strong></p>
+<p>After every merge, print what the weights sum to. It is one line and it is the
+only thing that would have caught this.</p>
+</div></blockquote>
+</section>
 <section id="the-value-investor-was-holding-growth">
 <h3>The value investor was holding growth<a class="headerlink" href="#the-value-investor-was-holding-growth" title="Link to this heading">#</a></h3>
 <p>Read the z-scores. The portfolio is <strong>+2.45 standard deviations on size</strong> — these
@@ -1410,6 +1473,7 @@ trade — and how you would ever know whether the result is real.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-c-characteristic-adjusted">6. Approach C — Characteristic-Adjusted <a id="chars"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-by-0-65-and-nothing-says-so">Scaled by 0.65 and nothing says so</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-value-investor-was-holding-growth">The value investor was holding growth</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-practitioners-like-this-and-where-it-breaks">Why practitioners like this, and where it breaks</a></li>
 </ul>

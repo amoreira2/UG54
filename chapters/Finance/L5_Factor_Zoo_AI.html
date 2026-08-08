@@ -491,6 +491,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-comparing-factors">🛡️ Pitfall Checklist for Comparing Factors <a id="pitfalls"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-how-much-do-these-overlap">🔄 Live Demo: How Much Do These Overlap? <a id="demo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#look-at-the-middle-row">Look at the middle row</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-average-first-then-the-picture">Read the average first, then the picture</a></li>
 </ul>
 </li>
@@ -773,22 +774,41 @@ not the correlation matrix.</p>
 <hr class="docutils" />
 <section id="live-demo-how-much-do-these-overlap">
 <h2>🔄 Live Demo: How Much Do These Overlap? <a id="demo"></a><a class="headerlink" href="#live-demo-how-much-do-these-overlap" title="Link to this heading">#</a></h2>
-<p>We have 30 signals. Let’s build every one of them as a long-short and look at
-what they actually do.</p>
+<p>Thirty signals from thirty published papers. Are they thirty bets?</p>
 <blockquote>
-<div><p><strong>📝 Spec</strong></p>
-<p>For each signal file, form the standard long-short — NYSE breakpoints, value
-weighted, top decile minus bottom decile, using <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> — align all of them
-on common months, and compute the pairwise correlation matrix of the <em>return
-series</em>.</p>
-</div></blockquote>
-<blockquote>
-<div><p><strong>🤔 Predict.</strong> 30 strategies from 30 different published papers. What do you
-expect the average pairwise correlation to be?</p>
+<div><p><strong>🤔 The question, and it is the whole lecture.</strong> To find out whether two
+signals are the same thing, <strong>what exactly do you correlate?</strong> You have two
+candidates in front of you and they are not equivalent:</p>
+<ul class="simple">
+<li><p>the <strong>characteristics</strong> — one number per stock per month, sitting in the
+signal files</p></li>
+<li><p>the <strong>strategies</strong> — one number per month, the long-short return each
+signal produces</p></li>
+</ul>
+<p>Commit to one before you read on. And predict the average pairwise
+correlation while you’re at it.</p>
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">long_short</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                    ← write your prompt here</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># ---- paste the AI&#39;s code below ----</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Reference implementation — `long_short()` and the 30-signal build</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">long_short</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">sig</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">)</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">sig</span><span class="p">,</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
     <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="n">sig</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
@@ -814,7 +834,50 @@ expect the average pairwise correlation to be?</p>
 </pre></div>
 </div>
 </div>
+</details>
 </div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — run after the long_short cell below</span>
+<span class="c1"># Three pairs, measured both ways.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">char_corr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">)</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">j</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;pair&#39;</span><span class="si">:</span><span class="s2">30s</span><span class="si">}{</span><span class="s1">&#39;CHARACTERISTICS&#39;</span><span class="si">:</span><span class="s2">&gt;18s</span><span class="si">}{</span><span class="s1">&#39;STRATEGIES&#39;</span><span class="si">:</span><span class="s2">&gt;13s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">61</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;MaxRet&#39;</span><span class="p">,</span><span class="s1">&#39;RealizedVol&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;Illiquidity&#39;</span><span class="p">,</span><span class="s1">&#39;Size&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;BM&#39;</span><span class="p">,</span><span class="s1">&#39;EP&#39;</span><span class="p">)]:</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">long_short</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">long_short</span><span class="p">(</span><span class="n">b</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; &amp; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="si">:</span><span class="s2">30s</span><span class="si">}{</span><span class="n">char_corr</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;18.2f</span><span class="si">}{</span><span class="n">rc</span><span class="si">:</span><span class="s2">&gt;13.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="look-at-the-middle-row">
+<h3>Look at the middle row<a class="headerlink" href="#look-at-the-middle-row" title="Link to this heading">#</a></h3>
+<p><strong>Illiquidity and Size correlate 0.07 as characteristics and 0.92 as
+strategies.</strong></p>
+<p>As raw numbers they look like unrelated ideas — Amihud’s price-impact measure
+and log market cap are barely related stock by stock. Sort on each, form the
+long-shorts, and you are running <strong>the same trade</strong>. The liquidity premium and
+the size premium are not two findings in this sample.</p>
+<p>That is the answer to the question. <strong>You correlate the strategies.</strong> The
+characteristics tell you how the numbers are distributed; only the portfolios
+tell you what you are holding — and a portfolio is what you own.</p>
+<blockquote>
+<div><p><strong>🤖 AI-Era Insight</strong></p>
+<p>“Correlate these signals” is the natural request and the natural code is
+<code class="docutils literal notranslate"><span class="pre">pivot</span></code> then <code class="docutils literal notranslate"><span class="pre">.corr()</span></code> on the characteristics. It runs in one line, and on the
+middle row it would have told you those two strategies were independent.</p>
+</div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">C</span>  <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
@@ -851,6 +914,7 @@ expect the average pairwise correlation to be?</p>
 </div>
 </div>
 </div>
+</section>
 <section id="read-the-average-first-then-the-picture">
 <h3>Read the average first, then the picture<a class="headerlink" href="#read-the-average-first-then-the-picture" title="Link to this heading">#</a></h3>
 <p>The <strong>average pairwise correlation is about +0.05</strong> — essentially zero. Taken at
@@ -1198,6 +1262,7 @@ estimate the whole thing.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-comparing-factors">🛡️ Pitfall Checklist for Comparing Factors <a id="pitfalls"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-how-much-do-these-overlap">🔄 Live Demo: How Much Do These Overlap? <a id="demo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#look-at-the-middle-row">Look at the middle row</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-average-first-then-the-picture">Read the average first, then the picture</a></li>
 </ul>
 </li>

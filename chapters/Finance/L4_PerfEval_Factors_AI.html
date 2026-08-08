@@ -501,8 +501,8 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decomposition">The decomposition</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-it-says-about-expected-returns">What it says about expected returns</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-same-equation-does-two-different-jobs">The same equation does two different jobs</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1 — The specification</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2 — Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-ask-for-it">Now ask for it</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-one-that-bites">The one that bites</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate-then-read-it">Step 3 — Validate, then read it</a></li>
 </ul>
 </li>
@@ -942,28 +942,83 @@ for the risk model and <em>bad</em> news for the alpha hunter, because it means 
 is left over.</p>
 </div></blockquote>
 </section>
-<section id="step-1-the-specification">
-<h3>Step 1 — The specification<a class="headerlink" href="#step-1-the-specification" title="Link to this heading">#</a></h3>
+<section id="now-ask-for-it">
+<h3>Now ask for it<a class="headerlink" href="#now-ask-for-it" title="Link to this heading">#</a></h3>
+<p>You have GE’s returns (permno 12060) and Ken French’s factors in <code class="docutils literal notranslate"><span class="pre">ff</span></code>. You want
+α, β and R².</p>
 <blockquote>
-<div><p><strong>📝 Spec</strong></p>
-<p>Take GE (permno 12060) monthly returns 1980–2000 from the panel. Subtract the
-risk-free rate <code class="docutils literal notranslate"><span class="pre">RF</span></code> to get excess returns. Regress on <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span></code> <strong>with an
-intercept</strong>, using statsmodels. Report α annualized (×12), β, R², the t-stat
-on α, and the standard deviation of the residuals annualized (×√12).</p>
-</div></blockquote>
-</section>
-<section id="step-2-implementation">
-<h3>Step 2 — Implementation<a class="headerlink" href="#step-2-implementation" title="Link to this heading">#</a></h3>
-<blockquote>
-<div><p><strong>🤖 AI prompt:</strong></p>
-<p><em>“Given a monthly Series of GE returns and a DataFrame ff with columns Mkt-RF
-and RF, compute GE’s excess return, regress it on Mkt-RF with an intercept
-using statsmodels OLS, and print annualized alpha, beta, R-squared, the t-stat
-on alpha, and annualized residual volatility.”</em></p>
+<div><p><strong>🤔 The question.</strong> This is four lines of statsmodels and every one of you
+could have an answer in fifteen seconds. So the fifteen seconds are not the
+point. <strong>What has to be in the request for the number to mean anything?</strong></p>
+<p>Look at the pitfall table above and pick the two you would bet an AI gets
+wrong if you don’t say them out loud.</p>
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ge</span>  <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">permno</span> <span class="o">==</span> <span class="mi">12060</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;1980-01-31&#39;</span><span class="p">:</span><span class="s1">&#39;2000-12-31&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                    ← write your prompt here</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># ---- paste the AI&#39;s code below ----</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — run after you&#39;ve pasted yours</span>
+<span class="c1"># The same regression, specified three ways.</span>
+<span class="n">ge</span> <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">permno</span> <span class="o">==</span> <span class="mi">12060</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;1980-01-31&#39;</span><span class="p">:</span><span class="s1">&#39;2000-12-31&#39;</span><span class="p">]</span>
+<span class="n">ex</span> <span class="o">=</span> <span class="p">(</span><span class="n">ge</span> <span class="o">-</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">Xm</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ex</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
+
+<span class="n">runs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;excess returns, with intercept   (correct)&#39;</span><span class="p">:</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">Xm</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">(),</span>
+        <span class="s1">&#39;TOTAL returns, with intercept    (pitfall 1)&#39;</span><span class="p">:</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">ge</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ex</span><span class="o">.</span><span class="n">index</span><span class="p">],</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">Xm</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">(),</span>
+        <span class="s1">&#39;excess returns, NO intercept     (pitfall 2)&#39;</span><span class="p">:</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">Xm</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;specification&#39;</span><span class="si">:</span><span class="s2">46s</span><span class="si">}{</span><span class="s1">&#39;beta&#39;</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">&#39;alpha/yr&#39;</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">65</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">runs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">al</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span> <span class="k">if</span> <span class="s1">&#39;const&#39;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">params</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">:</span><span class="s2">46s</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}{</span><span class="n">al</span><span class="si">:</span><span class="s2">&gt;10.2%</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;  (forced)&quot;</span> <span class="k">if</span> <span class="s1">&#39;const&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">params</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  mean risk-free rate over the sample: </span><span class="si">{</span><span class="n">ff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ex</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">/yr&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+<section id="the-one-that-bites">
+<h3>The one that bites<a class="headerlink" href="#the-one-that-bites" title="Link to this heading">#</a></h3>
+<p>Dropping the intercept barely moves β here — 1.07 to 1.09. Worth knowing, not
+fatal.</p>
+<p><strong>Forgetting to subtract the risk-free rate nearly doubles the alpha</strong>, from
+<strong>+7.1%</strong> to <strong>+13.8%</strong> a year. Look at the last line: the risk-free rate
+averaged 6.7%/yr over 1980–2000, and with nothing to absorb it, α swallowed it
+whole. You would have reported that GE beat the market by 14 points a year and
+half of it would have been T-bills.</p>
+<blockquote>
+<div><p><strong>🤖 AI-Era Insight</strong></p>
+<p>Neither version errors. Both print a beta near 1.07 and an R² near 0.56, so the
+output <em>looks</em> the same. The only defence is having said “excess returns” in
+the request — which is why the specification is the skill and the four lines
+are not.</p>
+</div></blockquote>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Reference implementation — later sections use `y`, `m`, `alpha_m`, `beta`, `idio`</span>
+<span class="n">ge</span>  <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">permno</span> <span class="o">==</span> <span class="mi">12060</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;1980-01-31&#39;</span><span class="p">:</span><span class="s1">&#39;2000-12-31&#39;</span><span class="p">]</span>
 <span class="n">y</span>   <span class="o">=</span> <span class="p">(</span><span class="n">ge</span> <span class="o">-</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>                       <span class="c1"># excess return (pitfall 1)</span>
 <span class="n">X</span>   <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">])</span>     <span class="c1"># intercept (pitfall 2)</span>
 <span class="n">m</span>   <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
@@ -979,6 +1034,7 @@ on alpha, and annualized residual volatility.”</em></p>
 </pre></div>
 </div>
 </div>
+</details>
 </div>
 </section>
 <section id="step-3-validate-then-read-it">
@@ -1627,8 +1683,8 @@ the other factors people use, where they came from, and how you’d choose.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decomposition">The decomposition</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-it-says-about-expected-returns">What it says about expected returns</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-same-equation-does-two-different-jobs">The same equation does two different jobs</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1 — The specification</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2 — Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-ask-for-it">Now ask for it</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-one-that-bites">The one that bites</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate-then-read-it">Step 3 — Validate, then read it</a></li>
 </ul>
 </li>

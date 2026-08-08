@@ -501,6 +501,8 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#breakpoints-and-the-size-disaster">2. Breakpoints, and the Size Disaster <a id="breakpoints"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fix-nyse-breakpoints">The fix: NYSE breakpoints</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#say-it-precisely">Say it precisely</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-word-twenty-fold">One word, twenty-fold</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#watch-what-it-does-to-the-size-effect">Watch what it does to the size effect</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sit-with-that-table">Sit with that table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-it-happens">Why it happens</a></li>
@@ -838,13 +840,82 @@ microcap tail.</p>
 <p>This is what Fama and French do, and what almost every published paper does.
 It is not a cosmetic choice.</p>
 </section>
-<section id="watch-what-it-does-to-the-size-effect">
-<h3>Watch what it does to the size effect<a class="headerlink" href="#watch-what-it-does-to-the-size-effect" title="Link to this heading">#</a></h3>
-<p>Banz (1981) reported that small stocks outperform. Let’s test that four ways —
-each one a defensible choice a competent analyst might make.</p>
+<section id="say-it-precisely">
+<h3>Say it precisely<a class="headerlink" href="#say-it-precisely" title="Link to this heading">#</a></h3>
+<p>That paragraph is easy to nod along to and hard to specify. Try.</p>
+<blockquote>
+<div><p><strong>🤔 The question.</strong> “Compute the cutoffs from NYSE stocks only, then apply
+them to everything.” Write that as an instruction someone could implement
+without asking you what you meant. There is one word doing all the work.</p>
+</div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d0</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                                    ← write your prompt here</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># ---- paste the AI&#39;s code below ----</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — run after you&#39;ve pasted yours</span>
+<span class="c1"># Three readings of &quot;NYSE breakpoints&quot;, scored by who ends up in the small bucket.</span>
+<span class="n">d0</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+<span class="n">q</span>  <span class="o">=</span> <span class="p">(</span><span class="n">d0</span><span class="p">[</span><span class="n">d0</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span>
+        <span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">&#39;lo&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">&#39;hi&#39;</span><span class="p">}))</span>
+<span class="n">a</span>  <span class="o">=</span> <span class="n">d0</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+
+<span class="n">n_right</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">me</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="o">.</span><span class="n">lo</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">nyse</span>    <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">n_wrong</span> <span class="o">=</span> <span class="n">nyse</span><span class="p">[</span><span class="n">nyse</span><span class="o">.</span><span class="n">me</span> <span class="o">&lt;=</span> <span class="n">nyse</span><span class="o">.</span><span class="n">lo</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">dec</span>     <span class="o">=</span> <span class="n">d0</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
+<span class="n">n_qcut</span>  <span class="o">=</span> <span class="n">d0</span><span class="p">[</span><span class="n">dec</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;reading&#39;</span><span class="si">:</span><span class="s2">52s</span><span class="si">}{</span><span class="s1">&#39;stocks in the small bucket&#39;</span><span class="si">:</span><span class="s2">&gt;27s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">79</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;cutoffs from NYSE, applied to EVERY stock  (correct)&#39;</span><span class="si">:</span><span class="s2">52s</span><span class="si">}{</span><span class="n">n_right</span><span class="si">:</span><span class="s2">&gt;27,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;cutoffs from NYSE, applied to NYSE only    (wrong)&#39;</span><span class="si">:</span><span class="s2">52s</span><span class="si">}{</span><span class="n">n_wrong</span><span class="si">:</span><span class="s2">&gt;27,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;no breakpoints at all -- plain qcut over everything&#39;</span><span class="si">:</span><span class="s2">52s</span><span class="si">}{</span><span class="n">n_qcut</span><span class="si">:</span><span class="s2">&gt;27,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+</section>
+<section id="one-word-twenty-fold">
+<h3>One word, twenty-fold<a class="headerlink" href="#one-word-twenty-fold" title="Link to this heading">#</a></h3>
+<p>“Compute from NYSE, apply to everything” is two clauses and people merge them.
+Filter to NYSE and you are sorting <strong>150 large companies</strong> into a “small” bucket
+— a portfolio of large-cap NYSE names labelled small-cap. It runs. It produces a
+t-statistic. It is not the size effect.</p>
+<p>The correct reading sweeps in <strong>3,106</strong> names, half the market, because “small
+relative to NYSE” is a much wider net than “smallest tenth of everything,” which
+is the <strong>597</strong> microcaps in row three.</p>
+<p>Now the four-way table, with the reference implementation.</p>
+</section>
+<section id="watch-what-it-does-to-the-size-effect">
+<h3>Watch what it does to the size effect<a class="headerlink" href="#watch-what-it-does-to-the-size-effect" title="Link to this heading">#</a></h3>
+<p>Banz (1981) reported that small stocks outperform. Four ways, each a defensible
+choice a competent analyst might make.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Reference implementation — `size_spread()`, used again in the Challenge</span>
+<span class="n">d0</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">size_spread</span><span class="p">(</span><span class="n">breakpoints</span><span class="p">,</span> <span class="n">weighting</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Small-minus-big, 1980-2000. Returns (annualized mean, vol, t, n_small).&quot;&quot;&quot;</span>
@@ -876,6 +947,7 @@ each one a defensible choice a competent analyst might make.</p>
 </pre></div>
 </div>
 </div>
+</details>
 </div>
 </section>
 <section id="sit-with-that-table">
@@ -1566,6 +1638,8 @@ a return” from “this strategy earns a return <em>you couldn’t have got for
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#breakpoints-and-the-size-disaster">2. Breakpoints, and the Size Disaster <a id="breakpoints"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fix-nyse-breakpoints">The fix: NYSE breakpoints</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#say-it-precisely">Say it precisely</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-word-twenty-fold">One word, twenty-fold</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#watch-what-it-does-to-the-size-effect">Watch what it does to the size effect</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sit-with-that-table">Sit with that table</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-it-happens">Why it happens</a></li>
