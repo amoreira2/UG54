@@ -617,14 +617,19 @@ factor model gives you alpha.</p>
 <h2>1. The Sort Recipe <a id="recipe"></a><a class="headerlink" href="#the-sort-recipe" title="Link to this heading">#</a></h2>
 <p>Last week you built one portfolio holding everything. Today you build a
 portfolio that expresses a <strong>view</strong>.</p>
-<p>The setup: you have a number for every stock in every month — a <em>signal</em>. Book-
-to-market, past return, profitability, anything. You believe stocks with a high
-value of that number will outperform stocks with a low value. How do you turn
-that belief into a portfolio?</p>
+<p>The setup: you have a number for every stock in every month — a <em>signal</em>. It can
+come from accounting data, from past returns, from the text of earnings calls,
+from ownership records, from short interest, from satellite images of parking
+lots. <strong>Anything.</strong> Three things have to be true and nothing else does: you have
+a value for every stock on every date, it varies across firms, and you have some
+theory of how it relates to expected returns.</p>
+<p>You believe stocks with a high value of that number will outperform stocks with
+a low value. How do you turn that belief into a portfolio?</p>
 <blockquote>
 <div><p><strong>The recipe — five steps, and it never changes</strong></p>
 <ol class="arabic simple">
-<li><p><strong>Rank</strong> every stock each month by the signal</p></li>
+<li><p><strong>Rank</strong> every stock each month by the signal — <em>within</em> that month, never
+across the whole sample. You are grading on a curve, by cohort</p></li>
 <li><p><strong>Bucket</strong> them into groups (deciles is standard)</p></li>
 <li><p><strong>Weight</strong> within each bucket (equal or value)</p></li>
 <li><p><strong>Average</strong> each bucket’s <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> to get that bucket’s return</p></li>
@@ -649,8 +654,12 @@ matter in practice:</p>
 <p>Long the top decile, short the bottom, in equal dollars. The weights sum to
 <strong>zero</strong> — exactly the structure you met in Lecture 1 when you computed an
 excess return. It costs nothing to enter, so what comes out is a <em>spread</em>, not
-a return on capital. That’s why we can compare it across strategies of
-different sizes.</p>
+a return on capital.</p>
+<p>Insisting that each leg’s weights sum to one is what gives you a clear notion of
+<strong>book size</strong>. If you run the long-short at 100×, you know exactly what that
+means: buy $100 of the long leg, sell $100 of the short. Without that
+normalization the number you report is scaled by an arbitrary constant and is
+not comparable to anyone else’s.</p>
 </section>
 <section id="from-names-to-characteristics">
 <h3>From names to characteristics<a class="headerlink" href="#from-names-to-characteristics" title="Link to this heading">#</a></h3>
@@ -675,6 +684,12 @@ into the <em>value</em> portfolio. Now, with AI, it’s back in growth.</p>
 value strategy held it when it was cheap and dropped it when it wasn’t —
 without anyone forming an opinion about Microsoft.</p>
 </div></blockquote>
+<p>But the recipe is not magic, and it is worth knowing what failure looks like.
+Sort stocks into 26 portfolios by the first letter of the ticker and you will
+get no spread in average returns at all — each portfolio will look like the
+market, only more volatile, because you have thrown away diversification to buy
+nothing. The machinery runs identically either way. <strong>The characteristic has to
+capture some real economics</strong>; the sort only harvests what is already there.</p>
 </section>
 </section>
 <hr class="docutils" />

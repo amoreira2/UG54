@@ -499,13 +499,17 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#look-at-the-standard-errors">Look at the standard errors</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-b-bottom-up">4. Approach B — Bottom-Up <a id="bottomup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-b-bottom-up">4. Approach B — Bottom-Up <a id="bottomup"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-long-a-window">How long a window?</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#splitting-the-risk">5. Splitting the Risk <a id="risk"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-things-worth-pausing-on">Two things worth pausing on</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-c-characteristic-adjusted">6. Approach C — Characteristic-Adjusted <a id="chars"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-value-investor-was-holding-growth">The value investor was holding growth</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-practitioners-like-this-and-where-it-breaks">Why practitioners like this, and where it breaks</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-trade-offs">7. The Trade-Offs <a id="tradeoffs"></a></a><ul class="nav section-nav flex-column">
@@ -887,6 +891,36 @@ for years.</p>
 <p>That is why risk systems are built bottom-up. A risk manager needs today’s
 exposure, not a five-year average.</p>
 </div></blockquote>
+<p>The rule of thumb is one sentence: <strong>for high-turnover portfolios bottom-up
+tracks exposures far better, because it refreshes at the holding level; for
+stable portfolios top-down is simpler and avoids the noise of estimating a beta
+for every name.</strong></p>
+<section id="how-long-a-window">
+<h3>How long a window?<a class="headerlink" href="#how-long-a-window" title="Link to this heading">#</a></h3>
+<p>Notice what we just chose without discussing it: five years of monthly data, and
+a name is dropped if it has fewer than 48 months. That is a real decision and it
+has a real trade-off. There is no reason to believe a firm’s beta is stable —
+Berkshire’s holdings were bought decades apart and the businesses changed — so:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Long window</strong></p></td>
+<td><p>more precision, <em>if</em> the beta really is constant</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Short window</strong></p></td>
+<td><p>captures time-variation, at the cost of noise</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The working conventions are <strong>1–2 years on daily data</strong> and <strong>about 5 years on
+monthly</strong>, which is where our 60 months comes from. It is a convention, not a
+result. Change it and every number in this section moves.</p>
+</section>
 </section>
 <hr class="docutils" />
 <section id="splitting-the-risk">
@@ -1005,9 +1039,33 @@ nothing about the prices you paid.</p>
 <blockquote>
 <div><p><strong>⚠️ Caution: coverage</strong></p>
 <p>Only 8 of the 16 positions have characteristics — the smaller and stranger
-names (Wesco, GATX) aren’t in the signal files. We renormalized the weights
-over what’s left, which quietly turns this into a decomposition of the <em>large</em>
-holdings only.</p>
+names (Wesco, GATX) aren’t in the signal files. Those 8 carry <strong>65%</strong> of the
+book, and we renormalized the weights over them, which quietly turns this into
+a decomposition of the <em>large</em> holdings only. Skip that renormalization and
+every score, and the implied return, comes out scaled by 0.65.</p>
+</div></blockquote>
+</section>
+<section id="why-practitioners-like-this-and-where-it-breaks">
+<h3>Why practitioners like this, and where it breaks<a class="headerlink" href="#why-practitioners-like-this-and-where-it-breaks" title="Link to this heading">#</a></h3>
+<p><strong>Why they like it.</strong> No time-series betas, so none of the window problems from
+the last section. Characteristics can change freely, because you re-estimate
+date by date and the model adapts instantly. And it scales — sector, country,
+currency are all just more columns in the regression.</p>
+<p><strong>Where it breaks.</strong> Two places, and both matter.</p>
+<p><em>It ignores covariances.</em> Characteristic-neutral is <strong>not</strong> factor-neutral. A
+firm the data calls “retail” can co-move with tech regardless of what its
+book-to-market says. Setting your characteristic scores to zero does not set
+your risk to zero, and this method has no way to see the difference.</p>
+<p><em>It overloads the smallest firms.</em> OLS weights every observation equally, and
+most stocks are tiny. The premia we just used were estimated with a few thousand
+microcaps pulling on them as hard as Coca-Cola. The standard fixes are weighted
+least squares on market cap, or restricting the estimation to the largest 20% of
+firms. We did neither — that is the honest caveat on the −16.4%.</p>
+<blockquote>
+<div><p><strong>📌 Remember: complements, not substitutes</strong></p>
+<p>Characteristics are observable, easy to work with and instantly current.
+Factors capture the actual co-movement structure. Neither one dominates, and
+the professional answer is to run both and look at where they disagree.</p>
 </div></blockquote>
 </section>
 </section>
@@ -1343,13 +1401,17 @@ trade — and how you would ever know whether the result is real.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#look-at-the-standard-errors">Look at the standard errors</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-b-bottom-up">4. Approach B — Bottom-Up <a id="bottomup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-b-bottom-up">4. Approach B — Bottom-Up <a id="bottomup"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-long-a-window">How long a window?</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#splitting-the-risk">5. Splitting the Risk <a id="risk"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-things-worth-pausing-on">Two things worth pausing on</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-c-characteristic-adjusted">6. Approach C — Characteristic-Adjusted <a id="chars"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-value-investor-was-holding-growth">The value investor was holding growth</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-practitioners-like-this-and-where-it-breaks">Why practitioners like this, and where it breaks</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-trade-offs">7. The Trade-Offs <a id="tradeoffs"></a></a><ul class="nav section-nav flex-column">

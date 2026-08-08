@@ -661,10 +661,19 @@ use pre-joined signals rather than doing that merge by hand.</p>
 <p>Notice the shape: one row per <strong>stock-month</strong>, not one column per stock. This is
 a <em>stacked</em> or <em>long</em> panel, and it is how essentially all cross-sectional
 finance data is stored.</p>
-<p>Why not a wide matrix with dates down and tickers across? Because the set of
-stocks changes every month. Companies IPO, get acquired, go bankrupt. A wide
-matrix would be mostly missing values and would need reshaping every time the
-universe changed.</p>
+<p>Why not a wide matrix, dates down and tickers across? A rectangular frame needs
+two coordinates — row and column — to identify one asset’s return on one date.
+That is easier to eyeball, and it breaks twice over here.</p>
+<p>It breaks on <strong>variables</strong>: one wide frame holds exactly one quantity, so you
+would need a separate frame for returns, another for market equity, another for
+each signal. By the time you have thirty characteristics you have thirty frames
+to keep aligned.</p>
+<p>It breaks on <strong>assets</strong>: the set of stocks changes every month — companies IPO,
+get acquired, go bankrupt — so the matrix would be mostly empty and would need
+reshaping every time the universe changed.</p>
+<p>Stacked, you need two coordinates in <em>columns</em> — <code class="docutils literal notranslate"><span class="pre">date</span></code> and <code class="docutils literal notranslate"><span class="pre">permno</span></code> — to
+identify a firm-month, and a third, the column name, to pick the variable. Every
+new signal is one more column, not one more dataframe.</p>
 <blockquote>
 <div><p><strong>🐍 Python Insight: <code class="docutils literal notranslate"><span class="pre">groupby('date')</span></code></strong></p>
 <p>Long format means “do something to each month’s cross-section” is
@@ -766,6 +775,10 @@ first month of stock <em>n+1</em>.</p>
 <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>                     <span class="c1"># ❌ crosses stocks</span>
 </pre></div>
 </div>
+<p>The mechanism is worth saying out loud: because the data is stacked, when you
+shift the first month of security <em>n</em> you get back the last month of security
+<em>n−1</em>. Grouping by <code class="docutils literal notranslate"><span class="pre">permno</span></code> correctly puts a missing value there instead,
+because that firm has no earlier row.</p>
 <p>The wrong version produces a full column of plausible numbers with a handful
 of nonsense values buried at every stock boundary — roughly 18,000 of them in
 this panel. Nothing errors, and the contamination is invisible in any summary
@@ -963,10 +976,18 @@ scheme drifts away from its target as prices move and has to be traded back.</p>
 <p>That is the entire reason index funds work, and why the first one could charge
 almost nothing. Hold this thought for Lecture 16, when we put a price on
 turnover.</p>
+<p>There is a second advantage, and it is the one that will keep coming back. By
+buying in proportion to market cap you <strong>never have to build a large position in
+a tiny stock</strong>. Equal weighting does the opposite: it forces the same dollars
+into the 6,000th-largest company as into General Electric. Those portfolios are
+very hard to trade, and the alphas people report from them are mostly a mirage
+unless the universe is restricted to large caps.</p>
 <blockquote>
 <div><p><strong>📌 Remember</strong></p>
-<p>Value-weighted → zero turnover from price moves.
-Equal-weighted → you must sell winners and buy losers every single month.</p>
+<p>Value-weighted → zero turnover from price moves, and no position you can’t get
+out of.
+Equal-weighted → you must sell winners and buy losers every single month, in
+the names least able to absorb it.</p>
 </div></blockquote>
 </section>
 </section>
