@@ -1,0 +1,1640 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Sorts, Breakpoints, and Long-Short Portfolios &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/L3_Sorts_AI';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/L3_Sorts_AI.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="IntrotoReturns_c.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">4.11. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">4.12. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Timing_c.html">5. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">5.6. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">5.7. Volatility Timing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModels_c.html">6. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="PortfolioMath_c.html">7. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1_c.html">7.13. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationI_cc.html">8. Capital Allocation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="crosssectionalequitystrategies.html">9. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">9.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">9.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">10. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance_evaluation_c.html">11. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MachineLearning_cc.html">12. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels_c.html">13. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">13.13. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="RiskManagement.html">14. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TradingCosts.html">15. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LeverageandShorting.html">16. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LLMs.html">17. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">18. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">19. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">19.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment2.html">19.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment3.html">19.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment4_c.html">19.6. Assignment 4</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment5.html">19.8. Assignment 5</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Finance/L3_Sorts_AI.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/L3_Sorts_AI.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/L3_Sorts_AI.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Sorts, Breakpoints, and Long-Short Portfolios</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-3">Lecture 3</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-plan">📋 Today’s Plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sort-recipe">1. The Sort Recipe <a id="recipe"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-decile-portfolios-and-not-just-a-regression">Why decile portfolios and not just a regression?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-is-a-self-financed-position">Step 5 is a self-financed position</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-names-to-characteristics">From names to characteristics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-sorts">🛡️ Pitfall Checklist for Sorts <a id="pitfalls"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-sorting-on-value">🔄 Live Demo: Sorting on Value <a id="demo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1 — The specification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2 — Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">Step 3 — Validate</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#breakpoints-and-the-size-disaster">2. Breakpoints, and the Size Disaster <a id="breakpoints"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fix-nyse-breakpoints">The fix: NYSE breakpoints</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#watch-what-it-does-to-the-size-effect">Watch what it does to the size effect</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sit-with-that-table">Sit with that table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-it-happens">Why it happens</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-second-piece-of-evidence-the-extremes-didn-t-trade">A second piece of evidence: the extremes didn’t trade</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#look-at-the-shape-of-that">Look at the shape of that</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-go-back-and-look-at-the-value-demo">Now go back and look at the value demo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-ten-buckets">3. Why Ten Buckets? <a id="tradeoff"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-real-bug-in-real-data">4. A Real Bug in Real Data <a id="infinities"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-sort-on-it-two-ways">Now sort on it — two ways</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-implementations-two-failures-zero-errors">Two implementations, two failures, zero errors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fix-and-the-habit">The fix, and the habit</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-pick-your-own-signal">🛠️ Hands-On: Pick Your Own Signal <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#your-task">Your task</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-did-the-room-find">What did the room find?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-size-four-ways">🎯 Challenge: Size, Four Ways <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-the-four-t-statistics">Q1 — The four t-statistics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-how-many-stocks-are-in-the-small-bucket">Q2 — How many stocks are in the small bucket?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-memo">Q3 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">Next class</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">📎 Appendix <a id="appendix"></a></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="sorts-breakpoints-and-long-short-portfolios">
+<h1>Sorts, Breakpoints, and Long-Short Portfolios<a class="headerlink" href="#sorts-breakpoints-and-long-short-portfolios" title="Link to this heading">#</a></h1>
+<section id="lecture-3">
+<h2>Lecture 3<a class="headerlink" href="#lecture-3" title="Link to this heading">#</a></h2>
+</section>
+<section id="learning-objectives">
+<h2>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of today you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Turn any firm characteristic into a portfolio</strong> using the sort recipe —
+rank, bucket, weight, average, spread</p></li>
+<li><p><strong>Build a long-short portfolio</strong> and explain why its weights sum to zero</p></li>
+<li><p><strong>Explain what NYSE breakpoints are for</strong> and why nearly every published
+paper uses them</p></li>
+<li><p><strong>Show that implementation choices change the answer</strong> — including the sign</p></li>
+<li><p><strong>Recognize when a spread is an artifact of your implementation</strong> rather than
+a property of the signal</p></li>
+</ol>
+</section>
+<section id="today-s-plan">
+<h2>📋 Today’s Plan<a class="headerlink" href="#today-s-plan" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#recipe"><span class="xref myst">The sort recipe</span></a> (8 min)</p></li>
+<li><p><a class="reference internal" href="#pitfalls"><span class="xref myst">Pitfall checklist</span></a> (3 min)</p></li>
+<li><p><a class="reference internal" href="#demo"><span class="xref myst">🔄 Live Demo: sorting on value</span></a> (10 min)</p></li>
+<li><p><a class="reference internal" href="#breakpoints"><span class="xref myst">Breakpoints, and the size disaster</span></a> (14 min)</p></li>
+<li><p><a class="reference internal" href="#tradeoff"><span class="xref myst">Why ten buckets?</span></a> (7 min)</p></li>
+<li><p><a class="reference internal" href="#infinities"><span class="xref myst">A real bug in real data</span></a> (7 min)</p></li>
+<li><p><a class="reference internal" href="#ho1"><span class="xref myst">🛠️ Hands-On: pick your own signal</span></a></p></li>
+<li><p><a class="reference internal" href="#challenge"><span class="xref myst">🎯 Challenge: size, four ways</span></a> — <em>homework</em></p></li>
+<li><p><a class="reference internal" href="#takeaways"><span class="xref myst">Key takeaways</span></a></p></li>
+</ol>
+<blockquote>
+<div><p><strong>📎 Winsorizing and z-scoring</strong> live in the Appendix —
+<code class="docutils literal notranslate"><span class="pre">chapters/Appendix/SignalHygiene_AI.ipynb</span></code>. Ranking is scale-free so a sort
+doesn’t need them, but you will if you combine two signals for Assignment 1.</p>
+<p><strong>📎 Sharpe and information ratios</strong> moved to Lecture 4, <em>Introduction to
+Performance Evaluation</em>, where they sit with the appraisal ratio once a
+factor model gives you alpha.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2>🛠️ Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Setup — run this first</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-whitegrid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span><span class="p">;</span> <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="n">BASE</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data&quot;</span>
+<span class="n">panel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/panel_backbone_1980_2000.parquet&quot;</span><span class="p">)</span>
+<span class="n">menu</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signal_menu.csv&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;panel: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows, </span><span class="si">{</span><span class="n">panel</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s2"> months&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;menu : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="si">}</span><span class="s2"> signals available</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">menu</span><span class="p">[[</span><span class="s1">&#39;Acronym&#39;</span><span class="p">,</span> <span class="s1">&#39;Authors&#39;</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">,</span> <span class="s1">&#39;Cat.Economic&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="the-sort-recipe">
+<h2>1. The Sort Recipe <a id="recipe"></a><a class="headerlink" href="#the-sort-recipe" title="Link to this heading">#</a></h2>
+<p>Last week you built one portfolio holding everything. Today you build a
+portfolio that expresses a <strong>view</strong>.</p>
+<p>The setup: you have a number for every stock in every month — a <em>signal</em>. Book-
+to-market, past return, profitability, anything. You believe stocks with a high
+value of that number will outperform stocks with a low value. How do you turn
+that belief into a portfolio?</p>
+<blockquote>
+<div><p><strong>The recipe — five steps, and it never changes</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Rank</strong> every stock each month by the signal</p></li>
+<li><p><strong>Bucket</strong> them into groups (deciles is standard)</p></li>
+<li><p><strong>Weight</strong> within each bucket (equal or value)</p></li>
+<li><p><strong>Average</strong> each bucket’s <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> to get that bucket’s return</p></li>
+<li><p><strong>Spread</strong> — go long the top bucket, short the bottom</p></li>
+</ol>
+</div></blockquote>
+<p>Every factor you have ever heard of — value, momentum, quality, low-volatility
+— is this recipe applied to a different column. That is genuinely all there is
+to it.</p>
+<section id="why-decile-portfolios-and-not-just-a-regression">
+<h3>Why decile portfolios and not just a regression?<a class="headerlink" href="#why-decile-portfolios-and-not-just-a-regression" title="Link to this heading">#</a></h3>
+<p>You could regress returns on the signal. Sorting has three advantages that
+matter in practice:</p>
+<ul class="simple">
+<li><p>It is <strong>non-parametric</strong> — no assumption that the relationship is linear</p></li>
+<li><p>It shows you the <strong>shape</strong> — is the effect in the extremes, or monotone?</p></li>
+<li><p>The output <strong>is a portfolio</strong>, with a return you could actually have earned</p></li>
+</ul>
+</section>
+<section id="step-5-is-a-self-financed-position">
+<h3>Step 5 is a self-financed position<a class="headerlink" href="#step-5-is-a-self-financed-position" title="Link to this heading">#</a></h3>
+<p>Long the top decile, short the bottom, in equal dollars. The weights sum to
+<strong>zero</strong> — exactly the structure you met in Lecture 1 when you computed an
+excess return. It costs nothing to enter, so what comes out is a <em>spread</em>, not
+a return on capital. That’s why we can compare it across strategies of
+different sizes.</p>
+</section>
+<section id="from-names-to-characteristics">
+<h3>From names to characteristics<a class="headerlink" href="#from-names-to-characteristics" title="Link to this heading">#</a></h3>
+<p>This is the move that defines quantitative investing.</p>
+<p>A discretionary analyst says <em>“I like Apple, because tariffs will hurt its
+competitors more.”</em> A quant says <em>“build a tariff-exposure characteristic, sort
+every stock on it, and hold the whole top decile.”</em></p>
+<p>The second version is the same idea, made diversified and repeatable. You are
+no longer betting on a company; you are betting on a <strong>property</strong>, held across
+hundreds of companies at once, and you find out whether the property pays.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight: the portfolios churn, and that’s the point</strong></p>
+<p>Sorting doesn’t buy a fixed list of firms. Membership turns over as companies
+change, which is exactly what makes it a bet on the characteristic rather than
+on the names.</p>
+<p>Microsoft is the standard illustration. Small in the early 80s, so it sat in
+the small-cap bucket. Gigantic by the late 90s, so it moved to the large-cap
+bucket. Priced enormously above book value during the tech boom → the <em>growth</em>
+(low book-to-market) portfolio. Valuation collapsed after 2000 → it migrated
+into the <em>value</em> portfolio. Now, with AI, it’s back in growth.</p>
+<p>One company. Four decades. It has been in nearly every bucket we sort on. A
+value strategy held it when it was cheap and dropped it when it wasn’t —
+without anyone forming an opinion about Microsoft.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="pitfall-checklist-for-sorts">
+<h2>🛡️ Pitfall Checklist for Sorts <a id="pitfalls"></a><a class="headerlink" href="#pitfall-checklist-for-sorts" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Pitfall</p></th>
+<th class="head"><p>What goes wrong</p></th>
+<th class="head"><p>🔍 How to detect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><strong>Sorting on the signal at <em>t</em>, measuring <code class="docutils literal notranslate"><span class="pre">ret</span></code> at <em>t</em></strong></p></td>
+<td><p>Look-ahead. Inflates everything, sometimes enormously</p></td>
+<td><p>Are you using <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>?</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p><strong>Equal-count deciles over all stocks</strong></p></td>
+<td><p>The bottom decile becomes ~600 microcaps that no one could trade</p></td>
+<td><p>How many stocks are in the extreme buckets, and how big are they?</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><strong>Equal-weighting inside buckets</strong></p></td>
+<td><p>Tiny firms get the same weight as Apple</p></td>
+<td><p>Is a <code class="docutils literal notranslate"><span class="pre">weights=</span></code> argument present?</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><strong>Ranking across the whole panel instead of within each month</strong></p></td>
+<td><p>You compare 1985’s book-to-market to 1999’s</p></td>
+<td><p>Is <code class="docutils literal notranslate"><span class="pre">groupby('date')</span></code> in the ranking step?</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><strong>Dropping missing signal values after bucketing</strong></p></td>
+<td><p>Bucket sizes become unequal and the spread is mismeasured</p></td>
+<td><p>Drop first, then rank</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p><strong>Reporting only the spread</strong></p></td>
+<td><p>A “great” long-short may be entirely a bad short leg you couldn’t execute</p></td>
+<td><p>Always print both legs separately</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>🤖 AI-Era Insight</strong></p>
+<p>Ask for “a decile sort on this signal” and you will get <code class="docutils literal notranslate"><span class="pre">pd.qcut(x,</span> <span class="pre">10)</span></code> over
+the full cross-section, equal-weighted, every time. That is pitfalls 2 and 3
+together, and as you’ll see in Section 3 it can flip the sign of your
+result.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="live-demo-sorting-on-value">
+<h2>🔄 Live Demo: Sorting on Value <a id="demo"></a><a class="headerlink" href="#live-demo-sorting-on-value" title="Link to this heading">#</a></h2>
+<p>Book-to-market — book value divided by market value. High means the market
+prices the firm cheaply relative to its accounting value. Graham and Dodd in
+1934, Stattman in 1980, Fama and French in 1992.</p>
+<section id="step-1-the-specification">
+<h3>Step 1 — The specification<a class="headerlink" href="#step-1-the-specification" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Spec</strong></p>
+<p>Merge the <code class="docutils literal notranslate"><span class="pre">BM</span></code> signal onto the panel. Within <strong>each month</strong>, rank stocks by
+<code class="docutils literal notranslate"><span class="pre">BM</span></code> and cut into 10 equal-count buckets. For each bucket and month, compute
+the equal-weighted average of <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>. Report each decile’s annualized mean
+return and the annualized decile-10-minus-decile-1 spread with its t-statistic.
+Drop rows with missing <code class="docutils literal notranslate"><span class="pre">BM</span></code>, <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>, or <code class="docutils literal notranslate"><span class="pre">me</span></code> before ranking.</p>
+</div></blockquote>
+</section>
+<section id="step-2-implementation">
+<h3>Step 2 — Implementation<a class="headerlink" href="#step-2-implementation" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>🤖 AI prompt:</strong></p>
+<p><em>“Merge signal df onto panel on permno and date. Drop missing. Within each
+date, use pd.qcut on the signal to make 10 buckets labelled 0-9. Group by date
+and bucket, take the mean of ret_fwd. Compute the time series of bucket 9
+minus bucket 0, and report its annualized mean and Newey-West-free t-stat.”</em></p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/BM.parquet&quot;</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BM&#39;</span><span class="p">,</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+
+<span class="c1"># rank WITHIN each month (pitfall 4)</span>
+<span class="n">d</span><span class="p">[</span><span class="s1">&#39;decile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;BM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
+
+<span class="n">bucket</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;decile&#39;</span><span class="p">])[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+<span class="n">ls</span> <span class="o">=</span> <span class="p">(</span><span class="n">bucket</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">bucket</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Annualized mean return by book-to-market decile (1 = growth, 10 = value)&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  D</span><span class="si">{</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">&lt;2d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">bucket</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">7.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">D10 - D1 : </span><span class="si">{</span><span class="n">ls</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">/yr&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;t-stat   : </span><span class="si">{</span><span class="n">ls</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">ls</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">))</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;months   : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">),</span> <span class="n">bucket</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Book-to-market decile&#39;</span><span class="p">);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mean return, annualized&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;The sort&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">ls</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;darkorange&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.8</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Growth of $1&#39;</span><span class="p">);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Long-short D10 - D1&#39;</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3-validate">
+<h3>Step 3 — Validate<a class="headerlink" href="#step-3-validate" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>🤔 Read the bar chart before the t-stat.</strong></p>
+<p>Is the pattern <strong>monotone</strong> — does each decile beat the one below it? A
+monotone sort is much stronger evidence than a big spread between the two
+extremes. If only D10 and D1 are unusual and the middle is flat, you may be
+looking at two small groups of odd firms rather than a pervasive relationship.</p>
+</div></blockquote>
+<p>Also check both legs separately (pitfall 6): a spread built entirely from a
+disastrous short leg is a different claim from one where both sides contribute.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="breakpoints-and-the-size-disaster">
+<h2>2. Breakpoints, and the Size Disaster <a id="breakpoints"></a><a class="headerlink" href="#breakpoints-and-the-size-disaster" title="Link to this heading">#</a></h2>
+<p>We used <code class="docutils literal notranslate"><span class="pre">pd.qcut</span></code> — equal-count deciles over every stock in the market. That
+seems like the neutral choice. It is not.</p>
+<p>Recall from last week: there are about 6,000 stocks in this market, and the
+largest 10 are 20% of total market value. The market is enormously skewed. So
+an equal-count bottom decile is <strong>600 of the smallest companies in America</strong> —
+firms worth a few million dollars, trading a few thousand dollars a day.</p>
+<section id="the-fix-nyse-breakpoints">
+<h3>The fix: NYSE breakpoints<a class="headerlink" href="#the-fix-nyse-breakpoints" title="Link to this heading">#</a></h3>
+<p>Compute the cutoffs using <strong>only NYSE-listed stocks</strong>, then apply those cutoffs
+to everything. NYSE firms are larger and more established, so the resulting
+buckets are defined relative to a sane benchmark rather than relative to the
+microcap tail.</p>
+<p>This is what Fama and French do, and what almost every published paper does.
+It is not a cosmetic choice.</p>
+</section>
+<section id="watch-what-it-does-to-the-size-effect">
+<h3>Watch what it does to the size effect<a class="headerlink" href="#watch-what-it-does-to-the-size-effect" title="Link to this heading">#</a></h3>
+<p>Banz (1981) reported that small stocks outperform. Let’s test that four ways —
+each one a defensible choice a competent analyst might make.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d0</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">size_spread</span><span class="p">(</span><span class="n">breakpoints</span><span class="p">,</span> <span class="n">weighting</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Small-minus-big, 1980-2000. Returns (annualized mean, vol, t, n_small).&quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">d0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">breakpoints</span> <span class="o">==</span> <span class="s1">&#39;nyse&#39;</span><span class="p">:</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span>
+               <span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span> <span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">&#39;lo&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">&#39;hi&#39;</span><span class="p">}))</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">me</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">me</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dec</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dec</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dec</span> <span class="o">==</span> <span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">notna</span><span class="p">()]</span>
+    <span class="n">agg</span> <span class="o">=</span> <span class="p">((</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span> <span class="k">if</span> <span class="n">weighting</span> <span class="o">==</span> <span class="s1">&#39;vw&#39;</span>
+           <span class="k">else</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">agg</span><span class="p">)</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">g</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)),</span> <span class="n">n</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SMALL MINUS BIG, 1980-2000 — four defensible implementations</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;breakpoints&#39;</span><span class="si">:</span><span class="s2">16s</span><span class="si">}{</span><span class="s1">&#39;weights&#39;</span><span class="si">:</span><span class="s2">10s</span><span class="si">}{</span><span class="s1">&#39;return/yr&#39;</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}{</span><span class="s1">&#39;vol&#39;</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">&#39;t-stat&#39;</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}{</span><span class="s1">&#39;n small&#39;</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">64</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">bp</span><span class="p">,</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;all&#39;</span><span class="p">,</span><span class="s1">&#39;all stocks&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nyse&#39;</span><span class="p">,</span><span class="s1">&#39;NYSE only&#39;</span><span class="p">)]:</span>
+    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ew&#39;</span><span class="p">,</span><span class="s1">&#39;vw&#39;</span><span class="p">]:</span>
+        <span class="n">m</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">size_spread</span><span class="p">(</span><span class="n">bp</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lbl</span><span class="si">:</span><span class="s2">16s</span><span class="si">}{</span><span class="n">w</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">:</span><span class="s2">10s</span><span class="si">}{</span><span class="n">m</span><span class="si">:</span><span class="s2">&gt;10.1%</span><span class="si">}{</span><span class="n">v</span><span class="si">:</span><span class="s2">&gt;8.1%</span><span class="si">}{</span><span class="n">t</span><span class="si">:</span><span class="s2">&gt;9.2f</span><span class="si">}{</span><span class="n">n</span><span class="si">:</span><span class="s2">&gt;10.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="sit-with-that-table">
+<h3>Sit with that table<a class="headerlink" href="#sit-with-that-table" title="Link to this heading">#</a></h3>
+<p>The same signal. The same 6,000 stocks. The same 252 months. And the answer runs
+from <strong>+20.7% a year with a t-statistic of 3.94</strong> — which would be one of the
+great anomalies in finance — to <strong>−6.4% a year with t = −1.93</strong>, which says the
+opposite.</p>
+<p>Nobody cheated. All four are choices a competent analyst might defend.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<p>The implementation choices <em>are</em> the result. When someone shows you a
+long-short return, “what were your breakpoints and how did you weight?” is
+not a technical footnote — it can be the entire finding.</p>
+</div></blockquote>
+</section>
+<section id="why-it-happens">
+<h3>Why it happens<a class="headerlink" href="#why-it-happens" title="Link to this heading">#</a></h3>
+<p>Look at the last column. With all-stock deciles the small bucket holds about
+<strong>597</strong> firms — the very tiniest in the market. Equal-weighted, that portfolio
+is dominated by companies worth a few million dollars.</p>
+<p>With NYSE breakpoints, “small” means small <em>relative to NYSE</em>, which sweeps in
+about <strong>3,106</strong> names — half the market — and the extreme microcap tail no
+longer drives the average.</p>
+<blockquote>
+<div><p><strong>⚠️ Caution: the +20.7% is real in the data and uninvestable in the world</strong></p>
+<p>Nothing is wrong with the arithmetic. That portfolio requires buying equal
+dollar amounts of 600 of the smallest listed companies in America and
+rebalancing monthly. The bid-ask spreads alone would consume most of it, and
+that’s before you ask whether you could buy at all. We quantify this in
+Lecture 16.</p>
+</div></blockquote>
+<p>This is also the answer to something you saw last week: equal-weighting lost to
+value-weighting over these twenty years. The size premium Banz published in
+1981 does not survive contact with sensible implementation choices over
+1980–2000.</p>
+</section>
+<section id="a-second-piece-of-evidence-the-extremes-didn-t-trade">
+<h3>A second piece of evidence: the extremes didn’t trade<a class="headerlink" href="#a-second-piece-of-evidence-the-extremes-didn-t-trade" title="Link to this heading">#</a></h3>
+<p>There is an independent way to see that the extreme buckets are not real
+portfolios. CRSP records a <strong>negative price</strong> when a stock did not trade on the
+last day of the month — the number it reports is then a bid/ask midpoint, not a
+price anyone transacted at.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d0</span><span class="p">[</span><span class="s1">&#39;traded&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d0</span><span class="p">[</span><span class="s1">&#39;prc&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stock-months with a negative price (no trade that day): &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="p">(</span><span class="o">~</span><span class="n">d0</span><span class="o">.</span><span class="n">traded</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> of the panel&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  median market cap, no-trade : $</span><span class="si">{</span><span class="n">d0</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">d0</span><span class="o">.</span><span class="n">traded</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">/</span><span class="mf">1e3</span><span class="si">:</span><span class="s2">&gt;8,.1f</span><span class="si">}</span><span class="s2">M&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  median market cap, traded   : $</span><span class="si">{</span><span class="n">d0</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="w"> </span><span class="n">d0</span><span class="o">.</span><span class="n">traded</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="o">/</span><span class="mf">1e3</span><span class="si">:</span><span class="s2">&gt;8,.1f</span><span class="si">}</span><span class="s2">M</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">share</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;decile&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">prc</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Share of the bucket that DIDN&#39;T TRADE, by book-to-market decile:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">share</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="s1">&#39;█&#39;</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  D</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">&lt;2d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">5.1%</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">bar</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="look-at-the-shape-of-that">
+<h3>Look at the shape of that<a class="headerlink" href="#look-at-the-shape-of-that" title="Link to this heading">#</a></h3>
+<p>Roughly <strong>32% of decile 1 and 33% of decile 10</strong> are stocks that did not trade
+on the formation date — against about 16% in the middle deciles. The extremes
+are twice as contaminated as the middle.</p>
+<p>Sorting on <em>any</em> characteristic pushes illiquid microcaps to the ends, because
+extreme characteristic values and extreme illiquidity travel together. So a
+third of both legs of your long-short is priced at a quote nobody hit.</p>
+<blockquote>
+<div><p><strong>⚠️ Caution: your backtest assumed you bought at that price</strong></p>
+<p>The return you computed for the extreme deciles is measured between two
+bid/ask midpoints. In reality you would have paid the ask and sold at the bid,
+on stocks with a median market cap of $10.8M.</p>
+<p>This is a <em>different</em> mechanism from the breakpoint problem — nothing to do
+with how you cut the buckets — and it points the same way. Two independent
+reasons the extreme portfolios are less real than they look.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>🤔 A question worth holding onto</strong></p>
+<p>Should you drop non-traded stock-months before sorting? It’s defensible. But
+notice you’d be dropping a quarter of the panel, concentrated in exactly the
+stocks the strategy wants to hold — which is itself a decision that changes
+the answer. Add it to the list from the four-way table.</p>
+</div></blockquote>
+</section>
+<section id="now-go-back-and-look-at-the-value-demo">
+<h3>Now go back and look at the value demo<a class="headerlink" href="#now-go-back-and-look-at-the-value-demo" title="Link to this heading">#</a></h3>
+<p>We opened with book-to-market, cut into equal-count deciles, equal-weighted:
+<strong>+20.8%/yr, t = 7.05.</strong> That is the same construction the table above just
+took apart. Run value under the standard convention instead.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The same signal, the standard implementation: NYSE breakpoints, value-weighted</span>
+<span class="n">qv</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;BM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">&#39;lo&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">&#39;hi&#39;</span><span class="p">}))</span>
+<span class="n">v</span>  <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">qv</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+<span class="n">v</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">BM</span> <span class="o">&lt;=</span> <span class="n">v</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">BM</span> <span class="o">&gt;=</span> <span class="n">v</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+<span class="n">v</span>  <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">])</span>
+<span class="n">pv</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+<span class="n">rv</span> <span class="o">=</span> <span class="p">(</span><span class="n">pv</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">pv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Book-to-market long-short, 1980-2000</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  equal-count deciles, equal-weighted : </span><span class="si">{</span><span class="n">ls</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.2%</span><span class="si">}</span><span class="s2">/yr   &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;t = </span><span class="si">{</span><span class="n">ls</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">ls</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">))</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  NYSE breakpoints,  value-weighted   : </span><span class="si">{</span><span class="n">rv</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.2%</span><span class="si">}</span><span class="s2">/yr   &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;t = </span><span class="si">{</span><span class="n">rv</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">rv</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rv</span><span class="p">))</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 Remember: +5.3%/yr is the value number for this course</strong></p>
+<p>Four times smaller than the demo, and it no longer clears |t| &gt; 2. The demo
+was not a lie — it was <code class="docutils literal notranslate"><span class="pre">pd.qcut</span></code> plus equal weights, and you now know exactly
+what that does. <strong>This is the number Lectures 4, 5 and 6 use.</strong></p>
+<p>Value survives better than size does: it stays positive. But the honest
+version of a result is the one built the way you would actually trade it.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="why-ten-buckets">
+<h2>3. Why Ten Buckets? <a id="tradeoff"></a><a class="headerlink" href="#why-ten-buckets" title="Link to this heading">#</a></h2>
+<p>Why deciles? Why not 100 buckets, so the top portfolio has a far more extreme
+signal? Or simply buy the single highest-signal stock?</p>
+<p>Because a portfolio return is an <em>estimate</em>, and estimates have standard errors.</p>
+<p>Individual stocks have annual volatility of <strong>40–80%</strong>. To measure an expected
+return to within a percentage point you need <span class="math notranslate nohighlight">\(\sigma/\sqrt{T}\)</span> small — and with
+σ = 60%, that takes centuries. Averaging across stocks in a bucket cuts the
+volatility fast, which is what makes the bucket’s mean return measurable at all.</p>
+<p>So there is a genuine trade-off:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>More buckets</p></th>
+<th class="head"><p>Fewer buckets</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Stronger signal in the extremes</p></td>
+<td><p>Weaker signal</p></td>
+</tr>
+<tr class="row-odd"><td><p>Fewer stocks each → noisier</p></td>
+<td><p>More stocks → more precise</p></td>
+</tr>
+<tr class="row-even"><td><p>Higher turnover, worse capacity</p></td>
+<td><p>Cheaper to trade</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Ten is a convention that balances these. Let’s check whether it’s a good one.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">]:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BM&#39;</span><span class="p">,</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;BM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">])[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">n_stocks</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">g</span> <span class="o">==</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">&gt;3d</span><span class="si">}</span><span class="s2"> buckets: spread </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;6.1%</span><span class="si">}</span><span class="s2">/yr   &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;t = </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="si">:</span><span class="s2">&gt;4.1f</span><span class="si">}</span><span class="s2">   &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_stocks</span><span class="si">:</span><span class="s2">&gt;5.0f</span><span class="si">}</span><span class="s2"> stocks in the top bucket&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<p>Cutting finer <strong>does</strong> widen the spread — monotonically, from 16% at quintiles
+to 29% at 50 buckets. The top 2% of stocks by book-to-market really are
+cheaper than the top 10%, and they really do earn more.</p>
+<p>But look at the t-statistic. It rises to about 7.2 at 20 buckets and then
+<strong>falls</strong>. Past that point each bucket holds so few stocks that the extra
+signal is swamped by the extra noise — you are paying in precision faster than
+you are gaining in strength.</p>
+<p>That is the trade-off, visible in four lines of output. Deciles sit
+essentially at the top of the curve, which is why the literature settled
+there — not because ten is a round number.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="a-real-bug-in-real-data">
+<h2>4. A Real Bug in Real Data <a id="infinities"></a><a class="headerlink" href="#a-real-bug-in-real-data" title="Link to this heading">#</a></h2>
+<p>Everything above assumed the numbers are numbers. Let’s check.</p>
+<p>Many of these characteristics are <strong>log ratios</strong> — log book-to-market, log
+issuance. When the denominator is zero or negative, the log is not a large
+number. It is <code class="docutils literal notranslate"><span class="pre">-inf</span></code>.</p>
+<p>Five of our thirty signals arrived from Open Source Asset Pricing with
+infinities in them. We ship the cleaned versions, but the raw file is in the
+repo so you can see what this does.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals_raw/CompositeDebtIssuance.parquet&quot;</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="s1">&#39;CompositeDebtIssuance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CompositeDebtIssuance — raw, exactly as delivered</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  rows          : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  +inf          : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isposinf</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  -inf          : </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">   (</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2"> of the file)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  finite min/max: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">v</span><span class="p">)])</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">v</span><span class="p">)])</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  mean          : </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  std           : </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Both signs of infinity are present, so the mean is not large — it is nan.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Every summary statistic of this signal is now undefined, and nothing errored.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="now-sort-on-it-two-ways">
+<h3>Now sort on it — two ways<a class="headerlink" href="#now-sort-on-it-two-ways" title="Link to this heading">#</a></h3>
+<p>Both of the following are reasonable implementations of “decile sort”. They
+fail differently, and neither raises anything.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rd</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+
+<span class="c1"># --- Implementation A: pd.qcut, the obvious choice -------------------</span>
+<span class="n">rd</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;CompositeDebtIssuance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;A) pd.qcut(x, 10, duplicates=&#39;drop&#39;)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   deciles that exist:&quot;</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rd</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   months in which decile 9 exists: </span><span class="si">{</span><span class="n">rd</span><span class="p">[</span><span class="n">rd</span><span class="o">.</span><span class="n">dec</span><span class="o">==</span><span class="mi">9</span><span class="p">]</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   rows assigned no decile at all : </span><span class="si">{</span><span class="n">rd</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">   Deciles 0 and 9 — your short leg and your long leg — DO NOT EXIST.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   qcut couldn&#39;t place the infinities, and &#39;duplicates=drop&#39; quietly&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   collapsed the bin edges. A long-short with no long and no short.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Implementation B: explicit quantile cutoffs ----------------------</span>
+<span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">rd</span><span class="p">[</span><span class="n">rd</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;CompositeDebtIssuance&#39;</span><span class="p">]</span>
+       <span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span> <span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">&#39;lo&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">&#39;hi&#39;</span><span class="p">}))</span>
+<span class="n">rb</span> <span class="o">=</span> <span class="n">rd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+<span class="n">rb</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rb</span><span class="p">[</span><span class="s1">&#39;CompositeDebtIssuance&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">rb</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rb</span><span class="p">[</span><span class="s1">&#39;CompositeDebtIssuance&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">rb</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+<span class="n">rb</span> <span class="o">=</span> <span class="n">rb</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">])</span>
+
+<span class="k">for</span> <span class="n">leg</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;long leg  (top)&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;short leg (bottom)&#39;</span><span class="p">)]:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">rb</span><span class="p">[</span><span class="n">rb</span><span class="o">.</span><span class="n">g</span> <span class="o">==</span> <span class="n">leg</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;B) </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;8,</span><span class="si">}</span><span class="s2"> rows, &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;CompositeDebtIssuance&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">&gt;6.1%</span><span class="si">}</span><span class="s2"> infinite&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">   Here the comparison `x &lt;= lo` works fine on infinities, so they all&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   land in the extreme buckets. You get a full portfolio and a t-stat —&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;   built largely from stocks whose signal could not be computed.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="two-implementations-two-failures-zero-errors">
+<h3>Two implementations, two failures, zero errors<a class="headerlink" href="#two-implementations-two-failures-zero-errors" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>What happened</p></th>
+<th class="head"><p>What you’d see</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>A</strong> <code class="docutils literal notranslate"><span class="pre">pd.qcut</span></code></p></td>
+<td><p>Infinities can’t be binned; <code class="docutils literal notranslate"><span class="pre">duplicates='drop'</span></code> collapses the edges</p></td>
+<td><p>Deciles 0 and 9 vanish. Your long-short has no legs. An empty result, or a <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> you’d “fix” by dropping months.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>B</strong> explicit quantiles</p></td>
+<td><p>Comparisons on <code class="docutils literal notranslate"><span class="pre">inf</span></code> work, so infinities sort into both extremes</p></td>
+<td><p>A complete portfolio, a return series, a t-statistic — all built on missing data</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>🤖 AI-Era Insight: this is the whole course in one cell</strong></p>
+<p>Ask an AI to “sort stocks into deciles on this signal” and you will get
+version A or version B. Both run. Neither warns you. Version B in particular
+hands you a result that looks exactly like every other result in this
+notebook.</p>
+<p>The bug is not in the code. The code is fine. The bug was in the data, and
+the only way to catch it was to look at the data first.</p>
+</div></blockquote>
+</section>
+<section id="the-fix-and-the-habit">
+<h3>The fix, and the habit<a class="headerlink" href="#the-fix-and-the-habit" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>   <span class="c1"># infinities are missing data</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>                             <span class="c1"># then drop them</span>
+</pre></div>
+</div>
+<p>Two lines. But the habit that matters comes before them: <strong>describe your signal
+before you sort on it.</strong> A single <code class="docutils literal notranslate"><span class="pre">.describe()</span></code> shows <code class="docutils literal notranslate"><span class="pre">inf</span></code> in the min or max
+immediately, and it takes three seconds.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">clean</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/CompositeDebtIssuance.parquet&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;raw   : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;clean : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">clean</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows   (</span><span class="si">{</span><span class="mi">1</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">clean</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> removed)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">spread_from</span><span class="p">(</span><span class="n">sig_df</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard implementation: NYSE breakpoints, value-weighted, D10 - D1.&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">sig_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="n">col</span><span class="p">]</span>
+           <span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">&#39;lo&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">&#39;hi&#39;</span><span class="p">}))</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">])</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;with infinities&#39;</span><span class="p">,</span> <span class="n">raw</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;cleaned&#39;</span><span class="p">,</span> <span class="n">clean</span><span class="p">)]:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">spread_from</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="s1">&#39;CompositeDebtIssuance&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">18s</span><span class="si">}</span><span class="s2"> return </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.2%</span><span class="si">}</span><span class="s2">/yr   &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;t = </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">))</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 Remember</strong></p>
+<p>Published t-statistic for this signal: <strong>+8.59</strong>. Cleaned, over 1980–2000, we
+get roughly <strong>−0.3</strong>. The infinities were never the reason it fails to
+replicate — but you could not have known that until you removed them.</p>
+<p>Fixing a data bug does not always rescue a result. Sometimes it just lets you
+see the real one.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="hands-on-pick-your-own-signal">
+<h2>🛠️ Hands-On: Pick Your Own Signal <a id="ho1"></a><a class="headerlink" href="#hands-on-pick-your-own-signal" title="Link to this heading">#</a></h2>
+<p>You have <strong>30 signals</strong>, each from a published paper, each with the t-statistic
+the original authors reported. Pick one and test it.</p>
+<blockquote>
+<div><p><strong>📌 Everyone uses the same convention</strong> so the class results are comparable:
+<strong>NYSE breakpoints, value-weighted, top decile minus bottom decile,
+<code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>.</strong> That is the standard implementation.</p>
+</div></blockquote>
+<section id="your-task">
+<h3>Your task<a class="headerlink" href="#your-task" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>Pick a signal from the menu</p></li>
+<li><p>Run the sort</p></li>
+<li><p>Report your t-statistic next to the published one</p></li>
+<li><p>Be ready to say out loud whether it replicated</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The menu — 30 published signals</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;display.width&#39;</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">menu</span><span class="p">[[</span><span class="s1">&#39;Acronym&#39;</span><span class="p">,</span><span class="s1">&#39;Authors&#39;</span><span class="p">,</span><span class="s1">&#39;Year&#39;</span><span class="p">,</span><span class="s1">&#39;Cat.Economic&#39;</span><span class="p">,</span><span class="s1">&#39;T-Stat&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Cat.Economic&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === EDIT THIS CELL: your signal ===</span>
+<span class="n">MY_SIGNAL</span> <span class="o">=</span> <span class="s2">&quot;GP&quot;</span>      <span class="c1"># ← pick any Acronym from the menu above</span>
+
+<span class="n">sig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> stock-months&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">menu</span><span class="o">.</span><span class="n">Acronym</span> <span class="o">==</span> <span class="n">MY_SIGNAL</span><span class="p">,</span> <span class="s1">&#39;LongDescription&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">300</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="c1"># Fill in the two blanks to complete the standard sort.</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">long_short</span><span class="p">(</span><span class="n">signal_name</span><span class="p">,</span> <span class="n">breakpoints</span><span class="o">=</span><span class="s1">&#39;nyse&#39;</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="s1">&#39;vw&#39;</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">signal_name</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">signal_name</span><span class="p">,</span> <span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span> <span class="s1">&#39;me&#39;</span><span class="p">])</span>          <span class="c1"># drop FIRST</span>
+
+    <span class="k">if</span> <span class="n">breakpoints</span> <span class="o">==</span> <span class="s1">&#39;nyse&#39;</span><span class="p">:</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="n">signal_name</span><span class="p">]</span>
+               <span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">&#39;lo&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">&#39;hi&#39;</span><span class="p">}))</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">signal_name</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                   <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">signal_name</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">____</span>        <span class="c1"># hint: d.groupby(&#39;date&#39;)[signal_name].transform(</span>
+                             <span class="c1">#        lambda x: pd.qcut(x,10,labels=False,duplicates=&#39;drop&#39;))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">])</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">])]</span>
+
+    <span class="n">agg</span> <span class="o">=</span> <span class="p">((</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span> <span class="k">if</span> <span class="n">weighting</span> <span class="o">==</span> <span class="s1">&#39;vw&#39;</span>
+           <span class="k">else</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">agg</span><span class="p">)</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">____</span>                 <span class="c1"># hint: (p[9] - p[0]).dropna()   — long top, short bottom</span>
+    <span class="k">return</span> <span class="n">r</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">long_short</span><span class="p">(</span><span class="n">MY_SIGNAL</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+<span class="n">pub</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">menu</span><span class="o">.</span><span class="n">Acronym</span> <span class="o">==</span> <span class="n">MY_SIGNAL</span><span class="p">,</span> <span class="s1">&#39;T-Stat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  return   </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  vol      </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Sharpe   </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  t-stat   </span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">      published: </span><span class="si">{</span><span class="n">pub</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  verdict  </span><span class="si">{</span><span class="s1">&#39;REPLICATES&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;does not clear |t| &gt; 2&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="what-did-the-room-find">
+<h3>What did the room find?<a class="headerlink" href="#what-did-the-room-find" title="Link to this heading">#</a></h3>
+<p>Compare with your neighbours. Some of you have a t-statistic above 4. Some have
+one near zero on a signal whose authors reported 8.</p>
+<p>Both are honest results from the same code.</p>
+<blockquote>
+<div><p><strong>🤔 Before we move on</strong></p>
+<p>Your sample is 1980–2000. Look up the sample period the original paper used —
+it’s in <code class="docutils literal notranslate"><span class="pre">menu</span></code>. If your window barely overlaps theirs, what exactly have you
+tested? And if a published t-statistic of 8 becomes 1 in a different window,
+which number should you believe?</p>
+</div></blockquote>
+<p>Hold that question. It is the backtesting and anomalies lectures (L8 and L9), and for several of you it
+will be your project.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="challenge-size-four-ways">
+<h2>🎯 Challenge: Size, Four Ways <a id="challenge"></a><a class="headerlink" href="#challenge-size-four-ways" title="Link to this heading">#</a></h2>
+<p>You are a junior analyst. Your PM read that small stocks outperform and asks
+you to check whether it’s true.</p>
+<p>Reproduce all four versions of the size sort and then decide what you would
+actually tell them.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">size_spread()</span></code> from Section 2, or write your own.</p>
+<section id="q1-the-four-t-statistics">
+<h3>Q1 — The four t-statistics<a class="headerlink" href="#q1-the-four-t-statistics" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t_ew_all</span>  <span class="o">=</span> <span class="n">____</span>   <span class="c1"># all-stock deciles, equal-weighted</span>
+<span class="n">t_vw_all</span>  <span class="o">=</span> <span class="n">____</span>   <span class="c1"># all-stock deciles, value-weighted</span>
+<span class="n">t_ew_nyse</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># NYSE breakpoints, equal-weighted</span>
+<span class="n">t_vw_nyse</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># NYSE breakpoints, value-weighted</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs — fill these in:</span>
+<span class="n">t_ew_all</span>  <span class="o">=</span> <span class="n">____</span>
+<span class="n">t_vw_all</span>  <span class="o">=</span> <span class="n">____</span>
+<span class="n">t_ew_nyse</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">t_vw_nyse</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;all stocks, EW : t = </span><span class="si">{</span><span class="n">t_ew_all</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;all stocks, VW : t = </span><span class="si">{</span><span class="n">t_vw_all</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NYSE bp,    EW : t = </span><span class="si">{</span><span class="n">t_ew_nyse</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NYSE bp,    VW : t = </span><span class="si">{</span><span class="n">t_vw_nyse</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q2-how-many-stocks-are-in-the-small-bucket">
+<h3>Q2 — How many stocks are in the small bucket?<a class="headerlink" href="#q2-how-many-stocks-are-in-the-small-bucket" title="Link to this heading">#</a></h3>
+<p>Report the average monthly number of stocks in the <strong>small</strong> bucket under each
+breakpoint scheme. This is the mechanism behind the table.</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n_small_all</span>  <span class="o">=</span> <span class="n">____</span>   <span class="c1"># average stocks in the small bucket, all-stock deciles</span>
+<span class="n">n_small_nyse</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># average stocks in the small bucket, NYSE breakpoints</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs — fill these in:</span>
+<span class="n">n_small_all</span>  <span class="o">=</span> <span class="n">____</span>
+<span class="n">n_small_nyse</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;all-stock deciles : </span><span class="si">{</span><span class="n">n_small_all</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> stocks in the small bucket&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NYSE breakpoints  : </span><span class="si">{</span><span class="n">n_small_nyse</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> stocks in the small bucket&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q3-the-memo">
+<h3>Q3 — The memo<a class="headerlink" href="#q3-the-memo" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Your task — maximum 6 sentences</strong></p>
+<p>Write to your PM. Does the size effect exist over 1980–2000?</p>
+<p>A strong memo will:</p>
+<ul class="simple">
+<li><p>Give <strong>one</strong> answer, not four</p></li>
+<li><p>Say which specification you’d stand behind and <strong>why</strong></p></li>
+<li><p>Explain what drives the difference between the two extremes</p></li>
+<li><p>Note something about the +20.7% version beyond “it’s a bigger number”</p></li>
+</ul>
+<p>There is no answer key here. I’m grading whether you understood that the
+choice had to be made and defended.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MEMO</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Write your memo here. Don&#39;t delete the surrounding triple quotes.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">MEMO</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="submission">
+<h2>📤 Submission <a id="submit"></a><a class="headerlink" href="#submission" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;t_ew_all&quot;</span><span class="p">,</span> <span class="s2">&quot;t_vw_all&quot;</span><span class="p">,</span> <span class="s2">&quot;t_ew_nyse&quot;</span><span class="p">,</span> <span class="s2">&quot;t_vw_nyse&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_small_all&quot;</span><span class="p">,</span> <span class="s2">&quot;n_small_nyse&quot;</span><span class="p">,</span> <span class="s2">&quot;MEMO&quot;</span><span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">()]</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">❌ Missing before submission: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;assignment&quot;</span><span class="p">:</span> <span class="s2">&quot;L3_Sorts_AI&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ts&quot;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;seconds&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;answers&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;MEMO&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;memo&quot;</span><span class="p">:</span> <span class="n">MEMO</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;UG54::</span><span class="si">{</span><span class="n">checksum</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s2"> chars&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Submission form: https://forms.gle/YOUR_FORM_LINK_HERE&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>The sort recipe is five steps and never changes:</strong> rank, bucket, weight,
+average, spread. Every factor you’ve heard of is this applied to a different
+column.</p></li>
+<li><p><strong>Rank within each month</strong>, never across the whole panel.</p></li>
+<li><p><strong>A long-short portfolio is self-financed</strong> — weights sum to zero, no capital
+tied up, so no risk-free rate to subtract.</p></li>
+<li><p><strong>Read the monotonicity, not just the spread.</strong> A clean staircase across
+deciles is much stronger evidence than two unusual extremes.</p></li>
+<li><p><strong>NYSE breakpoints exist for a reason.</strong> Equal-count deciles over the whole
+market put ~600 microcaps in the bottom bucket. That portfolio is real in the
+data and untradeable in the world.</p></li>
+<li><p><strong>Implementation choices can flip the sign.</strong> Size over 1980–2000 runs from
++20.7%/yr (t = 3.94) to −6.4%/yr (t = −1.93) across four defensible
+specifications. Always ask what the breakpoints and weights were.</p></li>
+<li><p><strong>A spread is not yet a result.</strong> You have a return series; you do not yet
+know whether it is skill, market exposure, or noise. Measuring that starts
+Wednesday.</p></li>
+</ol>
+<hr class="docutils" />
+<section id="next-class">
+<h3>Next class<a class="headerlink" href="#next-class" title="Link to this heading">#</a></h3>
+<p>Where the data really comes from — CRSP, Compustat, and how you’d pull it
+yourself — and then factor models: the tool that separates “this strategy earns
+a return” from “this strategy earns a return <em>you couldn’t have got for free</em>.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="appendix">
+<h2>📎 Appendix <a id="appendix"></a><a class="headerlink" href="#appendix" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
+<span class="c1"># 📎 APPENDIX — Belt-and-Suspenders Data Loading</span>
+<span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
+<span class="c1"># Everything today loads from the repo — no WRDS account needed.</span>
+<span class="c1">#</span>
+<span class="c1">#   panel  = pd.read_parquet(f&quot;{BASE}/panel_backbone_1980_2000.parquet&quot;)</span>
+<span class="c1">#   signal = pd.read_parquet(f&quot;{BASE}/signals/&lt;Acronym&gt;.parquet&quot;)</span>
+<span class="c1">#   menu   = pd.read_csv(f&quot;{BASE}/signal_menu.csv&quot;)</span>
+<span class="c1">#</span>
+<span class="c1"># The 30 signals come from Open Source Asset Pricing (Chen &amp; Zimmermann),</span>
+<span class="c1"># which replicates 300+ published cross-sectional predictors:</span>
+<span class="c1">#     https://www.openassetpricing.com</span>
+<span class="c1">#</span>
+<span class="c1"># TWO CONVENTIONS BAKED INTO THE SIGNAL FILES — worth knowing:</span>
+<span class="c1">#</span>
+<span class="c1"># 1. PRE-SIGNED. OSAP ships the raw characteristic plus a Sign column; 18 of</span>
+<span class="c1">#    our 30 have Sign = -1. We flipped those on write, so for every signal</span>
+<span class="c1">#    here HIGH = predicted HIGH return and the long-short is always D10 - D1.</span>
+<span class="c1">#    The original direction is in signal_menu.csv.</span>
+<span class="c1">#</span>
+<span class="c1"># 2. Use `ret_fwd`, not `ret`. Sorting on a signal at t and measuring ret at t</span>
+<span class="c1">#    is look-ahead. For short-term reversal that single error turns a t-stat</span>
+<span class="c1">#    of -0.4 into +70.</span>
+<span class="c1">#</span>
+<span class="c1"># To rebuild any of this from scratch: chapters/Finance/build_course_panel.py</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-3">Lecture 3</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-plan">📋 Today’s Plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sort-recipe">1. The Sort Recipe <a id="recipe"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-decile-portfolios-and-not-just-a-regression">Why decile portfolios and not just a regression?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-is-a-self-financed-position">Step 5 is a self-financed position</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-names-to-characteristics">From names to characteristics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-sorts">🛡️ Pitfall Checklist for Sorts <a id="pitfalls"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-sorting-on-value">🔄 Live Demo: Sorting on Value <a id="demo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1 — The specification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2 — Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">Step 3 — Validate</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#breakpoints-and-the-size-disaster">2. Breakpoints, and the Size Disaster <a id="breakpoints"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fix-nyse-breakpoints">The fix: NYSE breakpoints</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#watch-what-it-does-to-the-size-effect">Watch what it does to the size effect</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sit-with-that-table">Sit with that table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-it-happens">Why it happens</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-second-piece-of-evidence-the-extremes-didn-t-trade">A second piece of evidence: the extremes didn’t trade</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#look-at-the-shape-of-that">Look at the shape of that</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-go-back-and-look-at-the-value-demo">Now go back and look at the value demo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-ten-buckets">3. Why Ten Buckets? <a id="tradeoff"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-real-bug-in-real-data">4. A Real Bug in Real Data <a id="infinities"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#now-sort-on-it-two-ways">Now sort on it — two ways</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-implementations-two-failures-zero-errors">Two implementations, two failures, zero errors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-fix-and-the-habit">The fix, and the habit</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-pick-your-own-signal">🛠️ Hands-On: Pick Your Own Signal <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#your-task">Your task</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-did-the-room-find">What did the room find?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-size-four-ways">🎯 Challenge: Size, Four Ways <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-the-four-t-statistics">Q1 — The four t-statistics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-how-many-stocks-are-in-the-small-bucket">Q2 — How many stocks are in the small bucket?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-memo">Q3 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">Next class</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">📎 Appendix <a id="appendix"></a></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

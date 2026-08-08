@@ -1,0 +1,1660 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Introduction to Performance Evaluation, and Factor Models &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/L4_PerfEval_Factors_AI';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/L4_PerfEval_Factors_AI.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="IntrotoReturns_c.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">4.11. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">4.12. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Timing_c.html">5. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">5.6. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">5.7. Volatility Timing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModels_c.html">6. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="PortfolioMath_c.html">7. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1_c.html">7.13. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationI_cc.html">8. Capital Allocation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="crosssectionalequitystrategies.html">9. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">9.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">9.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">10. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance_evaluation_c.html">11. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MachineLearning_cc.html">12. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels_c.html">13. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">13.13. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="RiskManagement.html">14. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TradingCosts.html">15. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LeverageandShorting.html">16. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LLMs.html">17. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">18. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">19. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">19.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment2.html">19.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment3.html">19.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment4_c.html">19.6. Assignment 4</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment5.html">19.8. Assignment 5</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Finance/L4_PerfEval_Factors_AI.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/L4_PerfEval_Factors_AI.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/L4_PerfEval_Factors_AI.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Introduction to Performance Evaluation, and Factor Models</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-4">Lecture 4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-plan">📋 Today’s Plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-questions-three-ratios">1. Three Questions, Three Ratios <a id="three"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-the-information-ratio-and-endogenous-benchmarks">2. Sharpe, the Information Ratio, and Endogenous Benchmarks <a id="sharpe-ir"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-return-per-unit-of-total-risk">Sharpe: return per unit of total risk</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#information-ratio-return-relative-to-a-benchmark">Information ratio: return relative to a benchmark</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-fund-three-numbers">One fund. Three numbers.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#which-benchmark-is-right">Which benchmark is right?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#or-let-the-data-build-the-benchmark">Or: let the data build the benchmark</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-factor-regressions">🛡️ Pitfall Checklist for Factor Regressions <a id="pitfalls"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-was-ge-skill-or-beta">🔄 Live Demo: Was GE Skill, or Beta? <a id="demo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decomposition">The decomposition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-same-equation-does-two-different-jobs">The same equation does two different jobs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1 — The specification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2 — Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate-then-read-it">Step 3 — Validate, then read it</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decomposing-risk-hedging-and-the-risk-budget">3. Decomposing Risk, Hedging, and the Risk Budget <a id="decomp"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-anyone-bothers-the-hedged-portfolio">Why anyone bothers: the hedged portfolio</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-appraisal-ratio">4. The Appraisal Ratio <a id="appraisal"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-appraisal-ratio-is-lower-than-the-sharpe-ratio">Why the appraisal ratio is lower than the Sharpe ratio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#they-were-never-three-ratios">They were never three ratios</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#and-it-can-reverse-the-ranking">And it can reverse the ranking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-ratios-disagree">The two ratios disagree</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-famous-funds">5. Two Famous Funds <a id="funds"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-loadings-before-the-alpha">Read the loadings before the alpha</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-does-your-signal-have-alpha">🛠️ Hands-On: Does Your Signal Have Alpha? <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-with-the-room">Compare with the room</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-exxon-vs-pfizer">🎯 Challenge: Exxon vs Pfizer <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-exxon">Q1 — Exxon</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-pfizer">Q2 — Pfizer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-memo">Q3 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">Next class</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">📎 Appendix <a id="appendix"></a></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="introduction-to-performance-evaluation-and-factor-models">
+<h1>Introduction to Performance Evaluation, and Factor Models<a class="headerlink" href="#introduction-to-performance-evaluation-and-factor-models" title="Link to this heading">#</a></h1>
+<section id="lecture-4">
+<h2>Lecture 4<a class="headerlink" href="#lecture-4" title="Link to this heading">#</a></h2>
+</section>
+<section id="learning-objectives">
+<h2>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of today you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Choose the right performance ratio for the question</strong> — Sharpe, information,
+or appraisal — and say what each one assumes</p></li>
+<li><p><strong>Run a factor regression</strong> and read α, β, and R² correctly</p></li>
+<li><p><strong>Split a return into what you could have bought cheaply and what you couldn’t</strong></p></li>
+<li><p><strong>Compute an appraisal ratio</strong>, and show that Sharpe, information and
+appraisal are one formula against three different benchmarks</p></li>
+<li><p><strong>Build a hedged portfolio</strong> and explain why hedging buys you alpha capacity</p></li>
+<li><p><strong>Answer the question from Lecture 1</strong> — was General Electric skill, or beta?</p></li>
+<li><p><strong>Take apart a real fund</strong> — what ARKK and Berkshire were actually doing</p></li>
+</ol>
+</section>
+<section id="today-s-plan">
+<h2>📋 Today’s Plan<a class="headerlink" href="#today-s-plan" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#three"><span class="xref myst">Three questions, three ratios</span></a></p></li>
+<li><p><a class="reference internal" href="#sharpe-ir"><span class="xref myst">Sharpe, the information ratio, and endogenous benchmarks</span></a></p></li>
+<li><p><a class="reference internal" href="#pitfalls"><span class="xref myst">Pitfall checklist</span></a></p></li>
+<li><p><a class="reference internal" href="#demo"><span class="xref myst">🔄 Live Demo: was GE skill or beta?</span></a></p></li>
+<li><p><a class="reference internal" href="#decomp"><span class="xref myst">Decomposing risk, hedging, and the risk budget</span></a></p></li>
+<li><p><a class="reference internal" href="#appraisal"><span class="xref myst">The appraisal ratio — and why there was only ever one ratio</span></a></p></li>
+<li><p><a class="reference internal" href="#funds"><span class="xref myst">Two famous funds: ARKK vs Berkshire</span></a></p></li>
+<li><p><a class="reference internal" href="#ho1"><span class="xref myst">🛠️ Hands-On: does your signal have alpha?</span></a></p></li>
+<li><p><a class="reference internal" href="#challenge"><span class="xref myst">🎯 Challenge: Exxon vs Pfizer</span></a> — <em>homework</em></p></li>
+<li><p><a class="reference internal" href="#takeaways"><span class="xref myst">Key takeaways</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2>🛠️ Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Setup — run this first</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-whitegrid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">]</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span><span class="p">;</span> <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+
+<span class="n">BASE</span>  <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data&quot;</span>
+<span class="n">panel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/panel_backbone_1980_2000.parquet&quot;</span><span class="p">)</span>
+
+<span class="n">ff</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s1">&#39;1980-01-01&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
+<span class="n">ff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ff</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;1980-01-31&#39;</span><span class="p">:</span><span class="s1">&#39;2000-12-31&#39;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;panel: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;factors: </span><span class="si">{</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">, &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;columns </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="three-questions-three-ratios">
+<h2>1. Three Questions, Three Ratios <a id="three"></a><a class="headerlink" href="#three-questions-three-ratios" title="Link to this heading">#</a></h2>
+<p>You have a return series. Is it any good?</p>
+<p>That is not one question. It is three, and they have different answers.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Question</p></th>
+<th class="head"><p>Ratio</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>Was it worth the risk at all?</em></p></td>
+<td><p><strong>Sharpe</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><em>Did I beat what I was hired to beat?</em></p></td>
+<td><p><strong>Information ratio</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><em>Was any of it something I couldn’t have bought cheaply?</em></p></td>
+<td><p><strong>Appraisal ratio</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The third one is the hardest and the most important, and it needs a tool we
+don’t have yet — a <strong>factor model</strong>. We’ll do the first two now, build the
+factor model, then come back for the third.</p>
+</section>
+<hr class="docutils" />
+<section id="sharpe-the-information-ratio-and-endogenous-benchmarks">
+<h2>2. Sharpe, the Information Ratio, and Endogenous Benchmarks <a id="sharpe-ir"></a><a class="headerlink" href="#sharpe-the-information-ratio-and-endogenous-benchmarks" title="Link to this heading">#</a></h2>
+<section id="sharpe-return-per-unit-of-total-risk">
+<h3>Sharpe: return per unit of total risk<a class="headerlink" href="#sharpe-return-per-unit-of-total-risk" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[SR = \frac{\text{mean}(r)}{\text{sd}(r)} \times \sqrt{12}\]</div>
+<p>For a <strong>long-short</strong> strategy there is no risk-free rate to subtract — the
+weights sum to zero, so no capital was tied up and there is nothing to compare
+against a T-bill. For a <strong>long-only</strong> position you use the excess return
+<span class="math notranslate nohighlight">\(r - r_f\)</span>.</p>
+</section>
+<section id="information-ratio-return-relative-to-a-benchmark">
+<h3>Information ratio: return relative to a benchmark<a class="headerlink" href="#information-ratio-return-relative-to-a-benchmark" title="Link to this heading">#</a></h3>
+<p>Most money is not managed against cash. It is managed against a <strong>mandate</strong>.</p>
+<div class="math notranslate nohighlight">
+\[IR = \frac{\text{mean}(r_p - r_b)}{\text{sd}(r_p - r_b)} \times \sqrt{12}\]</div>
+<p>The numerator is <strong>active return</strong>; the denominator is <strong>tracking error</strong>. No
+regression needed — you only have to decide what <span class="math notranslate nohighlight">\(r_b\)</span> is.</p>
+<p>That decision is not a technical one. Let’s see how much it matters.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># A long-only value fund: top BM decile, NYSE breakpoints, value-weighted</span>
+<span class="n">bm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/BM.parquet&quot;</span><span class="p">)</span>
+<span class="n">dv</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BM&#39;</span><span class="p">,</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+<span class="n">hi</span> <span class="o">=</span> <span class="n">dv</span><span class="p">[</span><span class="n">dv</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;BM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">.9</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;hi&#39;</span><span class="p">)</span>
+<span class="n">dv</span> <span class="o">=</span> <span class="n">dv</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">hi</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+<span class="n">fund</span> <span class="o">=</span> <span class="p">(</span><span class="n">dv</span><span class="p">[</span><span class="n">dv</span><span class="o">.</span><span class="n">BM</span> <span class="o">&gt;=</span> <span class="n">dv</span><span class="o">.</span><span class="n">hi</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+          <span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">])))</span>
+
+<span class="n">d0</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+<span class="n">mkt_vw</span> <span class="o">=</span> <span class="n">d0</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span>
+<span class="n">mkt_ew</span> <span class="o">=</span> <span class="n">d0</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">rf</span>     <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">mkt_vw</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">info_ratio</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span> <span class="n">a</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value fund: </span><span class="si">{</span><span class="n">fund</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">/yr, vol </span><span class="si">{</span><span class="n">fund</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;benchmark&#39;</span><span class="si">:</span><span class="s2">24s</span><span class="si">}{</span><span class="s1">&#39;active ret&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}{</span><span class="s1">&#39;tracking err&#39;</span><span class="si">:</span><span class="s2">&gt;14s</span><span class="si">}{</span><span class="s1">&#39;IR&#39;</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">58</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;VW market&#39;</span><span class="p">,</span> <span class="n">mkt_vw</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;EW market&#39;</span><span class="p">,</span> <span class="n">mkt_ew</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;cash (risk-free)&#39;</span><span class="p">,</span> <span class="n">rf</span><span class="p">)]:</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">te</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">info_ratio</span><span class="p">(</span><span class="n">fund</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">24s</span><span class="si">}{</span><span class="n">a</span><span class="si">:</span><span class="s2">&gt;11.2%</span><span class="si">}{</span><span class="n">te</span><span class="si">:</span><span class="s2">&gt;14.2%</span><span class="si">}{</span><span class="n">i</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="one-fund-three-numbers">
+<h3>One fund. Three numbers.<a class="headerlink" href="#one-fund-three-numbers" title="Link to this heading">#</a></h3>
+<p>The same portfolio, the same 252 months, scores <strong>0.55</strong>, <strong>0.58</strong>, or <strong>0.83</strong>
+depending only on what you compare it to.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight: the Sharpe ratio is the information ratio against cash</strong></p>
+<p>Look at the last row. When the benchmark is the risk-free rate, active return
+becomes <span class="math notranslate nohighlight">\(r_p - r_f\)</span> and tracking error becomes the volatility of the excess
+return — which is the Sharpe ratio exactly. They are not two concepts. Sharpe
+is the special case where your mandate is “don’t lose to a T-bill.”</p>
+</div></blockquote>
+</section>
+<section id="which-benchmark-is-right">
+<h3>Which benchmark is right?<a class="headerlink" href="#which-benchmark-is-right" title="Link to this heading">#</a></h3>
+<p>Whichever one the manager was hired against. That is a contractual question:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mandate</p></th>
+<th class="head"><p>Benchmark</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>US large-cap equity fund</p></td>
+<td><p>S&amp;P 500</p></td>
+</tr>
+<tr class="row-odd"><td><p>Value manager</p></td>
+<td><p>Russell 1000 Value — <em>not</em> the S&amp;P, or they get credit for the value tilt itself</p></td>
+</tr>
+<tr class="row-even"><td><p>Balanced / pension fund</p></td>
+<td><p>60% equities, 40% bonds</p></td>
+</tr>
+<tr class="row-odd"><td><p>Liability-driven pension</p></td>
+<td><p>Long-duration government bonds</p></td>
+</tr>
+<tr class="row-even"><td><p>Hedge fund, absolute return</p></td>
+<td><p>Cash</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>⚠️ Caution: benchmark choice is where performance gets manufactured</strong></p>
+<p>A value manager benchmarked against the <em>broad market</em> gets paid for simply
+being a value manager — the whole style tilt shows up as active return. The
+same manager benchmarked against a <em>value index</em> has to beat other value
+managers.</p>
+<p>Our fund’s IR against the market is 0.55. Against a proper value benchmark it
+would be far lower, because most of that 5% active return <strong>is</strong> the value
+tilt.</p>
+</div></blockquote>
+<p>That last point is the opening for today. “Most of the active return is the
+value tilt” is a claim about <em>decomposition</em>, and a benchmark comparison can’t
+make it precisely. A regression can.</p>
+</section>
+<section id="or-let-the-data-build-the-benchmark">
+<h3>Or: let the data build the benchmark<a class="headerlink" href="#or-let-the-data-build-the-benchmark" title="Link to this heading">#</a></h3>
+<p>There is a third option nobody offers you in a mandate. Instead of picking a
+benchmark off a list, <strong>construct the combination of factors that best
+replicates the fund</strong>, and use that:</p>
+<div class="math notranslate nohighlight">
+\[r^b_t = \sum_j \beta_j f_{j,t}\]</div>
+<p>This is an <strong>endogenous benchmark</strong> — the fitted value of a factor regression.
+Whatever mix of market, size and value the manager was actually running, the
+regression finds it, and you measure them against that mix rather than against
+a label.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight: alpha is scarce, beta is plentiful — pay different prices</strong></p>
+<p>This is how large allocators actually think. Beta exposure is available for a
+few basis points in an ETF, so nobody should pay a performance fee for it.
+Alpha is hard to find and worth paying for. The whole job is telling them
+apart, and a factor regression is the tool that does it.</p>
+<p>The gains from beta come from <strong>implementation</strong> — getting it cheaply. The
+gains from alpha come from <strong>selection</strong> — finding someone who has it.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="pitfall-checklist-for-factor-regressions">
+<h2>🛡️ Pitfall Checklist for Factor Regressions <a id="pitfalls"></a><a class="headerlink" href="#pitfall-checklist-for-factor-regressions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Pitfall</p></th>
+<th class="head"><p>What goes wrong</p></th>
+<th class="head"><p>🔍 How to detect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><strong>Total returns on the left, excess on the right</strong></p></td>
+<td><p>α absorbs the risk-free rate and is badly biased</p></td>
+<td><p>Did you subtract <code class="docutils literal notranslate"><span class="pre">RF</span></code> from the stock’s return?</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p><strong>No intercept</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sm.OLS(y,</span> <span class="pre">X)</span></code> without <code class="docutils literal notranslate"><span class="pre">add_constant</span></code> forces α = 0 and biases β</p></td>
+<td><p>Is there a <code class="docutils literal notranslate"><span class="pre">const</span></code> row in the summary?</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><strong>Mixed frequencies</strong></p></td>
+<td><p>Monthly returns on daily factors</p></td>
+<td><p>Do both sides have the same number of rows?</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><strong>Reading a high R² as good</strong></p></td>
+<td><p>R² measures how much is <em>market</em>, not how much is <em>skill</em></p></td>
+<td><p>R² near 1 means almost no alpha is possible</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><strong>Annualizing α wrong</strong></p></td>
+<td><p>α is per-period; ×12 for monthly, not ×√12</p></td>
+<td><p>Volatility scales by √12, means by 12</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p><strong>Trusting α without its t-stat</strong></p></td>
+<td><p>A big α on a short sample is noise</p></td>
+<td><p>Is</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>🤖 AI-Era Insight</strong></p>
+<p>Pitfall 2 is the one to watch. <code class="docutils literal notranslate"><span class="pre">sm.OLS(y,</span> <span class="pre">x).fit()</span></code> runs perfectly happily
+without a constant and reports a beta — which is now wrong, because the
+regression line is forced through the origin. Nothing warns you. Always look
+for <code class="docutils literal notranslate"><span class="pre">const</span></code> in the output.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="live-demo-was-ge-skill-or-beta">
+<h2>🔄 Live Demo: Was GE Skill, or Beta? <a id="demo"></a><a class="headerlink" href="#live-demo-was-ge-skill-or-beta" title="Link to this heading">#</a></h2>
+<p>In Lecture 1 you found that General Electric returned 8,443% from 1980 to 2000
+— a Sharpe ratio of <strong>0.773</strong> against the market’s <strong>0.601</strong> — and I asked
+whether that proved Jack Welch was exceptional. Most of you noticed GE was more
+volatile: <strong>22.2%</strong> against the market’s <strong>15.6%</strong>.</p>
+<p>The natural suspicion is that GE was simply a <em>levered</em> bet on a bull market.
+Sharpe cannot tell you. A regression can.</p>
+<section id="the-decomposition">
+<h3>The decomposition<a class="headerlink" href="#the-decomposition" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[r^e_t = \alpha + \beta \, r^e_{m,t} + \varepsilon_t\]</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Term</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\beta \, r^e_m\)</span></p></td>
+<td><p>The part you could have had by holding the market with leverage — cheap</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\alpha\)</span></p></td>
+<td><p>Average return <strong>not</strong> explained by market exposure</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\varepsilon\)</span></p></td>
+<td><p>Idiosyncratic noise — diversifiable, so nobody pays you for it</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="the-same-equation-does-two-different-jobs">
+<h3>The same equation does two different jobs<a class="headerlink" href="#the-same-equation-does-two-different-jobs" title="Link to this heading">#</a></h3>
+<p>Worth separating these, because they get conflated constantly:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p><strong>Risk model</strong></p></th>
+<th class="head"><p><strong>Expected-return model</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Uses</p></td>
+<td><p><span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma_\varepsilon\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\alpha\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Asks</p></td>
+<td><p>how much will this move, and with what?</p></td>
+<td><p>will this earn anything?</p></td>
+</tr>
+<tr class="row-even"><td><p>Concerns the</p></td>
+<td><p><em>second</em> moment</p></td>
+<td><p><em>first</em> moment</p></td>
+</tr>
+<tr class="row-odd"><td><p>Used by</p></td>
+<td><p>risk managers, portfolio construction</p></td>
+<td><p>signal researchers, allocators</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A model can be excellent at one job and useless at the other. The market factor
+explains 56% of GE’s variance — a serviceable risk model. It says essentially
+nothing about whether GE will earn anything next year.</p>
+<blockquote>
+<div><p><strong>📌 Remember</strong></p>
+<p>Never say “the model works.” Say which job it is doing. A high R² is good news
+for the risk model and <em>bad</em> news for the alpha hunter, because it means less
+is left over.</p>
+</div></blockquote>
+</section>
+<section id="step-1-the-specification">
+<h3>Step 1 — The specification<a class="headerlink" href="#step-1-the-specification" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Spec</strong></p>
+<p>Take GE (permno 12060) monthly returns 1980–2000 from the panel. Subtract the
+risk-free rate <code class="docutils literal notranslate"><span class="pre">RF</span></code> to get excess returns. Regress on <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span></code> <strong>with an
+intercept</strong>, using statsmodels. Report α annualized (×12), β, R², the t-stat
+on α, and the standard deviation of the residuals annualized (×√12).</p>
+</div></blockquote>
+</section>
+<section id="step-2-implementation">
+<h3>Step 2 — Implementation<a class="headerlink" href="#step-2-implementation" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>🤖 AI prompt:</strong></p>
+<p><em>“Given a monthly Series of GE returns and a DataFrame ff with columns Mkt-RF
+and RF, compute GE’s excess return, regress it on Mkt-RF with an intercept
+using statsmodels OLS, and print annualized alpha, beta, R-squared, the t-stat
+on alpha, and annualized residual volatility.”</em></p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ge</span>  <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">permno</span> <span class="o">==</span> <span class="mi">12060</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;1980-01-31&#39;</span><span class="p">:</span><span class="s1">&#39;2000-12-31&#39;</span><span class="p">]</span>
+<span class="n">y</span>   <span class="o">=</span> <span class="p">(</span><span class="n">ge</span> <span class="o">-</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>                       <span class="c1"># excess return (pitfall 1)</span>
+<span class="n">X</span>   <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;Mkt-RF&#39;</span><span class="p">])</span>     <span class="c1"># intercept (pitfall 2)</span>
+<span class="n">m</span>   <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">alpha_m</span><span class="p">,</span> <span class="n">beta</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">],</span> <span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
+<span class="n">idio</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GE on the market, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="si">}</span><span class="s2"> months</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  alpha   </span><span class="si">{</span><span class="n">alpha_m</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr     t = </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  beta    </span><span class="si">{</span><span class="n">beta</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">              t = </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  R²      </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  idio vol </span><span class="si">{</span><span class="n">idio</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">/yr&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3-validate-then-read-it">
+<h3>Step 3 — Validate, then read it<a class="headerlink" href="#step-3-validate-then-read-it" title="Link to this heading">#</a></h3>
+<p>Check the pitfalls: excess returns on the left ✅, <code class="docutils literal notranslate"><span class="pre">const</span></code> present ✅, both
+series monthly ✅, α annualized by ×12 ✅.</p>
+<p>Now read it.</p>
+<blockquote>
+<div><p><strong>🤔 Before I say anything — what does β = 1.07 tell you?</strong></p>
+</div></blockquote>
+<p><strong>GE was not a levered market bet.</strong> Its beta is 1.07 — essentially the market.
+If leverage had explained GE’s higher volatility, β would have come in near 1.4.</p>
+<p>So where did the extra volatility come from? Not the market. Let’s split it.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="decomposing-risk-hedging-and-the-risk-budget">
+<h2>3. Decomposing Risk, Hedging, and the Risk Budget <a id="decomp"></a><a class="headerlink" href="#decomposing-risk-hedging-and-the-risk-budget" title="Link to this heading">#</a></h2>
+<p>Because <span class="math notranslate nohighlight">\(\varepsilon\)</span> is uncorrelated with the factor by construction, variance
+splits cleanly in two:</p>
+<div class="math notranslate nohighlight">
+\[\underbrace{\sigma^2}_{\text{total}} = \underbrace{\beta^2\sigma_m^2}_{\text{systematic}} + \underbrace{\sigma_\varepsilon^2}_{\text{idiosyncratic}}\]</div>
+<p>Note it’s <em>variances</em> that add, not volatilities — so the two pieces combine
+like the sides of a right triangle, not like a sum.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tot_vol</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">sys_vol</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GE total volatility      </span><span class="si">{</span><span class="n">tot_vol</span><span class="si">:</span><span class="s2">6.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  systematic (beta*mkt)  </span><span class="si">{</span><span class="n">sys_vol</span><span class="si">:</span><span class="s2">6.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  idiosyncratic          </span><span class="si">{</span><span class="n">idio</span><span class="si">:</span><span class="s2">6.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  check: sqrt(</span><span class="si">{</span><span class="n">sys_vol</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">^2 + </span><span class="si">{</span><span class="n">idio</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">^2) = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sys_vol</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">idio</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;share of variance from the market (= R²): </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;share idiosyncratic:                      </span><span class="si">{</span><span class="mi">1</span><span class="o">-</span><span class="n">m</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight: the volatility was real, and it wasn’t the market</strong></p>
+<p>GE ran 22.2% volatility against the market’s 15.6%. The excess did <strong>not</strong>
+come from levered market exposure — β is 1.07. It came from <strong>14.6% of
+idiosyncratic volatility</strong>, GE-specific risk that had nothing to do with the
+index.</p>
+<p>The week-1 suspicion was reasonable and it was wrong. This is why you run the
+regression instead of reasoning from volatility.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>⚠️ Caution: R² is not a quality measure</strong></p>
+<p>GE’s R² is 0.56. That is not “56% good.” It says 56% of GE’s variance was
+market movement. A <em>higher</em> R² would mean <em>less</em> room for alpha, not more. An
+index fund has R² ≈ 1.00 and zero alpha by construction.</p>
+</div></blockquote>
+<section id="why-anyone-bothers-the-hedged-portfolio">
+<h3>Why anyone bothers: the hedged portfolio<a class="headerlink" href="#why-anyone-bothers-the-hedged-portfolio" title="Link to this heading">#</a></h3>
+<p>The decomposition isn’t just accounting. It tells you how to <em>build</em> something.</p>
+<p>Hold GE and short <span class="math notranslate nohighlight">\(\beta\)</span> units of the market. The systematic term cancels:</p>
+<div class="math notranslate nohighlight">
+\[r^e - \beta r^e_m = \alpha + \varepsilon\]</div>
+<p>You are left with alpha plus idiosyncratic noise, and <strong>no market exposure at
+all</strong>. This is the hedged portfolio, and its volatility is <span class="math notranslate nohighlight">\(\sigma_\varepsilon\)</span> —
+14.6% instead of GE’s 22.2%.</p>
+<p>Now suppose your CIO gives you a <strong>risk budget</strong>: you may run $5M of annualized
+volatility in this position, no more. How much GE can you hold?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">BUDGET</span> <span class="o">=</span> <span class="mi">5_000_000</span>       <span class="c1"># $ of annualized volatility you&#39;re allowed to run</span>
+
+<span class="n">pos_unhedged</span> <span class="o">=</span> <span class="n">BUDGET</span> <span class="o">/</span> <span class="n">tot_vol</span>      <span class="c1"># $ position that uses the whole budget</span>
+<span class="n">pos_hedged</span>   <span class="o">=</span> <span class="n">BUDGET</span> <span class="o">/</span> <span class="n">idio</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="s1">&#39;volatility&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}{</span><span class="s1">&#39;position&#39;</span><span class="si">:</span><span class="s2">&gt;16s</span><span class="si">}{</span><span class="s1">&#39;alpha P&amp;L&#39;</span><span class="si">:</span><span class="s2">&gt;13s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">64</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">vol</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;GE, unhedged&#39;</span><span class="p">,</span> <span class="n">tot_vol</span><span class="p">,</span> <span class="n">pos_unhedged</span><span class="p">),</span>
+                       <span class="p">(</span><span class="s1">&#39;GE, market-hedged&#39;</span><span class="p">,</span> <span class="n">idio</span><span class="p">,</span> <span class="n">pos_hedged</span><span class="p">)]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="n">vol</span><span class="si">:</span><span class="s2">&gt;12.2%</span><span class="si">}{</span><span class="n">pos</span><span class="si">:</span><span class="s2">&gt;16,.0f</span><span class="si">}{</span><span class="n">pos</span><span class="o">*</span><span class="n">alpha_m</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;13,.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Hedging lets you hold </span><span class="si">{</span><span class="n">pos_hedged</span><span class="o">/</span><span class="n">pos_unhedged</span><span class="o">-</span><span class="mi">1</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2"> more GE for the same risk budget,&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;and therefore earn </span><span class="si">{</span><span class="n">pos_hedged</span><span class="o">/</span><span class="n">pos_unhedged</span><span class="o">-</span><span class="mi">1</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2"> more alpha dollars.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight: hedging converts risk budget into alpha capacity</strong></p>
+<p>Your risk budget is scarce. Every unit of it spent on market exposure — which
+you could have bought for five basis points — is a unit not spent on the thing
+you are actually being paid for.</p>
+<p>Strip the market out and the same budget carries a <strong>50% larger</strong> position in
+the part you have a view on. That is the entire economic case for hedging, and
+it is why the appraisal ratio (next section) is the number that matters when
+you already own the market.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>📌 Remember: this is how the industry is organized</strong></p>
+<p>The split runs straight through the business. <strong>Beta is plentiful and cheap</strong> —
+index funds, futures, ETFs, a few basis points. <strong>Alpha is scarce and dear</strong> —
+hedge funds, 2-and-20, capacity-constrained.</p>
+<p>The reason those are separate products at separate prices is precisely the
+decomposition on this page. Anyone charging an alpha fee for something with
+β = 1.0 and α = 0 is selling you beta at an alpha price, and a regression is
+how you catch them. Which is what we’ll do next.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-appraisal-ratio">
+<h2>4. The Appraisal Ratio <a id="appraisal"></a><a class="headerlink" href="#the-appraisal-ratio" title="Link to this heading">#</a></h2>
+<p>Now the third question: <strong>was any of it something you couldn’t have bought
+cheaply?</strong></p>
+<p>You can buy market exposure for about five basis points. So the part of GE’s
+return that came from β is not worth paying a manager for. What’s left is α —
+and the risk you had to carry to get it is the <em>idiosyncratic</em> risk, because the
+systematic part was never yours in the first place.</p>
+<div class="math notranslate nohighlight">
+\[AR = \frac{\alpha}{\sigma_\varepsilon}\]</div>
+<p>That is the <strong>appraisal ratio</strong>: alpha per unit of the risk you couldn’t
+diversify or replicate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sharpe_ge</span>  <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">y</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">mkt</span>        <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span>
+<span class="n">sharpe_mkt</span> <span class="o">=</span> <span class="n">mkt</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">mkt</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="s1">&#39;Sharpe&#39;</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}{</span><span class="s1">&#39;Appraisal&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">43</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;GE&#39;</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="n">sharpe_ge</span><span class="si">:</span><span class="s2">&gt;9.3f</span><span class="si">}{</span><span class="n">alpha_m</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="n">idio</span><span class="si">:</span><span class="s2">&gt;12.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;The market&#39;</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="n">sharpe_mkt</span><span class="si">:</span><span class="s2">&gt;9.3f</span><span class="si">}{</span><span class="mf">0.0</span><span class="si">:</span><span class="s2">&gt;12.3f</span><span class="si">}</span><span class="s2">   &lt;- by definition&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="why-the-appraisal-ratio-is-lower-than-the-sharpe-ratio">
+<h3>Why the appraisal ratio is lower than the Sharpe ratio<a class="headerlink" href="#why-the-appraisal-ratio-is-lower-than-the-sharpe-ratio" title="Link to this heading">#</a></h3>
+<p>GE’s Sharpe is 0.773; its appraisal ratio is 0.487.</p>
+<p>The Sharpe ratio credits GE for <em>everything</em> it earned, including the part that
+was just market exposure at β = 1.07. The appraisal ratio credits it only for α.
+Strip out the free part and the number falls.</p>
+</section>
+<section id="they-were-never-three-ratios">
+<h3>They were never three ratios<a class="headerlink" href="#they-were-never-three-ratios" title="Link to this heading">#</a></h3>
+<p>Go back to the endogenous benchmark from Section 2 — the fitted value
+<span class="math notranslate nohighlight">\(r^b = \sum_j \beta_j f_j\)</span>. Measure the information ratio against <em>that</em>:</p>
+<div class="math notranslate nohighlight">
+\[r - r^b = \alpha + \varepsilon
+\qquad\Longrightarrow\qquad
+IR = \frac{\text{mean}(\alpha + \varepsilon)}{\text{sd}(\alpha + \varepsilon)} = \frac{\alpha}{\sigma_\varepsilon}\]</div>
+<p>which <strong>is</strong> the appraisal ratio, exactly.</p>
+<p>So there is one formula — active return over tracking error — and the only thing
+that changes is what you benchmark against:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>= information ratio against…</p></th>
+<th class="head"><p>Use when</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Sharpe</strong></p></td>
+<td><p>cash</p></td>
+<td><p>this is your whole portfolio</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Information ratio</strong></p></td>
+<td><p>your mandate</p></td>
+<td><p>you were hired to beat something</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Appraisal ratio</strong></p></td>
+<td><p><strong>the endogenous benchmark</strong></p></td>
+<td><p>you already hold the factors</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>📌 Remember</strong></p>
+<p>Picking a performance measure <em>is</em> picking a benchmark. Sharpe assumes your
+alternative was a T-bill. The appraisal ratio assumes your alternative was a
+cheap replicating portfolio of factors — which, for anyone who can buy ETFs,
+is the honest comparison.</p>
+</div></blockquote>
+</section>
+<section id="and-it-can-reverse-the-ranking">
+<h3>And it can reverse the ranking<a class="headerlink" href="#and-it-can-reverse-the-ranking" title="Link to this heading">#</a></h3>
+<p>Here is the value long-short from Lecture 3 — the standard convention, NYSE
+breakpoints and value-weighted, so <strong>+5.3%/yr and not the +20.8% the demo
+showed</strong> — run through the same regression.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="n">dv</span><span class="p">[</span><span class="n">dv</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="s1">&#39;BM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">&#39;lo&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">&#39;hi&#39;</span><span class="p">})</span>
+<span class="n">dl</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;BM&#39;</span><span class="p">,</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+<span class="n">dl</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+<span class="n">dl</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">BM</span> <span class="o">&lt;=</span> <span class="n">dl</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">BM</span> <span class="o">&gt;=</span> <span class="n">dl</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+<span class="n">dl</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">])</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+<span class="n">ls</span> <span class="o">=</span> <span class="p">(</span><span class="n">pp</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>          <span class="c1"># align to the month earned</span>
+
+<span class="n">j</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">ls</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;ls&#39;</span><span class="p">),</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">m2</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">ls</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">idio2</span> <span class="o">=</span> <span class="n">m2</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Value long-short (NYSE breakpoints, value-weighted)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  mean      </span><span class="si">{</span><span class="n">j</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  alpha     </span><span class="si">{</span><span class="n">m2</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr   t = </span><span class="si">{</span><span class="n">m2</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  beta      </span><span class="si">{</span><span class="n">m2</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  R²        </span><span class="si">{</span><span class="n">m2</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="s1">&#39;Sharpe&#39;</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}{</span><span class="s1">&#39;Appraisal&#39;</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">43</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;GE&#39;</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="n">sharpe_ge</span><span class="si">:</span><span class="s2">&gt;9.3f</span><span class="si">}{</span><span class="n">alpha_m</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="n">idio</span><span class="si">:</span><span class="s2">&gt;12.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Value long-short&#39;</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="n">j</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">j</span><span class="o">.</span><span class="n">ls</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;9.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">m2</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="n">idio2</span><span class="si">:</span><span class="s2">&gt;12.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-two-ratios-disagree">
+<h3>The two ratios disagree<a class="headerlink" href="#the-two-ratios-disagree" title="Link to this heading">#</a></h3>
+<p><strong>Sharpe ranks GE well above the value strategy. Appraisal ranks the value
+strategy above GE.</strong></p>
+<p>The reason is in the beta. The value long-short has β = <strong>−0.21</strong> — it leans
+slightly <em>against</em> the market. That negative exposure dragged on its raw return
+during a twenty-year bull market, so its Sharpe looks mediocre. Strip the market
+out and its alpha (<strong>+7.2%/yr</strong>) is actually <em>larger</em> than its raw return
+(+5.3%/yr).</p>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<p>For an investor who already owns the market, the appraisal ratio is the
+relevant number, and it says the value strategy is the better addition. For an
+investor choosing one single thing to own, Sharpe is right and GE wins.</p>
+<p><strong>The ratios don’t disagree because one is wrong. They answer different
+questions.</strong> Know which one you’re asking.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>⚠️ Caution: two things we are not doing today</strong></p>
+<p>GE’s alpha has <strong>t = 2.19</strong> over twenty years — statistically marginal, and we
+haven’t asked how many stocks we’d have to look at before finding one that
+good by chance. We also picked GE <em>because</em> it was famous.</p>
+<p>Both of those are serious problems, and both are Lectures 8 and 9.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="two-famous-funds">
+<h2>5. Two Famous Funds <a id="funds"></a><a class="headerlink" href="#two-famous-funds" title="Link to this heading">#</a></h2>
+<p>Enough with single stocks. Let’s point this at two managers you’ve heard of.</p>
+<p><strong>Cathie Wood’s ARK Innovation (ARKK)</strong> — disruptive technology, genomics, AI.
+Spectacular returns and a huge following.</p>
+<p><strong>Warren Buffett’s Berkshire Hathaway (BRK)</strong> — the most famous track record in
+finance.</p>
+<p>Both against the six-factor model. Watch what separates them.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">funds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/Fin418/&#39;</span>
+                       <span class="s1">&#39;main/assets/data/df_WarrenBAndCathieW_monthly.pkl&#39;</span><span class="p">)</span>
+<span class="n">funds</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">funds</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>      <span class="c1"># &#39;Mom   &#39; has trailing spaces</span>
+<span class="n">FACT</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">,</span><span class="s1">&#39;SMB&#39;</span><span class="p">,</span><span class="s1">&#39;HML&#39;</span><span class="p">,</span><span class="s1">&#39;RMW&#39;</span><span class="p">,</span><span class="s1">&#39;CMA&#39;</span><span class="p">,</span><span class="s1">&#39;Mom&#39;</span><span class="p">]</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ARKK&#39;</span><span class="p">,</span><span class="s1">&#39;BRK&#39;</span><span class="p">]:</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">funds</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">nm</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">nm</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">FACT</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">iv</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">rows</span><span class="p">[</span><span class="n">nm</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">ret</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="n">vol</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span>
+                    <span class="n">sharpe</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">y</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">],</span>
+                    <span class="n">r2</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">rsquared</span><span class="p">,</span> <span class="n">appraisal</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="n">iv</span><span class="p">,</span>
+                    <span class="o">**</span><span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">FACT</span><span class="p">})</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">12s</span><span class="si">}{</span><span class="s1">&#39;months&#39;</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">&#39;return&#39;</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}{</span><span class="s1">&#39;vol&#39;</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">&#39;Sharpe&#39;</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ARKK&#39;</span><span class="p">,</span><span class="s1">&#39;BRK&#39;</span><span class="p">]:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">12s</span><span class="si">}{</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">months</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;8d</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">ret</span><span class="si">:</span><span class="s2">&gt;8.1%</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">vol</span><span class="si">:</span><span class="s2">&gt;8.1%</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">sharpe</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">12s</span><span class="si">}{</span><span class="s1">&#39;alpha&#39;</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}{</span><span class="s1">&#39;t&#39;</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}{</span><span class="s1">&#39;R²&#39;</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}{</span><span class="s1">&#39;appraisal&#39;</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ARKK&#39;</span><span class="p">,</span><span class="s1">&#39;BRK&#39;</span><span class="p">]:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">12s</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">alpha</span><span class="si">:</span><span class="s2">&gt;8.1%</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">t</span><span class="si">:</span><span class="s2">&gt;7.2f</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">r2</span><span class="si">:</span><span class="s2">&gt;7.2f</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">appraisal</span><span class="si">:</span><span class="s2">&gt;11.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="si">:</span><span class="s2">12s</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">FACT</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ARKK&#39;</span><span class="p">,</span><span class="s1">&#39;BRK&#39;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">12s</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">R</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">f</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;+9.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">FACT</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="read-the-loadings-before-the-alpha">
+<h3>Read the loadings before the alpha<a class="headerlink" href="#read-the-loadings-before-the-alpha" title="Link to this heading">#</a></h3>
+<p><strong>ARKK has the better Sharpe ratio — 0.96 against 0.64.</strong> On the Lecture 1
+measure it wins comfortably. Now look at what it is made of.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">=</span> <span class="pre">+1.54</span></code> — half again as much market exposure as the market itself.
+<code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">=</span> <span class="pre">−0.95</span></code> — a large <em>growth</em> tilt. <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">=</span> <span class="pre">−0.81</span></code> — tilted toward
+<strong>unprofitable</strong> firms. <code class="docutils literal notranslate"><span class="pre">CMA</span> <span class="pre">=</span> <span class="pre">−0.53</span></code> — toward heavy investors.</p>
+<p>That is a recognizable style: <strong>levered, small, unprofitable growth.</strong> And
+<code class="docutils literal notranslate"><span class="pre">R²</span> <span class="pre">=</span> <span class="pre">0.84</span></code> says 84% of ARKK’s month-to-month variation is that style, not
+stock selection. Its alpha is +8.2%/yr with <strong>t = 1.23</strong> — not distinguishable
+from zero.</p>
+<p>Berkshire is the mirror image. <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">=</span> <span class="pre">+0.69</span></code> — <em>defensive</em>, less market risk
+than the market. <code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">=</span> <span class="pre">+0.57</span></code> — value. <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">=</span> <span class="pre">+0.35</span></code> — profitable, quality
+firms. R² = 0.40, so most of what Berkshire did is <em>not</em> explained by the six
+factors.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight: the same tools, opposite readings</strong></p>
+<p>Buffett’s reputation is stock-picking genius. The regression says a large part
+of it is a <strong>systematic, describable style</strong> — buy cheap, profitable, low-beta
+companies and hold them — which is now sold as a “quality” ETF. That is not a
+debunking. It is the discovery that his edge was a repeatable idea, decades
+before anyone packaged it.</p>
+<p>ARKK’s returns are 84% a levered growth bet, over 59 months that happened to
+be a growth bull market.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>⚠️ Caution: read the sample lengths</strong></p>
+<p>Berkshire has 279 months. ARKK has <strong>59</strong>. Neither alpha clears |t| &gt; 2, and
+ARKK’s window is a single regime. Note also that Berkshire’s 279 months are
+<strong>not contiguous</strong> — this file spans 1988–2021, which is 398 months, so about
+30% of the calendar is missing at scattered single months. We use it because
+it is the only place ARKK and Berkshire sit side by side; every number in the
+table inherits that gap. This is a demonstration of the <em>method</em>, not
+a verdict on either manager — and how to reason about that gap is Lecture 8.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="hands-on-does-your-signal-have-alpha">
+<h2>🛠️ Hands-On: Does Your Signal Have Alpha? <a id="ho1"></a><a class="headerlink" href="#hands-on-does-your-signal-have-alpha" title="Link to this heading">#</a></h2>
+<p>In Lecture 3 you each picked a signal and computed its long-short return. Now
+run it through a factor regression and find out how much of it was market
+exposure.</p>
+<blockquote>
+<div><p><strong>🤔 Predict first.</strong> A long-short is roughly market-neutral by construction —
+you’re long some stocks and short others. So do you expect β near zero? Commit
+before running.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === EDIT THIS CELL: your signal from Lecture 3 ===</span>
+<span class="n">MY_SIGNAL</span> <span class="o">=</span> <span class="s2">&quot;GP&quot;</span>      <span class="c1"># ← your pick</span>
+
+<span class="n">sig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">MY_SIGNAL</span><span class="p">,</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+<span class="n">qq</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="n">MY_SIGNAL</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">&#39;lo&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">&#39;hi&#39;</span><span class="p">}))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">qq</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+<span class="n">x</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">MY_SIGNAL</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">MY_SIGNAL</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">])</span>
+<span class="n">px</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+<span class="n">r</span>  <span class="o">=</span> <span class="p">(</span><span class="n">px</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">px</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">r</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="c1"># Fill in the two blanks to regress your long-short on the market.</span>
+
+<span class="n">jj</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">),</span> <span class="n">ff</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="n">mm</span> <span class="o">=</span> <span class="n">____</span>        <span class="c1"># hint: sm.OLS(jj.r, sm.add_constant(jj[&#39;Mkt-RF&#39;])).fit()</span>
+<span class="n">iv</span> <span class="o">=</span> <span class="n">____</span>        <span class="c1"># hint: mm.resid.std() * np.sqrt(12)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  raw return  </span><span class="si">{</span><span class="n">jj</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.2%</span><span class="si">}</span><span class="s2">/yr    Sharpe    </span><span class="si">{</span><span class="n">jj</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">jj</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  alpha       </span><span class="si">{</span><span class="n">mm</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.2%</span><span class="si">}</span><span class="s2">/yr    t = </span><span class="si">{</span><span class="n">mm</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  beta        </span><span class="si">{</span><span class="n">mm</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;Mkt-RF&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">+7.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  R²          </span><span class="si">{</span><span class="n">mm</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">7.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  appraisal   </span><span class="si">{</span><span class="n">mm</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="n">iv</span><span class="si">:</span><span class="s2">+7.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="compare-with-the-room">
+<h3>Compare with the room<a class="headerlink" href="#compare-with-the-room" title="Link to this heading">#</a></h3>
+<p>Two things to look for, and to say out loud:</p>
+<ul class="simple">
+<li><p><strong>Is your β near zero?</strong> Most long-shorts are, but not all. A signal
+correlated with size or volatility often carries real market exposure without
+anyone intending it.</p></li>
+<li><p><strong>Is your alpha bigger or smaller than your raw return?</strong> Bigger means
+negative beta was <em>hurting</em> you. Smaller means part of what looked like signal
+was just market.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="challenge-exxon-vs-pfizer">
+<h2>🎯 Challenge: Exxon vs Pfizer <a id="challenge"></a><a class="headerlink" href="#challenge-exxon-vs-pfizer" title="Link to this heading">#</a></h2>
+<p><em>Homework — due before Lecture 5.</em></p>
+<p>Two of the largest US companies, both public for the whole 1980–2000 sample.
+Their Sharpe ratios are <strong>0.720</strong> and <strong>0.718</strong> — indistinguishable.</p>
+<p>Your CIO already holds the market and wants to add one satellite position. Run
+the regressions and tell them which.</p>
+<ul class="simple">
+<li><p><strong>Exxon</strong> is permno <strong>11850</strong></p></li>
+<li><p><strong>Pfizer</strong> is permno <strong>21936</strong></p></li>
+</ul>
+<section id="q1-exxon">
+<h3>Q1 — Exxon<a class="headerlink" href="#q1-exxon" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xom_alpha_ann</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized alpha, e.g. 0.05 for 5%/yr</span>
+<span class="n">xom_beta</span>      <span class="o">=</span> <span class="n">____</span>
+<span class="n">xom_appraisal</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized alpha / annualized idiosyncratic vol</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs — fill these in:</span>
+<span class="n">xom_alpha_ann</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">xom_beta</span>      <span class="o">=</span> <span class="n">____</span>
+<span class="n">xom_appraisal</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exxon: alpha </span><span class="si">{</span><span class="n">xom_alpha_ann</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr  beta </span><span class="si">{</span><span class="n">xom_beta</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  appraisal </span><span class="si">{</span><span class="n">xom_appraisal</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q2-pfizer">
+<h3>Q2 — Pfizer<a class="headerlink" href="#q2-pfizer" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pfe_alpha_ann</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">pfe_beta</span>      <span class="o">=</span> <span class="n">____</span>
+<span class="n">pfe_appraisal</span> <span class="o">=</span> <span class="n">____</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs — fill these in:</span>
+<span class="n">pfe_alpha_ann</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">pfe_beta</span>      <span class="o">=</span> <span class="n">____</span>
+<span class="n">pfe_appraisal</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pfizer: alpha </span><span class="si">{</span><span class="n">pfe_alpha_ann</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr  beta </span><span class="si">{</span><span class="n">pfe_beta</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  appraisal </span><span class="si">{</span><span class="n">pfe_appraisal</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q3-the-memo">
+<h3>Q3 — The memo<a class="headerlink" href="#q3-the-memo" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Your task — maximum 6 sentences</strong></p>
+<p>Their Sharpe ratios are the same. Once you have the regressions, are these two
+positions interchangeable?</p>
+<p>Address: what is <em>different</em> about how each one earned its return; whether the
+appraisal ratio separates them; and what a CIO who already owns the market
+should care about that neither ratio captures.</p>
+<p>There is a defensible answer in either direction. I’m grading the reasoning.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MEMO</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Write your memo here. Don&#39;t delete the surrounding triple quotes.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">MEMO</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="submission">
+<h2>📤 Submission <a id="submit"></a><a class="headerlink" href="#submission" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;xom_alpha_ann&quot;</span><span class="p">,</span> <span class="s2">&quot;xom_beta&quot;</span><span class="p">,</span> <span class="s2">&quot;xom_appraisal&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pfe_alpha_ann&quot;</span><span class="p">,</span> <span class="s2">&quot;pfe_beta&quot;</span><span class="p">,</span> <span class="s2">&quot;pfe_appraisal&quot;</span><span class="p">,</span> <span class="s2">&quot;MEMO&quot;</span><span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">()]</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">❌ Missing before submission: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;assignment&quot;</span><span class="p">:</span> <span class="s2">&quot;L4_PerfEval_AI&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ts&quot;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;seconds&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;answers&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;MEMO&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;memo&quot;</span><span class="p">:</span> <span class="n">MEMO</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;UG54::</span><span class="si">{</span><span class="n">checksum</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Submission form: https://forms.gle/YOUR_FORM_LINK_HERE&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Three ratios, three questions.</strong> Sharpe: was it worth the risk? Information:
+did I beat my mandate? Appraisal: was any of it mine?</p></li>
+<li><p><strong>Sharpe is the information ratio against cash.</strong> Not a separate idea.</p></li>
+<li><p><strong>The benchmark is a choice, and it manufactures performance.</strong> A value
+manager measured against the broad market gets paid for the tilt itself.</p></li>
+<li><p><strong>α is what the factor doesn’t explain; β is what you could have bought
+cheaply.</strong> That is the whole point of the regression.</p></li>
+<li><p><strong>Variances add, volatilities don’t:</strong> σ² = β²σ²ₘ + σ²ε.</p></li>
+<li><p><strong>R² is not a quality score.</strong> High R² means <em>less</em> room for alpha.</p></li>
+<li><p><strong>GE was skill, not leverage.</strong> β = 1.07, α = +7.1%/yr. The extra volatility
+was idiosyncratic. The week-1 suspicion was reasonable and wrong — which is
+why you run the regression.</p></li>
+<li><p><strong>A factor model does two separate jobs</strong> — risk (β, σ_ε) and expected return
+(α). A high R² is good for the first and bad for the second.</p></li>
+<li><p><strong>Hedging converts risk budget into alpha capacity.</strong> Stripping GE’s market
+exposure lets the same $5M vol budget carry ~50% more position.</p></li>
+<li><p><strong>Alpha is scarce, beta is plentiful — pay different prices.</strong> That split is
+why index funds and hedge funds are different products.</p></li>
+<li><p><strong>ARKK had the better Sharpe and an R² of 0.84.</strong> Most of it was a levered
+growth style. Buffett’s R² was 0.40 — but much of <em>his</em> edge turned out to be
+a describable value-and-quality tilt too.</p></li>
+<li><p><strong>Sharpe and appraisal can rank things differently</strong>, and neither is wrong.
+The value long-short has a worse Sharpe and a better appraisal because its
+β is negative. Which matters depends on what you already own.</p></li>
+</ol>
+<hr class="docutils" />
+<section id="next-class">
+<h3>Next class<a class="headerlink" href="#next-class" title="Link to this heading">#</a></h3>
+<p>Where do factors come from? We used the market because it was obvious. Next:
+the other factors people use, where they came from, and how you’d choose.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="appendix">
+<h2>📎 Appendix <a id="appendix"></a><a class="headerlink" href="#appendix" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
+<span class="c1"># 📎 APPENDIX — Belt-and-Suspenders Data Loading</span>
+<span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
+<span class="c1">#   panel = pd.read_parquet(f&quot;{BASE}/panel_backbone_1980_2000.parquet&quot;)</span>
+<span class="c1">#</span>
+<span class="c1"># Fama-French factors are fetched live from Ken French&#39;s library. Prompt:</span>
+<span class="c1"># &quot;Using pandas-datareader, fetch F-F_Research_Data_Factors monthly from the</span>
+<span class="c1">#  famafrench source starting 1980, convert the PeriodIndex to month-end</span>
+<span class="c1">#  timestamps, and divide by 100 to get decimals.&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_ff_monthly</span><span class="p">():</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;F-F_Research_Data_Factors&#39;</span><span class="p">,</span> <span class="s1">&#39;famafrench&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s1">&#39;1980-01-01&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span> <span class="o">/</span> <span class="mi">100</span>
+
+<span class="c1"># Backup if Ken French is unreachable:</span>
+<span class="c1"># ff = pd.read_csv(&quot;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/ff_monthly.csv&quot;, index_col=0, parse_dates=True)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-4">Lecture 4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-plan">📋 Today’s Plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-questions-three-ratios">1. Three Questions, Three Ratios <a id="three"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-the-information-ratio-and-endogenous-benchmarks">2. Sharpe, the Information Ratio, and Endogenous Benchmarks <a id="sharpe-ir"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-return-per-unit-of-total-risk">Sharpe: return per unit of total risk</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#information-ratio-return-relative-to-a-benchmark">Information ratio: return relative to a benchmark</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-fund-three-numbers">One fund. Three numbers.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#which-benchmark-is-right">Which benchmark is right?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#or-let-the-data-build-the-benchmark">Or: let the data build the benchmark</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-factor-regressions">🛡️ Pitfall Checklist for Factor Regressions <a id="pitfalls"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-was-ge-skill-or-beta">🔄 Live Demo: Was GE Skill, or Beta? <a id="demo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decomposition">The decomposition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-same-equation-does-two-different-jobs">The same equation does two different jobs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1 — The specification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2 — Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate-then-read-it">Step 3 — Validate, then read it</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#decomposing-risk-hedging-and-the-risk-budget">3. Decomposing Risk, Hedging, and the Risk Budget <a id="decomp"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-anyone-bothers-the-hedged-portfolio">Why anyone bothers: the hedged portfolio</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-appraisal-ratio">4. The Appraisal Ratio <a id="appraisal"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-appraisal-ratio-is-lower-than-the-sharpe-ratio">Why the appraisal ratio is lower than the Sharpe ratio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#they-were-never-three-ratios">They were never three ratios</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#and-it-can-reverse-the-ranking">And it can reverse the ranking</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-ratios-disagree">The two ratios disagree</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-famous-funds">5. Two Famous Funds <a id="funds"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-loadings-before-the-alpha">Read the loadings before the alpha</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-does-your-signal-have-alpha">🛠️ Hands-On: Does Your Signal Have Alpha? <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-with-the-room">Compare with the room</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-exxon-vs-pfizer">🎯 Challenge: Exxon vs Pfizer <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-exxon">Q1 — Exxon</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-pfizer">Q2 — Pfizer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-memo">Q3 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">Next class</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">📎 Appendix <a id="appendix"></a></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

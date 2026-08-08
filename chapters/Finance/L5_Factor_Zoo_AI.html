@@ -1,0 +1,1266 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Where Factors Come From, and the Factor Zoo &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/L5_Factor_Zoo_AI';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/L5_Factor_Zoo_AI.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">3. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">3.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">3.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">3.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">3.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">3.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">3.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">3.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">3.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">3.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">3.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">3.4.9. Cleaning data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">3.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">3.5. Flow control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">3.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">3.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="IntrotoReturns_c.html">4. Introduction to Asset Returns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">4.11. The Choice of Frequency and Annualization of Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">4.12. Data APIs</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="Timing_c.html">5. Timing Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">5.6. Expected Returns Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">5.7. Volatility Timing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="FactorModels_c.html">6. Factor Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="PortfolioMath_c.html">7. Portfolios</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../scientific/linear_algebra1_c.html">7.13. Linear Algebra Review</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationI_cc.html">8. Capital Allocation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="crosssectionalequitystrategies.html">9. Cross-Sectional Equity Strategies</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">9.18. Momentum factor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">9.19. An overview of factors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="CapitalAllocationII.html">10. Capital Allocation II</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Performance_evaluation_c.html">11. Performance Evaluation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MachineLearning_cc.html">12. Machine Learning in Finance</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="MultiFactorModels_c.html">13. Multi Factor Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">13.13. 📊 Interpreting Factor Models</a></li>
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="RiskManagement.html">14. Risk Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TradingCosts.html">15. Liquidity and Trading Cost Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LeverageandShorting.html">16. Leverage, Shorting, and Limits to Arbitrage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LLMs.html">17. Gen AI and LLMs in Finance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">18. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">19. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment1.html">19.1. Assignment 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment2.html">19.2. Assignment 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment3.html">19.3. Assignment 3</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment4_c.html">19.6. Assignment 4</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/Assignment5.html">19.8. Assignment 5</a></li>
+
+
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Finance/L5_Factor_Zoo_AI.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/L5_Factor_Zoo_AI.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/L5_Factor_Zoo_AI.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Where Factors Come From, and the Factor Zoo</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-5">Lecture 5</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-plan">📋 Today’s Plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-kinds-of-factor-model">1. Three Kinds of Factor Model <a id="three"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-zoo-what-people-actually-trade">2. The Zoo: What People Actually Trade <a id="zoo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-stories-and-they-are-not-the-same">Two stories, and they are not the same</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-comparing-factors">🛡️ Pitfall Checklist for Comparing Factors <a id="pitfalls"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-how-much-do-these-overlap">🔄 Live Demo: How Much Do These Overlap? <a id="demo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-average-first-then-the-picture">Read the average first, then the picture</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-zoo-is-smaller-than-it-looks">3. The Zoo Is Smaller Than It Looks <a id="smaller"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#three-papers-one-factor">Three papers, one factor</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-find-your-signal-s-twin">🛠️ Hands-On: Find Your Signal’s Twin <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#your-task">Your task</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-take-from-it">What to take from it</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-how-many-bets-are-there-really">🎯 Challenge: How Many Bets Are There Really? <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-the-headline-correlation-numbers">Q1 — The headline correlation numbers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-within-versus-across-category">Q2 — Within versus across category</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-memo">Q3 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">Next class</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">📎 Appendix <a id="appendix"></a></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="where-factors-come-from-and-the-factor-zoo">
+<h1>Where Factors Come From, and the Factor Zoo<a class="headerlink" href="#where-factors-come-from-and-the-factor-zoo" title="Link to this heading">#</a></h1>
+<section id="lecture-5">
+<h2>Lecture 5<a class="headerlink" href="#lecture-5" title="Link to this heading">#</a></h2>
+</section>
+<section id="learning-objectives">
+<h2>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of today you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Distinguish the three kinds of factor model</strong> — and say what you have to
+specify in each</p></li>
+<li><p><strong>Name the major factor families</strong> and the economic story behind each</p></li>
+<li><p><strong>Measure how much two signals overlap</strong> rather than guessing from their names</p></li>
+<li><p><strong>Show that the factor zoo is far smaller than its headcount suggests</strong></p></li>
+<li><p><strong>Explain why that matters</strong> for anyone testing a new signal</p></li>
+</ol>
+</section>
+<section id="today-s-plan">
+<h2>📋 Today’s Plan<a class="headerlink" href="#today-s-plan" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#three"><span class="xref myst">Three kinds of factor model</span></a></p></li>
+<li><p><a class="reference internal" href="#zoo"><span class="xref myst">The zoo: what people actually trade</span></a></p></li>
+<li><p><a class="reference internal" href="#pitfalls"><span class="xref myst">Pitfall checklist</span></a></p></li>
+<li><p><a class="reference internal" href="#demo"><span class="xref myst">🔄 Live Demo: how much do these overlap?</span></a></p></li>
+<li><p><a class="reference internal" href="#smaller"><span class="xref myst">The zoo is smaller than it looks</span></a></p></li>
+<li><p><a class="reference internal" href="#ho1"><span class="xref myst">🛠️ Hands-On: find your signal’s twin</span></a></p></li>
+<li><p><a class="reference internal" href="#challenge"><span class="xref myst">🎯 Challenge: how many bets are there really?</span></a> — <em>homework</em></p></li>
+<li><p><a class="reference internal" href="#takeaways"><span class="xref myst">Key takeaways</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2>🛠️ Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Setup — run this first</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-v0_8-whitegrid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">]</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span><span class="p">;</span> <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<span class="n">BASE</span>  <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data&quot;</span>
+<span class="n">panel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/panel_backbone_1980_2000.parquet&quot;</span><span class="p">)</span>
+<span class="n">menu</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signal_menu.csv&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="si">}</span><span class="s2"> signals across </span><span class="si">{</span><span class="n">menu</span><span class="p">[</span><span class="s1">&#39;Cat.Economic&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s2"> economic categories&quot;</span><span class="p">)</span>
+<span class="n">menu</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Cat.Economic&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="three-kinds-of-factor-model">
+<h2>1. Three Kinds of Factor Model <a id="three"></a><a class="headerlink" href="#three-kinds-of-factor-model" title="Link to this heading">#</a></h2>
+<p>Last class we regressed GE on the market. Where did “the market” come from? We
+chose it. That choice is the model.</p>
+<p>There are exactly three ways to build a factor model, and they differ in <strong>what
+you have to specify</strong>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>You <strong>specify</strong></p></th>
+<th class="head"><p>You <strong>estimate</strong></p></th>
+<th class="head"><p>How</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Time-series</strong></p></td>
+<td><p>the factor <em>returns</em></p></td>
+<td><p>the betas</p></td>
+<td><p>time-series regression</p></td>
+<td><p>Fama-French — HML is a portfolio return you can look up</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Characteristic</strong> (fundamental)</p></td>
+<td><p>the <em>betas</em></p></td>
+<td><p>the factor returns</p></td>
+<td><p>cross-sectional regression, each period</p></td>
+<td><p>BARRA — book-to-market <strong>is</strong> the loading</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Statistical</strong></p></td>
+<td><p><strong>nothing</strong></p></td>
+<td><p>both</p></td>
+<td><p>eigendecomposition of Σ</p></td>
+<td><p>PCA</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight: the same duality you already met</strong></p>
+<p>In Lecture 3 you sorted stocks on a characteristic to <em>make</em> a portfolio. In
+Lecture 4 you regressed a return on a portfolio to <em>get</em> a beta. Those are the
+two directions:</p>
+<ul class="simple">
+<li><p>Make a portfolio from a characteristic → you now have a <strong>factor return</strong> →
+time-series model</p></li>
+<li><p>Take the characteristic as the exposure directly → estimate what that
+exposure paid each month → <strong>characteristic model</strong></p></li>
+</ul>
+<p>Same raw material, opposite plumbing.</p>
+</div></blockquote>
+<p>Today is about the first two, and specifically about <strong>which</strong> characteristics
+are worth turning into factors. The statistical route gets its own lecture (L18)
+because it answers a different question: what if the ones we chose are wrong?</p>
+</section>
+<hr class="docutils" />
+<section id="the-zoo-what-people-actually-trade">
+<h2>2. The Zoo: What People Actually Trade <a id="zoo"></a><a class="headerlink" href="#the-zoo-what-people-actually-trade" title="Link to this heading">#</a></h2>
+<p>Over fifty years the literature has published <strong>300+</strong> characteristics that
+predict the cross-section of returns. They are not 300 different ideas. They
+cluster into a handful of families, each with an economic story.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Family</p></th>
+<th class="head"><p>The claim</p></th>
+<th class="head"><p>Canonical signal</p></th>
+<th class="head"><p>Why it might work</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Value</strong></p></td>
+<td><p>Cheap firms outperform</p></td>
+<td><p>Book-to-market (Stattman 1980)</p></td>
+<td><p>Risk of distress, or over-extrapolation of bad news</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Momentum</strong></p></td>
+<td><p>Recent winners keep winning</p></td>
+<td><p>12-month return, skip a month (Jegadeesh-Titman 1993)</p></td>
+<td><p>Under-reaction to news, then over-shoot</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Profitability</strong></p></td>
+<td><p>Profitable firms outperform</p></td>
+<td><p>Gross profits / assets (Novy-Marx 2013)</p></td>
+<td><p>Quality is under-priced relative to growth</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Investment</strong></p></td>
+<td><p>Firms that grow assets fast underperform</p></td>
+<td><p>Asset growth (Cooper et al. 2008)</p></td>
+<td><p>Empire-building; over-investment at the peak</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Low risk</strong></p></td>
+<td><p>Low-volatility, low-beta stocks outperform</p></td>
+<td><p>Idiosyncratic vol (Ang et al. 2006)</p></td>
+<td><p>Leverage-constrained investors bid up high-beta names</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Issuance</strong></p></td>
+<td><p>Firms issuing equity underperform</p></td>
+<td><p>Share issuance (Pontiff-Woodgate 2008)</p></td>
+<td><p>Managers issue when the stock is expensive</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Liquidity</strong></p></td>
+<td><p>Illiquid stocks earn a premium</p></td>
+<td><p>Amihud (2002)</p></td>
+<td><p>Compensation for not being able to get out</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>📌 Every one of these is in your signal menu</strong>, with the original paper and
+the t-statistic its authors reported.</p>
+</div></blockquote>
+<section id="two-stories-and-they-are-not-the-same">
+<h3>Two stories, and they are not the same<a class="headerlink" href="#two-stories-and-they-are-not-the-same" title="Link to this heading">#</a></h3>
+<p>Every family above has <em>two</em> competing explanations, and which one you believe
+changes what you expect next.</p>
+<p><strong>Risk.</strong> The premium is compensation for bearing something genuinely
+unpleasant. If so it should persist — nobody is going to arbitrage away payment
+for real risk.</p>
+<p><strong>Mispricing.</strong> Investors are making a systematic error. If so, the premium
+should <strong>shrink once the paper is published</strong> and people trade against it.</p>
+<blockquote>
+<div><p><strong>🤔 Hold this question.</strong> You saw in Lecture 3 that the size premium went
+negative over 1980–2000, right after Banz published it in 1981. Which story
+does that support? We test this properly in Lecture 9.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="pitfall-checklist-for-comparing-factors">
+<h2>🛡️ Pitfall Checklist for Comparing Factors <a id="pitfalls"></a><a class="headerlink" href="#pitfall-checklist-for-comparing-factors" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Pitfall</p></th>
+<th class="head"><p>What goes wrong</p></th>
+<th class="head"><p>🔍 How to detect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><strong>Assuming different names mean different bets</strong></p></td>
+<td><p>You “diversify” across five signals that are one signal</p></td>
+<td><p>Correlate the long-short returns, not the characteristics</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p><strong>Correlating the signals instead of the strategies</strong></p></td>
+<td><p>Raw characteristics can look unrelated while their portfolios move together</p></td>
+<td><p>Always correlate the <em>return series</em></p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><strong>Comparing over different samples</strong></p></td>
+<td><p>Two signals with different data coverage aren’t comparable</p></td>
+<td><p>Align on common months before correlating</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><strong>Reading a category label as an economic claim</strong></p></td>
+<td><p>“Liquidity” and “size” are different words for overlapping things</p></td>
+<td><p>Check the number, not the taxonomy</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><strong>Counting signals as evidence</strong></p></td>
+<td><p>300 papers finding predictability is not 300 independent confirmations</p></td>
+<td><p>How many <em>distinct</em> bets are there? — today</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>🤖 AI-Era Insight</strong></p>
+<p>Ask an AI to “build a diversified multi-factor strategy” and it will happily
+combine value, size, low-volatility and liquidity — three of which, as you’re
+about to see, are close to the same trade in this sample. It has the names,
+not the correlation matrix.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="live-demo-how-much-do-these-overlap">
+<h2>🔄 Live Demo: How Much Do These Overlap? <a id="demo"></a><a class="headerlink" href="#live-demo-how-much-do-these-overlap" title="Link to this heading">#</a></h2>
+<p>We have 30 signals. Let’s build every one of them as a long-short and look at
+what they actually do.</p>
+<blockquote>
+<div><p><strong>📝 Spec</strong></p>
+<p>For each signal file, form the standard long-short — NYSE breakpoints, value
+weighted, top decile minus bottom decile, using <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> — align all of them
+on common months, and compute the pairwise correlation matrix of the <em>return
+series</em>.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>🤔 Predict.</strong> 30 strategies from 30 different published papers. What do you
+expect the average pairwise correlation to be?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">long_short</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">sig</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">sig</span><span class="p">,</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">,</span><span class="s1">&#39;me&#39;</span><span class="p">])</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)[</span><span class="n">sig</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+           <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">&#39;lo&#39;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">&#39;hi&#39;</span><span class="p">}))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">sig</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">sig</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">])</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;ret_fwd&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;me&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span>
+
+<span class="n">SIGS</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">menu</span><span class="o">.</span><span class="n">Acronym</span><span class="p">)</span>          <span class="c1"># the menu IS the directory listing</span>
+<span class="n">R</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">SIGS</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">long_short</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">:</span> <span class="n">R</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">R</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">L</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> long-short strategies over </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">L</span><span class="p">)</span><span class="si">}</span><span class="s2"> common months&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">C</span>  <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+<span class="n">iu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu_indices_from</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">v</span>  <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">iu</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pairwise correlations across </span><span class="si">{</span><span class="n">L</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> strategies</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  mean      </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  median    </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  |corr|&gt;0.5 in </span><span class="si">{</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">&gt;</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> of pairs</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">names</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">pairs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">((</span><span class="n">C</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">names</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">iu</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Most POSITIVELY correlated pairs:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">a</span><span class="si">:</span><span class="s2">22s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">b</span><span class="si">:</span><span class="s2">22s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">c</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Most NEGATIVELY correlated pairs:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">[:</span><span class="mi">3</span><span class="p">]:</span>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">a</span><span class="si">:</span><span class="s2">22s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">b</span><span class="si">:</span><span class="s2">22s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">c</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">order</span> <span class="o">=</span> <span class="p">(</span><span class="n">menu</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Acronym&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">C</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="s1">&#39;Cat.Economic&#39;</span><span class="p">]</span>
+           <span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">9.5</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">order</span><span class="p">,</span> <span class="n">order</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu_r&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="p">)));</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="p">)));</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Correlation of 29 long-short strategies, sorted by economic category&#39;</span><span class="p">,</span>
+             <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.046</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="read-the-average-first-then-the-picture">
+<h3>Read the average first, then the picture<a class="headerlink" href="#read-the-average-first-then-the-picture" title="Link to this heading">#</a></h3>
+<p>The <strong>average pairwise correlation is about +0.05</strong> — essentially zero. Taken at
+face value that says the zoo is wonderfully diversified: thirty nearly
+independent sources of return.</p>
+<p>That is the wrong conclusion, and the heatmap shows why. Look at the blocks on
+the diagonal.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-zoo-is-smaller-than-it-looks">
+<h2>3. The Zoo Is Smaller Than It Looks <a id="smaller"></a><a class="headerlink" href="#the-zoo-is-smaller-than-it-looks" title="Link to this heading">#</a></h2>
+<p>The average hides the structure. Split the pairs by whether the two signals come
+from the <strong>same economic category</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;Acronym&#39;</span><span class="p">)[</span><span class="s1">&#39;Cat.Economic&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="n">within</span><span class="p">,</span> <span class="n">across</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">iu</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">names</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+    <span class="p">(</span><span class="n">within</span> <span class="k">if</span> <span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">else</span> <span class="n">across</span><span class="p">)</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mean |correlation|</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  WITHIN economic category   </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">within</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">   (n = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">within</span><span class="p">)</span><span class="si">}</span><span class="s2"> pairs)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ACROSS economic category   </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">across</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">   (n = </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">across</span><span class="p">)</span><span class="si">}</span><span class="s2"> pairs)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  ratio: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">within</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">across</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="three-papers-one-factor">
+<h3>Three papers, one factor<a class="headerlink" href="#three-papers-one-factor" title="Link to this heading">#</a></h3>
+<p>Look at the top of the correlation list:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>pair</p></th>
+<th class="head"><p>correlation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>MaxRet &amp; RealizedVol</p></td>
+<td><p><strong>+0.97</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>IdioVol3F &amp; RealizedVol</p></td>
+<td><p><strong>+0.96</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>IdioVol3F &amp; MaxRet</p></td>
+<td><p><strong>+0.94</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Illiquidity &amp; Size</p></td>
+<td><p><strong>+0.92</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Those are separate publications, in separate journals, with separate names and
+separate economic stories. At a correlation of 0.97 they are <strong>the same trade</strong>.
+Whatever is being paid for, all three are collecting it.</p>
+<p>And Illiquidity vs Size at 0.92: illiquid firms <em>are</em> small firms. The
+“liquidity premium” and the “size premium” are not two findings in this sample.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight: count bets, not papers</strong></p>
+<p>The zoo has 300+ entries and far fewer distinct positions. Signals inside a
+family are near-duplicates (mean |ρ| ≈ 0.58); signals across families are
+nearly independent (≈ 0.19).</p>
+<p><strong>Diversification comes from spanning families, not from collecting names.</strong></p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>⚠️ Caution: this breaks a lot of published evidence</strong></p>
+<p>If 300 papers each report an independent-looking discovery, that seems like
+overwhelming support for cross-sectional predictability. If those 300 papers
+are really testing eight or ten distinct bets over and over on overlapping
+samples, it is much weaker support than the headcount suggests.</p>
+<p>That is one of the two big problems with the anomaly literature. We take it
+apart in Lecture 9, and Lecture 18 asks the sharper version: how many distinct
+factors can this data support <em>at all</em>?</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="hands-on-find-your-signal-s-twin">
+<h2>🛠️ Hands-On: Find Your Signal’s Twin <a id="ho1"></a><a class="headerlink" href="#hands-on-find-your-signal-s-twin" title="Link to this heading">#</a></h2>
+<p>You picked a signal in Lecture 3 and regressed it in Lecture 4. Now find out
+what else it is.</p>
+<section id="your-task">
+<h3>Your task<a class="headerlink" href="#your-task" title="Link to this heading">#</a></h3>
+<p>Pull your signal’s row out of the correlation matrix and look at its nearest
+neighbours. Then check whether they’re in the same economic category — if the
+nearest neighbour is in a <em>different</em> family, that’s worth knowing.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === EDIT + YOUR TURN ===</span>
+<span class="n">MY_SIGNAL</span> <span class="o">=</span> <span class="s2">&quot;GP&quot;</span>        <span class="c1"># ← your pick from Lecture 3</span>
+
+<span class="n">row</span> <span class="o">=</span> <span class="n">____</span>              <span class="c1"># hint: C[MY_SIGNAL].drop(MY_SIGNAL).sort_values(ascending=False)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MY_SIGNAL</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;closest 5:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">flag</span> <span class="o">=</span> <span class="s2">&quot;  ← same family&quot;</span> <span class="k">if</span> <span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MY_SIGNAL</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s2">24s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">c</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="n">flag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">most negatively correlated:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s2">24s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">c</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">cat</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="what-to-take-from-it">
+<h3>What to take from it<a class="headerlink" href="#what-to-take-from-it" title="Link to this heading">#</a></h3>
+<p>If your signal’s nearest neighbour is above <strong>+0.8</strong>, you are not holding a
+distinct bet — you’re holding a version of something else, and any “confirmation”
+from that other signal is not independent evidence.</p>
+<p>If your closest neighbour is below <strong>+0.3</strong>, your signal is doing something the
+rest of the zoo isn’t. That is more interesting, and also more suspicious: check
+that it isn’t just noisier.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="challenge-how-many-bets-are-there-really">
+<h2>🎯 Challenge: How Many Bets Are There Really? <a id="challenge"></a><a class="headerlink" href="#challenge-how-many-bets-are-there-really" title="Link to this heading">#</a></h2>
+<p><em>Homework — due before Lecture 6.</em></p>
+<p>You are briefing an investment committee that has been told “we run a
+30-factor model, so we’re extremely diversified.”</p>
+<p>Quantify how true that is.</p>
+<section id="q1-the-headline-correlation-numbers">
+<h3>Q1 — The headline correlation numbers<a class="headerlink" href="#q1-the-headline-correlation-numbers" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mean_pairwise_corr</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># mean of the off-diagonal correlations (signed)</span>
+<span class="n">frac_high_corr</span>     <span class="o">=</span> <span class="n">____</span>   <span class="c1"># fraction of pairs with |corr| &gt; 0.5</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs — fill these in:</span>
+<span class="n">mean_pairwise_corr</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">frac_high_corr</span>     <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mean pairwise correlation : </span><span class="si">{</span><span class="n">mean_pairwise_corr</span><span class="si">:</span><span class="s2">+.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;share of pairs |corr|&gt;0.5 : </span><span class="si">{</span><span class="n">frac_high_corr</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q2-within-versus-across-category">
+<h3>Q2 — Within versus across category<a class="headerlink" href="#q2-within-versus-across-category" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">within_cat_corr</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># mean |corr| for pairs in the SAME economic category</span>
+<span class="n">across_cat_corr</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># mean |corr| for pairs in DIFFERENT categories</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs — fill these in:</span>
+<span class="n">within_cat_corr</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">across_cat_corr</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;within category : </span><span class="si">{</span><span class="n">within_cat_corr</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;across category : </span><span class="si">{</span><span class="n">across_cat_corr</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ratio           : </span><span class="si">{</span><span class="n">within_cat_corr</span><span class="o">/</span><span class="n">across_cat_corr</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q3-the-memo">
+<h3>Q3 — The memo<a class="headerlink" href="#q3-the-memo" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Your task — maximum 6 sentences</strong></p>
+<p>Is a 30-factor model diversified?</p>
+<p>Use both numbers. The average correlation says one thing and the within/across
+split says another — explain the difference and say which one the committee
+should act on. Name at least one specific pair of signals that are effectively
+the same trade, and say what you’d actually recommend.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MEMO</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Write your memo here. Don&#39;t delete the surrounding triple quotes.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">MEMO</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="submission">
+<h2>📤 Submission <a id="submit"></a><a class="headerlink" href="#submission" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mean_pairwise_corr&quot;</span><span class="p">,</span> <span class="s2">&quot;frac_high_corr&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;within_cat_corr&quot;</span><span class="p">,</span> <span class="s2">&quot;across_cat_corr&quot;</span><span class="p">,</span> <span class="s2">&quot;MEMO&quot;</span><span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">()]</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">❌ Missing before submission: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;assignment&quot;</span><span class="p">:</span> <span class="s2">&quot;L5_FactorZoo_AI&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ts&quot;</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">&quot;seconds&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+00:00&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;answers&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;MEMO&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;memo&quot;</span><span class="p">:</span> <span class="n">MEMO</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;UG54::</span><span class="si">{</span><span class="n">checksum</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Submission form: https://forms.gle/YOUR_FORM_LINK_HERE&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Three kinds of factor model</strong>, distinguished by what you specify:
+time-series (you name the factor returns), characteristic (you name the
+exposures), statistical (you name nothing).</p></li>
+<li><p><strong>A sort makes a factor; a regression consumes one.</strong> Same raw material,
+opposite direction.</p></li>
+<li><p><strong>The zoo has families, not 300 ideas</strong> — value, momentum, profitability,
+investment, low-risk, issuance, liquidity.</p></li>
+<li><p><strong>Every family has two stories, risk and mispricing</strong>, and they predict
+different futures. Mispricing implies the premium dies after publication.</p></li>
+<li><p><strong>Correlate the strategies, never the signals.</strong> Names and categories are not
+evidence.</p></li>
+<li><p><strong>Within a family, mean |ρ| ≈ 0.58. Across families, ≈ 0.19.</strong> Diversification
+comes from spanning families.</p></li>
+<li><p><strong>Some “different” factors are the same trade.</strong> MaxRet, RealizedVol and
+IdioVol3F correlate 0.94–0.97. Illiquidity and Size, 0.92.</p></li>
+<li><p><strong>300 papers is not 300 pieces of evidence.</strong> Which is a serious problem for
+the literature, and the subject of Lecture 9.</p></li>
+</ol>
+<hr class="docutils" />
+<section id="next-class">
+<h3>Next class<a class="headerlink" href="#next-class" title="Link to this heading">#</a></h3>
+<p>We’ve been using one factor — the market. Next: how to run and read a model with
+several, why alpha shrinks every time you add one, and the two different ways to
+estimate the whole thing.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="appendix">
+<h2>📎 Appendix <a id="appendix"></a><a class="headerlink" href="#appendix" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
+<span class="c1"># 📎 APPENDIX — data</span>
+<span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
+<span class="c1"># Everything today comes from the repo:</span>
+<span class="c1">#   panel  = pd.read_parquet(f&quot;{BASE}/panel_backbone_1980_2000.parquet&quot;)</span>
+<span class="c1">#   signal = pd.read_parquet(f&quot;{BASE}/signals/&lt;Acronym&gt;.parquet&quot;)</span>
+<span class="c1">#   menu   = pd.read_csv(f&quot;{BASE}/signal_menu.csv&quot;)</span>
+<span class="c1">#</span>
+<span class="c1"># The 30 signals are replications from Open Source Asset Pricing</span>
+<span class="c1"># (Chen &amp; Zimmermann), which covers 300+ published cross-sectional predictors:</span>
+<span class="c1">#     https://www.openassetpricing.com</span>
+<span class="c1"># `signal_menu.csv` carries each one&#39;s authors, year, journal, economic</span>
+<span class="c1"># category, and the t-statistic the ORIGINAL paper reported — which is what</span>
+<span class="c1"># makes the replication comparison in Lecture 3 possible.</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-5">Lecture 5</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-plan">📋 Today’s Plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#three-kinds-of-factor-model">1. Three Kinds of Factor Model <a id="three"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-zoo-what-people-actually-trade">2. The Zoo: What People Actually Trade <a id="zoo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-stories-and-they-are-not-the-same">Two stories, and they are not the same</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-comparing-factors">🛡️ Pitfall Checklist for Comparing Factors <a id="pitfalls"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-how-much-do-these-overlap">🔄 Live Demo: How Much Do These Overlap? <a id="demo"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-average-first-then-the-picture">Read the average first, then the picture</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-zoo-is-smaller-than-it-looks">3. The Zoo Is Smaller Than It Looks <a id="smaller"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#three-papers-one-factor">Three papers, one factor</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-find-your-signal-s-twin">🛠️ Hands-On: Find Your Signal’s Twin <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#your-task">Your task</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-to-take-from-it">What to take from it</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-how-many-bets-are-there-really">🎯 Challenge: How Many Bets Are There Really? <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-the-headline-correlation-numbers">Q1 — The headline correlation numbers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-within-versus-across-category">Q2 — Within versus across category</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-memo">Q3 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">Next class</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">📎 Appendix <a id="appendix"></a></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
