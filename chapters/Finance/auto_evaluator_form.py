@@ -134,6 +134,7 @@ def main():
         print("No ANTHROPIC_API_KEY — numeric answers graded here, "
               "memos written out for grading.\n")
     rows, memos = [], []
+    other = {}          # other lectures' submissions seen while scanning
     skipped = 0
 
     for resp in responses:
@@ -156,6 +157,8 @@ def main():
         # One form serves the whole term, so the sheet holds every lecture's
         # submissions. Rows for other lectures are not errors -- skip them.
         if payload.get("assignment") != args.assignment:
+            other.setdefault(payload.get("assignment"), []).append(
+                (email, payload.get("ts", "")))
             skipped += 1
             continue
 
@@ -212,8 +215,23 @@ def main():
         else:
             print(f"✅ {who}: numeric={pct:.0f}%")
 
-    if skipped:
-        print(f"\n(skipped {skipped} submission(s) for other lectures)")
+    # Anything from another lecture that is not already in that lecture's grades
+    # tab is a late submission nobody has looked at. Say so by name.
+    if other:
+        print()
+        for asg, seen in sorted(other.items()):
+            tab = "Grades_" + str(asg).split("_")[0]
+            try:
+                done = {(r.get("email"), r.get("submission_ts"))
+                        for r in book.worksheet(tab).get_all_records()}
+            except Exception:
+                done = set()
+            missing = [x for x in seen if x not in done]
+            if missing:
+                print(f"⚠️  {len(missing)} UNGRADED {asg} submission(s) in the sheet"
+                      f" — run:  python3 grade_latest.py {asg}")
+            else:
+                print(f"({len(seen)} {asg} submission(s), all already graded)")
     if not rows:
         print(f"No submissions found for {args.assignment}.")
         return
