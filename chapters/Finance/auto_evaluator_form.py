@@ -149,7 +149,7 @@ def main():
             memo_grade = grade_memo(client, memo_txt, args.assignment)
         else:
             memo_grade = {"score": "", "picked_fund": "", "feedback": "(graded separately)"}
-            memos.append((name or email, memo_txt.strip()))
+            memos.append((len(rows), name or email, email, memo_txt.strip()))
 
         n_ok = sum(1 for r in numeric.values() if r["correct"])
         pct = n_ok / len(numeric) * 100
@@ -204,9 +204,9 @@ def main():
                      f"'{args.grades_tab}' tab.\n\n## Rubric\n\n```\n"
                      + MEMO_RUBRICS.get(args.assignment, "(no rubric)").strip()
                      + "\n```\n\n---\n\n")
-            for who, m in memos:
-                fh.write(f"## {who}\n\n{m or '_(no memo submitted)_'}\n\n"
-                         "**Score:** _/5\n**Feedback:**\n\n---\n\n")
+            for idx, who, mail, m in memos:
+                fh.write(f"## [{idx}] {who}  <{mail}>\n\n{m or '_(no memo submitted)_'}\n\n"
+                         "**Score:** _/5\n**Feedback:** \n\n---\n\n")
         print(f"✅ Wrote {len(memos)} memo(s) to {mp.name} — grade these next")
 
     flagged = [r for r in rows if r["flag"]]
