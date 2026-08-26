@@ -564,31 +564,31 @@ See why differing betas demand a formal model and set the stage for multi-factor
 <span class="k">def</span><span class="w"> </span><span class="nf">get_daily_wrds_single_ticker</span><span class="p">(</span><span class="n">ticker</span><span class="p">,</span><span class="n">conn</span><span class="p">,</span><span class="n">dividends</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">tickers</span> <span class="o">=</span> <span class="p">[</span><span class="n">ticker</span><span class="p">]</span>
     <span class="c1"># Retrieve PERMNOs for the specified tickers</span>
-    <span class="n">permnos</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">library</span><span class="o">=</span><span class="s1">&#39;crsp&#39;</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s1">&#39;stocknames&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;namedt&#39;</span><span class="p">,</span> <span class="s1">&#39;nameenddt&#39;</span><span class="p">])</span>
-    <span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">])</span>
-    <span class="n">permnos</span> <span class="o">=</span> <span class="n">permnos</span><span class="p">[(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tickers</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())]</span>
+    <span class="n">permnos</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">library</span><span class="o">=</span><span class="s1">'crsp'</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s1">'stocknames'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'permno'</span><span class="p">,</span> <span class="s1">'ticker'</span><span class="p">,</span> <span class="s1">'namedt'</span><span class="p">,</span> <span class="s1">'nameenddt'</span><span class="p">])</span>
+    <span class="n">permnos</span><span class="p">[</span><span class="s1">'nameenddt'</span><span class="p">]</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">'nameenddt'</span><span class="p">])</span>
+    <span class="n">permnos</span> <span class="o">=</span> <span class="n">permnos</span><span class="p">[(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">'ticker'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tickers</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">'nameenddt'</span><span class="p">]</span><span class="o">==</span><span class="n">permnos</span><span class="p">[</span><span class="s1">'nameenddt'</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())]</span>
     <span class="c1"># Extract unique PERMNOs</span>
-    <span class="n">permno_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">permno_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">permnos</span><span class="p">[</span><span class="s1">'permno'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]]</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">permno_list</span><span class="p">)</span>
 
     <span class="c1"># Query daily stock file for the specified PERMNOs</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""</span>
 <span class="s2">        SELECT permno, date, ret, retx, prc       </span>
 <span class="s2">        FROM crsp.dsf</span>
-<span class="s2">        WHERE permno IN (</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">permno_list</span><span class="p">))</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">        WHERE permno IN (</span><span class="si">{</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">permno_list</span><span class="p">))</span><span class="si">}</span><span class="s2">)</span>
 <span class="s2">        ORDER BY date</span>
-<span class="s2">    &quot;&quot;&quot;</span>
-    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
-    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">permnos</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="s2">    """</span>
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">])</span>
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">permnos</span><span class="p">[[</span><span class="s1">'permno'</span><span class="p">,</span> <span class="s1">'ticker'</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">'permno'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
     <span class="c1"># Pivot data to have dates as index and tickers as columns</span>
-    <span class="c1"># daily_returns = daily_returns.pivot(index=&#39;date&#39;, columns=&#39;ticker&#39;, values=&#39;ret&#39;)</span>
-    <span class="c1"># daily_returns=daily_returns[&#39;2000&#39;:]</span>
+    <span class="c1"># daily_returns = daily_returns.pivot(index='date', columns='ticker', values='ret')</span>
+    <span class="c1"># daily_returns=daily_returns['2000':]</span>
     <span class="k">if</span> <span class="n">dividends</span><span class="p">:</span>
-        <span class="n">daily_returns</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">daily_returns</span><span class="o">.</span><span class="n">ret</span><span class="o">-</span><span class="n">daily_returns</span><span class="o">.</span><span class="n">retx</span><span class="p">)</span><span class="o">*</span><span class="n">daily_returns</span><span class="o">.</span><span class="n">prc</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">daily_returns</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">daily_returns</span><span class="o">.</span><span class="n">prc</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
-        <span class="n">daily_returns</span><span class="o">=</span><span class="n">daily_returns</span><span class="p">[[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;P&#39;</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+        <span class="n">daily_returns</span><span class="p">[</span><span class="s1">'D'</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">daily_returns</span><span class="o">.</span><span class="n">ret</span><span class="o">-</span><span class="n">daily_returns</span><span class="o">.</span><span class="n">retx</span><span class="p">)</span><span class="o">*</span><span class="n">daily_returns</span><span class="o">.</span><span class="n">prc</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">daily_returns</span><span class="p">[</span><span class="s1">'P'</span><span class="p">]</span><span class="o">=</span><span class="n">daily_returns</span><span class="o">.</span><span class="n">prc</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+        <span class="n">daily_returns</span><span class="o">=</span><span class="n">daily_returns</span><span class="p">[[</span><span class="s1">'date'</span><span class="p">,</span><span class="s1">'P'</span><span class="p">,</span><span class="s1">'D'</span><span class="p">]]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">daily_returns</span><span class="o">=</span><span class="n">daily_returns</span><span class="p">[[</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="s1">&#39;ret&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>    
+        <span class="n">daily_returns</span><span class="o">=</span><span class="n">daily_returns</span><span class="p">[[</span><span class="s1">'date'</span><span class="p">,</span><span class="s1">'ret'</span><span class="p">]]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>    
 
 
     <span class="k">return</span> <span class="n">daily_returns</span>
@@ -596,25 +596,25 @@ See why differing betas demand a formal model and set the stage for multi-factor
 <span class="k">def</span><span class="w"> </span><span class="nf">get_daily_wrds</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="n">tickers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
   
     <span class="c1"># Retrieve PERMNOs for the specified tickers</span>
-    <span class="n">permnos</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">library</span><span class="o">=</span><span class="s1">&#39;crsp&#39;</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s1">&#39;stocknames&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="s1">&#39;namedt&#39;</span><span class="p">,</span> <span class="s1">&#39;nameenddt&#39;</span><span class="p">])</span>
-    <span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">])</span>
-    <span class="n">permnos</span> <span class="o">=</span> <span class="n">permnos</span><span class="p">[(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;ticker&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tickers</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;nameenddt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())]</span>
+    <span class="n">permnos</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">get_table</span><span class="p">(</span><span class="n">library</span><span class="o">=</span><span class="s1">'crsp'</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="s1">'stocknames'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'permno'</span><span class="p">,</span> <span class="s1">'ticker'</span><span class="p">,</span> <span class="s1">'namedt'</span><span class="p">,</span> <span class="s1">'nameenddt'</span><span class="p">])</span>
+    <span class="n">permnos</span><span class="p">[</span><span class="s1">'nameenddt'</span><span class="p">]</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">'nameenddt'</span><span class="p">])</span>
+    <span class="n">permnos</span> <span class="o">=</span> <span class="n">permnos</span><span class="p">[(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">'ticker'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">tickers</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">permnos</span><span class="p">[</span><span class="s1">'nameenddt'</span><span class="p">]</span><span class="o">==</span><span class="n">permnos</span><span class="p">[</span><span class="s1">'nameenddt'</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())]</span>
     <span class="c1"># Extract unique PERMNOs</span>
-    <span class="n">permno_list</span> <span class="o">=</span> <span class="n">permnos</span><span class="p">[</span><span class="s1">&#39;permno&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">permno_list</span> <span class="o">=</span> <span class="n">permnos</span><span class="p">[</span><span class="s1">'permno'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">permno_list</span><span class="p">)</span>
 
     <span class="c1"># Query daily stock file for the specified PERMNOs</span>
     
-    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""</span>
 <span class="s2">        SELECT permno, date, ret, retx, prc       </span>
 <span class="s2">        FROM crsp.dsf</span>
-<span class="s2">        WHERE permno IN (</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">permno_list</span><span class="p">))</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">        WHERE permno IN (</span><span class="si">{</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="w"> </span><span class="n">permno_list</span><span class="p">))</span><span class="si">}</span><span class="s2">)</span>
 <span class="s2">        ORDER BY date,permno</span>
-<span class="s2">    &quot;&quot;&quot;</span>
-    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">])</span>
-    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">permnos</span><span class="p">[[</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="s1">&#39;ticker&#39;</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;permno&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="s2">    """</span>
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">])</span>
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">permnos</span><span class="p">[[</span><span class="s1">'permno'</span><span class="p">,</span> <span class="s1">'ticker'</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s1">'permno'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
 <span class="c1"># Pivot data to have dates as index and tickers as columns</span>
-    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;ticker&#39;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">&#39;ret&#39;</span><span class="p">)</span>    
+    <span class="n">daily_returns</span> <span class="o">=</span> <span class="n">daily_returns</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s1">'date'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">'ticker'</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="s1">'ret'</span><span class="p">)</span>    
     <span class="n">daily_returns</span><span class="o">=</span><span class="n">daily_returns</span><span class="p">[</span><span class="n">tickers</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">daily_returns</span>
@@ -664,7 +664,7 @@ Done
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#We now get daily prices and dividends for the UNH stock</span>
 <span class="c1"># lets not think too hard how we did that--the function is defined above--but for now--lets just used it</span>
-<span class="n">df</span><span class="o">=</span><span class="n">get_daily_wrds_single_ticker</span><span class="p">(</span><span class="s1">&#39;UNH&#39;</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
+<span class="n">df</span><span class="o">=</span><span class="n">get_daily_wrds_single_ticker</span><span class="p">(</span><span class="s1">'UNH'</span><span class="p">,</span><span class="n">conn</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -680,10 +680,10 @@ Done
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#df.to_csv(&#39;../../assets/data/UNH_data.csv&#39;)</span>
-<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/UNH_data.csv&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#df.to_csv('../../assets/data/UNH_data.csv')</span>
+<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/UNH_data.csv'</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
-<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -782,7 +782,7 @@ Done
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
 
 <span class="n">df</span>
 </pre></div>
@@ -892,7 +892,7 @@ Done
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ret&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -976,11 +976,11 @@ Done
 <span class="n">end_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>          <span class="c1"># End date</span>
 
 
-<span class="n">df_rf</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="s2">&quot;DGS3MO&quot;</span><span class="p">,</span> <span class="s2">&quot;fred&quot;</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
+<span class="n">df_rf</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="s2">"DGS3MO"</span><span class="p">,</span> <span class="s2">"fred"</span><span class="p">,</span> <span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
 <span class="n">df_rf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">df_rf</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="s2">&quot;rf&quot;</span><span class="p">]</span>
+<span class="n">df_rf</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Date"</span><span class="p">,</span> <span class="s2">"rf"</span><span class="p">]</span>
 <span class="n">df_rf</span><span class="o">.</span><span class="n">rf</span><span class="o">=</span><span class="n">df_rf</span><span class="o">.</span><span class="n">rf</span><span class="o">/</span><span class="mi">100</span>
-<span class="n">df_rf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_rf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"Date"</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <span class="n">df_rf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
@@ -988,7 +988,7 @@ Done
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel=&#39;Date&#39;&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel='Date'&gt;
 </pre></div>
 </div>
 <img alt="../../_images/7aa97b4d73f6ccb6ae1ef4d6a31d8dc5b2ebef907fdc96d997a9cc9d02125403.png" src="../../_images/7aa97b4d73f6ccb6ae1ef4d6a31d8dc5b2ebef907fdc96d997a9cc9d02125403.png" />
@@ -999,7 +999,7 @@ Done
 <p>Lets get the return column of our dataframe and  merge it together with our risk-free return</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_rf</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_rf</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1189,7 +1189,7 @@ Done
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#conn = wrds.Connection()</span>
-<span class="n">df</span><span class="o">=</span><span class="n">get_daily_wrds</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="n">tickers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span><span class="s1">&#39;WMT&#39;</span><span class="p">,</span><span class="s1">&#39;JPM&#39;</span><span class="p">])</span>
+<span class="n">df</span><span class="o">=</span><span class="n">get_daily_wrds</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="n">tickers</span><span class="o">=</span><span class="p">[</span><span class="s1">'SPY'</span><span class="p">,</span><span class="s1">'WMT'</span><span class="p">,</span><span class="s1">'JPM'</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -1205,10 +1205,10 @@ Done
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># again you can load this data directly if you don;t have wrds access</span>
-<span class="c1"># df.to_csv(&#39;../../assets/data/df_SPYWMTJPM_data.csv&#39;)</span>
-<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/df_SPYWMTJPM_data.csv&#39;</span><span class="p">)</span>
+<span class="c1"># df.to_csv('../../assets/data/df_SPYWMTJPM_data.csv')</span>
+<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/df_SPYWMTJPM_data.csv'</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
-<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1219,7 +1219,7 @@ Done
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># will create excess returns</span>
-<span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_rf</span><span class="o">/</span><span class="mi">252</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_rf</span><span class="o">/</span><span class="mi">252</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
 <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 <span class="n">df</span>
 </pre></div>
@@ -1342,7 +1342,7 @@ Done
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_re</span><span class="o">=</span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span><span class="s1">&#39;WMT&#39;</span><span class="p">,</span><span class="s1">&#39;JPM&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;rf&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_re</span><span class="o">=</span><span class="n">df</span><span class="p">[[</span><span class="s1">'SPY'</span><span class="p">,</span><span class="s1">'WMT'</span><span class="p">,</span><span class="s1">'JPM'</span><span class="p">]]</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'rf'</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">df_re</span>
 </pre></div>
 </div>
@@ -1472,7 +1472,7 @@ Done
 <p>I am using ‘m_spy’ denote the returns minus the return on the factor</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_re</span><span class="p">[[</span><span class="s1">&#39;WMT_m_spy&#39;</span><span class="p">,</span><span class="s1">&#39;JPM_m_spy&#39;</span><span class="p">]]</span><span class="o">=</span><span class="n">df_re</span><span class="p">[[</span><span class="s1">&#39;WMT&#39;</span><span class="p">,</span><span class="s1">&#39;JPM&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;SPY&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_re</span><span class="p">[[</span><span class="s1">'WMT_m_spy'</span><span class="p">,</span><span class="s1">'JPM_m_spy'</span><span class="p">]]</span><span class="o">=</span><span class="n">df_re</span><span class="p">[[</span><span class="s1">'WMT'</span><span class="p">,</span><span class="s1">'JPM'</span><span class="p">]]</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'SPY'</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">df</span>
 </pre></div>
 </div>
@@ -1607,10 +1607,10 @@ Done
 
 <span class="c1"># Function to add regression line and beta coefficient</span>
 
-<span class="n">df_re</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;WMT_m_spy&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;SPY vs WMT&#39;</span><span class="p">)</span>
+<span class="n">df_re</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">'SPY'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">'WMT_m_spy'</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">'SPY vs WMT'</span><span class="p">)</span>
 
 <span class="c1"># Scatter plot for SPY vs CSCO</span>
-<span class="n">df_re</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;SPY&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;JPM_m_spy&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;SPY vs JPM&#39;</span><span class="p">)</span>
+<span class="n">df_re</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">'SPY'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">'JPM_m_spy'</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">'SPY vs JPM'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

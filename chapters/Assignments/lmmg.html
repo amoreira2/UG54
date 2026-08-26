@@ -510,7 +510,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># @title 1. Setup and Libraries</span>
-<span class="c1"># We install &#39;transformers&#39; for the LLM and &#39;wordcloud&#39; for visualization</span>
+<span class="c1"># We install 'transformers' for the LLM and 'wordcloud' for visualization</span>
 <span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>transformers<span class="w"> </span>torch<span class="w"> </span>wordcloud<span class="w"> </span>matplotlib<span class="w"> </span>seaborn<span class="w"> </span>pandas<span class="w"> </span>scikit-learn<span class="w"> </span>-q
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -523,9 +523,9 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">pipeline</span>
 
 <span class="c1"># Set plotting style for the course</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;whitegrid&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Libraries installed and imported successfully.&quot;</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">"whitegrid"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"figure.figsize"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Libraries installed and imported successfully."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -544,32 +544,32 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 2.1 The Data: Excerpts from FedEx Earnings Calls</span>
 <span class="c1"># In a real application, you would scrape these via an API (e.g., FMP or SeekingAlpha)</span>
 
-<span class="n">fdx_march_2020</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">fdx_march_2020</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">We said on this call last year that FY 2020 would be a year of challenge and change.</span>
 <span class="s2">Then beginning in January, we began to deal with COVID-19 in China then in Europe and then, of course, in the United States.</span>
-<span class="s2">We&#39;ve made every effort to keep our team members and the public safe as we&#39;ve dealt with this terrible disease.</span>
+<span class="s2">We've made every effort to keep our team members and the public safe as we've dealt with this terrible disease.</span>
 <span class="s2">We are suspending our earnings forecast. The economic impact of the coronavirus is hard to predict.</span>
 <span class="s2">Global trade has slowed significantly due to the shutdowns.</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
-<span class="n">fdx_june_2020</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">fdx_june_2020</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">Here in the United States, the COVID pandemic has accelerated e-commerce adoption.</span>
 <span class="s2">In mid-March, Asia-Pacific outbound average daily volume grew substantially over pre-COVID-19 levels fueled by PPE demand surge.</span>
 <span class="s2">We are also experiencing Europe outbound growth on the transatlantic lane due to limited capacity and surging e-commerce volume.</span>
 <span class="s2">As we enter fiscal 21, there are signs of tentative economic recovery under way.</span>
 <span class="s2">We have continued to champion small and medium businesses and support their recovery.</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 <span class="c1"># 2.2 Vectorization (TF-IDF) and Similarity</span>
-<span class="c1"># We convert text to numbers, highlighting unique words (like &quot;PPE&quot; or &quot;suspending&quot;)</span>
-<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="s1">&#39;english&#39;</span><span class="p">)</span>
+<span class="c1"># We convert text to numbers, highlighting unique words (like "PPE" or "suspending")</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">stop_words</span><span class="o">=</span><span class="s1">'english'</span><span class="p">)</span>
 <span class="n">tfidf_matrix</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">([</span><span class="n">fdx_march_2020</span><span class="p">,</span> <span class="n">fdx_june_2020</span><span class="p">])</span>
 
 <span class="c1"># Calculate Similarity</span>
 <span class="n">similarity</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">tfidf_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="n">tfidf_matrix</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cosine Similarity between March and June Calls: </span><span class="si">{</span><span class="n">similarity</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Interpretation: A low score indicates a massive shift in the company&#39;s operating environment.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cosine Similarity between March and June Calls: </span><span class="si">{</span><span class="n">similarity</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Interpretation: A low score indicates a massive shift in the company's operating environment."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -582,33 +582,33 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3.1 Load the FOMC Text Data</span>
-<span class="n">fomc_march_15</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">fomc_march_15</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">The coronavirus outbreak has harmed communities and disrupted economic activity in many countries, including the United States.</span>
 <span class="s2">The Federal Reserve is prepared to use its full range of tools to support the flow of credit to households and businesses.</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
-<span class="n">fomc_april_29</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">fomc_april_29</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">The Federal Reserve is committed to using its full range of tools to support the U.S. economy in this challenging time.</span>
 <span class="s2">The ongoing public health crisis will weigh heavily on economic activity, employment, and inflation in the near term.</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 <span class="n">fomc_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s1">&#39;Date&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;2020-03-15&#39;</span><span class="p">,</span> <span class="s1">&#39;2020-04-29&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;Text&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">fomc_march_15</span><span class="p">,</span> <span class="n">fomc_april_29</span><span class="p">]</span>
+    <span class="s1">'Date'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'2020-03-15'</span><span class="p">,</span> <span class="s1">'2020-04-29'</span><span class="p">],</span>
+    <span class="s1">'Text'</span><span class="p">:</span> <span class="p">[</span><span class="n">fomc_march_15</span><span class="p">,</span> <span class="n">fomc_april_29</span><span class="p">]</span>
 <span class="p">})</span>
 
 <span class="c1"># 3.2 Load FinBERT</span>
 <span class="c1"># Note: This downloads the model weights from Hugging Face</span>
-<span class="n">classifier</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s2">&quot;sentiment-analysis&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;ProsusAI/finbert&quot;</span><span class="p">)</span>
+<span class="n">classifier</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s2">"sentiment-analysis"</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"ProsusAI/finbert"</span><span class="p">)</span>
 
 <span class="c1"># 3.3 Apply the Model</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running LLM inference...&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Running LLM inference..."</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_sentiment</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="c1"># The model returns a label (Positive/Negative/Neutral) and a confidence score</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">classifier</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s1">'label'</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span>
 
-<span class="n">fomc_data</span><span class="p">[[</span><span class="s1">&#39;Label&#39;</span><span class="p">,</span> <span class="s1">&#39;Score&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">fomc_data</span><span class="p">[</span><span class="s1">&#39;Text&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">get_sentiment</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+<span class="n">fomc_data</span><span class="p">[[</span><span class="s1">'Label'</span><span class="p">,</span> <span class="s1">'Score'</span><span class="p">]]</span> <span class="o">=</span> <span class="n">fomc_data</span><span class="p">[</span><span class="s1">'Text'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">get_sentiment</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
 
 <span class="n">display</span><span class="p">(</span><span class="n">fomc_data</span><span class="p">)</span>
 </pre></div>
@@ -627,42 +627,42 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 4.1 Simulate Data</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">n_days</span> <span class="o">=</span> <span class="mi">200</span>
-<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">n_days</span><span class="p">)</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">'2020-01-01'</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">n_days</span><span class="p">)</span>
 
 <span class="c1"># Generate synthetic returns and sentiment</span>
-<span class="c1"># Assumption: Sentiment has predictive power for TOMORROW&#39;s return</span>
+<span class="c1"># Assumption: Sentiment has predictive power for TOMORROW's return</span>
 <span class="n">sentiment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">n_days</span><span class="p">)</span> <span class="c1"># -1 (Bad News), 1 (Good News)</span>
 <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">n_days</span><span class="p">)</span>
 
 <span class="c1"># The Return generation process:</span>
 <span class="c1"># Return(t) is driven by Sentiment(t-1) [Predictive] AND Sentiment(t) [Reactionary]</span>
 <span class="n">returns</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">sentiment</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Date&#39;</span><span class="p">:</span> <span class="n">dates</span><span class="p">,</span> <span class="s1">&#39;Return&#39;</span><span class="p">:</span> <span class="n">returns</span><span class="p">,</span> <span class="s1">&#39;Sentiment&#39;</span><span class="p">:</span> <span class="n">sentiment</span><span class="p">})</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'Date'</span><span class="p">:</span> <span class="n">dates</span><span class="p">,</span> <span class="s1">'Return'</span><span class="p">:</span> <span class="n">returns</span><span class="p">,</span> <span class="s1">'Sentiment'</span><span class="p">:</span> <span class="n">sentiment</span><span class="p">})</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
-<span class="c1"># 4.2 The &quot;Flawed&quot; Strategy (Look-Ahead)</span>
+<span class="c1"># 4.2 The "Flawed" Strategy (Look-Ahead)</span>
 <span class="c1"># We trade using the sentiment of the SAME day (assuming we knew the news before the market opened)</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Strategy_LookAhead&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Sentiment&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Return&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Strategy_LookAhead'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Sentiment'</span><span class="p">]</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Return'</span><span class="p">]</span>
 
-<span class="c1"># 4.3 The &quot;Correct&quot; Strategy (Lagged)</span>
-<span class="c1"># We trade using YESTERDAY&#39;S sentiment (we read the news, then trade the next open)</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Strategy_Real&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Sentiment&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Return&#39;</span><span class="p">]</span>
+<span class="c1"># 4.3 The "Correct" Strategy (Lagged)</span>
+<span class="c1"># We trade using YESTERDAY'S sentiment (we read the news, then trade the next open)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Strategy_Real'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Sentiment'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Return'</span><span class="p">]</span>
 
 <span class="c1"># 4.4 Visualization</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Cum_Ret_LookAhead&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Strategy_LookAhead&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Cum_Ret_Real&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Strategy_Real&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Cum_Ret_Market&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Return&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Cum_Ret_LookAhead'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Strategy_LookAhead'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Cum_Ret_Real'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Strategy_Real'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'Cum_Ret_Market'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Return'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Cum_Ret_LookAhead&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Look-Ahead Bias (Flawed)&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Cum_Ret_Real&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Realistic Strategy (Lagged)&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Cum_Ret_Market&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Market (Buy &amp; Hold)&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Cum_Ret_LookAhead'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Look-Ahead Bias (Flawed)'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Cum_Ret_Real'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Realistic Strategy (Lagged)'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'green'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">'Date'</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">'Cum_Ret_Market'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Market (Buy &amp; Hold)'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;The Danger of Look-Ahead Bias in NLP Strategies&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Cumulative Return ($1 Invested)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"The Danger of Look-Ahead Bias in NLP Strategies"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Cumulative Return ($1 Invested)"</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Observation: The Red line is a fantasy. The Green line is reality.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Observation: The Red line is a fantasy. The Green line is reality."</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
