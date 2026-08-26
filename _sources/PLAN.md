@@ -142,12 +142,12 @@ differs — it has Nov 25–29 off. The UG bulletin governs).
 | 1 | Wed Sep 2 | **L1** Course intro + AI workflow + asset returns | |
 | 2 | Wed Sep 9 | **L2** The panel + portfolio mathematics | *groups formed* |
 | 3 | Mon Sep 14 | **L3** Sorts, breakpoints, long-short; **WRDS at the end** | *strategy chosen* |
-| 4 | Wed Sep 16 | **L4** Intro to Performance Evaluation + Factor Models I `(2B)` | **A1** |
+| 4 | Wed Sep 16 | **L4** Intro to Performance Evaluation + Factor Models I `(2B)` | *A1 due Fri Sep 18* |
 | 5 | Mon Sep 21 | **L5** Factor models II — types, the zoo `(3A)` | |
 | 6 | Wed Sep 23 | **L6** Factor models III — multi-factor, Fama-MacBeth `(3B)` | |
 | 7 | Mon Sep 28 | **L7** Portfolio decomposition — top-down / bottom-up / characteristic | **A2** |
 | 8 | Wed Sep 30 | **L8** Backtesting protocol `(4A)` | |
-| 9 | Mon Oct 5 | **L9** Anomalies `(4B)` | **A3** |
+| 9 | Mon Oct 5 | **L9** Anomalies `(4B)` | *A3 due Fri Oct 9* |
 | 10 | Wed Oct 7 | **Project pitches I** — 5 min × 10 groups | pitch deck |
 | — | Mon Oct 12 | *Fall Break — no class* | |
 | 11 | Wed Oct 14 | **Review** *(Legislative Day)* | |
@@ -155,11 +155,11 @@ differs — it has Nov 25–29 off. The UG bulletin governs).
 | 13 | Wed Oct 21 | **L10** Momentum and trend following `(5A)` | |
 | 14 | Mon Oct 26 | **L11** Conditional strategies I `(5B)` | **A4** |
 | 15 | Wed Oct 28 | **L12** Conditional strategies II — factor timing | |
-| 16 | Mon Nov 2 | **L13** Capital allocation I | |
-| 17 | Wed Nov 4 | **L14** Capital allocation II — fragility | **A5** |
+| 16 | Mon Nov 2 | **L13** Capital allocation I | *A5 due Fri Nov 6* |
+| 17 | Wed Nov 4 | **L14** Capital allocation II — fragility | |
 | 18 | Mon Nov 9 | **Guest 1** | |
 | 19 | Wed Nov 11 | **L15** BARRA / fundamental risk models `(7A)` | |
-| 20 | Mon Nov 16 | **L16** Transaction costs `(7B)` | **A6** |
+| 20 | Mon Nov 16 | **L16** Transaction costs `(7B)` | *A6 due Fri Nov 20* |
 | 21 | Wed Nov 18 | **Project pitches II** — 5 min × 10 | |
 | 22 | Mon Nov 23 | **L17** Leverage and shorting | |
 | 23 | Wed Nov 25 | **L18** PCA / statistical factors `(6)` | |
@@ -260,15 +260,22 @@ chain. Pitch day I is the natural point to commit.
 The lecture block fixes the **skill**; the group's own strategy supplies the
 **data**.
 
-| | Due | After | The task |
+| | Due | Last lecture it needs | The task |
 |---|-----|-------|----------|
-| **A1** | Mtg 4 | L1–L3 | Decile-sort your signal. Long-short spread, turnover, Sharpe. |
-| **A2** | Mtg 7 | L4–L7 | Regress your long-short return on FF6. Alpha, betas, t-stat, R². Skill or exposure? |
-| **A3** | Mtg 9 | L8–L9 | Split your sample. IS vs OOS Sharpe, how many variants you tried, a multiple-testing haircut. |
-| **A4** | Mtg 14 | L10 | Build the (12,1) benchmark. Your signal's correlation with it, and its alpha controlling for momentum. **Is your signal just momentum?** |
-| **A5** | Mtg 17 | L11–L13 | Vol-scale your strategy; MVE combination with the market; optimal weight. |
-| **A6** | Mtg 20 | L14–L16 | Bootstrap your Sharpe SE; apply a cost model; net-of-cost Sharpe. |
-| **A7** | Mtg 24 | L17 | Long-only vs long-short. What does the shorting constraint cost you? |
+| **A1** | **Fri Sep 18** | L3 (Mon Sep 14) | Decile-sort your signal. Long-short spread, turnover, Sharpe. |
+| **A2** | **Mon Sep 28** | L6 (Wed Sep 23) | Regress your long-short return on FF6. Alpha, betas, t-stat, R². Skill or exposure? |
+| **A3** | **Fri Oct 9** | L9 (Mon Oct 5) | Split your sample. IS vs OOS Sharpe, how many variants you tried, a multiple-testing haircut. |
+| **A4** | **Mon Oct 26** | L10 (Wed Oct 21) | Build the (12,1) benchmark. Your signal's correlation with it, and its alpha controlling for momentum. **Is your signal just momentum?** |
+| **A5** | **Fri Nov 6** | L13 (Mon Nov 2) | Vol-scale your strategy; MVE combination with the market; optimal weight. |
+| **A6** | **Fri Nov 20** | L16 (Mon Nov 16) | Bootstrap your Sharpe SE; apply a cost model; net-of-cost Sharpe. |
+| **A7** | **Mon Nov 30** | L17 (Mon Nov 23) | Long-only vs long-short. What does the shorting constraint cost you? |
+
+**Due-date rule: 4–7 days after the last lecture the assignment depends on.**
+Assignments are submitted on Brightspace by midnight, so due dates need not be
+meeting days. Three of the previous dates were broken — A3 and A6 fell on the
+*same day* as their final lecture, and A1 and A5 gave two days. A2's "after
+L4–L7" was also wrong: the task is an FF6 regression, which is L6 material, so
+L7 is not a dependency.
 
 **Grading: submission only** (completion), following the existing policy — 7
 assignments, groups of 3, submit your own copy, drop one, late = zero.
