@@ -96,10 +96,29 @@ def main():
     responses = book.worksheet(args.responses_tab).get_all_records()
 
     # Find or create the grades tab
+    prior = {}
     try:
         grades_ws = book.worksheet(args.grades_tab)
+        # Re-grading must not destroy memo scores already merged in. Key on the
+        # submission timestamp inside the token, which is unique per attempt.
+        for old in grades_ws.get_all_records():
+            if str(old.get("memo_score", "")).strip():
+                prior[(old.get("email"), old.get("submission_ts"))] = {
+                    "memo_score": old.get("memo_score"),
+                    "feedback": old.get("feedback", ""),
+                }
+        if prior:
+            print(f"carrying forward {len(prior)} memo grade(s) already recorded\n")
     except gspread.WorksheetNotFound:
         grades_ws = book.add_worksheet(args.grades_tab, rows=200, cols=20)
+
+    # Late = submitted after the challenge stopped accepting work.
+    import datetime as _dt
+    try:
+        from grade_latest import DUE
+        due = next((_dt.date.fromisoformat(d) for d, x in DUE if x == args.assignment), None)
+    except Exception:
+        due = None
 
     # Memos are graded by the Anthropic API when a key is present. Without one
     # they are written to a markdown file next to the rubric, to be graded by
@@ -145,25 +164,43 @@ def main():
         else:
             numeric = grade_numeric(payload["answers"], key)
         memo_txt = payload.get("memo", "")
-        if use_api:
+        carried = prior.get((email, payload.get("ts", "")))
+
+        late = ""
+        if due:
+            try:
+                late = "LATE" if _dt.datetime.strptime(
+                    ts.split()[0], "%m/%d/%Y").date() > due else ""
+            except Exception:
+                late = ""
+
+        if carried:
+            memo_grade = {"score": carried["memo_score"], "picked_fund": "",
+                          "feedback": carried["feedback"]}
+        elif use_api:
             memo_grade = grade_memo(client, memo_txt, args.assignment)
         else:
-            memo_grade = {"score": "", "picked_fund": "", "feedback": "(graded separately)"}
-            memos.append((len(rows), name or email, email, memo_txt.strip()))
+            memo_grade = None
+        if memo_grade is None:
+            memo_grade = {"score": "", "picked_fund": "", "feedback": ""}
+        memos.append((len(rows), name or email, email, memo_txt.strip(),
+                      memo_grade["score"], memo_grade.get("feedback", "")))
 
         n_ok = sum(1 for r in numeric.values() if r["correct"])
         pct = n_ok / len(numeric) * 100
-        if use_api:
-            overall = round(0.7 * pct + 0.3 * (memo_grade["score"] / 5 * 100), 1)
-            flag = overall < 50 or memo_grade["score"] == 0
+        if str(memo_grade["score"]).strip() != "":
+            ms = float(memo_grade["score"])
+            overall = round(0.7 * pct + 0.3 * (ms / 5 * 100), 1)
+            flag = overall < 50 or ms == 0
         else:
             overall, flag = "", pct < 50
 
         rows.append({
-            "ts": ts, "name": name, "email": email, "status": "GRADED",
+            "ts": ts, "name": name, "email": email, "status": "GRADED", "late": late,
             "submission_ts": payload.get("ts", ""),
             "numeric_pct": round(pct, 1),
             "memo_score": memo_grade["score"],
+            "feedback": memo_grade.get("feedback", ""),
             "overall": overall,
             "flag": flag,
             "feedback": memo_grade["feedback"],
@@ -204,10 +241,16 @@ def main():
                      f"'{args.grades_tab}' tab.\n\n## Rubric\n\n```\n"
                      + MEMO_RUBRICS.get(args.assignment, "(no rubric)").strip()
                      + "\n```\n\n---\n\n")
-            for idx, who, mail, m in memos:
-                fh.write(f"## [{idx}] {who}  <{mail}>\n\n{m or '_(no memo submitted)_'}\n\n"
-                         "**Score:** _/5\n**Feedback:** \n\n---\n\n")
-        print(f"✅ Wrote {len(memos)} memo(s) to {mp.name} — grade these next")
+            for idx, who, mail, m, sc, fb in memos:
+                done = str(sc).strip() != ""
+                fh.write(f"## [{idx}] {who}  <{mail}>"
+                         + ("   ✅ already graded\n\n" if done else "\n\n")
+                         + f"{m or '_(no memo submitted)_'}\n\n"
+                         f"**Score:** {sc if done else '_'}/5\n"
+                         f"**Feedback:** {fb}\n\n---\n\n")
+        todo = sum(1 for m in memos if str(m[4]).strip() == "")
+        print(f"✅ Wrote {len(memos)} memo(s) to {mp.name}"
+              + (f" — {todo} still need grading" if todo else " — all already graded"))
 
     flagged = [r for r in rows if r["flag"]]
     if flagged:
