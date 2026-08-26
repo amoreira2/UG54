@@ -630,26 +630,35 @@ GROUND TRUTH:
   was famous (survivorship / hindsight); conglomerates are diversified so this
   may be a portfolio effect; GE Capital made GE partly a financial firm.
 
+GRADE THE REASONING, NOT THE ARITHMETIC. Quoting 22.2% vs 15.6% is evidence a
+student looked, but it is not the skill being tested and it earns no credit on
+its own. A memo that argues correctly in words scores exactly the same as one
+that cites the figures. Never deduct for not quoting numbers.
+
 Grade 0-5:
-  5 = Notices the volatility difference AND says what more they'd need (beta,
-      market exposure, a benchmark comparison, or a selection-bias concern).
-      Concludes "suggestive, not proof."
-  4 = Notices the volatility difference and reasons correctly from it, but
-      doesn't say what would settle the question.
-  3 = Correct intuition ("more return but also more risk") without using the
-      numbers given.
-  2 = Answers the question but ignores risk entirely -- e.g. "yes, higher
+  5 = Recognizes that a higher Sharpe is suggestive but not decisive, AND names
+      something that would settle it -- a risk difference the Sharpe ratio does
+      not capture, market exposure, a proper benchmark, or the fact that GE was
+      chosen because it was famous.
+  4 = Recognizes the comparison is incomplete and reasons correctly about why,
+      but stops short of saying what would settle it.
+  3 = Gestures at risk but the argument is thin, one-sided, or asserted rather
+      than reasoned.
+  2 = Answers the question while ignoring risk entirely -- e.g. "yes, higher
       Sharpe means he was better."
-  1 = Restates the numbers without an argument.
+  1 = Restates the numbers or the question without an argument.
   0 = Empty or off-topic.
 
 DO NOT penalize a student for not using the words "alpha", "beta", or "CAPM" --
-they have not been taught yet. DO reward noticing that the comparison is
-incomplete.
+they have not been taught yet. A student who says "riskier in a way volatility
+doesn't capture" has made exactly the right move and should be graded as such.
+DO reward noticing that the comparison is incomplete.
 
 For picked_fund return "neither" (not applicable).
-For cited_appraisal_or_alpha return True if the memo references the volatility
-difference or asks for a risk-adjusted/benchmark comparison, else False.
+For cited_appraisal_or_alpha return True if the memo argues that the Sharpe
+comparison is incomplete -- whether by pointing at the risk difference, asking
+for a benchmark or risk-adjusted comparison, or raising selection bias -- else
+False. Do not require that any number be quoted.
 
 Output via the `grade_memo` tool.
 """,
