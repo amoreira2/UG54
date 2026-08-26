@@ -24,48 +24,26 @@ through and dated rather than deleted, so the reasoning survives.
 
 ## Data
 
-### ▸ Remove `ret_fwd` from the course panel — build it as needed
+### ▸ ~~Remove `ret_fwd` from the course panel~~ — **decided against, 2026-08-26**
 
-**Why:** shipping the column means students never build a forward return
-themselves, then hit the `groupby`/`shift` trap the first time they make their
-own signal for the project. Making them construct it moves the lesson from
-"read about the trap" to "fall into the trap on graded work."
+Considered making students build the forward return themselves, so the
+`groupby`/`shift` trap is something they fall into rather than read about.
+**Keeping the shipped column.** Three reasons, in order of weight:
 
-**Blast radius** (counted 2026-08-26):
-
-| file | uses |
-|---|---|
-| `build_course_panel.py` | 2 — stop writing the column |
-| `L2_Panel_Portfolios_AI` | **23** |
-| `L3_Sorts_AI` | **22** |
-| `L4_PerfEval_Factors_AI` | 9 |
-| `L6_MultiFactor_AI` | 8 |
-| `L1`, `L5`, `L7`, `SignalHygiene_AI` | 2 each |
-
-**Three things to settle before starting:**
-
-1. **The P2 prompt moment breaks.** L2's best demo asks students to build
-   `ret_fwd` and then scores their attempt against the shipped column —
+1. **It would break L2's best demo.** The P2 prompt moment asks students to
+   build `ret_fwd` and then scores the attempt *against the shipped column* —
    `shift(-1)` alone is wrong on 19,156 rows, `groupby` first on 1,357. Delete
-   the column and there is nothing to score against. Either keep a copy in a
-   separate small file used only by the check, or replace the check with a
-   self-consistency test.
+   the column and there is nothing to score against. The lesson is already
+   taught, and taught better, *because* the answer exists to check against.
+2. **Every answer key assumes the stricter rule.** The shipped column only fills
+   when the next observation is the very next *calendar* month, so it never
+   splices across a gap in a stock's history — that is the whole 1,357-row
+   difference. A plain groupby-shift does not do this, so removing the column
+   means re-verifying every key in `auto_evaluator.py`.
+3. **68 uses across seven notebooks** plus `build_course_panel.py`.
 
-2. **The shipped column has an extra rule.** It only fills when the next
-   observation is the very *next calendar month*, so it never splices across a
-   gap in a stock's history. A plain `groupby('permno')['ret'].shift(-1)` does
-   not do this — hence the 1,357-row difference. Every number in the course was
-   computed with the stricter rule. So either the spec students are given has to
-   state the calendar rule explicitly, or **every answer key needs re-verifying**
-   against the looser construction.
-
-3. **Where does each lecture build it?** Simplest is one line in each setup cell,
-   which makes it invisible again. Better is L2 builds it as the P2 exercise and
-   L3–L7 build it in a visible (not hidden) setup line, so the habit stays in
-   view.
-
-**Do this between terms, not now** — it touches all seven notebooks and every
-answer key.
+Revisit only if the project work shows students are still hitting the trap on
+their own signals — which is the thing this was meant to prevent.
 
 ---
 
