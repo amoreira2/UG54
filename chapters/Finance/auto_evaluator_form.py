@@ -115,7 +115,7 @@ def main():
     # Late = submitted after the challenge stopped accepting work.
     import datetime as _dt
     try:
-        from grade_latest import DUE
+        from grade import DUE
         due = next((_dt.date.fromisoformat(d) for d, x in DUE if x == args.assignment), None)
     except Exception:
         due = None

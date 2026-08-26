@@ -2,7 +2,7 @@
 """
 Read the scores written into memos_<L#>.md and merge them into the Grades tab.
 
-    python3 grade_latest.py L1_Returns_AI     # numeric grades + memos_L1.md
+    python3 grade.py L1_Returns_AI     # numeric grades + memos_L1.md
     # ...fill in **Score:** and **Feedback:** in memos_L1.md...
     python3 merge_memo_grades.py L1           # push them into the sheet
 
@@ -23,7 +23,7 @@ a = p.parse_args()
 
 mp = HERE / f"memos_{a.tag}.md"
 if not mp.exists():
-    sys.exit(f"{mp.name} not found -- run grade_latest.py first.")
+    sys.exit(f"{mp.name} not found -- run grade.py first.")
 
 text = mp.read_text(encoding="utf-8")
 blocks = re.split(r"^## \[(\d+)\] (.+?)$", text, flags=re.M)[1:]
@@ -47,7 +47,7 @@ hdr  = vals[0]
 col  = {h: k for k, h in enumerate(hdr)}
 for need in ("numeric_pct", "memo_score", "overall", "feedback", "flag"):
     if need not in col:
-        sys.exit(f"Grades tab has no '{need}' column -- re-run grade_latest.py.")
+        sys.exit(f"Grades tab has no '{need}' column -- re-run grade.py.")
 
 changed = 0
 for idx, (score, fb) in sorted(graded.items()):
