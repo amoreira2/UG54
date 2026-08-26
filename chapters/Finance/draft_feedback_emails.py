@@ -8,7 +8,7 @@ this script has no ability to send anything.
 
 To actually send, take the drafts to your mail client, or use Brightspace.
 """
-import argparse, sys
+import argparse, sys, textwrap
 from pathlib import Path
 
 HERE  = Path(__file__).resolve().parent
@@ -33,28 +33,46 @@ def render(r) -> tuple[str, str, str]:
     oks   = {k[:-3]: v for k, v in r.items() if k.endswith("_ok")}
     wrong = [q for q, v in oks.items() if str(v).upper() != "TRUE"]
 
-    L = [f"Hi {first},", "", f"Feedback on your {TITLES.get(a.tag, a.tag)} challenge.", ""]
+    L = [f"Hi {first},", ""]
+    L += textwrap.wrap("Thanks for submitting the " + TITLES.get(a.tag, a.tag)
+                       + " challenge.", 72)
+    L += [
+         "Your participation is registered — that is what counts for your",
+         "participation grade. Everything below is feedback, not a score.", ""]
 
     if r.get("status") != "GRADED":
-        L += ["I couldn't read your submission — the pasted code didn't decode.",
-              "Copy just the line starting UG54:: (not the ==== rules around it)",
-              "and resubmit. No penalty.", "", "— Prof. Moreira"]
-        return r.get("email", ""), f"UG54 — {a.tag} challenge: please resubmit", "\n".join(L)
+        L += ["One small thing: I couldn't read the code you pasted, so I can't",
+              "give you feedback on the answers yet. Copy just the line that starts",
+              "with UG54:: — not the ==== rules printed around it — and send it",
+              "through the form again whenever you get a chance.", "",
+              "Your participation still counts. Nothing to worry about.", "",
+              "See you in class,", "Alan"]
+        return r.get("email", ""), f"UG54 — {a.tag}: thanks, and one small thing", "\n".join(L)
 
     n_ok = len(oks) - len(wrong)
-    L += [f"NUMBERS   {n_ok} of {len(oks)} correct"]
     if wrong:
-        L += ["          check: " + ", ".join(wrong),
-              "          (the notebook recomputes these — rerun it and compare)"]
-    L += ["", f"MEMO      {r.get('memo_score','')}/5", ""]
-    for line in str(r.get("feedback", "")).split(". "):
-        if line.strip():
-            L.append("          " + line.strip().rstrip(".") + ".")
-    L += ["", f"OVERALL   {r.get('overall','')}%",
-          "          (70% the numbers, 30% the memo)", "",
-          "Bring any questions to office hours or the start of Wednesday's class.",
-          "", "— Prof. Moreira"]
+        L += [f"On the numbers, you had {n_ok} of {len(oks)}. Worth a second look at:",
+              "   " + ", ".join(wrong),
+              "The notebook recomputes these, so rerunning it and comparing is the",
+              "quickest way to see where it diverged.", ""]
+    else:
+        L += [f"All {len(oks)} numbers came out right.", ""]
+
+    fb = str(r.get("feedback", "")).strip()
+    if fb:
+        L += ["On the memo:", ""]
+        for line in fb.split(". "):
+            if line.strip():
+                L += textwrap.wrap(line.strip().rstrip(".") + ".", 69,
+                                   initial_indent="   ", subsequent_indent="   ")
+                L.append("")
+        L.pop()
+        L.append("")
+
+    L += ["Bring any questions to office hours, or grab me at the start of class.",
+          "", "See you Wednesday,", "Alan"]
     return r.get("email", ""), f"UG54 — {a.tag} challenge feedback", "\n".join(L)
+
 
 out = Path(a.out).expanduser() if a.out else None
 if out: out.mkdir(parents=True, exist_ok=True)
