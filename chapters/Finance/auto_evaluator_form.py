@@ -28,27 +28,45 @@ Usage:
 
 import argparse
 import base64
+import re
 import hashlib
 import json
 import sys
 from datetime import datetime
 
-def decode_token(token: str) -> tuple[dict, str | None]:
-    """Decode UG54::<checksum>::<base64> → payload dict. Returns (payload, error)."""
-    token = token.strip()
-    if not token.startswith("UG54::"):
-        return {}, f"Bad prefix (got: {token[:20]!r})"
+TOKEN_RE = re.compile(r"UG54::([0-9a-f]{8})::([A-Za-z0-9+/=\\s]+)")
+
+
+def decode_token(text: str) -> tuple[dict, str | None]:
+    """Pull a UG54 token out of whatever the student pasted and decode it.
+
+    Students paste the whole printed block surprisingly often -- separator
+    rules, the "COPY THE LINE BELOW" header, trailing newlines. So we search
+    for the token rather than requiring the paste to start with it, and we
+    rebuild the base64 padding rather than trusting whatever followed it.
+    """
+    if not text or not text.strip():
+        return {}, "Nothing pasted"
+    m = TOKEN_RE.search(text)
+    if not m:
+        head = text.strip().splitlines()[0][:40] if text.strip() else ""
+        return {}, f"No UG54 token found (paste started: {head!r})"
+
+    checksum, body = m.group(1), re.sub(r"\\s+", "", m.group(2))
+    # A run of '=' from a separator line looks like base64 padding. Strip all
+    # of it and re-pad correctly.
+    body = body.rstrip("=")
+    body += "=" * (-len(body) % 4)
+
     try:
-        _, checksum, encoded = token.split("::", 2)
-    except ValueError:
-        return {}, "Token doesn't split into 3 parts"
-    try:
-        blob = base64.b64decode(encoded.encode()).decode()
+        blob = base64.b64decode(body.encode()).decode()
     except Exception as e:
         return {}, f"Base64 decode failed: {e}"
+
     expected = hashlib.sha256(blob.encode()).hexdigest()[:8]
     if expected != checksum:
-        return {}, f"Checksum mismatch (got {checksum}, expected {expected}) — payload tampered or truncated"
+        return {}, (f"Checksum mismatch (got {checksum}, expected {expected}) "
+                    "-- payload edited or truncated")
     try:
         return json.loads(blob), None
     except Exception as e:
