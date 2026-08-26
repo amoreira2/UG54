@@ -451,7 +451,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#before-the-first-class">Before the first class</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-ret-fwd-from-the-course-panel-build-it-as-needed">▸ Remove <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> from the course panel — build it as needed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-ret-fwd-from-the-course-panel-decided-against-2026-08-26">▸ ~~Remove <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> from the course panel~~ — <strong>decided against, 2026-08-26</strong></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#submission-cell-globals-not-dir">▸ Submission cell: <code class="docutils literal notranslate"><span class="pre">globals()</span></code> not <code class="docutils literal notranslate"><span class="pre">dir()</span></code></a></li>
 </ul>
 </li>
@@ -493,63 +493,26 @@ day one always loses time to setup.</p></li>
 <hr class="docutils" />
 <section id="data">
 <h2>Data<a class="headerlink" href="#data" title="Link to this heading">#</a></h2>
-<section id="remove-ret-fwd-from-the-course-panel-build-it-as-needed">
-<h3>▸ Remove <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> from the course panel — build it as needed<a class="headerlink" href="#remove-ret-fwd-from-the-course-panel-build-it-as-needed" title="Link to this heading">#</a></h3>
-<p><strong>Why:</strong> shipping the column means students never build a forward return
-themselves, then hit the <code class="docutils literal notranslate"><span class="pre">groupby</span></code>/<code class="docutils literal notranslate"><span class="pre">shift</span></code> trap the first time they make their
-own signal for the project. Making them construct it moves the lesson from
-“read about the trap” to “fall into the trap on graded work.”</p>
-<p><strong>Blast radius</strong> (counted 2026-08-26):</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>file</p></th>
-<th class="head"><p>uses</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_course_panel.py</span></code></p></td>
-<td><p>2 — stop writing the column</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">L2_Panel_Portfolios_AI</span></code></p></td>
-<td><p><strong>23</strong></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">L3_Sorts_AI</span></code></p></td>
-<td><p><strong>22</strong></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">L4_PerfEval_Factors_AI</span></code></p></td>
-<td><p>9</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">L6_MultiFactor_AI</span></code></p></td>
-<td><p>8</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">L1</span></code>, <code class="docutils literal notranslate"><span class="pre">L5</span></code>, <code class="docutils literal notranslate"><span class="pre">L7</span></code>, <code class="docutils literal notranslate"><span class="pre">SignalHygiene_AI</span></code></p></td>
-<td><p>2 each</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>Three things to settle before starting:</strong></p>
+<section id="remove-ret-fwd-from-the-course-panel-decided-against-2026-08-26">
+<h3>▸ ~~Remove <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> from the course panel~~ — <strong>decided against, 2026-08-26</strong><a class="headerlink" href="#remove-ret-fwd-from-the-course-panel-decided-against-2026-08-26" title="Link to this heading">#</a></h3>
+<p>Considered making students build the forward return themselves, so the
+<code class="docutils literal notranslate"><span class="pre">groupby</span></code>/<code class="docutils literal notranslate"><span class="pre">shift</span></code> trap is something they fall into rather than read about.
+<strong>Keeping the shipped column.</strong> Three reasons, in order of weight:</p>
 <ol class="arabic simple">
-<li><p><strong>The P2 prompt moment breaks.</strong> L2’s best demo asks students to build
-<code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> and then scores their attempt against the shipped column —
+<li><p><strong>It would break L2’s best demo.</strong> The P2 prompt moment asks students to
+build <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> and then scores the attempt <em>against the shipped column</em> —
 <code class="docutils literal notranslate"><span class="pre">shift(-1)</span></code> alone is wrong on 19,156 rows, <code class="docutils literal notranslate"><span class="pre">groupby</span></code> first on 1,357. Delete
-the column and there is nothing to score against. Either keep a copy in a
-separate small file used only by the check, or replace the check with a
-self-consistency test.</p></li>
-<li><p><strong>The shipped column has an extra rule.</strong> It only fills when the next
-observation is the very <em>next calendar month</em>, so it never splices across a
-gap in a stock’s history. A plain <code class="docutils literal notranslate"><span class="pre">groupby('permno')['ret'].shift(-1)</span></code> does
-not do this — hence the 1,357-row difference. Every number in the course was
-computed with the stricter rule. So either the spec students are given has to
-state the calendar rule explicitly, or <strong>every answer key needs re-verifying</strong>
-against the looser construction.</p></li>
-<li><p><strong>Where does each lecture build it?</strong> Simplest is one line in each setup cell,
-which makes it invisible again. Better is L2 builds it as the P2 exercise and
-L3–L7 build it in a visible (not hidden) setup line, so the habit stays in
-view.</p></li>
+the column and there is nothing to score against. The lesson is already
+taught, and taught better, <em>because</em> the answer exists to check against.</p></li>
+<li><p><strong>Every answer key assumes the stricter rule.</strong> The shipped column only fills
+when the next observation is the very next <em>calendar</em> month, so it never
+splices across a gap in a stock’s history — that is the whole 1,357-row
+difference. A plain groupby-shift does not do this, so removing the column
+means re-verifying every key in <code class="docutils literal notranslate"><span class="pre">auto_evaluator.py</span></code>.</p></li>
+<li><p><strong>68 uses across seven notebooks</strong> plus <code class="docutils literal notranslate"><span class="pre">build_course_panel.py</span></code>.</p></li>
 </ol>
-<p><strong>Do this between terms, not now</strong> — it touches all seven notebooks and every
-answer key.</p>
+<p>Revisit only if the project work shows students are still hitting the trap on
+their own signals — which is the thing this was meant to prevent.</p>
 </section>
 <hr class="docutils" />
 <section id="submission-cell-globals-not-dir">
@@ -683,7 +646,7 @@ the live sheet; Anthropic API key made optional.</p></li>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#before-the-first-class">Before the first class</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-ret-fwd-from-the-course-panel-build-it-as-needed">▸ Remove <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> from the course panel — build it as needed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-ret-fwd-from-the-course-panel-decided-against-2026-08-26">▸ ~~Remove <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> from the course panel~~ — <strong>decided against, 2026-08-26</strong></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#submission-cell-globals-not-dir">▸ Submission cell: <code class="docutils literal notranslate"><span class="pre">globals()</span></code> not <code class="docutils literal notranslate"><span class="pre">dir()</span></code></a></li>
 </ul>
 </li>
