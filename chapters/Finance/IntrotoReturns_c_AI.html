@@ -521,6 +521,12 @@ document.write(`
 </li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-challenge-how-stable-is-spy-s-sharpe-ratio">🎯 Final Challenge: How Stable is SPY’s Sharpe Ratio? <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-required-computations">The required computations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-memo">The Memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-new-skill">🤖 The New Skill</a></li>
 </ul>
@@ -1509,6 +1515,138 @@ document.write(`
 </section>
 </section>
 <hr class="docutils" />
+<section id="final-challenge-how-stable-is-spy-s-sharpe-ratio">
+<h2>🎯 Final Challenge: How Stable is SPY’s Sharpe Ratio? <a id="challenge"></a><a class="headerlink" href="#final-challenge-how-stable-is-spy-s-sharpe-ratio" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>Setup.</strong> You’re advising a client who plans to put their entire retirement
+in SPY. They’ve heard “stocks return 10% per year” and figure that’s enough.
+Pull SPY’s history from 2010-01-01 to 2024-12-31, compute the standard
+risk-adjusted statistics, and decide whether the 10% number is reliable.</p>
+</div></blockquote>
+<p>You may use AI freely. The skill being tested: writing the spec, auditing
+the output, and turning numbers into a recommendation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load SPY data from the same Yahoo / Fama-French sources we used earlier</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yfinance</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">yf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pdr</span>
+
+<span class="n">spy</span> <span class="o">=</span> <span class="n">yf</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">'SPY'</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s1">'2010-01-01'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">'2024-12-31'</span><span class="p">,</span>
+                  <span class="n">auto_adjust</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">'Close'</span><span class="p">]</span>
+<span class="n">spy_ret</span> <span class="o">=</span> <span class="n">spy</span><span class="o">.</span><span class="n">pct_change</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="n">ff</span> <span class="o">=</span> <span class="n">pdr</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">'F-F_Research_Data_Factors_Daily'</span><span class="p">,</span> <span class="s1">'famafrench'</span><span class="p">,</span>
+                    <span class="n">start</span><span class="o">=</span><span class="s1">'2010-01-01'</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">'2024-12-31'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
+<span class="n">ff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+<span class="c1"># Align and compute excess returns</span>
+<span class="n">spy_ret</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">spy_ret</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">merged</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">spy_ret</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'spy'</span><span class="p">),</span> <span class="n">ff</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'rf'</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">merged</span><span class="p">[</span><span class="s1">'spy_excess'</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="s1">'spy'</span><span class="p">]</span> <span class="o">-</span> <span class="n">merged</span><span class="p">[</span><span class="s1">'rf'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span><span class="si">}</span><span class="s2"> trading days, </span><span class="si">{</span><span class="n">merged</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">merged</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">merged</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="the-required-computations">
+<h3>The required computations<a class="headerlink" href="#the-required-computations" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📌 Required variable names</strong> (the submission cell looks for these):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spy_annual_mean</span>      <span class="o">=</span> <span class="n">____</span>   <span class="c1"># SPY's annualized TOTAL return (decimal, e.g. 0.13)</span>
+<span class="n">spy_annual_vol</span>       <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized vol of total returns</span>
+<span class="n">spy_annual_sharpe</span>    <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized Sharpe on EXCESS returns</span>
+<span class="n">spy_worst_year</span>       <span class="o">=</span> <span class="n">____</span>   <span class="c1"># worst calendar-year total return (e.g. -0.18 for -18%)</span>
+<span class="n">spy_best_year</span>        <span class="o">=</span> <span class="n">____</span>   <span class="c1"># best calendar-year total return</span>
+<span class="n">spy_negative_years</span>   <span class="o">=</span> <span class="n">____</span>   <span class="c1"># count of years with negative total return</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here (annualization, calendar-year aggregation)</span>
+
+
+<span class="c1"># Required outputs:</span>
+<span class="n">spy_annual_mean</span>    <span class="o">=</span> <span class="n">____</span>
+<span class="n">spy_annual_vol</span>     <span class="o">=</span> <span class="n">____</span>
+<span class="n">spy_annual_sharpe</span>  <span class="o">=</span> <span class="n">____</span>
+<span class="n">spy_worst_year</span>     <span class="o">=</span> <span class="n">____</span>
+<span class="n">spy_best_year</span>      <span class="o">=</span> <span class="n">____</span>
+<span class="n">spy_negative_years</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Annual mean (total):  </span><span class="si">{</span><span class="n">spy_annual_mean</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Annual vol:           </span><span class="si">{</span><span class="n">spy_annual_vol</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Annual Sharpe (excess):</span><span class="si">{</span><span class="n">spy_annual_sharpe</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Worst year:           </span><span class="si">{</span><span class="n">spy_worst_year</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Best year:            </span><span class="si">{</span><span class="n">spy_best_year</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Negative years:       </span><span class="si">{</span><span class="n">spy_negative_years</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="p">(</span><span class="mi">2024</span><span class="o">-</span><span class="mi">2010</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-memo">
+<h3>The Memo<a class="headerlink" href="#the-memo" title="Link to this heading">#</a></h3>
+<p>Write a <strong>single paragraph</strong> (max 5 sentences) advising your client.</p>
+<ol class="arabic simple">
+<li><p>Is “10% per year in SPY” a reasonable expectation based on the 2010-2024 sample?</p></li>
+<li><p>What’s the realistic downside they should plan for?</p></li>
+<li><p>What’s the one caveat (sample period, regime, etc.) that could make you wrong?</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MEMO</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">Write your 5-sentence-max memo here. Don't delete the triple quotes.</span>
+<span class="s2">"""</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">MEMO</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="submission">
+<h2>📤 Submission <a id="submit"></a><a class="headerlink" href="#submission" title="Link to this heading">#</a></h2>
+<p>Run the cell below. Copy the line starting with <code class="docutils literal notranslate"><span class="pre">UG54::</span></code> into the submission
+form: <strong><a class="reference external" href="https://forms.gle/YOUR_FORM_LINK_HERE">https://forms.gle/YOUR_FORM_LINK_HERE</a></strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"spy_annual_mean"</span><span class="p">,</span> <span class="s2">"spy_annual_vol"</span><span class="p">,</span> <span class="s2">"spy_annual_sharpe"</span><span class="p">,</span>
+    <span class="s2">"spy_worst_year"</span><span class="p">,</span> <span class="s2">"spy_best_year"</span><span class="p">,</span> <span class="s2">"spy_negative_years"</span><span class="p">,</span>
+    <span class="s2">"MEMO"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">()]</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">❌ Missing: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"assignment"</span><span class="p">:</span> <span class="s2">"IntrotoReturns_AI"</span><span class="p">,</span>
+    <span class="s2">"ts"</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">"seconds"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"Z"</span><span class="p">,</span>
+    <span class="s2">"answers"</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"MEMO"</span><span class="p">},</span>
+    <span class="s2">"memo"</span><span class="p">:</span> <span class="n">MEMO</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"UG54::</span><span class="si">{</span><span class="n">checksum</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s2"> chars"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
 <section id="key-takeaways">
 <h2>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
@@ -1634,6 +1772,12 @@ document.write(`
 </li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-challenge-how-stable-is-spy-s-sharpe-ratio">🎯 Final Challenge: How Stable is SPY’s Sharpe Ratio? <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-required-computations">The required computations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-memo">The Memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-new-skill">🤖 The New Skill</a></li>
 </ul>
