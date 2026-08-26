@@ -15,7 +15,7 @@ HERE = Path(__file__).resolve().parent
 KEY  = HERE / "service_account.json"
 
 p = argparse.ArgumentParser()
-p.add_argument("--sheet", default="UG54 Submissions")
+p.add_argument("--sheet", default="UG54 Submissions (Responses)")
 p.add_argument("--sheet-url", default=None, help="more reliable than the name")
 a = p.parse_args()
 
@@ -35,8 +35,42 @@ except ImportError:
     sys.exit("❌ gspread not installed:  pip install gspread")
 
 gc = gspread.service_account(filename=str(KEY))
+
+# What can this account actually see? Anything shared with it shows up here.
 try:
-    book = gc.open_by_url(a.sheet_url) if a.sheet_url else gc.open(a.sheet)
+    visible = gc.list_spreadsheet_files()
+except Exception as e:
+    visible = []
+    print(f"(could not list files: {type(e).__name__})")
+
+if visible:
+    print("Spreadsheets shared with this account:")
+    for f in visible:
+        print(f"   • {f['name']}")
+    print()
+else:
+    print("⚠️  Nothing is shared with this account yet — that is STEP 4.\n")
+
+try:
+    if a.sheet_url:
+        book = gc.open_by_url(a.sheet_url)
+    else:
+        # Try the given name, then the name Google actually uses for a
+        # form-linked sheet, then anything that looks like ours.
+        names = [a.sheet, f"{a.sheet} (Responses)"]
+        names += [f['name'] for f in visible if 'ug54' in f['name'].lower()]
+        book, last = None, None
+        for n in dict.fromkeys(names):
+            try:
+                book = gc.open(n)
+                if n != a.sheet:
+                    print(f"note: opened it as '{n}', not '{a.sheet}'.")
+                    print(f"      Use --sheet \"{n}\" when grading, or rename the sheet.\n")
+                break
+            except Exception as e:
+                last = e
+        if book is None:
+            raise last or RuntimeError("no candidate name worked")
 except Exception as e:
     msg = str(e)
     print(f"❌ Could not open the Sheet.\n   {type(e).__name__}: {msg[:300]}\n")

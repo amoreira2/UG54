@@ -57,9 +57,9 @@ def decode_token(token: str) -> tuple[dict, str | None]:
 
 def main():
     # Lazy imports — only needed when actually running, not when testing decode_token
+    import os
     import gspread
-    from anthropic import Anthropic
-    from auto_evaluator import ANSWER_KEY, grade_numeric, grade_memo, grade_wrds_tour
+    from auto_evaluator import ANSWER_KEY, MEMO_RUBRICS, grade_numeric, grade_wrds_tour
 
     p = argparse.ArgumentParser()
     p.add_argument("--sheet", required=True, help="Google Sheet name")
@@ -83,8 +83,20 @@ def main():
     except gspread.WorksheetNotFound:
         grades_ws = book.add_worksheet(args.grades_tab, rows=200, cols=20)
 
-    client = Anthropic()
-    rows = []
+    # Memos are graded by the Anthropic API when a key is present. Without one
+    # they are written to a markdown file next to the rubric, to be graded by
+    # hand or by an assistant already reading this repo. Numeric answers are
+    # always graded here, deterministically.
+    use_api = bool(os.environ.get("ANTHROPIC_API_KEY"))
+    client = None
+    if use_api:
+        from anthropic import Anthropic
+        from auto_evaluator import grade_memo
+        client = Anthropic()
+    else:
+        print("No ANTHROPIC_API_KEY — numeric answers graded here, "
+              "memos written out for grading.\n")
+    rows, memos = [], []
     skipped = 0
 
     for resp in responses:
@@ -114,25 +126,36 @@ def main():
             numeric = grade_wrds_tour(payload["answers"])
         else:
             numeric = grade_numeric(payload["answers"], key)
-        memo_grade = grade_memo(client, payload.get("memo", ""), args.assignment)
+        memo_txt = payload.get("memo", "")
+        if use_api:
+            memo_grade = grade_memo(client, memo_txt, args.assignment)
+        else:
+            memo_grade = {"score": "", "picked_fund": "", "feedback": "(graded separately)"}
+            memos.append((name or email, memo_txt.strip()))
 
         n_ok = sum(1 for r in numeric.values() if r["correct"])
         pct = n_ok / len(numeric) * 100
-        memo_pct = memo_grade["score"] / 5 * 100
-        overall = 0.7 * pct + 0.3 * memo_pct
+        if use_api:
+            overall = round(0.7 * pct + 0.3 * (memo_grade["score"] / 5 * 100), 1)
+            flag = overall < 50 or memo_grade["score"] == 0
+        else:
+            overall, flag = "", pct < 50
 
         rows.append({
             "ts": ts, "name": name, "email": email, "status": "GRADED",
             "submission_ts": payload.get("ts", ""),
             "numeric_pct": round(pct, 1),
             "memo_score": memo_grade["score"],
-            "memo_picked": memo_grade["picked_fund"],
-            "overall": round(overall, 1),
-            "flag": overall < 50 or memo_grade["score"] == 0,
+            "overall": overall,
+            "flag": flag,
             "feedback": memo_grade["feedback"],
             **{f"{q}_ok": r["correct"] for q, r in numeric.items()},
         })
-        print(f"✅ {email}: numeric={pct:.0f}%  memo={memo_grade['score']}/5  overall={overall:.0f}")
+        who = name or email
+        if use_api:
+            print(f"✅ {who}: numeric={pct:.0f}%  memo={memo_grade['score']}/5  overall={overall:.0f}")
+        else:
+            print(f"✅ {who}: numeric={pct:.0f}%")
 
     if skipped:
         print(f"\n(skipped {skipped} submission(s) for other lectures)")
@@ -153,6 +176,20 @@ def main():
     grades_ws.clear()
     grades_ws.update([header] + [[r[h] for h in header] for r in rows])
     print(f"\n✅ Wrote {len(rows)} grades to '{args.grades_tab}'")
+
+    if memos:
+        from pathlib import Path
+        mp = Path(__file__).resolve().parent / f"memos_{args.assignment.split('_')[0]}.md"
+        with open(mp, "w", encoding="utf-8") as fh:
+            fh.write(f"# Memos to grade — {args.assignment}\n\nScore each 0–5 "
+                     "against the rubric, then paste the scores into the "
+                     f"'{args.grades_tab}' tab.\n\n## Rubric\n\n```\n"
+                     + MEMO_RUBRICS.get(args.assignment, "(no rubric)").strip()
+                     + "\n```\n\n---\n\n")
+            for who, m in memos:
+                fh.write(f"## {who}\n\n{m or '_(no memo submitted)_'}\n\n"
+                         "**Score:** _/5\n**Feedback:**\n\n---\n\n")
+        print(f"✅ Wrote {len(memos)} memo(s) to {mp.name} — grade these next")
 
     flagged = [r for r in rows if r["flag"]]
     if flagged:

@@ -19,7 +19,7 @@ import os, subprocess, sys, datetime as dt
 from pathlib import Path
 
 HERE  = Path(__file__).resolve().parent
-SHEET = "UG54 Submissions"
+SHEET = "UG54 Submissions (Responses)"
 
 # Challenges are started in class and due before the NEXT lecture, so each
 # entry is (date the challenge stops accepting new work, assignment name).
@@ -43,12 +43,7 @@ def preflight() -> list[str]:
             "     Google Cloud Console -> IAM -> Service Accounts -> create key (JSON),\n"
             "     save it there, then share the Sheet with that account's email."
         )
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        problems.append(
-            "ANTHROPIC_API_KEY is not set. The memo grader needs it.\n"
-            "     Put `export ANTHROPIC_API_KEY=...` in your shell profile."
-        )
-    for mod in ("gspread", "anthropic"):
+    for mod in ("gspread",):
         try:
             __import__(mod)
         except ImportError:
@@ -81,6 +76,9 @@ def main() -> int:
 
     tab = "Grades_" + assignment.split("_")[0]
     print(f"{today}: grading {assignment} -> tab '{tab}'\n")
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        print("(no ANTHROPIC_API_KEY — numeric answers graded automatically, "
+              "memos written out for grading)\n")
 
     cmd = [sys.executable, str(HERE / "auto_evaluator_form.py"),
            "--sheet", SHEET, "--grades-tab", tab, "--assignment", assignment]
