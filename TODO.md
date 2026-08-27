@@ -65,6 +65,35 @@ a student being told their answer is missing when it isn't.
 
 ---
 
+### ▸ A2 — pinned from the old Assignment 3
+
+Old `chapters/Assignments/Assignment3.ipynb` exercises 11–15 need L4 and were
+deliberately held out of A1. They are the best material in the old assignments
+and should go into **A2** (due Thu Sep 24, after L4–L6):
+
+- **Ex 11** — plot ten stocks against the market and guess which has the highest
+  beta *by eye*, then: *"why is it important to measure beta correctly? Explain
+  how you can use beta to improve a trade you have in one of these companies."*
+- **Ex 12** — regress every stock on the market. Then: *"you are a fund manager
+  with a mandate to keep your beta at 0.5. Provide portfolio weights."* Sharper
+  than anything currently in L4.
+- **Ex 13** — beta-hedged returns for those mandate portfolios. *"Do they
+  co-move? Can you call them risk-free? In what sense are they free of risk and
+  in what sense not?"*
+- **Ex 14** — largest-alpha and lowest-alpha stock. *"If you were picking one
+  trade, would picking the largest alpha be right?"*
+- **Ex 15** — *"Is that the best we can do? How could you improve the portfolio?"*
+
+Also for A2: old `Assignment4_c.ipynb` is the FF5 mean-variance lab
+(`w ∝ Σ⁻¹μ`) — that belongs in **A5**, not A2.
+
+**Turnover:** PLAN's one-line A1 spec said "report turnover", but turnover is
+never defined in L1–L3 and appears in **none** of the old assignments. It is
+properly a Lecture 16 topic (`TradingCosts_revamped_curated.ipynb` computes it).
+Dropped from A1; put it in A6, which is the transaction-cost assignment.
+
+---
+
 ## Content and length
 
 - [ ] **The block is 15.3 lectures of material in 7 slots.** The nine trims in
