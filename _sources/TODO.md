@@ -12,8 +12,8 @@ through and dated rather than deleted, so the reasoning survives.
 - [ ] **A8 (Thu Dec 3).** Its Thursday is Thanksgiving so it slips to the day
       before the final report. Keep it and let students drop it, or cut it and
       run seven? *Postponed — nothing dropped for now.*
-- [ ] **Assignments 3–8 do not exist yet.** A1 and A2 are built. A3 can be
-      written now (L4–L6 are done); A4–A8 depend on lectures not yet built.
+- [ ] **Assignments 4–8 do not exist yet.** A1, A2 and A3 are built and tested.
+      A4–A8 depend on lectures that are not yet written (L8 onward).
 
 ---
 
@@ -75,7 +75,19 @@ a student being told their answer is missing when it isn't.
 
 ---
 
-### ▸ A3 — pinned from the old Assignment 3
+### ▸ ~~A3 — pinned from the old Assignment 3~~ — **built 2026-08-26**
+
+All five exercises are in `A3_Beta_and_Alpha_AI.ipynb` as Part 1 (Q1–Q5), on the
+49-industry file so students reuse their A1 cleaning code. Verified: betas run
+0.52 (Util) to 1.63 (Softw), median 1.10; Smoke has the top alpha at +8.85%/yr,
+t = +3.14; **only 5 of 49 clear |t| > 2**, which seeds multiple testing for A4.
+The beta-0.5 mandate is solvable several ways — Util alone is already 0.52 — and
+a hedged portfolio comes out at corr 0.000 with the market, 12.0% vol against
+14.4% unhedged, which makes the "risk-free in what sense?" question land.
+
+Old text preserved below for reference.
+
+### ▸ Original note — old Assignment 3
 
 Old `chapters/Assignments/Assignment3.ipynb` exercises 11–15 need L4 and were
 deliberately held out of A1. They are the best material in the old assignments
