@@ -7,6 +7,16 @@ through and dated rather than deleted, so the reasoning survives.
 
 ---
 
+## Open decisions
+
+- [ ] **A8 (Thu Dec 3).** Its Thursday is Thanksgiving so it slips to the day
+      before the final report. Keep it and let students drop it, or cut it and
+      run seven? *Postponed — nothing dropped for now.*
+- [ ] **Assignments 3–8 do not exist yet.** A1 and A2 are built. A3 can be
+      written now (L4–L6 are done); A4–A8 depend on lectures not yet built.
+
+---
+
 ## Before the first class
 
 - [ ] **Submit one test response yourself.** Open L1 in Colab, run it, paste the
@@ -65,11 +75,11 @@ a student being told their answer is missing when it isn't.
 
 ---
 
-### ▸ A2 — pinned from the old Assignment 3
+### ▸ A3 — pinned from the old Assignment 3
 
 Old `chapters/Assignments/Assignment3.ipynb` exercises 11–15 need L4 and were
 deliberately held out of A1. They are the best material in the old assignments
-and should go into **A2** (due Thu Sep 24, after L4–L6):
+and should go into **A3** (due Thu Sep 24, after L4–L6):
 
 - **Ex 11** — plot ten stocks against the market and guess which has the highest
   beta *by eye*, then: *"why is it important to measure beta correctly? Explain
@@ -84,13 +94,13 @@ and should go into **A2** (due Thu Sep 24, after L4–L6):
   trade, would picking the largest alpha be right?"*
 - **Ex 15** — *"Is that the best we can do? How could you improve the portfolio?"*
 
-Also for A2: old `Assignment4_c.ipynb` is the FF5 mean-variance lab
-(`w ∝ Σ⁻¹μ`) — that belongs in **A5**, not A2.
+Also: old `Assignment4_c.ipynb` is the FF5 mean-variance lab (`w ∝ Σ⁻¹μ`) —
+that belongs in **A6**, not A3.
 
-**Turnover:** PLAN's one-line A1 spec said "report turnover", but turnover is
+**Turnover:** PLAN's one-line spec said "report turnover", but turnover is
 never defined in L1–L3 and appears in **none** of the old assignments. It is
 properly a Lecture 16 topic (`TradingCosts_revamped_curated.ipynb` computes it).
-Dropped from A1; put it in A6, which is the transaction-cost assignment.
+Dropped from A2; it belongs in A7, the transaction-cost assignment.
 
 ---
 
