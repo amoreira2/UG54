@@ -187,13 +187,18 @@ differs — it has Nov 25–29 off. The UG bulletin governs).
 | 21 | Wed Nov 18 | **Project pitches II** — 5 min × 10 | |
 | 22 | Mon Nov 23 | **L17** Leverage and shorting | |
 | 23 | Wed Nov 25 | **L18** PCA / statistical factors `(6)` | |
-| 24 | Mon Nov 30 | **Guest 2** | *A8 due Thu Dec 3* |
-| 25 | Wed Dec 2 | **L19** Machine learning | |
-| 26 | Mon Dec 7 | **Presentations I** | report + code **Fri Dec 4** |
-| 27 | Wed Dec 9 | **Presentations II** | slides AM of your slot |
+| 24 | Mon Nov 30 | **L19** Machine learning | *A8 due Thu Dec 3* |
+| — | Wed Dec 2 | *No class* | |
+| 25 | Mon Dec 7 | **Presentations I** — 15 min per group | report + code **Fri Dec 4** |
+| 26 | Wed Dec 9 | **Presentations II** | slides AM of your slot |
+| 27 | **Fri Dec 11** | **Presentations III** | |
 | 28 | Mon Dec 14 | **Review** (cumulative) | |
 
-**19 lectures · 1 midterm · 2 reviews · 2 guests · 2 pitch days · 2 presentation days = 28.**
+**19 lectures · 1 midterm · 2 reviews · 1 guest · 2 pitch days · 3 presentation days = 28.**
+
+> **Changed by AM on the syllabus, 2026-08-27.** Guest 2 dropped so L19 moves to
+> Nov 30; Wed Dec 2 is off; a third presentation day is added on **Friday
+> Dec 11**, which is not a normal M/W slot and needs a room.
 
 ### Calendar reasoning
 
@@ -295,7 +300,7 @@ The lecture block fixes the **skill**; the group's own strategy supplies the
 | **A7** | **Thu Nov 19** | L16 (Mon Nov 16) | Bootstrap your Sharpe SE; apply a cost model; net-of-cost Sharpe. Turnover is defined here. |
 | **A8** | **Thu Dec 3** | L17 (Mon Nov 23) | Long-only vs long-short. What does the shorting constraint cost you? |
 
-**Eight assignments, due Thursday at midnight, drop one — seven count.** One
+**Eight assignments, due Thursday at midnight, drop two — six count.** One
 weekday all term, so nobody has to look it up. Gaps run 1–3 days after the last
 lecture the assignment needs; a Wednesday lecture means it is due the next night,
 which is fine because the assignment applies a technique the lecture has just
