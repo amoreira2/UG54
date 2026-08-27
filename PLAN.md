@@ -521,25 +521,31 @@ substring of `C_noise = ____`).
 
 | L | Topic | Source assets | Status |
 |---|-------|---------------|--------|
-| L1 | Intro + AI workflow + returns | `CourseIntro_AI` ✅ · `IntrotoReturns_c_AI` ✅ | 🟡 merge two builts |
-| L2 | WRDS panel + portfolio math | `WRDS_Data_Tour_AI` ✅ · `PortfolioMath_c` | 🟡 merge + condense |
-| L3 | Sorts, breakpoints, ratios | `crosssectional` · `FactorModels_c_AI` ✅ | 🟡 **needs NYSE breakpoints (new)** |
-| L4 | **Intro to Performance Eval** + Factor models I | `FactorModels_c_AI` ✅ + Sharpe/IR moved from L3 | 🟡 merge |
-| L5 | Factor models II — types, zoo | `Factors.ipynb` · `MultiFactorModels_c` | 🟡 |
-| L6 | Factor models III — estimation | `FactorModels_II_AI` ✅ · `FactorModelEstimation_c` | 🟡 **needs Fama-MacBeth (new)** |
-| L7 | Backtesting protocol | `Performance_evaluation_c` | 🔴 **messy; overfitting demo built on MVE, must repackage** |
-| L8 | Anomalies | `Factors.ipynb` | 🔴 **design unresolved — tour or depth?** |
-| L9 | Momentum and trend | `Momentum.ipynb` | 🟡 strong bones |
-| L10 | Conditional strategies I | `MarketTiming_c` · `Timing_AI` ✅ | 🟡 strong bones |
-| L11 | Conditional strategies II | `Volatilitytiming_c` · `Timing_AI` ✅ | 🟡 **generalize to factor timing** |
-| L12 | Capital allocation I | `CapitalAllocationI_AI` ✅ | 🟡 **make the math intuitive** |
-| L13 | Capital allocation II — fragility | `CapitalAllocationII` · `L16_L17_AlphaCapture_joint_design.md` | 🟡 **the core; design doc awaiting sign-off** |
-| L14 | BARRA / fundamental risk models | `RiskManagement` (covariance half) | 🔴 **never taught; needs anatomy, winsorization, specific risk, bias tests** |
-| L15 | Transaction costs | `TradingCosts` | 🔴 **never taught** |
-| L16 | Leverage and shorting | `LeverageandShorting` | 🔴 **never taught** |
-| L17 | PCA / statistical factors | **`StatisticalFactors_AI`** ✅ | ✅ **built + smoke-tested 2026-08-06** |
-| L18 | Machine learning | `MachineLearning_cc` | 🟡 |
-| ⬛ | Midterm, reviews ×2, guests ×2, pitches ×2, presentations ×3 | | 🔴 all to design |
+| L1 | Intro + AI workflow + returns | `L1_Welcome_Returns_AI` | ✅ **built, tested** |
+| L2 | The panel + portfolio math | `L2_Panel_Portfolios_AI` | ✅ **built, tested** |
+| L3 | Sorts, breakpoints, long-short | `L3_Sorts_AI` | ✅ **built, tested** |
+| L4 | Performance eval + factor models I | `L4_PerfEval_Factors_AI` | ✅ **built, tested** |
+| L5 | Factor models II — the zoo | `L5_Factor_Zoo_AI` | ✅ **built, tested** |
+| L6 | Factor models III — multi-factor, FM | `L6_MultiFactor_AI` | ✅ **built, tested** |
+| L7 | Portfolio decomposition | `L7_Portfolio_Decomposition_AI` | ✅ **built, tested** |
+| L8 | Backtesting protocol | `L8_Backtesting_AI` | ✅ **built, tested 2026-08-27** |
+| L9 | **Anomalies** | *(no pre-AI notebook — see below)* | 🔴 **design decision open**, `L9_DESIGN.md` |
+| L10 | Momentum and trend | `Momentum.ipynb` | 🟡 strong bones |
+| L11 | Conditional strategies I | `MarketTiming_c` · `Timing_AI` | 🟡 strong bones |
+| L12 | Conditional strategies II | `Volatilitytiming_c` · `Timing_AI` | 🟡 **generalize to factor timing** |
+| L13 | Capital allocation I | `CapitalAllocationI_AI` · `PortfolioMath_c` | 🟡 **owns the `w′Σw` algebra** |
+| L14 | Capital allocation II — fragility | `CapitalAllocationII` + **MVE overfitting from `Performance_evaluation_c`** | 🟡 design doc awaiting sign-off |
+| L15 | BARRA / fundamental risk models | `RiskManagement` (covariance half) | 🔴 never taught |
+| L16 | Transaction costs | `TradingCosts_revamped_curated` | 🔴 never taught; **owns turnover** |
+| L17 | Leverage and shorting | `LeverageandShorting` | 🔴 never taught |
+| L18 | PCA / statistical factors | `StatisticalFactors_AI` | ✅ built + smoke-tested |
+| L19 | Machine learning | `MachineLearning_cc` | 🟡 |
+| ⬛ | Midterm, reviews ×2, guest, pitches ×2, presentations ×3 | | 🔴 all to design |
+
+> **Renumbered 2026-08-27.** This table predated L7's insertion and was one
+> behind from L7 onward. `Factors.ipynb` is removed as L9's source: it is a tour
+> of the factor families, which is L5's content, and reusing it would make L9 a
+> second zoo tour.
 
 ### Superseded
 
@@ -580,15 +586,14 @@ condensing, and two genuinely new pieces.
 
 ### Block B — L7–L8, the evidence block
 
-- [ ] **L7** rebuild. `Performance_evaluation_c` is 2.5MB and messy. The
-      overfitting demo is built on MVE (25 references) which is now *post*-midterm
-      — repackage it around signal selection instead. Same lesson, and it runs on
-      the object students already hold.
-- [ ] **L8 design decision** — the existing anomaly material is a tour and it's
-      boring. Options: (a) a deeper dive on 2–3 anomalies with the original
-      papers, (b) a replication exercise against Open Source Asset Pricing,
-      (c) organize around *why* they might work rather than a catalogue.
-      **Decide before building.**
+- [x] ~~**L8** rebuild~~ — **done 2026-08-27.** Repackaged around signal
+      selection exactly as planned; the MVE overfitting demo moves to L14.
+- [ ] **L9 design decision — still open.** The existing anomaly material is a
+      tour and it's boring. Options: (a) a deeper dive on 2–3 anomalies with the
+      original papers, (b) a replication exercise against Open Source Asset
+      Pricing, (c) organize around *why* they might work rather than a catalogue.
+      **Decide before building.** `L9_DESIGN.md` works out (b) in full and
+      verifies its numbers; it does not settle the choice.
 
 ### Block C — L10–L13, the core
 
@@ -636,7 +641,10 @@ condensing, and two genuinely new pieces.
 
 ## 12. Open questions
 
-- **L8 anomalies** — tour, deep dive, or replication exercise? (Blocks Block B.)
+- **L9 anomalies** — tour, deep dive, or replication exercise? **Still open.**
+  A worked-out version of option (b) is in `chapters/Finance/L9_DESIGN.md`,
+  with the numbers verified; (a) and (c) have not been costed. Decide before
+  building.
 - **Group formation logistics** — groups by meeting 2, strategy by meeting 3.
   How are groups formed, and how do you avoid ten momentum strategies?
 - **Strategy changes** — groups may switch. Should a switch after Pitches I be

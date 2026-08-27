@@ -1,7 +1,17 @@
 # L9 · Anomalies — design note
 
 **Slot:** Meeting 9, Mon 5 Oct. **Feeds:** A4, due Thu 8 Oct.
-**Status:** planned, not built.
+**Status:** ⚠️ **this is option (b) of an open question, not a settled plan.**
+
+`PLAN.md` §12 has carried this since the redesign began:
+
+> *"L9 anomalies — tour, deep dive, or replication exercise?"*
+> Options: **(a)** a deeper dive on 2–3 anomalies with the original papers,
+> **(b)** a replication exercise against Open Source Asset Pricing,
+> **(c)** organize around *why* they might work rather than a catalogue.
+
+**What follows works out (b) and verifies its numbers.** It does not settle the
+choice, and (a) and (c) have not been costed. See the comparison at the bottom.
 
 ---
 
@@ -192,3 +202,25 @@ paragraph.
 
 L8 came in at 2,657 (1.88 sessions). L9 has less machinery and more argument, so
 it should be easier to hold — but the argument is the part that grows.
+
+
+---
+
+## The choice this note does not make
+
+| | What the lecture would be | Strongest argument for | Against |
+|---|---|---|---|
+| **(a) Deep dive** | Two or three anomalies — say momentum, accruals, low-vol — read against the original papers: what they claimed, on what sample, and what happened next | Students read a real paper, which nothing else in the course makes them do. Concrete and memorable. | Covers three anomalies instead of thirty, so it cannot make the aggregate argument. Needs reading assigned before class. |
+| **(b) Replication** *(worked out above)* | All 29 signals against their published t-statistics; the shrinkage line; the file drawer; what the gap can and cannot tell you | Every number verified and it runs in seconds. Pays all three inherited debts. Uses the machinery students already own. | Risks a second dose of L8. Could read as nihilism if the Chen–Zimmermann rebuttal is thin. |
+| **(c) Why they work** | Organized by mechanism — risk compensation, behavioural error, limits to arbitrage — rather than by finding | The half of the argument Paleologo does not supply, and the thing that makes a premium credible rather than a coincidence | **Largely taken.** L5 §2 already does risk-vs-mispricing, and the equilibrium argument is booked for the late-term conceptual lecture (`MISSING_CONTENT` Tier 5e). Building it here would either duplicate L5 or pre-empt that lecture. |
+
+**My recommendation: (b), with one section of (a).** The replication spine is the
+part that only works with all 29, and it is the part the earlier lectures have
+been promising. But §3 — the three explanations — would land much harder on a
+named anomaly than in the abstract, and **Size** is sitting right there: Banz
+1981, published t of 2.5, our data says **−0.42**, and L2 and L3 have both
+already flagged that it died the year it was published. One anomaly, read
+properly, inside the replication frame.
+
+That keeps (c) where it belongs — L5 for the dichotomy, the conceptual lecture
+for the equilibrium argument.
