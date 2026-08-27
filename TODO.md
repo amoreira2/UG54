@@ -13,7 +13,8 @@ through and dated rather than deleted, so the reasoning survives.
       before the final report. Keep it and let students drop it, or cut it and
       run seven? *Postponed — nothing dropped for now.*
 - [ ] **Assignments 4–8 do not exist yet.** A1, A2 and A3 are built and tested.
-      A4–A8 depend on lectures that are not yet written (L8 onward).
+      **A4 can now be written** — L8 exists and L9 is next. A5–A8 still wait on
+      their lectures.
 
 ---
 
@@ -163,10 +164,10 @@ labelling it that way is what stops it working. The rest are mine; the grep in
       they contain none of the last six commits. Running one silently reverts
       everything. Either backport the changes into them, or add a
       "DO NOT RUN — superseded" header.
-- [ ] L5's demo downloads all 30 signal files (~94 MB) to build the correlation
-      matrix — 87 s on one machine, and 40 students at once is ~3.7 GB from
-      GitHub raw, which rate-limits. Cache the 29 long-short return series as one
-      small parquet.
+- [x] ~~L5's demo downloads all 30 signal files (~94 MB)~~ — **done 2026-08-27.**
+      `build_longshort_panel.py` writes `longshort_29.parquet`, 55 KB, and L8
+      uses it (3 s instead of 90 s). **L5 itself still rebuilds from scratch** —
+      point its `long_short()` demo at the cache too.
 - [ ] Optional, October: schedule grading. `grade_latest.py` works out which
       challenge is due, so a cron entry is one line. Grade the *morning of* each
       class, not after it — the challenge is due before the next lecture, so

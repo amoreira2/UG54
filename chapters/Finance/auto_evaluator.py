@@ -151,6 +151,15 @@ ANSWER_KEY = {
         "sr_str":            (0.0, 10.0),
         "sr_best":           (0.0, 10.0),
     },
+    "L8_Backtesting_AI": {
+        # Estimate ends 1987-12, tune ends 1991-12, test 1992-01 to 2000-12.
+        # 29 cached long-shorts; grid N in {1,3,5,10,20,29} x W in {ew,ivol,sharpe}.
+        # Tuning picks N=20, ivol. Verified by executing the notebook 2026-08-27.
+        "tuned_sharpe": (1.3140, 0.08),
+        "naive_sharpe": (0.2427, 0.30),   # small number, loose tolerance
+        "all29_sharpe": (1.0519, 0.08),
+        "bonf_t":       (3.1340, 0.02),   # norm.isf(0.025/29) -- should be exact
+    },
     "L7_Decomposition_AI": {
         # Berkshire 13F, 1996-12-31 snapshot, betas over 1992-01 to 1996-12.
         # Verified by executing the notebook 2026-08-07.
@@ -321,6 +330,58 @@ ANSWER_KEY = {
 }
 
 MEMO_RUBRICS = {
+    "L8_Backtesting_AI": """
+You are grading a memo on backtesting protocol. Students have just met the
+estimate/tune/test split, walk-forward testing, and Bonferroni.
+
+THE QUESTION: having run the process on two different splits, recommend one of
+three rules to the PM -- the tuned combination, the single best in-sample
+signal, or all 29 equal-weighted. And answer: if the naive rule earned 11.8%/yr
+in the walk-forward and the tuned process earned 5.6%, why not recommend it?
+
+GROUND TRUTH:
+- The naive rule's 11.8% comes with 15.3% volatility and a 24% drawdown, against
+  3.8% and 4% for the tuned process. Sharpe 0.77 vs 1.48. Comparing returns
+  without comparing risk is the trap, and it is the whole of the last question.
+  A student who does not resolve this cannot score above 3.
+- WHAT CHANGED between the two splits: the levels. Class split gave tuned 1.13,
+  naive -0.08, all-29 0.85; the homework split gives 1.31, 0.24, 1.05.
+- WHAT DID NOT CHANGE: the ordering. Tuned > all-29 > naive, in both, and in the
+  three other splits shown in class. **The ordering is the finding; the levels
+  are not.** A student who says this has the main point.
+- Good answers note that all-29 equal-weighted is close behind the tuned rule
+  while requiring no tuning at all, so most of the gain is diversification
+  rather than clever parameter choice. Recommending all-29 on robustness grounds
+  is a perfectly defensible answer and should score well if argued.
+- On what they would need before trusting a single Sharpe: the standard error
+  (~0.42 on six years, so these numbers are not distinguishable from each other),
+  a bootstrap interval, fraction to half, and how many strategies were searched.
+
+GRADE THE REASONING, NOT THE ARITHMETIC. Quoting the numbers is evidence they
+looked; it earns no credit on its own. Never deduct for not quoting figures.
+
+Grade 0-5:
+  5 = Picks a rule and defends it; separates what changed (levels) from what did
+      not (ordering) and says which is the finding; resolves the return-vs-risk
+      question explicitly.
+  4 = Two of those three, reasoned well.
+  3 = Picks a rule with some justification and handles the return-vs-risk
+      question, but treats the two splits as simply confirming each other.
+  2 = Recommends the naive rule on the strength of its return, or picks a rule
+      with no argument.
+  1 = Restates the tables.
+  0 = Empty or off-topic.
+
+PENALIZE: treating a Sharpe difference of 0.1-0.2 as meaningful on six years of
+data; claiming the test sample proves the strategy will work in future.
+DO NOT PENALIZE a well-argued recommendation of all-29 over the tuned rule.
+
+For picked_fund return "neither".
+For cited_appraisal_or_alpha return True if the memo makes any risk-adjusted
+comparison rather than comparing raw returns, else False.
+
+Output via the `grade_memo` tool.
+""",
     "L7_Decomposition_AI": """
 Grading a week-7 memo to a risk committee asking: "we already regress the fund's
 returns on factors -- why pay for a holdings-based system?"
