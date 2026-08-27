@@ -85,11 +85,35 @@ The course voice is **instructor-talking-to-students**, not marketer-pitching.
 
 **Rule of thumb:** if a sentence sounds like a finance-bro LinkedIn post, rewrite it.
 
+### Don't tell students how important the thing they are reading is
+
+A separate failure from hype, and easier to slip into. Phrases that rank the
+material for the reader:
+
+| ❌ Don't write | ✅ Write instead |
+|---------------|------------------|
+| "This is the whole course in one cell" | *(just show the cell)* |
+| "This is the most important thing in today's class" | "Two return columns, and the difference matters:" |
+| "…and this is the whole ballgame" | "…which decides the answer" |
+| "That's the whole shape of this course" | *(delete)* |
+| "This is the single most common way X goes wrong" | "X goes wrong this way often enough to check every time" |
+
+Three reasons. It is **unfalsifiable padding** — the student cannot do anything
+with it. It **flattens emphasis**: if four things are the most important thing,
+none is. And it **does the reading for them** — the point of a worked example
+that fails silently is that they notice, not that they are told they just
+noticed something profound.
+
+State the fact, show the number, and let it land. If a passage genuinely is
+central, that should be visible from the evidence, not from a label on it.
+
 ```bash
-grep -nE 'a-year analyst|is gold|killer feature|tape (it|this|these)|earn your salary|gave birth|pod shops obsess|the spine of' chapters/Finance/build_*.py chapters/Finance/*runsheet.md
+grep -nE 'a-year analyst|is gold|killer feature|tape (it|this|these)|earn your salary|gave birth|pod shops obsess|the spine of|whole course in one|the whole ballgame|most important thing in|single most (common|important)|the whole shape of' chapters/Finance/*_AI.ipynb chapters/Assignments/A[0-9]_*.ipynb chapters/Finance/build_*.py
 ```
 
-Output should be empty.
+Output should be empty. **It is not empty today** — there are seven hits across
+L1, L2, L3 and A1, logged in `TODO.md`. Fix them in the next editing pass, not
+piecemeal.
 
 ### Belt-and-suspenders data loading
 

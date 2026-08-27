@@ -116,6 +116,27 @@ Dropped from A2; it belongs in A7, the transaction-cost assignment.
 
 ---
 
+### ▸ Strip the "this is important" framing — 7 hits
+
+New style rule in `PLAN.md` §1: don't tell students how important a passage is.
+Not urgent, do it in the next editing pass rather than piecemeal.
+
+| file | cell | phrase |
+|---|---|---|
+| `L3_Sorts_AI` | c30 | "🤖 AI-Era Insight: **this is the whole course in one cell**" |
+| `L2_Panel_Portfolios_AI` | c7 | "This is **the most important thing in today's class**" |
+| `L2_Panel_Portfolios_AI` | c22 | "Which return column — and this is **the whole ballgame**" |
+| `L1_Welcome_Returns_AI` | c33 | "That's **the whole shape of this course**" |
+| `L1_Welcome_Returns_AI` | c33 | "**the single most common** way a Sharpe ratio ends up 100× wrong" |
+| `L1_Welcome_Returns_AI` | c8 | "**the single most common** silent bug in AI-generated code" |
+| `A1_Python_and_Pandas_AI` | c7 | "**the single most common** way a Jupyter result turns out wrong" |
+
+The L3 one is the worst — it sits on genuinely the best cell in the block, and
+labelling it that way is what stops it working. The rest are mine; the grep in
+`PLAN.md` §1 catches them all.
+
+---
+
 ## Content and length
 
 - [ ] **The block is 15.3 lectures of material in 7 slots.** The nine trims in
