@@ -1,0 +1,1452 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Factor Models II — Estimation &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/FactorModels_II_AI';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/FactorModels_II_AI.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data-Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="L1_Welcome_Returns_AI.html">3. L1 · The Workflow, and What a Return Is</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L2_Panel_Portfolios_AI.html">4. L2 · The Panel and Portfolio Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L3_Sorts_AI.html">5. L3 · Sorts, Breakpoints, and Long-Short Portfolios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L4_PerfEval_Factors_AI.html">6. L4 · Performance Evaluation, and Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L5_Factor_Zoo_AI.html">7. L5 · Where Factors Come From, and the Factor Zoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L6_MultiFactor_AI.html">8. L6 · Multi-Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L7_Portfolio_Decomposition_AI.html">9. L7 · Decomposing a Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L8_Backtesting_Protocol.html">10. L8 · Backtesting Protocol  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L9_Anomalies.html">11. L9 · Anomalies  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L10_Momentum_and_Trend_Following.html">12. L10 · Momentum and Trend Following  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Conditional_Strategies_I.html">13. L11 · Conditional Strategies I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Conditional_Strategies_II.html">14. L12 · Conditional Strategies II — Factor Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_I.html">15. L13 · Capital Allocation I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Capital_Allocation_II.html">16. L14 · Capital Allocation II — Fragility  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L15_Fundamental_Risk_Models_BARRA.html">17. L15 · Fundamental Risk Models (BARRA)  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L16_Transaction_Costs.html">18. L16 · Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L17_Leverage_and_Shorting.html">19. L17 · Leverage and Shorting  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L18_PCA_and_Statistical_Factors.html">20. L18 · PCA and Statistical Factors  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L19_Machine_Learning.html">21. L19 · Machine Learning  ◦</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">22. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_AI.html">22.1. Assignment 1 — Python, pandas, and Data That Fights Back</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">22.5. Assignment 2 — Diversification, and Your First Sort</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A3_Beta_and_Alpha_AI.html">22.8. Assignment 3 — Beta, Alpha, and Whether You Have Either</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/SignalHygiene_AI.html">23. Appendix · Signal Hygiene</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">24. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">24.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">24.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">24.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">24.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">24.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">24.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">24.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">24.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">24.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">24.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">24.4.9. Cleaning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">24.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">24.5. Flow Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">24.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">24.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../scientific/linear_algebra1_c.html">25. Linear Algebra Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">26. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intro.html">27. Archive · Pre-AI Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="IntrotoReturns_c.html">27.1. Introduction to Asset Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">27.2. Choice of Frequency and Annualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">27.3. Data APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PortfolioMath_c.html">27.4. Portfolio Mathematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FactorModels_c.html">27.5. Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiFactorModels_c.html">27.6. Multi-Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">27.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="FactorModelEstimation_c.html">27.11. Factor Model Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crosssectionalequitystrategies.html">27.12. Cross-Sectional Equity Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">27.13. Momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">27.14. An Overview of Factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Timing_c.html">27.15. Timing Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">27.16. Expected-Return Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">27.17. Volatility Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationI_cc.html">27.18. Capital Allocation I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationII.html">27.19. Capital Allocation II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Performance_evaluation_c.html">27.20. Performance Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RiskManagement.html">27.21. Risk Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TradingCosts.html">27.22. Liquidity and Trading Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LeverageandShorting.html">27.23. Leverage, Shorting, Limits to Arbitrage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearning_cc.html">27.24. Machine Learning in Finance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LLMs.html">27.25. Gen AI and LLMs in Finance</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Finance/FactorModels_II_AI.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/FactorModels_II_AI.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/FactorModels_II_AI.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Factor Models II — Estimation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-estimates-drift-rolling-beta">Why Estimates Drift: Rolling Beta <a id="drift"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-estimation">🛡️ Pitfall Checklist for Estimation <a id="pitfalls"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-rolling-beta">🔄 Live Demo: Rolling Beta <a id="demo1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1: The Specification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2: Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">Step 3: Validate ✅</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-window-size-tradeoff">The Window-Size Tradeoff <a id="tradeoff"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#look-ahead-bias-in-hedge-ratios">Look-Ahead Bias in Hedge Ratios <a id="lookahead"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-implement-validate-round-2">🔄 Specify → Implement → Validate (Round 2)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-significance-of-alpha">Statistical Significance of Alpha <a id="tstat"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-means-are-uniquely-hard">Why Means Are Uniquely Hard</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-persistence-test">The Persistence Test <a id="persistence"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-alpha-is-actually-found">How Alpha Is Actually Found <a id="finding-alpha"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#valuation-business-judgment">1. Valuation / Business Judgment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquidity-provision">2. Liquidity Provision</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#proprietary-data">3. Proprietary Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-hire-which-manager">🎯 Challenge: Hire Which Manager? <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-new-skill">🤖 The new skill</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-full-sample-alphas">Q1 — Full-sample alphas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-split-the-sample">Q2 — Split the sample</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-persistence-ratio">Q3 — The persistence ratio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-rolling-beta-sanity-check">Q4 — Rolling beta sanity check</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q5-the-memo">Q5 — The Memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="factor-models-ii-estimation">
+<h1>Factor Models II — Estimation<a class="headerlink" href="#factor-models-ii-estimation" title="Link to this heading">#</a></h1>
+<section id="learning-objectives">
+<h2>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of this notebook, you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Estimate rolling betas and see them drift</strong> — and explain why static beta is a fiction</p></li>
+<li><p><strong>Diagnose the window-size tradeoff</strong> — short = noisy, long = stale</p></li>
+<li><p><strong>Avoid look-ahead bias</strong> when using estimated betas in real-time</p></li>
+<li><p><strong>Read a t-stat on alpha</strong> and translate it into a hire/fire decision</p></li>
+<li><p><strong>Run a persistence test</strong> — the right out-of-sample check on a manager’s track record</p></li>
+<li><p><strong>Audit AI-generated estimation code</strong> — using a checklist specific to time-varying parameters</p></li>
+</ol>
+</section>
+<section id="table-of-contents">
+<h2>📋 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#setup"><span class="xref myst">Setup</span></a></p></li>
+<li><p><a class="reference internal" href="#drift"><span class="xref myst">Why Estimates Drift: Rolling Beta</span></a></p></li>
+<li><p><a class="reference internal" href="#pitfalls"><span class="xref myst">Pitfall Checklist for Estimation</span></a></p></li>
+<li><p><a class="reference internal" href="#demo1"><span class="xref myst">Live Demo: Rolling Beta with AI</span></a></p></li>
+<li><p><a class="reference internal" href="#tradeoff"><span class="xref myst">The Window-Size Tradeoff</span></a></p></li>
+<li><p><a class="reference internal" href="#lookahead"><span class="xref myst">Look-Ahead Bias in Hedge Ratios</span></a></p></li>
+<li><p><a class="reference internal" href="#tstat"><span class="xref myst">Statistical Significance of Alpha</span></a></p></li>
+<li><p><a class="reference internal" href="#persistence"><span class="xref myst">The Persistence Test</span></a></p></li>
+<li><p><a class="reference internal" href="#finding-alpha"><span class="xref myst">How Alpha Is Actually Found</span></a></p></li>
+<li><p><a class="reference internal" href="#challenge"><span class="xref myst">🎯 Challenge: Hire Which Manager?</span></a></p></li>
+<li><p><a class="reference internal" href="#takeaways"><span class="xref myst">Key Takeaways</span></a></p></li>
+<li><p><a class="reference internal" href="#submit"><span class="xref myst">Submission</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2>🛠️ Setup <a id="setup"></a><a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Setup (run first)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">'seaborn-v0_8-whitegrid'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'font.size'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataReader</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">'daily'</span><span class="p">):</span>
+    <span class="n">freq_label</span> <span class="o">=</span> <span class="s1">''</span> <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s1">'monthly'</span> <span class="k">else</span> <span class="s1">'_'</span> <span class="o">+</span> <span class="n">freq</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">"F-F_Research_Data_Factors</span><span class="si">{</span><span class="n">freq_label</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"famafrench"</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">"1921-01-01"</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">'RF'</span><span class="p">,</span> <span class="s1">'Mkt-RF'</span><span class="p">]]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span> <span class="o">/</span> <span class="mi">100</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Loaded"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="why-estimates-drift-rolling-beta">
+<h2>Why Estimates Drift: Rolling Beta <a id="drift"></a><a class="headerlink" href="#why-estimates-drift-rolling-beta" title="Link to this heading">#</a></h2>
+<p>Last class we computed MSFT’s beta on the full sample and got β ≈ 1.19. We
+treated that number as if it were a property of MSFT.</p>
+<p><strong>It isn’t.</strong> MSFT in 2000 was a cyclical tech-bubble stock with β &gt; 1.5.
+MSFT in 2015 was a cash-flow utility with β &lt; 1. The “true” beta moves.</p>
+<blockquote>
+<div><p><strong>The question this lecture answers:</strong> if beta moves, how do we estimate it
+at a moment in time — and how do we use that estimate without fooling ourselves?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load MSFT and align with market factor</span>
+<span class="n">url_msft</span> <span class="o">=</span> <span class="s1">'https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/FactorModels_data2.csv'</span>
+<span class="n">df_returns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url_msft</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">'date'</span><span class="p">)</span>
+<span class="n">df_factor</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">()</span>
+<span class="n">df_returns</span><span class="p">,</span> <span class="n">df_factor</span> <span class="o">=</span> <span class="n">df_returns</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">df_factor</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">join</span><span class="o">=</span><span class="s1">'inner'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">df_eret</span> <span class="o">=</span> <span class="n">df_returns</span><span class="p">[</span><span class="s1">'MSFT'</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_factor</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span>   <span class="c1"># MSFT excess</span>
+<span class="n">MKT</span> <span class="o">=</span> <span class="n">df_factor</span><span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Range: </span><span class="si">{</span><span class="n">df_eret</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">df_eret</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Days: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df_eret</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="pitfall-checklist-for-estimation">
+<h2>🛡️ Pitfall Checklist for Estimation <a id="pitfalls"></a><a class="headerlink" href="#pitfall-checklist-for-estimation" title="Link to this heading">#</a></h2>
+<p>The pitfalls from Lecture I still apply. <em>These</em> are the new ones, specific to
+time-varying estimation:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Pitfall</p></th>
+<th class="head"><p>What goes wrong</p></th>
+<th class="head"><p>🔍 How to detect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>9</p></td>
+<td><p><strong>Window too short</strong></p></td>
+<td><p>Beta estimate is dominated by noise; flips around wildly</p></td>
+<td><p>Plot rolling beta — if it looks like static, the window is too short</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p><strong>Window too long</strong></p></td>
+<td><p>Estimate is stale; doesn’t reflect today’s company</p></td>
+<td><p>Compare 1y vs 5y rolling betas — if they diverge, you’re stuck</p></td>
+</tr>
+<tr class="row-even"><td><p>11</p></td>
+<td><p><strong>Look-ahead in rolling beta</strong></p></td>
+<td><p>Using day-t beta to hedge day-t (you didn’t have it yet)</p></td>
+<td><p>Pretend to live-trade: did the regression use any data ≥ today?</p></td>
+</tr>
+<tr class="row-odd"><td><p>12</p></td>
+<td><p><strong>Confusing significance with importance</strong></p></td>
+<td><p>t-stat &gt; 2 → “real alpha” — but 3% alpha with 5% std error is significant AND barely useful</p></td>
+<td><p>Look at the <em>magnitude</em> of the standard error, not just the t-stat</p></td>
+</tr>
+<tr class="row-even"><td><p>13</p></td>
+<td><p><strong>Multiple testing</strong></p></td>
+<td><p>Try 100 strategies; ~5 will show “significant” alpha by chance</p></td>
+<td><p>Bonferroni: divide your p-value threshold by the number of tests</p></td>
+</tr>
+<tr class="row-odd"><td><p>14</p></td>
+<td><p><strong>No persistence check</strong></p></td>
+<td><p>Full-sample alpha hides that all the alpha came in one regime</p></td>
+<td><p>Split the sample. If the alphas don’t agree, the alpha isn’t real</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>🤖 AI-Era Insight</strong></p>
+<p>The AI will happily fit a rolling regression with <code class="docutils literal notranslate"><span class="pre">pandas.rolling()</span></code> — and it
+will use TODAY’S data to compute TODAY’S beta. That’s look-ahead. Your job
+is to ask: <em>would I have had this number in real time?</em></p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="live-demo-rolling-beta">
+<h2>🔄 Live Demo: Rolling Beta <a id="demo1"></a><a class="headerlink" href="#live-demo-rolling-beta" title="Link to this heading">#</a></h2>
+<section id="step-1-the-specification">
+<h3>Step 1: The Specification<a class="headerlink" href="#step-1-the-specification" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Spec</strong></p>
+<p>Estimate MSFT’s beta using a <strong>252-day rolling window</strong> of daily excess
+returns regressed on the market factor. Plot the rolling beta over the
+full sample. The first 251 days should be NaN (no window yet).</p>
+</div></blockquote>
+</section>
+<section id="step-2-implementation">
+<h3>Step 2: Implementation<a class="headerlink" href="#step-2-implementation" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>🤖 AI prompt:</strong></p>
+<p><em>“I have <code class="docutils literal notranslate"><span class="pre">df_eret</span></code> (MSFT daily excess returns) and <code class="docutils literal notranslate"><span class="pre">MKT</span></code> (daily market
+excess returns). Compute a rolling 252-day OLS beta of df_eret on MKT.
+The result should be a pandas Series of betas indexed by date, with the
+first 251 values NaN. Plot it.”</em></p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Canonical rolling beta — using pandas .rolling() with covariance / variance</span>
+<span class="n">window</span> <span class="o">=</span> <span class="mi">252</span>
+<span class="n">rolling_beta</span> <span class="o">=</span> <span class="n">MKT</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">df_eret</span><span class="p">)</span> <span class="o">/</span> <span class="n">MKT</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">rolling_beta</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">rolling_beta</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s1">'red'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Full-sample average = </span><span class="si">{</span><span class="n">rolling_beta</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">':'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'β = 1'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Rolling β (252-day window)'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'MSFT beta over time — it moves a lot'</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Min beta: </span><span class="si">{</span><span class="n">rolling_beta</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  on </span><span class="si">{</span><span class="n">rolling_beta</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Max beta: </span><span class="si">{</span><span class="n">rolling_beta</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  on </span><span class="si">{</span><span class="n">rolling_beta</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3-validate">
+<h3>Step 3: Validate ✅<a class="headerlink" href="#step-3-validate" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>✅ <strong>First 251 values NaN?</strong> Check with <code class="docutils literal notranslate"><span class="pre">rolling_beta.head(255)</span></code></p></li>
+<li><p>✅ <strong>Beta in a plausible range?</strong> MSFT historical β has been 0.7–1.6. If you see 5 or -2, something is wrong.</p></li>
+<li><p>✅ <strong>No look-ahead?</strong> <code class="docutils literal notranslate"><span class="pre">pandas.rolling().cov()</span></code> uses the <strong>trailing</strong> window — the value at date <span class="math notranslate nohighlight">\(t\)</span> uses data from <span class="math notranslate nohighlight">\(t-251\)</span> to <span class="math notranslate nohighlight">\(t\)</span>. That’s OK for <em>historical analysis</em> but in Section 6 we’ll see why it’s NOT OK for <em>real-time hedging</em>.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-window-size-tradeoff">
+<h2>The Window-Size Tradeoff <a id="tradeoff"></a><a class="headerlink" href="#the-window-size-tradeoff" title="Link to this heading">#</a></h2>
+<p>Why 252 days? Why not 63 days? Why not 1260 days?</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Window</p></th>
+<th class="head"><p>What you get</p></th>
+<th class="head"><p>What you lose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Short (e.g. 63 days)</strong></p></td>
+<td><p>Picks up regime changes fast</p></td>
+<td><p>Dominated by noise</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Long (e.g. 1260 days = 5 yrs)</strong></p></td>
+<td><p>Tight estimate (low noise)</p></td>
+<td><p>Misses structural changes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This is the classic <strong>bias-variance tradeoff</strong>:</p>
+<ul class="simple">
+<li><p>Short window → low bias, high variance</p></li>
+<li><p>Long window → high bias (using stale data), low variance</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compare three window lengths side by side</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">63</span><span class="p">,</span> <span class="s1">'steelblue'</span><span class="p">),</span> <span class="p">(</span><span class="mi">252</span><span class="p">,</span> <span class="s1">'orange'</span><span class="p">),</span> <span class="p">(</span><span class="mi">1260</span><span class="p">,</span> <span class="s1">'red'</span><span class="p">)]:</span>
+    <span class="n">rb</span> <span class="o">=</span> <span class="n">MKT</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">df_eret</span><span class="p">)</span> <span class="o">/</span> <span class="n">MKT</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+    <span class="n">rb</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">w</span><span class="si">}</span><span class="s1">-day window'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">':'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Rolling β'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Window size: noise vs. staleness'</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<p>Look at the <strong>63-day</strong> line — it spikes through 1.5 and 0.5 within months. Most
+of that is <em>noise</em>, not real beta movement.</p>
+<p>Look at the <strong>1260-day</strong> line — it’s smooth, but in 2020 (COVID) it took years
+to adjust. If you’d used it to hedge in 2020, your hedge would be wrong.</p>
+<p>252 days (1 year) is the common compromise. Pod shops use shorter (often 60–125)
+because they’re rehedging daily; long-horizon investors use longer (3–5 years).
+<strong>There is no right answer.</strong></p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="look-ahead-bias-in-hedge-ratios">
+<h2>Look-Ahead Bias in Hedge Ratios <a id="lookahead"></a><a class="headerlink" href="#look-ahead-bias-in-hedge-ratios" title="Link to this heading">#</a></h2>
+<p>You want to hedge MSFT in real time. You decide to use a 252-day rolling beta.</p>
+<p>Question: when you hedge on <strong>2020-03-15</strong> (COVID crash day), which beta do you
+use?</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>What it means</p></th>
+<th class="head"><p>OK in real time?</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rolling_beta.loc['2020-03-15']</span></code></p></td>
+<td><p>Beta computed using data <strong>up to and including</strong> Mar 15</p></td>
+<td><p>⚠️ Used Mar 15 returns to predict Mar 15 → look-ahead</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rolling_beta.shift(1).loc['2020-03-15']</span></code></p></td>
+<td><p>Beta computed using data <strong>up to Mar 14</strong></p></td>
+<td><p>✅ Correct — only uses past data</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The shift looks tiny but it matters a LOT during volatile periods.</p>
+<section id="specify-implement-validate-round-2">
+<h3>🔄 Specify → Implement → Validate (Round 2)<a class="headerlink" href="#specify-implement-validate-round-2" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Spec</strong></p>
+<p>Build TWO dynamic-hedge series:
+(i) <code class="docutils literal notranslate"><span class="pre">hedge_lookahead</span></code> = MSFT excess − rolling_beta × MKT (uses contemporaneous beta)
+(ii) <code class="docutils literal notranslate"><span class="pre">hedge_realtime</span></code>  = MSFT excess − rolling_beta.shift(1) × MKT (uses lagged beta)</p>
+<p>Plot the cumulative returns of both. They should be subtly different. The
+<em>lookahead</em> version will outperform the realtime one — that outperformance is
+the bias.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>🤖 AI prompt:</strong></p>
+<p><em>“Given <code class="docutils literal notranslate"><span class="pre">df_eret</span></code> (MSFT excess), <code class="docutils literal notranslate"><span class="pre">MKT</span></code>, and <code class="docutils literal notranslate"><span class="pre">rolling_beta</span></code> (252-day rolling),
+construct (a) <code class="docutils literal notranslate"><span class="pre">hedge_lookahead</span></code> = df_eret − rolling_beta × MKT,
+(b) <code class="docutils literal notranslate"><span class="pre">hedge_realtime</span></code> = df_eret − rolling_beta.shift(1) × MKT. Plot cumulative
+returns of both on one chart. Report each one’s mean and Sharpe.”</em></p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Implementation</span>
+<span class="n">hedge_lookahead</span> <span class="o">=</span> <span class="n">df_eret</span> <span class="o">-</span> <span class="n">rolling_beta</span>          <span class="o">*</span> <span class="n">MKT</span>
+<span class="n">hedge_realtime</span>  <span class="o">=</span> <span class="n">df_eret</span> <span class="o">-</span> <span class="n">rolling_beta</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">MKT</span>
+
+<span class="n">both</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'hedge (look-ahead)'</span><span class="p">:</span> <span class="n">hedge_lookahead</span><span class="p">,</span>
+                     <span class="s1">'hedge (real-time)'</span><span class="p">:</span>  <span class="n">hedge_realtime</span><span class="p">})</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">both</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Growth of \$1'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Look-ahead vs real-time hedge — gap is the bias'</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean (look-ahead, ann.):  </span><span class="si">{</span><span class="n">hedge_lookahead</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">252</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean (real-time, ann.):   </span><span class="si">{</span><span class="n">hedge_realtime</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="w">  </span><span class="o">*</span><span class="w"> </span><span class="mi">252</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sharpe (look-ahead):      </span><span class="si">{</span><span class="n">hedge_lookahead</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">hedge_lookahead</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sharpe (real-time):       </span><span class="si">{</span><span class="n">hedge_realtime</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="n">hedge_realtime</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>⚠️ Caution</strong></p>
+<p>Backtests that quietly use look-ahead inflate Sharpe ratios by 0.1–0.3 routinely.
+When a strategy looks “too good,” the first thing to check is whether <em>any</em>
+input variable contains data the strategy wouldn’t have had in real time.
+<strong>The shift is your friend.</strong></p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="statistical-significance-of-alpha">
+<h2>Statistical Significance of Alpha <a id="tstat"></a><a class="headerlink" href="#statistical-significance-of-alpha" title="Link to this heading">#</a></h2>
+<p>You run a regression. You see α = 5%/year. Is that real or luck?</p>
+<p>The <strong>standard error</strong> of your alpha estimate tells you how much it would
+move under a different random draw. The <strong>t-statistic</strong> is the ratio:</p>
+<div class="math notranslate nohighlight">
+\[t = \frac{\hat\alpha}{\text{SE}(\hat\alpha)}\]</div>
+<p>Rough guide:</p>
+<p>| |t| | Interpretation |
+|—–|—————-|
+| &lt; 1.0 | Indistinguishable from zero |
+| 1.0 – 2.0 | Suggestive, not conclusive |
+| 2.0 – 3.0 | “Statistically significant” (95% confidence) |
+| &gt; 3.0 | Strong evidence |</p>
+<blockquote>
+<div><p><strong>⚠️ Caution — significance ≠ importance</strong></p>
+<p>A 0.1%/year alpha with t = 4 is statistically significant but economically
+trivial. A 10%/year alpha with t = 1.2 is economically huge but statistically
+uncertain. <strong>Both numbers matter.</strong></p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>⚠️ Caution — multiple testing</strong></p>
+<p>If you try 100 random “strategies,” 5 will show t &gt; 2 by pure chance.
+Don’t mistake fishing for skill. (Look up <a class="reference external" href="https://academic.oup.com/rfs/article/29/1/5/1843824">Harvey, Liu &amp; Zhu 2016</a> — “Of factors anything goes if you look at enough of them.”)</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Full-sample regression for MSFT — read the t-stat</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">MKT</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">df_eret</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">alpha_d</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span>
+<span class="n">se_alpha_d</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bse</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span>
+<span class="n">t_alpha</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Alpha (daily):           </span><span class="si">{</span><span class="n">alpha_d</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SE of alpha (daily):     </span><span class="si">{</span><span class="n">se_alpha_d</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"t-stat on alpha:         </span><span class="si">{</span><span class="n">t_alpha</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Alpha (annualized):      </span><span class="si">{</span><span class="n">alpha_d</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">252</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SE of alpha (annualized):</span><span class="si">{</span><span class="n">se_alpha_d</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">252</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">95% CI on annual α:     [</span><span class="si">{</span><span class="p">(</span><span class="n">alpha_d</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1.96</span><span class="o">*</span><span class="n">se_alpha_d</span><span class="p">)</span><span class="o">*</span><span class="mi">252</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="p">(</span><span class="n">alpha_d</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1.96</span><span class="o">*</span><span class="n">se_alpha_d</span><span class="p">)</span><span class="o">*</span><span class="mi">252</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 Remember</strong></p>
+<p>The 95% confidence interval is what your CIO actually wants to see — it’s the
+range the true alpha probably lives in. A point estimate of “5% alpha” with a
+CI of [-3%, +13%] is a different story from a point estimate of “5% alpha”
+with a CI of [4%, 6%].</p>
+</div></blockquote>
+<section id="why-means-are-uniquely-hard">
+<h3>Why Means Are Uniquely Hard<a class="headerlink" href="#why-means-are-uniquely-hard" title="Link to this heading">#</a></h3>
+<p>For most parameters (β, variance, correlations) the standard error shrinks
+as you collect more observations — sampling more <em>frequently</em> helps.</p>
+<p><strong>For means (and α is a mean!), this is not true.</strong> The standard error of a
+sample mean is:</p>
+<div class="math notranslate nohighlight">
+\[\text{SE}(\hat{E}[r^e]) = \sqrt{\frac{\text{Var}(r^e)}{T}}\]</div>
+<p>Here <span class="math notranslate nohighlight">\(T\)</span> is <strong>calendar time</strong>, not observation count. If you switch from
+daily to minute data, both <span class="math notranslate nohighlight">\(\text{Var}(r^e)\)</span> and <span class="math notranslate nohighlight">\(T\)</span> scale with frequency
+and the SE doesn’t budge.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight: “Only time will tell”</strong></p>
+<p>Sampling more frequently doesn’t help you estimate a mean. It helps for
+betas and variances, but not means. The only thing that helps a mean is
+<em>more calendar time</em>.</p>
+</div></blockquote>
+<p>How many years do you need before you can be 95% confident a strategy’s
+alpha is positive? Setting the t-stat to 1.64:</p>
+<div class="math notranslate nohighlight">
+\[T = \left(\frac{1.64}{\text{Sharpe}}\right)^2\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Years of data needed to detect an alpha at the 95% level, by Sharpe</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="k">for</span> <span class="n">sharpe</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]:</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.64</span> <span class="o">/</span> <span class="n">sharpe</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sharpe = </span><span class="si">{</span><span class="n">sharpe</span><span class="si">:</span><span class="s2">&gt;3.1f</span><span class="si">}</span><span class="s2">   →   need </span><span class="si">{</span><span class="n">T</span><span class="si">:</span><span class="s2">&gt;5.1f</span><span class="si">}</span><span class="s2"> years for 95% confidence"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Why high-Sharpe strategies are valuable</strong></p>
+<p>A Sharpe-0.4 strategy (market-like) needs ~17 years before you can say
+with 95% confidence that it’s not just luck. A Sharpe-2 strategy needs
+less than a year. So one reason high-Sharpe strategies are prized is
+that you can <em>detect</em> them quickly with limited data — not just that
+the performance itself is better.</p>
+<p>Corollary: opening a hedge fund with a Sharpe-0.5 alpha strategy is
+hard. Even if you’re right, your investors need a decade of returns
+before they can statistically distinguish you from noise.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-persistence-test">
+<h2>The Persistence Test <a id="persistence"></a><a class="headerlink" href="#the-persistence-test" title="Link to this heading">#</a></h2>
+<p>The t-stat tells you whether your estimate is far from zero. It does NOT tell
+you whether the underlying alpha is <strong>stable</strong> — i.e., whether the manager
+who earned alpha last decade will earn it next decade.</p>
+<p>The simplest persistence test: <strong>split the sample in half</strong>. Compute alpha in
+each half. Ask:</p>
+<ol class="arabic simple">
+<li><p>Are both halves’ alphas significantly positive?</p></li>
+<li><p>Are they roughly the <strong>same magnitude</strong>?</p></li>
+</ol>
+<p>If yes to both: persistent skill. If alpha collapses or flips sign in the
+second half: the full-sample number was driven by one lucky regime.</p>
+<p>This is a coarse test (with only 2 sub-periods you can’t say much). Better
+tests exist — bootstrap, walk-forward — but the split-sample is the cheapest
+sanity check, and it catches the most embarrassing mistakes.</p>
+</section>
+<hr class="docutils" />
+<section id="how-alpha-is-actually-found">
+<h2>How Alpha Is Actually Found <a id="finding-alpha"></a><a class="headerlink" href="#how-alpha-is-actually-found" title="Link to this heading">#</a></h2>
+<p>We just spent a lecture showing that you <strong>cannot reliably estimate alpha
+from historical returns alone</strong>. Sample sizes are tiny relative to the
+required precision, and persistence is rare. So where does real alpha
+come from in practice?</p>
+<p>Three buckets:</p>
+<section id="valuation-business-judgment">
+<h3>1. Valuation / Business Judgment<a class="headerlink" href="#valuation-business-judgment" title="Link to this heading">#</a></h3>
+<p>You understand a company or industry better than the market does. Buffett’s
+entire edge. Einhorn shorting Lehman in 2008. Requires deep fundamental
+research and often access to management (legal access — public meetings,
+calls, conferences). The edge is being <strong>right when others are wrong AND
+understanding why others are wrong.</strong></p>
+</section>
+<section id="liquidity-provision">
+<h3>2. Liquidity Provision<a class="headerlink" href="#liquidity-provision" title="Link to this heading">#</a></h3>
+<p>Forced sellers push prices below fundamentals. Common forced-seller events:</p>
+<ul class="simple">
+<li><p>A stock is dropped from the S&amp;P 500 → index funds must sell</p></li>
+<li><p>A firm is downgraded → some funds can only hold investment-grade</p></li>
+<li><p>A mutual fund suffers outflows → must sell whatever it holds</p></li>
+</ul>
+<p>You take the other side. The bet: the move is <em>not</em> driven by fundamentals,
+so it will revert. Citadel, Millennium, market makers live here.</p>
+</section>
+<section id="proprietary-data">
+<h3>3. Proprietary Data<a class="headerlink" href="#proprietary-data" title="Link to this heading">#</a></h3>
+<p>See the world before others do. Satellite imagery of retail parking lots,
+shipping flows, credit card panels, web scraping, alt data. The edge isn’t
+the model — it’s the <strong>data nobody else has</strong>.</p>
+<blockquote>
+<div><p><strong>⚠️ What’s NOT on this list</strong></p>
+<p>Backtesting factor models on public data. ML-on-public-features. Optimization
+over historical returns. These discover <em>factor premia</em> (real but commoditized)
+— not alpha. The minute the trade is crowded, the alpha disappears.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>📌 Remember: Crowded trades</strong></p>
+<p>A crowded trade can deliver <strong>negative</strong> alpha even when the original idea
+was correct. Being right + being early ≠ being profitable. Real alpha
+requires you to be right, early, AND able to size up before everyone else
+catches on. This is why you can read about Buffett’s strategy and still
+not be Buffett.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="challenge-hire-which-manager">
+<h2>🎯 Challenge: Hire Which Manager? <a id="challenge"></a><a class="headerlink" href="#challenge-hire-which-manager" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>The setup</strong></p>
+<p>Your fund is hiring. Two managers are finalists: <strong>Mgr X</strong> and <strong>Mgr Y</strong>.
+Both have a 10-year daily track record (2015–2024). Their <strong>full-sample
+alphas are essentially identical</strong> — about 4%/year.</p>
+<p>You have one offer to extend. Who do you hire?</p>
+</div></blockquote>
+<section id="the-new-skill">
+<h3>🤖 The new skill<a class="headerlink" href="#the-new-skill" title="Link to this heading">#</a></h3>
+<p>You may use AI. Your value is in <strong>knowing what test to run, auditing
+the output, and writing the recommendation.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the challenge data</span>
+<span class="n">url_chal</span> <span class="o">=</span> <span class="s1">'https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/Estimation_AI_challenge.csv'</span>
+<span class="n">mgrs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url_chal</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">'date'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Range: </span><span class="si">{</span><span class="n">mgrs</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">mgrs</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Columns: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">mgrs</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">mgrs</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 Data dictionary</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MKT</span></code></p></td>
+<td><p>Market excess return (net of RF)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RF</span></code></p></td>
+<td><p>Daily risk-free rate (decimal)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Mgr_X</span></code></p></td>
+<td><p>Manager X <strong>total</strong> daily return</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Mgr_Y</span></code></p></td>
+<td><p>Manager Y <strong>total</strong> daily return</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>⚠️ Subtract RF to get excess returns before regressing.</p>
+</div></blockquote>
+</section>
+<section id="q1-full-sample-alphas">
+<h3>Q1 — Full-sample alphas<a class="headerlink" href="#q1-full-sample-alphas" title="Link to this heading">#</a></h3>
+<p>Run a CAPM regression for each manager. Report annualized α, β, and the
+<strong>t-stat on α</strong> for each. Confirm: the alphas are similar.</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alpha_x_full</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized</span>
+<span class="n">alpha_y_full</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">tstat_x_full</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">tstat_y_full</span> <span class="o">=</span> <span class="n">____</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs:</span>
+<span class="n">alpha_x_full</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">alpha_y_full</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">tstat_x_full</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">tstat_y_full</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mgr X: α = </span><span class="si">{</span><span class="n">alpha_x_full</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr   t-stat = </span><span class="si">{</span><span class="n">tstat_x_full</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mgr Y: α = </span><span class="si">{</span><span class="n">alpha_y_full</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr   t-stat = </span><span class="si">{</span><span class="n">tstat_y_full</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q2-split-the-sample">
+<h3>Q2 — Split the sample<a class="headerlink" href="#q2-split-the-sample" title="Link to this heading">#</a></h3>
+<p>Split each manager’s history into two halves (use <code class="docutils literal notranslate"><span class="pre">len(mgrs)</span> <span class="pre">//</span> <span class="pre">2</span></code> as the
+breakpoint). Compute α in each half.</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alpha_x_half1</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized α for Mgr X, first half</span>
+<span class="n">alpha_x_half2</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized α for Mgr X, second half</span>
+<span class="n">alpha_y_half1</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">alpha_y_half2</span> <span class="o">=</span> <span class="n">____</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs:</span>
+<span class="n">alpha_x_half1</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">alpha_x_half2</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">alpha_y_half1</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">alpha_y_half2</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mgr X:  half-1 α = </span><span class="si">{</span><span class="n">alpha_x_half1</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">   half-2 α = </span><span class="si">{</span><span class="n">alpha_x_half2</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mgr Y:  half-1 α = </span><span class="si">{</span><span class="n">alpha_y_half1</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">   half-2 α = </span><span class="si">{</span><span class="n">alpha_y_half2</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q3-the-persistence-ratio">
+<h3>Q3 — The persistence ratio<a class="headerlink" href="#q3-the-persistence-ratio" title="Link to this heading">#</a></h3>
+<p>For each manager, compute the <strong>persistence ratio</strong>: half-2 α divided by
+half-1 α. A value near +1 means the alpha persisted. A value near 0 or
+negative means it didn’t.</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">persistence_x</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># alpha_x_half2 / alpha_x_half1</span>
+<span class="n">persistence_y</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># alpha_y_half2 / alpha_y_half1</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs:</span>
+<span class="n">persistence_x</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">persistence_y</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mgr X persistence ratio: </span><span class="si">{</span><span class="n">persistence_x</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mgr Y persistence ratio: </span><span class="si">{</span><span class="n">persistence_y</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q4-rolling-beta-sanity-check">
+<h3>Q4 — Rolling beta sanity check<a class="headerlink" href="#q4-rolling-beta-sanity-check" title="Link to this heading">#</a></h3>
+<p>Compute the 252-day <strong>rolling beta</strong> for each manager. Report the
+<strong>standard deviation</strong> of each one’s rolling beta (excluding NaN).</p>
+<p>A manager whose beta is wildly time-varying is harder to evaluate — you
+can’t trust a single beta number.</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">beta_std_x</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># standard deviation of Mgr X's 252-day rolling beta</span>
+<span class="n">beta_std_y</span> <span class="o">=</span> <span class="n">____</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs:</span>
+<span class="n">beta_std_x</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">beta_std_y</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mgr X rolling β std: </span><span class="si">{</span><span class="n">beta_std_x</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mgr Y rolling β std: </span><span class="si">{</span><span class="n">beta_std_y</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q5-the-memo">
+<h3>Q5 — The Memo<a class="headerlink" href="#q5-the-memo" title="Link to this heading">#</a></h3>
+<p>Write a <strong>single paragraph</strong> (max 6 sentences) to your CIO.</p>
+<ol class="arabic simple">
+<li><p>Which manager do you hire (X, Y, or neither)?</p></li>
+<li><p>Cite the <strong>one diagnostic</strong> that drove your decision.</p></li>
+<li><p>Note one risk that could make you wrong.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>What we’re looking for:</strong> financial + statistical judgment. The full-sample
+alphas are nearly identical; the right answer requires the persistence test.
+A memo that just compares full-sample α and t-stat is missing the point.</p>
+</div></blockquote>
+<p><strong>Write your memo as a Python string below</strong> (the submission cell pulls it from <code class="docutils literal notranslate"><span class="pre">MEMO</span></code>):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MEMO</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">Write your 6-sentence-max memo here. Don't delete the triple quotes.</span>
+<span class="s2">"""</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">MEMO</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="submission">
+<h2>📤 Submission <a id="submit"></a><a class="headerlink" href="#submission" title="Link to this heading">#</a></h2>
+<p>Run the cell below. Copy the line that starts with <code class="docutils literal notranslate"><span class="pre">UG54::</span></code> and paste it into
+the submission form: <strong><a class="reference external" href="https://forms.gle/YOUR_FORM_LINK_HERE">https://forms.gle/YOUR_FORM_LINK_HERE</a></strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"alpha_x_full"</span><span class="p">,</span> <span class="s2">"alpha_y_full"</span><span class="p">,</span> <span class="s2">"tstat_x_full"</span><span class="p">,</span> <span class="s2">"tstat_y_full"</span><span class="p">,</span>
+    <span class="s2">"alpha_x_half1"</span><span class="p">,</span> <span class="s2">"alpha_x_half2"</span><span class="p">,</span> <span class="s2">"alpha_y_half1"</span><span class="p">,</span> <span class="s2">"alpha_y_half2"</span><span class="p">,</span>
+    <span class="s2">"persistence_x"</span><span class="p">,</span> <span class="s2">"persistence_y"</span><span class="p">,</span>
+    <span class="s2">"beta_std_x"</span><span class="p">,</span> <span class="s2">"beta_std_y"</span><span class="p">,</span>
+    <span class="s2">"MEMO"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">()]</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">❌ Missing variables before submission: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"Make sure each answer cell defines the variable name listed above."</span>
+    <span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"assignment"</span><span class="p">:</span> <span class="s2">"FactorModels_II_AI"</span><span class="p">,</span>
+    <span class="s2">"ts"</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">"seconds"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"Z"</span><span class="p">,</span>
+    <span class="s2">"answers"</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"MEMO"</span><span class="p">},</span>
+    <span class="s2">"memo"</span><span class="p">:</span> <span class="n">MEMO</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"UG54::</span><span class="si">{</span><span class="n">checksum</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s2"> chars"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Submission form: https://forms.gle/YOUR_FORM_LINK_HERE"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Static beta is a fiction.</strong> Companies change; their betas change.</p></li>
+<li><p><strong>Window size is a tradeoff.</strong> Short = noise, long = stale. 252 days is a
+common compromise; there’s no universally right answer.</p></li>
+<li><p><strong>Real-time hedging needs lagged inputs.</strong> <code class="docutils literal notranslate"><span class="pre">rolling_beta.shift(1)</span></code> is the
+line between honest backtest and look-ahead bias.</p></li>
+<li><p><strong>Significance ≠ importance ≠ persistence.</strong> Always look at the <em>standard
+error</em> alongside the <em>point estimate</em>, and check whether the alpha shows
+up out of sample.</p></li>
+<li><p><strong>Means are uniquely hard.</strong> Only calendar time helps. Sharpe-0.5 alpha
+needs ~11 years to clear t &gt; 1.64. High-Sharpe strategies are valuable
+partly because you can <em>detect</em> them quickly.</p></li>
+<li><p><strong>The persistence test is the cheapest sanity check.</strong> Split the sample.
+If alpha collapses or flips, the full-sample number was luck.</p></li>
+<li><p><strong>Alpha isn’t found by regression.</strong> It comes from valuation, liquidity
+provision, or proprietary data. Backtests find factor premia, not alpha.
+Crowded trades destroy alpha even when the original idea was right.</p></li>
+<li><p><strong>AI generates code, you generate judgment.</strong> The full-sample regression
+is one line of code. Knowing <em>which extra tests to run</em> — and that no
+amount of estimation will substitute for understanding <em>why</em> an edge
+exists — is the skill.</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-estimates-drift-rolling-beta">Why Estimates Drift: Rolling Beta <a id="drift"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-estimation">🛡️ Pitfall Checklist for Estimation <a id="pitfalls"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-rolling-beta">🔄 Live Demo: Rolling Beta <a id="demo1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">Step 1: The Specification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">Step 2: Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">Step 3: Validate ✅</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-window-size-tradeoff">The Window-Size Tradeoff <a id="tradeoff"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#look-ahead-bias-in-hedge-ratios">Look-Ahead Bias in Hedge Ratios <a id="lookahead"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specify-implement-validate-round-2">🔄 Specify → Implement → Validate (Round 2)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistical-significance-of-alpha">Statistical Significance of Alpha <a id="tstat"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-means-are-uniquely-hard">Why Means Are Uniquely Hard</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-persistence-test">The Persistence Test <a id="persistence"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-alpha-is-actually-found">How Alpha Is Actually Found <a id="finding-alpha"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#valuation-business-judgment">1. Valuation / Business Judgment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#liquidity-provision">2. Liquidity Provision</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#proprietary-data">3. Proprietary Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-hire-which-manager">🎯 Challenge: Hire Which Manager? <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-new-skill">🤖 The new skill</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-full-sample-alphas">Q1 — Full-sample alphas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-split-the-sample">Q2 — Split the sample</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-persistence-ratio">Q3 — The persistence ratio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-rolling-beta-sanity-check">Q4 — Rolling beta sanity check</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q5-the-memo">Q5 — The Memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

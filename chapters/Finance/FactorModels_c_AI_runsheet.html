@@ -1,0 +1,790 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Factor Models I — In-Class Run Sheet &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/FactorModels_c_AI_runsheet';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/FactorModels_c_AI_runsheet.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data-Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="L1_Welcome_Returns_AI.html">3. L1 · The Workflow, and What a Return Is</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L2_Panel_Portfolios_AI.html">4. L2 · The Panel and Portfolio Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L3_Sorts_AI.html">5. L3 · Sorts, Breakpoints, and Long-Short Portfolios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L4_PerfEval_Factors_AI.html">6. L4 · Performance Evaluation, and Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L5_Factor_Zoo_AI.html">7. L5 · Where Factors Come From, and the Factor Zoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L6_MultiFactor_AI.html">8. L6 · Multi-Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L7_Portfolio_Decomposition_AI.html">9. L7 · Decomposing a Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L8_Backtesting_Protocol.html">10. L8 · Backtesting Protocol  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L9_Anomalies.html">11. L9 · Anomalies  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L10_Momentum_and_Trend_Following.html">12. L10 · Momentum and Trend Following  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Conditional_Strategies_I.html">13. L11 · Conditional Strategies I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Conditional_Strategies_II.html">14. L12 · Conditional Strategies II — Factor Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_I.html">15. L13 · Capital Allocation I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Capital_Allocation_II.html">16. L14 · Capital Allocation II — Fragility  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L15_Fundamental_Risk_Models_BARRA.html">17. L15 · Fundamental Risk Models (BARRA)  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L16_Transaction_Costs.html">18. L16 · Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L17_Leverage_and_Shorting.html">19. L17 · Leverage and Shorting  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L18_PCA_and_Statistical_Factors.html">20. L18 · PCA and Statistical Factors  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L19_Machine_Learning.html">21. L19 · Machine Learning  ◦</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">22. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_AI.html">22.1. Assignment 1 — Python, pandas, and Data That Fights Back</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">22.5. Assignment 2 — Diversification, and Your First Sort</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A3_Beta_and_Alpha_AI.html">22.8. Assignment 3 — Beta, Alpha, and Whether You Have Either</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/SignalHygiene_AI.html">23. Appendix · Signal Hygiene</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">24. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">24.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">24.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">24.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">24.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">24.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">24.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">24.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">24.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">24.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">24.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">24.4.9. Cleaning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">24.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">24.5. Flow Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">24.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">24.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../scientific/linear_algebra1_c.html">25. Linear Algebra Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">26. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intro.html">27. Archive · Pre-AI Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="IntrotoReturns_c.html">27.1. Introduction to Asset Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">27.2. Choice of Frequency and Annualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">27.3. Data APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PortfolioMath_c.html">27.4. Portfolio Mathematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FactorModels_c.html">27.5. Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiFactorModels_c.html">27.6. Multi-Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">27.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="FactorModelEstimation_c.html">27.11. Factor Model Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crosssectionalequitystrategies.html">27.12. Cross-Sectional Equity Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">27.13. Momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">27.14. An Overview of Factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Timing_c.html">27.15. Timing Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">27.16. Expected-Return Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">27.17. Volatility Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationI_cc.html">27.18. Capital Allocation I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationII.html">27.19. Capital Allocation II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Performance_evaluation_c.html">27.20. Performance Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RiskManagement.html">27.21. Risk Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TradingCosts.html">27.22. Liquidity and Trading Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LeverageandShorting.html">27.23. Leverage, Shorting, Limits to Arbitrage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearning_cc.html">27.24. Machine Learning in Finance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LLMs.html">27.25. Gen AI and LLMs in Finance</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/FactorModels_c_AI_runsheet.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/FactorModels_c_AI_runsheet.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Factor Models I — In-Class Run Sheet</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cold-open-3-min-0-00">🎬 Cold open (3 min) — 0:00</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivate-12-min-0-03">1️⃣ Motivate (12 min) — 0:03</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-5-min-0-15">2️⃣ Pitfall checklist (5 min) — 0:15</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-ai-moment-1-the-wmt-regression-10-min-0-20">3️⃣ Live AI moment #1 — The WMT regression (10 min) — 0:20</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-vs-expected-return-models-5-min-0-30">4️⃣ Risk vs expected return models (5 min) — 0:30</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-ai-moment-2-hedged-portfolio-12-min-0-35">5️⃣ Live AI moment #2 — Hedged portfolio (12 min) — 0:35</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#position-sizing-sharpe-vs-appraisal-8-min-0-47">6️⃣ Position sizing + Sharpe vs Appraisal (8 min) — 0:47</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-20-min-0-55">7️⃣ Challenge (20 min) — 0:55</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-5-min-1-15">🎯 Wrap (5 min) — 1:15</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#if-you-fall-behind">🆘 If you fall behind</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-class-checklist-5-min-before">📋 Pre-class checklist (5 min before)</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="factor-models-i-in-class-run-sheet">
+<h1>Factor Models I — In-Class Run Sheet<a class="headerlink" href="#factor-models-i-in-class-run-sheet" title="Link to this heading">#</a></h1>
+<p><strong>Notebook:</strong> <code class="docutils literal notranslate"><span class="pre">FactorModels_c_AI.ipynb</span></code>
+<strong>Duration:</strong> 75 min
+<strong>Pre-class assigned:</strong> Ang Ch. 6 §2-3 (skim)
+<strong>You need open:</strong> notebook in Colab + Gemini panel + this run sheet on second screen</p>
+<hr class="docutils" />
+<section id="cold-open-3-min-0-00">
+<h2>🎬 Cold open (3 min) — 0:00<a class="headerlink" href="#cold-open-3-min-0-00" title="Link to this heading">#</a></h2>
+<p><strong>The hook (memorize this, don’t read):</strong></p>
+<blockquote>
+<div><p>“It’s 9am. You’re at Citadel. You bought $50M of MSFT yesterday. Your risk manager calls: ‘How much of that risk is the market, and how much is MSFT-specific? You have 30 seconds.’ If you can’t split that bet into two pieces, you can’t manage it. That’s what today’s class is about.”</p>
+</div></blockquote>
+<p>Then: “By the end of class you’ll know how to answer that question for any stock, and you’ll have a tool you can point at any fund manager’s track record to figure out whether they’re skilled or just lucky.”</p>
+</section>
+<hr class="docutils" />
+<section id="motivate-12-min-0-03">
+<h2>1️⃣ Motivate (12 min) — 0:03<a class="headerlink" href="#motivate-12-min-0-03" title="Link to this heading">#</a></h2>
+<p><strong>Notebook cells:</strong> Run setup (cells 3-4) silently before class.</p>
+<p><strong>Walk through:</strong></p>
+<ul class="simple">
+<li><p>Cell 6 (load SPY/WMT/JPM data) — 1 min, just show it loaded</p></li>
+<li><p>Cell 7 (scatter plots) — <strong>STOP HERE.</strong> Spend 5 min on this picture.</p></li>
+</ul>
+<p><strong>Drive the discussion:</strong></p>
+<ul class="simple">
+<li><p>“Eyeball it. Which has higher beta — WMT or JPM?”</p></li>
+<li><p>“Why does that make sense?” (WMT = groceries = defensive; JPM = bank = cyclical)</p></li>
+<li><p>“What’s the slope of the best-fit line through the JPM cloud? Roughly?” (Aim for ~1.5)</p></li>
+<li><p>“What’s the spread <em>around</em> the line? Which one is tighter?”</p></li>
+</ul>
+<p><strong>Then introduce the decomposition (cell 8):</strong></p>
+<ul class="simple">
+<li><p>Write <code class="docutils literal notranslate"><span class="pre">r^e</span> <span class="pre">=</span> <span class="pre">α</span> <span class="pre">+</span> <span class="pre">β·f</span> <span class="pre">+</span> <span class="pre">ε</span></code> on the board.</p></li>
+<li><p>“This is just statistics — <em>always</em> true. The whole class is about what each piece <em>means</em>.”</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="pitfall-checklist-5-min-0-15">
+<h2>2️⃣ Pitfall checklist (5 min) — 0:15<a class="headerlink" href="#pitfall-checklist-5-min-0-15" title="Link to this heading">#</a></h2>
+<p><strong>Notebook cells:</strong> Project cell 9 (the pitfall table). Don’t read every row.</p>
+<p><strong>Pick 3 to emphasize:</strong></p>
+<ul class="simple">
+<li><p><strong>#1 Total vs excess:</strong> “If you forget to subtract RF, your alpha contains the risk-free rate. In 2024 with RF ≈ 5%, that’s a huge contamination.”</p></li>
+<li><p><strong>#2 No constant:</strong> “AI loves to do <code class="docutils literal notranslate"><span class="pre">sm.OLS(y,</span> <span class="pre">X)</span></code> without <code class="docutils literal notranslate"><span class="pre">add_constant</span></code>. That forces alpha to zero. The beta you get back is garbage.”</p></li>
+<li><p><strong>#7 Sharpe vs Appraisal:</strong> “We’ll come back to this. Most people get it wrong.”</p></li>
+</ul>
+<p><strong>Punchline:</strong> “Your job is shifting. You used to write <code class="docutils literal notranslate"><span class="pre">pd.merge()</span></code>. Now you spec it, audit it, and explain it.”</p>
+</section>
+<hr class="docutils" />
+<section id="live-ai-moment-1-the-wmt-regression-10-min-0-20">
+<h2>3️⃣ Live AI moment #1 — The WMT regression (10 min) — 0:20<a class="headerlink" href="#live-ai-moment-1-the-wmt-regression-10-min-0-20" title="Link to this heading">#</a></h2>
+<p><strong>Notebook cells:</strong> Project cell 10 (the spec).</p>
+<p><strong>Steps:</strong></p>
+<ol class="arabic">
+<li><p>Read the spec out loud — emphasize what’s specified (units, intercept, what to report).</p></li>
+<li><p><strong>Switch to Gemini panel.</strong> Paste this prompt (or have it pre-typed):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Using the DataFrame `data` with columns SPY, WMT, JPM
+(daily excess returns), regress WMT on SPY using statsmodels
+with an intercept. Print alpha (daily and annualized), beta,
+R-squared, and the t-stat on alpha.
+</pre></div>
+</div>
+</li>
+<li><p><strong>Run whatever Gemini produces.</strong> <em>(If it’s broken, that’s the lesson — fix it together.)</em></p></li>
+<li><p>Compare to cell 12 (the canonical answer).</p></li>
+<li><p><strong>Audit out loud:</strong> walk through cell 13’s checklist.</p>
+<ul class="simple">
+<li><p>“α annualized ≈ 5%. Is that real? Look at the t-stat.”</p></li>
+<li><p>“β = 0.67 — matches the scatter we eyeballed.”</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>If Gemini fails:</strong> even better. Show students the failure mode and walk through fixing it. This is the most valuable demo of the day.</p>
+<p><strong>Time check:</strong> If you’re behind, skip the audit checklist verbosity and just hit the t-stat and beta sanity check.</p>
+</section>
+<hr class="docutils" />
+<section id="risk-vs-expected-return-models-5-min-0-30">
+<h2>4️⃣ Risk vs expected return models (5 min) — 0:30<a class="headerlink" href="#risk-vs-expected-return-models-5-min-0-30" title="Link to this heading">#</a></h2>
+<p><strong>Notebook cells:</strong> 15, 16 (mostly conceptual).</p>
+<p><strong>Just say:</strong></p>
+<ul class="simple">
+<li><p>“Two questions you might ask a factor model: ‘How much risk is here?’ vs ‘What return should this earn?’”</p></li>
+<li><p>“Same equation, different metric. R² for the first, α for the second.”</p></li>
+<li><p>“CAPM has R² ≈ 50% — decent risk model. CAPM has tiny but persistent α anomalies — failed return model.”</p></li>
+<li><p>“Knowing which question you’re asking is half the battle.”</p></li>
+</ul>
+<p><strong>Don’t run any code.</strong> Just talk.</p>
+</section>
+<hr class="docutils" />
+<section id="live-ai-moment-2-hedged-portfolio-12-min-0-35">
+<h2>5️⃣ Live AI moment #2 — Hedged portfolio (12 min) — 0:35<a class="headerlink" href="#live-ai-moment-2-hedged-portfolio-12-min-0-35" title="Link to this heading">#</a></h2>
+<p><strong>This is the conceptual core of the lecture. Slow down here.</strong></p>
+<p><strong>Notebook cells:</strong> Run cell 18 (MSFT regression — quick), then stop at cell 19 (the spec).</p>
+<p><strong>Walk through the spec.</strong> Then prompt Gemini:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Given `df_eret` (MSFT excess returns) and `df_factor['Mkt-RF']`
+(market factor), and beta = 1.19 from the regression, construct
+(a) Tracking = beta × MKT, (b) Hedged = MSFT excess − Tracking.
+Plot cumulative returns of all three on a log scale. Confirm
+correlation of Hedged with MKT is ≈ 0.
+</pre></div>
+</div>
+<p><strong>Run cells 20-21.</strong> When the cumulative chart comes up:</p>
+<p><strong>Ask the class (don’t answer for them):</strong></p>
+<ul class="simple">
+<li><p>“What do you see in the hedged line?”</p></li>
+<li><p>“It’s flatter. Why does that matter?”</p></li>
+<li><p>“If I have a $1M vol budget, can I put more money into MSFT directly or into the hedged version?”</p></li>
+</ul>
+<p><strong>Land the punchline (cell 22 insight):</strong></p>
+<blockquote>
+<div><p>“Lower vol = bigger position = more alpha captured. This is the logic that factor-neutral hedge funds (Citadel, Millennium, Balyasny) are built around.”</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="position-sizing-sharpe-vs-appraisal-8-min-0-47">
+<h2>6️⃣ Position sizing + Sharpe vs Appraisal (8 min) — 0:47<a class="headerlink" href="#position-sizing-sharpe-vs-appraisal-8-min-0-47" title="Link to this heading">#</a></h2>
+<p><strong>Notebook cells:</strong> Run cells 24-29 in sequence. Don’t dwell on the code.</p>
+<p><strong>Key moments:</strong></p>
+<ul class="simple">
+<li><p>After cell 24: “The hedged position is 2-3× bigger. Same risk, more skill captured.”</p></li>
+<li><p>After cell 27: “Sharpe and Appraisal are different. Sharpe ratio of unhedged MSFT includes the market premium. Appraisal ratio strips it out.”</p></li>
+<li><p>“Active-management compensation usually keys off the appraisal-ratio analog (alpha after risk adjustment), not headline Sharpe.”</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="challenge-20-min-0-55">
+<h2>7️⃣ Challenge (20 min) — 0:55<a class="headerlink" href="#challenge-20-min-0-55" title="Link to this heading">#</a></h2>
+<p><strong>Notebook cells:</strong> Project cell 32 (the challenge setup).</p>
+<p><strong>Set it up (2 min):</strong></p>
+<blockquote>
+<div><p>“You’re at a fund-of-funds. CIO meeting tomorrow with Fund A and Fund B. You have 18 minutes to figure out who deserves capital. Use AI freely. Pair up.”</p>
+</div></blockquote>
+<p><strong>Tell them:</strong> “Just do Q1, Q2, Q3 in class. Q4 and Q5 are homework.”</p>
+<p><strong>During (15 min):</strong> Walk the room. Listen for:</p>
+<ul class="simple">
+<li><p>Did they remember to subtract RF?</p></li>
+<li><p>Are they using the right column names?</p></li>
+<li><p>Do they understand the Appraisal ratio?</p></li>
+</ul>
+<p><strong>Common mistakes to be ready for:</strong></p>
+<ul class="simple">
+<li><p>Forgetting to subtract RF → α will be ~5% too high for both funds</p></li>
+<li><p>Comparing raw means → “Fund A wins, done!” — push back: “is that the right metric?”</p></li>
+<li><p>Confusing Sharpe with Appraisal</p></li>
+</ul>
+<p><strong>Cold-call discussion (3 min):</strong></p>
+<ul class="simple">
+<li><p>“Who has Fund A’s beta?” (should be ~0.6)</p></li>
+<li><p>“Who has Fund B’s alpha?” (should be ~-12% annualized — <em>negative</em>)</p></li>
+<li><p>“So who’s the better manager? Don’t tell me who made more money. Tell me who has skill.”</p></li>
+</ul>
+<p><strong>The reveal:</strong> Fund A has small but real α ≈ 3-5%, low idio vol → high appraisal. Fund B has <em>negative</em> α — it just rode high-beta exposure in a bull market. <strong>Don’t give them the capital.</strong></p>
+</section>
+<hr class="docutils" />
+<section id="wrap-5-min-1-15">
+<h2>🎯 Wrap (5 min) — 1:15<a class="headerlink" href="#wrap-5-min-1-15" title="Link to this heading">#</a></h2>
+<p><strong>Notebook cells:</strong> Project cell 41 (Key Takeaways).</p>
+<p><strong>Pick 2 to emphasize:</strong></p>
+<ol class="arabic simple">
+<li><p>“The decomposition is always valid. <em>What you do with it</em> is the job.”</p></li>
+<li><p>“AI writes the code. You write the spec, audit the output, and make the decision.”</p></li>
+</ol>
+<p><strong>Preview next class:</strong> “Next time we estimate factor exposures in real-time on real portfolios. The wrinkle: betas drift. We’ll see what happens when you use stale ones.”</p>
+<p><strong>Assignment reminder:</strong> Submit completed Q4 + Q5 to the Drive folder by midnight Sunday.</p>
+</section>
+<hr class="docutils" />
+<section id="if-you-fall-behind">
+<h2>🆘 If you fall behind<a class="headerlink" href="#if-you-fall-behind" title="Link to this heading">#</a></h2>
+<p>Cut in this order:</p>
+<ol class="arabic simple">
+<li><p>✂️ The position sizing section (cells 24-25) — students can do at home</p></li>
+<li><p>✂️ Variance decomposition (cells 30-31) — equivalent to R²</p></li>
+<li><p>✂️ Q3 in the challenge — leave for homework</p></li>
+</ol>
+<p><strong>Do NOT cut:</strong> the hedged portfolio demo (live AI moment #2), the challenge setup.</p>
+</section>
+<hr class="docutils" />
+<section id="pre-class-checklist-5-min-before">
+<h2>📋 Pre-class checklist (5 min before)<a class="headerlink" href="#pre-class-checklist-5-min-before" title="Link to this heading">#</a></h2>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Notebook open in Colab, cells 3-4 run (libraries loaded)</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Gemini side panel open</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> This run sheet on second screen / printed</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Both AI prompts copied to a scratch text file (Gemini sometimes resets)</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Cumulative returns plot from cell 21 pre-rendered in case Gemini fails</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Challenge URL works (test load of <code class="docutils literal notranslate"><span class="pre">FactorModels_AI_challenge.csv</span></code>)</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cold-open-3-min-0-00">🎬 Cold open (3 min) — 0:00</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivate-12-min-0-03">1️⃣ Motivate (12 min) — 0:03</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-5-min-0-15">2️⃣ Pitfall checklist (5 min) — 0:15</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-ai-moment-1-the-wmt-regression-10-min-0-20">3️⃣ Live AI moment #1 — The WMT regression (10 min) — 0:20</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-vs-expected-return-models-5-min-0-30">4️⃣ Risk vs expected return models (5 min) — 0:30</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-ai-moment-2-hedged-portfolio-12-min-0-35">5️⃣ Live AI moment #2 — Hedged portfolio (12 min) — 0:35</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#position-sizing-sharpe-vs-appraisal-8-min-0-47">6️⃣ Position sizing + Sharpe vs Appraisal (8 min) — 0:47</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-20-min-0-55">7️⃣ Challenge (20 min) — 0:55</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-5-min-1-15">🎯 Wrap (5 min) — 1:15</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#if-you-fall-behind">🆘 If you fall behind</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-class-checklist-5-min-before">📋 Pre-class checklist (5 min before)</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

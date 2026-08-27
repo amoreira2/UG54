@@ -1,0 +1,1480 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>WRDS — Pulling Data Like a Pro &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/WRDS_Data_Tour_AI';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/WRDS_Data_Tour_AI.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data-Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="L1_Welcome_Returns_AI.html">3. L1 · The Workflow, and What a Return Is</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L2_Panel_Portfolios_AI.html">4. L2 · The Panel and Portfolio Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L3_Sorts_AI.html">5. L3 · Sorts, Breakpoints, and Long-Short Portfolios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L4_PerfEval_Factors_AI.html">6. L4 · Performance Evaluation, and Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L5_Factor_Zoo_AI.html">7. L5 · Where Factors Come From, and the Factor Zoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L6_MultiFactor_AI.html">8. L6 · Multi-Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L7_Portfolio_Decomposition_AI.html">9. L7 · Decomposing a Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L8_Backtesting_Protocol.html">10. L8 · Backtesting Protocol  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L9_Anomalies.html">11. L9 · Anomalies  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L10_Momentum_and_Trend_Following.html">12. L10 · Momentum and Trend Following  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Conditional_Strategies_I.html">13. L11 · Conditional Strategies I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Conditional_Strategies_II.html">14. L12 · Conditional Strategies II — Factor Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_I.html">15. L13 · Capital Allocation I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Capital_Allocation_II.html">16. L14 · Capital Allocation II — Fragility  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L15_Fundamental_Risk_Models_BARRA.html">17. L15 · Fundamental Risk Models (BARRA)  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L16_Transaction_Costs.html">18. L16 · Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L17_Leverage_and_Shorting.html">19. L17 · Leverage and Shorting  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L18_PCA_and_Statistical_Factors.html">20. L18 · PCA and Statistical Factors  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L19_Machine_Learning.html">21. L19 · Machine Learning  ◦</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">22. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_AI.html">22.1. Assignment 1 — Python, pandas, and Data That Fights Back</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">22.5. Assignment 2 — Diversification, and Your First Sort</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A3_Beta_and_Alpha_AI.html">22.8. Assignment 3 — Beta, Alpha, and Whether You Have Either</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/SignalHygiene_AI.html">23. Appendix · Signal Hygiene</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">24. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">24.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">24.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">24.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">24.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">24.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">24.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">24.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">24.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">24.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">24.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">24.4.9. Cleaning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">24.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">24.5. Flow Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">24.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">24.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../scientific/linear_algebra1_c.html">25. Linear Algebra Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">26. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intro.html">27. Archive · Pre-AI Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="IntrotoReturns_c.html">27.1. Introduction to Asset Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">27.2. Choice of Frequency and Annualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">27.3. Data APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PortfolioMath_c.html">27.4. Portfolio Mathematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FactorModels_c.html">27.5. Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiFactorModels_c.html">27.6. Multi-Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">27.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="FactorModelEstimation_c.html">27.11. Factor Model Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crosssectionalequitystrategies.html">27.12. Cross-Sectional Equity Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">27.13. Momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">27.14. An Overview of Factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Timing_c.html">27.15. Timing Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">27.16. Expected-Return Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">27.17. Volatility Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationI_cc.html">27.18. Capital Allocation I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationII.html">27.19. Capital Allocation II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Performance_evaluation_c.html">27.20. Performance Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RiskManagement.html">27.21. Risk Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TradingCosts.html">27.22. Liquidity and Trading Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LeverageandShorting.html">27.23. Leverage, Shorting, Limits to Arbitrage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearning_cc.html">27.24. Machine Learning in Finance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LLMs.html">27.25. Gen AI and LLMs in Finance</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Finance/WRDS_Data_Tour_AI.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/WRDS_Data_Tour_AI.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/WRDS_Data_Tour_AI.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>WRDS — Pulling Data Like a Pro</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-wrds">Why WRDS? <a id="why"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#your-first-wrds-connection">Your First WRDS Connection <a id="connect"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sanity-check-what-tables-are-available">Sanity check: what tables are available?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-wrds-loose-vs-precise-prompts">Querying WRDS: Loose vs Precise Prompts <a id="workflow"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-1-single-stock-aapl-monthly">Demo 1 — Single Stock (AAPL Monthly) <a id="demo1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loose-prompt-what-not-to-do">🔴 Loose prompt — what NOT to do</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-prompt-the-pattern-that-works">🟢 Precise prompt — the pattern that works</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-retx-trick-share-issuance">The <code class="docutils literal notranslate"><span class="pre">retx</span></code> Trick + Share Issuance <a id="retx"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#share-issuance-from-the-data">Share issuance from the data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-2-a-cross-section">Demo 2 — A Cross-Section <a id="demo2"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loose-prompt">🔴 Loose prompt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-prompt">🟢 Precise prompt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-in-the-cross-section-share-codes-exchanges-negative-prices">What’s IN the Cross-Section: Share Codes, Exchanges, Negative Prices <a id="xs"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#share-codes-shrcd-define-the-universe">Share codes (<code class="docutils literal notranslate"><span class="pre">shrcd</span></code>) define the universe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exchanges-exchcd">Exchanges (<code class="docutils literal notranslate"><span class="pre">exchcd</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#negative-prices-a-crsp-convention">Negative prices — a CRSP convention</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-3-compustat-fundamentals">Demo 3 — Compustat Fundamentals <a id="demo3"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">🔴 Loose prompt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">🟢 Precise prompt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#book-to-market-and-the-value-premium-teaser">Book-to-Market and the Value Premium Teaser <a id="value"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-challenge-pull-your-own-stock">🎯 Final Challenge: Pull YOUR Own Stock <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-find-your-stock-s-permno">Step 1 — Find your stock’s permno</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-pull-5-years-of-monthly-data">Step 2 — Pull 5 years of monthly data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-compute-the-required-outputs">Step 3 — Compute the required outputs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-note-2-sentences">Step 4 — Note (2 sentences)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fallback-load-csvs-use-only-if-wrds-connection-fails">🚨 FALLBACK_LOAD_CSVS (use only if WRDS connection fails)</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="wrds-pulling-data-like-a-pro">
+<h1>WRDS — Pulling Data Like a Pro<a class="headerlink" href="#wrds-pulling-data-like-a-pro" title="Link to this heading">#</a></h1>
+<section id="learning-objectives">
+<h2>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of this notebook, you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Connect to WRDS from Colab</strong> and execute SQL queries against CRSP and Compustat</p></li>
+<li><p><strong>Write precise SQL prompts</strong> — telling AI exactly which table, which columns, which filters</p></li>
+<li><p><strong>Distinguish a good prompt from a bad one</strong> — and predict what bugs each will produce</p></li>
+<li><p><strong>Pull a stock’s full CRSP history</strong> — returns, prices, shares outstanding, dividends</p></li>
+<li><p><strong>Pull and join Compustat fundamentals</strong> to compute book-to-market and other ratios</p></li>
+<li><p><strong>Recognize and handle CRSP quirks</strong>: share codes, negative prices, permno vs ticker</p></li>
+</ol>
+</section>
+<section id="table-of-contents">
+<h2>📋 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#setup"><span class="xref myst">Setup</span></a></p></li>
+<li><p><a class="reference internal" href="#why"><span class="xref myst">Why WRDS?</span></a></p></li>
+<li><p><a class="reference internal" href="#connect"><span class="xref myst">Your First WRDS Connection</span></a></p></li>
+<li><p><a class="reference internal" href="#workflow"><span class="xref myst">Querying WRDS: Loose vs Precise Prompts</span></a></p></li>
+<li><p><a class="reference internal" href="#demo1"><span class="xref myst">Demo 1 — Single Stock (AAPL Monthly)</span></a></p></li>
+<li><p><a class="reference internal" href="#retx"><span class="xref myst">The <code class="docutils literal notranslate"><span class="pre">retx</span></code> Trick + Share Issuance</span></a></p></li>
+<li><p><a class="reference internal" href="#demo2"><span class="xref myst">Demo 2 — A Cross-Section</span></a></p></li>
+<li><p><a class="reference internal" href="#xs"><span class="xref myst">What’s IN the Cross-Section: Share Codes, Exchanges, Negative Prices</span></a></p></li>
+<li><p><a class="reference internal" href="#demo3"><span class="xref myst">Demo 3 — Compustat Fundamentals</span></a></p></li>
+<li><p><a class="reference internal" href="#value"><span class="xref myst">Book-to-Market and the Value Premium Teaser</span></a></p></li>
+<li><p><a class="reference internal" href="#challenge"><span class="xref myst">🎯 Final Challenge: Pull YOUR Own Stock</span></a></p></li>
+<li><p><a class="reference internal" href="#submit"><span class="xref myst">Submission</span></a></p></li>
+<li><p><a class="reference internal" href="#takeaways"><span class="xref myst">Key Takeaways</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2>🛠️ Setup <a id="setup"></a><a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<p>We’ll need <code class="docutils literal notranslate"><span class="pre">wrds</span></code> (the official client library), plus the usual <code class="docutils literal notranslate"><span class="pre">pandas</span></code> /
+<code class="docutils literal notranslate"><span class="pre">numpy</span></code> / <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> stack.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Setup — run this first</span>
+<span class="c1"># Uncomment in Colab; on your local machine it's likely already installed</span>
+<span class="c1"># !pip install wrds -q</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">'seaborn-v0_8-whitegrid'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'font.size'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">11</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Libraries loaded"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="why-wrds">
+<h2>Why WRDS? <a id="why"></a><a class="headerlink" href="#why-wrds" title="Link to this heading">#</a></h2>
+<p>You have three data tools at your disposal in this class:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Source</p></th>
+<th class="head"><p>Strengths</p></th>
+<th class="head"><p>Limits</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>FRED</strong> (St. Louis Fed)</p></td>
+<td><p>Free macro: GDP, CPI, Fed Funds, yields</p></td>
+<td><p>Macro only, no stocks</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Yahoo Finance</strong> (yfinance)</p></td>
+<td><p>Free daily prices, easy in Colab</p></td>
+<td><p>Survivorship-biased, inconsistent splits/dividends, no fundamentals</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>WRDS</strong> (CRSP + Compustat)</p></td>
+<td><p>Survivorship-free, standardized, gold standard for research</p></td>
+<td><p>Institutional access required</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>NYU pays for WRDS. <strong>You’re going to use it today.</strong> You should have your account
+approved by now — if not, raise your hand and we sort it out before continuing.</p>
+</section>
+<hr class="docutils" />
+<section id="your-first-wrds-connection">
+<h2>Your First WRDS Connection <a id="connect"></a><a class="headerlink" href="#your-first-wrds-connection" title="Link to this heading">#</a></h2>
+<p>Two ways to authenticate:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>When to use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Interactive prompt</strong></p></td>
+<td><p>First time in Colab — type password when asked</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">.pgpass</span></code> file</strong></p></td>
+<td><p>If you ran it once and saved credentials (persists between sessions on local machine, not in Colab)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Run the cell below. The first time you run it in a Colab session, it asks
+for your <strong>WRDS username</strong> and <strong>password</strong>. After that, it’s a <code class="docutils literal notranslate"><span class="pre">db</span></code> object
+you can query.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">wrds</span>
+
+<span class="c1"># Replace 'your-netid-here' with your WRDS username</span>
+<span class="c1"># (Often this is your NYU NetID, but check your WRDS welcome email)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">wrds</span><span class="o">.</span><span class="n">Connection</span><span class="p">(</span><span class="n">wrds_username</span><span class="o">=</span><span class="s1">'your-netid-here'</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Connected to WRDS"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="sanity-check-what-tables-are-available">
+<h3>Sanity check: what tables are available?<a class="headerlink" href="#sanity-check-what-tables-are-available" title="Link to this heading">#</a></h3>
+<p>WRDS exposes hundreds of databases — CRSP, Compustat, IBES, OptionMetrics,
+TAQ, etc. Each is a <strong>schema</strong>; tables live under those schemas.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># How many tables in the crsp schema?</span>
+<span class="n">crsp_tables</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">list_tables</span><span class="p">(</span><span class="n">library</span><span class="o">=</span><span class="s1">'crsp'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"CRSP schema has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">crsp_tables</span><span class="p">)</span><span class="si">}</span><span class="s2"> tables."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">The ones we'll use today:"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'msf'</span><span class="p">,</span> <span class="s1">'dsf'</span><span class="p">,</span> <span class="s1">'stocknames'</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">crsp_tables</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✅ crsp.</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ❌ crsp.</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> not found"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key tables to know</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Table</p></th>
+<th class="head"><p>What it is</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">crsp.msf</span></code></p></td>
+<td><p>Monthly stock file — one row per (permno, month-end)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">crsp.dsf</span></code></p></td>
+<td><p>Daily stock file — same but daily (huge — careful with date ranges)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">crsp.stocknames</span></code></p></td>
+<td><p>Lookup: ticker ↔ permno ↔ name over time</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">comp.funda</span></code></p></td>
+<td><p>Compustat annual fundamentals — revenue, assets, equity, etc.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">comp.fundq</span></code></p></td>
+<td><p>Compustat quarterly fundamentals</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">crsp.ccmxpf_lnkhist</span></code></p></td>
+<td><p>Link table — joins CRSP permno to Compustat gvkey</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></blockquote>
+<blockquote>
+<div><p><strong>⚠️ If the connection fails</strong></p>
+<p>Possible reasons:</p>
+<ol class="arabic simple">
+<li><p><strong>Account not yet approved</strong> — check email from WRDS, contact NYU IT</p></li>
+<li><p><strong>Wrong username</strong> — usually NetID, sometimes different; check WRDS welcome email</p></li>
+<li><p><strong>Network blocking</strong> — corporate VPNs sometimes block port 9737</p></li>
+</ol>
+<p><strong>Emergency fallback for today only:</strong> if WRDS won’t connect, run the
+hidden cell at the bottom of this notebook called “FALLBACK_LOAD_CSVS” — it
+loads pre-pulled samples so you can still follow along. Then sort out your
+WRDS access after class.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="querying-wrds-loose-vs-precise-prompts">
+<h2>Querying WRDS: Loose vs Precise Prompts <a id="workflow"></a><a class="headerlink" href="#querying-wrds-loose-vs-precise-prompts" title="Link to this heading">#</a></h2>
+<p>Querying WRDS is mostly writing <strong>SQL</strong> against PostgreSQL. You can have AI
+write the SQL — but only if you give it enough to work with. <strong>This is
+where Specify → Implement → Validate matters most.</strong></p>
+<p>A loose prompt produces SQL with predictable bugs:</p>
+<ul class="simple">
+<li><p>Wrong table name (the AI guesses)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SELECT</span> <span class="pre">*</span></code> (slow, fetches columns you don’t need)</p></li>
+<li><p>Missing filters → query returns millions of rows or times out</p></li>
+<li><p>Wrong date format → empty result</p></li>
+<li><p>Ticker-based filter instead of permno → wrong stock (tickers reuse!)</p></li>
+</ul>
+<p>A precise prompt produces SQL that works the first time:</p>
+<ul class="simple">
+<li><p>Names the exact table</p></li>
+<li><p>Names the columns you need</p></li>
+<li><p>Names the filters with units (date format, integer codes)</p></li>
+<li><p>Names the order</p></li>
+</ul>
+<blockquote>
+<div><p><strong>🤖 AI-Era Insight</strong></p>
+<p>When you ask AI for SQL against WRDS, you’re effectively delegating the
+<em>schema knowledge</em> to the AI. <strong>AI does not actually know the WRDS schema
+well</strong> — it’s seen many SQL queries online, but the specific column names,
+data types, and join patterns of CRSP/Compustat are quirky. You have to
+tell it. We’ll show the pattern three times today.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="demo-1-single-stock-aapl-monthly">
+<h2>Demo 1 — Single Stock (AAPL Monthly) <a id="demo1"></a><a class="headerlink" href="#demo-1-single-stock-aapl-monthly" title="Link to this heading">#</a></h2>
+<p><strong>Goal:</strong> pull AAPL’s monthly returns from 2010 to 2024.</p>
+<section id="loose-prompt-what-not-to-do">
+<h3>🔴 Loose prompt — what NOT to do<a class="headerlink" href="#loose-prompt-what-not-to-do" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Get Apple’s stock returns from WRDS”</em></p>
+</div></blockquote>
+<p><strong>What an AI is likely to produce:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="s2">"SELECT * FROM crsp.msf WHERE ticker='AAPL'"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>The bugs:</strong></p>
+<ul class="simple">
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">SELECT</span> <span class="pre">*</span></code> pulls every column — wasteful, slow</p></li>
+<li><p>❌ Filtering by <code class="docutils literal notranslate"><span class="pre">ticker='AAPL'</span></code> works for AAPL, but tickers can change or be reused. <strong><code class="docutils literal notranslate"><span class="pre">permno</span></code> is the only stable ID</strong> — but AI doesn’t know that unless you say it.</p></li>
+<li><p>❌ No date range — pulls AAPL’s <em>entire</em> history (40+ years), most of which you don’t need</p></li>
+<li><p>❌ No <code class="docutils literal notranslate"><span class="pre">ORDER</span> <span class="pre">BY</span></code> — results come back in arbitrary order</p></li>
+<li><p>❌ No <code class="docutils literal notranslate"><span class="pre">date_cols</span></code> argument — date column comes back as a string, not a datetime</p></li>
+</ul>
+</section>
+<section id="precise-prompt-the-pattern-that-works">
+<h3>🟢 Precise prompt — the pattern that works<a class="headerlink" href="#precise-prompt-the-pattern-that-works" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Using <code class="docutils literal notranslate"><span class="pre">db.raw_sql</span></code>, query <code class="docutils literal notranslate"><span class="pre">crsp.msf</span></code> for permno=14593 (AAPL) between
+2010-01-01 and 2024-12-31. Return only these columns: date, ret, retx, prc,
+shrout, ticker. Order by date. Pass <code class="docutils literal notranslate"><span class="pre">date_cols=['date']</span></code> to parse the date
+column.”</em></p>
+</div></blockquote>
+<p>The precise version names:</p>
+<ol class="arabic simple">
+<li><p>The exact function (<code class="docutils literal notranslate"><span class="pre">db.raw_sql</span></code>)</p></li>
+<li><p>The exact table (<code class="docutils literal notranslate"><span class="pre">crsp.msf</span></code>)</p></li>
+<li><p>The exact filter (<code class="docutils literal notranslate"><span class="pre">permno=14593</span></code>, not ticker)</p></li>
+<li><p>The exact columns</p></li>
+<li><p>The exact date range</p></li>
+<li><p>The ordering</p></li>
+<li><p>The date parsing</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 🟢 The precise version — this is the canonical pattern</span>
+<span class="n">aapl</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">    SELECT date, ret, retx, prc, shrout, ticker</span>
+<span class="s2">    FROM crsp.msf</span>
+<span class="s2">    WHERE permno = 14593</span>
+<span class="s2">      AND date BETWEEN '2010-01-01' AND '2024-12-31'</span>
+<span class="s2">    ORDER BY date</span>
+<span class="s2">"""</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"AAPL monthly: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">aapl</span><span class="p">)</span><span class="si">}</span><span class="s2"> months, </span><span class="si">{</span><span class="n">aapl</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">aapl</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">aapl</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 How do you find a stock’s permno?</strong></p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">crsp.stocknames</span></code>. We’ll do this in the challenge — but for famous
+stocks you’ll see permnos in academic papers (AAPL=14593, MSFT=10107,
+JPM=47896 are common ones to memorize).</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-retx-trick-share-issuance">
+<h2>The <code class="docutils literal notranslate"><span class="pre">retx</span></code> Trick + Share Issuance <a id="retx"></a><a class="headerlink" href="#the-retx-trick-share-issuance" title="Link to this heading">#</a></h2>
+<p>CRSP gives you BOTH <code class="docutils literal notranslate"><span class="pre">ret</span></code> (with dividends) and <code class="docutils literal notranslate"><span class="pre">retx</span></code> (without). The
+difference is the dividend yield for that month:</p>
+<div class="math notranslate nohighlight">
+\[\text{dividend yield}_t = \text{ret}_t - \text{retx}_t\]</div>
+<p>This is a useful CRSP feature — most other data sources give you only one
+return number. Let’s extract Apple’s dividend history:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">aapl</span><span class="p">[</span><span class="s1">'div_yield'</span><span class="p">]</span> <span class="o">=</span> <span class="n">aapl</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span> <span class="o">-</span> <span class="n">aapl</span><span class="p">[</span><span class="s1">'retx'</span><span class="p">]</span>
+<span class="n">div_months</span> <span class="o">=</span> <span class="n">aapl</span><span class="p">[</span><span class="n">aapl</span><span class="p">[</span><span class="s1">'div_yield'</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Months with dividend: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">div_months</span><span class="p">)</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">aapl</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># Quick plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">aapl</span><span class="p">[</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">aapl</span><span class="p">[</span><span class="s1">'div_yield'</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Monthly dividend yield (%)'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"AAPL dividend yield by month — notice when Tim Cook reinstated dividends"</span><span class="p">,</span>
+             <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="share-issuance-from-the-data">
+<h3>Share issuance from the data<a class="headerlink" href="#share-issuance-from-the-data" title="Link to this heading">#</a></h3>
+<p>Compare price growth to market cap growth. The difference is share
+issuance (or buybacks, if negative).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">aapl</span><span class="p">[</span><span class="s1">'abs_prc'</span><span class="p">]</span> <span class="o">=</span> <span class="n">aapl</span><span class="p">[</span><span class="s1">'prc'</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+<span class="n">aapl</span><span class="p">[</span><span class="s1">'mktcap'</span><span class="p">]</span> <span class="o">=</span> <span class="n">aapl</span><span class="p">[</span><span class="s1">'abs_prc'</span><span class="p">]</span> <span class="o">*</span> <span class="n">aapl</span><span class="p">[</span><span class="s1">'shrout'</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>  <span class="c1"># millions</span>
+
+<span class="n">p0</span><span class="p">,</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">aapl</span><span class="p">[</span><span class="s1">'abs_prc'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="n">aapl</span><span class="p">[</span><span class="s1">'abs_prc'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">m0</span><span class="p">,</span> <span class="n">m1</span> <span class="o">=</span> <span class="n">aapl</span><span class="p">[</span><span class="s1">'mktcap'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>   <span class="n">aapl</span><span class="p">[</span><span class="s1">'mktcap'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">s0</span><span class="p">,</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">aapl</span><span class="p">[</span><span class="s1">'shrout'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>   <span class="n">aapl</span><span class="p">[</span><span class="s1">'shrout'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"AAPL 2010-01 → 2024-12:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Price growth:    </span><span class="si">{</span><span class="n">p1</span><span class="o">/</span><span class="n">p0</span><span class="si">:</span><span class="s2">&gt;6.2f</span><span class="si">}</span><span class="s2">x"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Mktcap growth:   </span><span class="si">{</span><span class="n">m1</span><span class="o">/</span><span class="n">m0</span><span class="si">:</span><span class="s2">&gt;6.2f</span><span class="si">}</span><span class="s2">x"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Share count:     </span><span class="si">{</span><span class="n">s1</span><span class="o">/</span><span class="n">s0</span><span class="si">:</span><span class="s2">&gt;6.2f</span><span class="si">}</span><span class="s2">x   ← &lt;1 means NET BUYBACKS"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ⇒ Apple repurchased </span><span class="si">{</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">s1</span><span class="o">/</span><span class="n">s0</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% of its shares over the period"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>🤔 The buyback story</strong></p>
+<p>Apple’s market cap grew far faster than its share count fell. Looking at
+price alone misses how much of the per-share growth came from buybacks
+versus from business growth. Decomposing the two requires the share-count
+series — which is why <code class="docutils literal notranslate"><span class="pre">shrout</span></code> over time is one of CRSP’s underrated
+columns.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="demo-2-a-cross-section">
+<h2>Demo 2 — A Cross-Section <a id="demo2"></a><a class="headerlink" href="#demo-2-a-cross-section" title="Link to this heading">#</a></h2>
+<p><strong>Goal:</strong> pull every US common stock that was trading at the end of June 2020.</p>
+<section id="loose-prompt">
+<h3>🔴 Loose prompt<a class="headerlink" href="#loose-prompt" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Get all stocks from CRSP for June 2020”</em></p>
+</div></blockquote>
+<p><strong>What AI is likely to produce:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="s2">"SELECT * FROM crsp.msf WHERE date BETWEEN '2020-06-01' AND '2020-06-30'"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>The bugs:</strong></p>
+<ul class="simple">
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">BETWEEN</span> <span class="pre">'2020-06-01'</span> <span class="pre">AND</span> <span class="pre">'2020-06-30'</span></code> — but CRSP monthly dates are
+<em>always month-end</em>. This filter may return <strong>zero rows</strong> (depending on
+whether 6/30/2020 falls in the range).</p></li>
+<li><p>❌ No <code class="docutils literal notranslate"><span class="pre">shrcd</span></code> filter — you’ll get ETFs (18), ADRs (71), closed-end funds (73)
+mixed in with common stock</p></li>
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">SELECT</span> <span class="pre">*</span></code> again</p></li>
+<li><p>❌ No <code class="docutils literal notranslate"><span class="pre">date_cols</span></code></p></li>
+</ul>
+</section>
+<section id="precise-prompt">
+<h3>🟢 Precise prompt<a class="headerlink" href="#precise-prompt" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Query <code class="docutils literal notranslate"><span class="pre">crsp.msf</span></code> for the specific month-end date 2020-06-30. Filter to
+<code class="docutils literal notranslate"><span class="pre">shrcd</span> <span class="pre">IN</span> <span class="pre">(10,</span> <span class="pre">11)</span></code> for US common stocks only. Return permno, ticker, prc,
+shrout, ret, exchcd. Pass <code class="docutils literal notranslate"><span class="pre">date_cols=['date']</span></code>.”</em></p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">    SELECT permno, ticker, prc, shrout, ret, exchcd</span>
+<span class="s2">    FROM crsp.msf</span>
+<span class="s2">    WHERE date = '2020-06-30'</span>
+<span class="s2">      AND shrcd IN (10, 11)</span>
+<span class="s2">"""</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Universe on 2020-06-30: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> US common stocks"</span><span class="p">)</span>
+<span class="n">xs</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="what-s-in-the-cross-section-share-codes-exchanges-negative-prices">
+<h2>What’s IN the Cross-Section: Share Codes, Exchanges, Negative Prices <a id="xs"></a><a class="headerlink" href="#what-s-in-the-cross-section-share-codes-exchanges-negative-prices" title="Link to this heading">#</a></h2>
+<p>Three things to know about the CRSP universe before you start using it:</p>
+<section id="share-codes-shrcd-define-the-universe">
+<h3>Share codes (<code class="docutils literal notranslate"><span class="pre">shrcd</span></code>) define the universe<a class="headerlink" href="#share-codes-shrcd-define-the-universe" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">shrcd</span></code></p></th>
+<th class="head"><p>What it is</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>US common stock — hasn’t paid a dividend yet</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>US common stock — pays dividends (most firms)</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>US common stock — incorporated outside US</p></td>
+</tr>
+<tr class="row-odd"><td><p>18</p></td>
+<td><p>ETF</p></td>
+</tr>
+<tr class="row-even"><td><p>71</p></td>
+<td><p>ADR (foreign stock listed in US)</p></td>
+</tr>
+<tr class="row-odd"><td><p>73</p></td>
+<td><p>Closed-end fund</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>The academic-finance default is <code class="docutils literal notranslate"><span class="pre">shrcd</span> <span class="pre">IN</span> <span class="pre">(10,</span> <span class="pre">11)</span></code>.</strong> Use this unless you
+have a specific reason not to.</p>
+</div></blockquote>
+</section>
+<section id="exchanges-exchcd">
+<h3>Exchanges (<code class="docutils literal notranslate"><span class="pre">exchcd</span></code>)<a class="headerlink" href="#exchanges-exchcd" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Exchange breakdown:"</span><span class="p">)</span>
+<span class="n">exch_names</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">'NYSE'</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">'AMEX'</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">'NASDAQ'</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">exch</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">[</span><span class="s1">'exchcd'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">exch_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">exch</span><span class="p">,</span><span class="w"> </span><span class="sa">f</span><span class="s1">'code </span><span class="si">{</span><span class="n">exch</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="negative-prices-a-crsp-convention">
+<h3>Negative prices — a CRSP convention<a class="headerlink" href="#negative-prices-a-crsp-convention" title="Link to this heading">#</a></h3>
+<p>CRSP marks <code class="docutils literal notranslate"><span class="pre">prc</span></code> <strong>negative</strong> when there was no actual trade at the close —
+the value is the bid-ask midpoint instead. Common for thinly-traded small-caps.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">neg</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="n">xs</span><span class="p">[</span><span class="s1">'prc'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Stocks with negative-flagged prices: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">neg</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">neg</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">By exchange:"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">exch</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="s1">'exchcd'</span><span class="p">]</span> <span class="o">==</span> <span class="n">exch</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">neg_count</span> <span class="o">=</span> <span class="p">((</span><span class="n">xs</span><span class="p">[</span><span class="s1">'exchcd'</span><span class="p">]</span> <span class="o">==</span> <span class="n">exch</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="s1">'prc'</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">exch_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">exch</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exch</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">neg_count</span><span class="si">:</span><span class="s2">&gt;3</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">total</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">neg_count</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">total</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>⚠️ AMEX dominates because it hosts small, illiquid names</strong></p>
+<p>NYSE and NASDAQ require minimum-liquidity to stay listed. AMEX doesn’t.
+Stocks that don’t trade on their closing day get a midpoint quote instead
+of a transaction price — hence the negative flag.</p>
+<p><strong>What to do:</strong> use <code class="docutils literal notranslate"><span class="pre">abs(prc)</span></code> for the value; consider whether to drop
+negative-flagged rows entirely. Common research papers exclude them; others
+use them with a footnote. <strong>Your call. But you have to make one.</strong></p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="demo-3-compustat-fundamentals">
+<h2>Demo 3 — Compustat Fundamentals <a id="demo3"></a><a class="headerlink" href="#demo-3-compustat-fundamentals" title="Link to this heading">#</a></h2>
+<p><strong>Goal:</strong> pull Apple’s annual revenue, total assets, and book equity from Compustat.</p>
+<p>This is the hardest of the three demos because Compustat uses its OWN identifier
+(<code class="docutils literal notranslate"><span class="pre">gvkey</span></code>), not CRSP’s <code class="docutils literal notranslate"><span class="pre">permno</span></code>. You either look up the gvkey directly, or use the
+CRSP-Compustat link table to join.</p>
+<section id="id1">
+<h3>🔴 Loose prompt<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Get Apple’s revenue and assets from Compustat”</em></p>
+</div></blockquote>
+<p><strong>What AI is likely to produce:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="s2">"SELECT * FROM comp.funda WHERE tic = 'AAPL'"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>The bugs:</strong></p>
+<ul class="simple">
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">tic</span></code> in <code class="docutils literal notranslate"><span class="pre">comp.funda</span></code> is the <em>most recent</em> ticker. Reliable for AAPL
+today; fails for any firm whose ticker has changed (which is many).</p></li>
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">comp.funda</span></code> has multiple rows per fiscal year for the same company,
+because it stores multiple data formats. <strong>Always filter</strong> <code class="docutils literal notranslate"><span class="pre">indfmt='INDL'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">datafmt='STD'</span></code>, <code class="docutils literal notranslate"><span class="pre">popsrc='D'</span></code>, <code class="docutils literal notranslate"><span class="pre">consol='C'</span></code>. Without these you get ~4x
+the rows.</p></li>
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">SELECT</span> <span class="pre">*</span></code> — Compustat has ~700 columns. You don’t need all of them.</p></li>
+<li><p>❌ No date range — pulls 40 years.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>🟢 Precise prompt<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Query <code class="docutils literal notranslate"><span class="pre">comp.funda</span></code> for Apple. AAPL’s Compustat <code class="docutils literal notranslate"><span class="pre">gvkey</span></code> is <code class="docutils literal notranslate"><span class="pre">'001690'</span></code>
+(note: 6-character zero-padded string). Filter to indfmt=’INDL’,
+datafmt=’STD’, popsrc=’D’, consol=’C’ to deduplicate. Return: datadate,
+fyear, revt (revenue, <span class="math notranslate nohighlight">\(M), at (total assets, \)</span>M), ceq (book common equity,
+$M). Order by datadate. Pass date_cols=[‘datadate’].”</em></p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">aapl_fund</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">    SELECT datadate, fyear, revt, at, ceq</span>
+<span class="s2">    FROM comp.funda</span>
+<span class="s2">    WHERE gvkey = '001690'</span>
+<span class="s2">      AND indfmt = 'INDL'</span>
+<span class="s2">      AND datafmt = 'STD'</span>
+<span class="s2">      AND popsrc = 'D'</span>
+<span class="s2">      AND consol = 'C'</span>
+<span class="s2">    ORDER BY datadate</span>
+<span class="s2">"""</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">'datadate'</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"AAPL fundamentals: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">aapl_fund</span><span class="p">)</span><span class="si">}</span><span class="s2"> fiscal years"</span><span class="p">)</span>
+<span class="n">aapl_fund</span><span class="o">.</span><span class="n">tail</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 The 4-filter pattern is the most common Compustat foot-gun</strong></p>
+<p>Forgetting <code class="docutils literal notranslate"><span class="pre">indfmt</span></code>, <code class="docutils literal notranslate"><span class="pre">datafmt</span></code>, <code class="docutils literal notranslate"><span class="pre">popsrc</span></code>, <code class="docutils literal notranslate"><span class="pre">consol</span></code> is THE most common bug
+in Compustat queries. Your data will look fine — just 4x too many rows per
+firm-year. Your subsequent analysis will be silently wrong. Keep these
+four filters handy for any Compustat query.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="book-to-market-and-the-value-premium-teaser">
+<h2>Book-to-Market and the Value Premium Teaser <a id="value"></a><a class="headerlink" href="#book-to-market-and-the-value-premium-teaser" title="Link to this heading">#</a></h2>
+<p>Now combine: AAPL’s <strong>book equity</strong> (from Compustat) divided by its <strong>market
+equity</strong> (from CRSP) = the book-to-market ratio.</p>
+<p>For most of Apple’s history this ratio has been very <em>low</em> — Apple is a
+classic “growth” stock (priced far above book value). Fama and French’s
+famous result: high-B/M (“value”) stocks earn ~3-5%/year more than low-B/M
+(“growth”) stocks, on average, over decades.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute AAPL's recent book/market</span>
+<span class="c1"># Book equity: latest fiscal year from Compustat</span>
+<span class="n">latest</span> <span class="o">=</span> <span class="n">aapl_fund</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">book_equity_M</span> <span class="o">=</span> <span class="n">latest</span><span class="p">[</span><span class="s1">'ceq'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"AAPL fiscal year </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">latest</span><span class="p">[</span><span class="s1">'fyear'</span><span class="p">])</span><span class="si">}</span><span class="s2">: book equity = $</span><span class="si">{</span><span class="n">book_equity_M</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">M"</span><span class="p">)</span>
+
+<span class="c1"># Market equity: latest from CRSP</span>
+<span class="n">latest_mkt</span> <span class="o">=</span> <span class="n">aapl</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">market_equity_M</span> <span class="o">=</span> <span class="n">latest_mkt</span><span class="p">[</span><span class="s1">'mktcap'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"AAPL market cap as of </span><span class="si">{</span><span class="n">latest_mkt</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">: $</span><span class="si">{</span><span class="n">market_equity_M</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">M"</span><span class="p">)</span>
+
+<span class="n">bm</span> <span class="o">=</span> <span class="n">book_equity_M</span> <span class="o">/</span> <span class="n">market_equity_M</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Book-to-Market ratio: </span><span class="si">{</span><span class="n">bm</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  → Apple is priced at </span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">bm</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">x book value"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  → That makes it a deep 'growth' stock by F-F standards"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 The teaser</strong></p>
+<p>A high B/M ratio (cheap relative to book) historically earns higher returns.
+Apple — at 0.05ish B/M — has the opposite. <strong>We’ll spend Weeks 8-9 unpacking
+exactly how to test, exploit, and worry about this pattern.</strong> Today you just
+learned how to compute it for any firm in WRDS.</p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="final-challenge-pull-your-own-stock">
+<h2>🎯 Final Challenge: Pull YOUR Own Stock <a id="challenge"></a><a class="headerlink" href="#final-challenge-pull-your-own-stock" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>The point of this challenge</strong> is to verify you can independently use WRDS
+end-to-end. Pick a stock (NOT AAPL), look up its permno, pull 5 years of
+data, and report some basic facts.</p>
+</div></blockquote>
+<section id="step-1-find-your-stock-s-permno">
+<h3>Step 1 — Find your stock’s permno<a class="headerlink" href="#step-1-find-your-stock-s-permno" title="Link to this heading">#</a></h3>
+<p>Pick a ticker. Examples: MSFT, JPM, KO, BA, F, TSLA, NVDA, JNJ.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">crsp.stocknames</span></code> to look up the permno. The right query:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Look up YOUR stock's permno</span>
+<span class="n">MY_TICKER</span> <span class="o">=</span> <span class="s2">"____"</span>  <span class="c1"># ← replace with your ticker</span>
+
+<span class="n">lookup</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">    SELECT permno, ticker, comnam, namedt, nameenddt</span>
+<span class="s2">    FROM crsp.stocknames</span>
+<span class="s2">    WHERE ticker = '</span><span class="si">{</span><span class="n">MY_TICKER</span><span class="si">}</span><span class="s2">'</span>
+<span class="s2">    ORDER BY namedt</span>
+<span class="s2">"""</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Permno history for ticker </span><span class="si">{</span><span class="n">MY_TICKER</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">lookup</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+<span class="c1"># Pick the permno of the firm we care about (usually the latest entry)</span>
+<span class="n">my_permno</span> <span class="o">=</span> <span class="n">____</span>  <span class="c1"># ← fill in the permno (int) from the lookup above</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Will use permno = </span><span class="si">{</span><span class="n">my_permno</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>⚠️ Tickers get recycled.</strong> If your lookup returns multiple permnos,
+they may be totally different companies that used the same ticker at
+different times. Pick the one whose name (<code class="docutils literal notranslate"><span class="pre">comnam</span></code>) and date range match
+the company you actually want.</p>
+</div></blockquote>
+</section>
+<section id="step-2-pull-5-years-of-monthly-data">
+<h3>Step 2 — Pull 5 years of monthly data<a class="headerlink" href="#step-2-pull-5-years-of-monthly-data" title="Link to this heading">#</a></h3>
+<p>Adapt the precise prompt pattern from Demo 1. Pull monthly data from
+2019-01-01 to 2024-12-31 for your permno.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Pull the data — adapt the precise query pattern</span>
+<span class="n">mine</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">raw_sql</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">    SELECT date, ret, retx, prc, shrout, ticker</span>
+<span class="s2">    FROM crsp.msf</span>
+<span class="s2">    WHERE permno = </span><span class="si">{</span><span class="n">my_permno</span><span class="si">}</span>
+<span class="s2">      AND date BETWEEN '2019-01-01' AND '2024-12-31'</span>
+<span class="s2">    ORDER BY date</span>
+<span class="s2">"""</span><span class="p">,</span> <span class="n">date_cols</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pulled </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mine</span><span class="p">)</span><span class="si">}</span><span class="s2"> months of data"</span><span class="p">)</span>
+<span class="n">mine</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3-compute-the-required-outputs">
+<h3>Step 3 — Compute the required outputs<a class="headerlink" href="#step-3-compute-the-required-outputs" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📌 Required variable names</strong> (the submission cell expects these):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_ticker</span>           <span class="o">=</span> <span class="s2">"____"</span>   <span class="c1"># your ticker as a string</span>
+<span class="n">my_permno</span>           <span class="o">=</span> <span class="n">____</span>     <span class="c1"># the permno you used (int)</span>
+<span class="n">months_of_data</span>      <span class="o">=</span> <span class="n">____</span>     <span class="c1"># number of months pulled</span>
+<span class="n">latest_mktcap_M</span>     <span class="o">=</span> <span class="n">____</span>     <span class="c1"># last row's price × shrout / 1000 (millions)</span>
+<span class="n">cum_return</span>          <span class="o">=</span> <span class="n">____</span>     <span class="c1"># cumulative total return over the period</span>
+<span class="n">avg_monthly_return</span>  <span class="o">=</span> <span class="n">____</span>     <span class="c1"># mean of ret column</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required outputs:</span>
+<span class="n">my_ticker</span>          <span class="o">=</span> <span class="s2">"____"</span>
+<span class="n">my_permno</span>          <span class="o">=</span> <span class="n">____</span>
+<span class="n">months_of_data</span>     <span class="o">=</span> <span class="n">____</span>
+<span class="n">latest_mktcap_M</span>    <span class="o">=</span> <span class="n">____</span>
+<span class="n">cum_return</span>         <span class="o">=</span> <span class="n">____</span>
+<span class="n">avg_monthly_return</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Stock:               </span><span class="si">{</span><span class="n">my_ticker</span><span class="si">}</span><span class="s2"> (permno </span><span class="si">{</span><span class="n">my_permno</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Months of data:      </span><span class="si">{</span><span class="n">months_of_data</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Latest market cap:   $</span><span class="si">{</span><span class="n">latest_mktcap_M</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">M"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cumulative return:   </span><span class="si">{</span><span class="n">cum_return</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Avg monthly return:  </span><span class="si">{</span><span class="n">avg_monthly_return</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-4-note-2-sentences">
+<h3>Step 4 — Note (2 sentences)<a class="headerlink" href="#step-4-note-2-sentences" title="Link to this heading">#</a></h3>
+<p>Anything you noticed about your stock? Anything that surprised you about
+running the WRDS query?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">NOTE</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">Two sentences about your stock and/or the WRDS experience.</span>
+<span class="s2">Keep the triple quotes.</span>
+<span class="s2">"""</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">NOTE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="submission">
+<h2>📤 Submission <a id="submit"></a><a class="headerlink" href="#submission" title="Link to this heading">#</a></h2>
+<p>Run the cell below. Copy the line starting with <code class="docutils literal notranslate"><span class="pre">UG54::</span></code> into the
+submission form: <strong><a class="reference external" href="https://forms.gle/YOUR_FORM_LINK_HERE">https://forms.gle/YOUR_FORM_LINK_HERE</a></strong></p>
+<p>Completion-only — any plausible values + a real note will get full credit.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"my_ticker"</span><span class="p">,</span> <span class="s2">"my_permno"</span><span class="p">,</span> <span class="s2">"months_of_data"</span><span class="p">,</span> <span class="s2">"latest_mktcap_M"</span><span class="p">,</span>
+    <span class="s2">"cum_return"</span><span class="p">,</span> <span class="s2">"avg_monthly_return"</span><span class="p">,</span> <span class="s2">"NOTE"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">()]</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">❌ Missing: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"assignment"</span><span class="p">:</span> <span class="s2">"WRDS_Tour_AI"</span><span class="p">,</span>
+    <span class="s2">"ts"</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">"seconds"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"Z"</span><span class="p">,</span>
+    <span class="s2">"answers"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"my_ticker"</span><span class="p">:</span>          <span class="nb">str</span><span class="p">(</span><span class="n">my_ticker</span><span class="p">),</span>
+        <span class="s2">"my_permno"</span><span class="p">:</span>          <span class="nb">int</span><span class="p">(</span><span class="n">my_permno</span><span class="p">),</span>
+        <span class="s2">"months_of_data"</span><span class="p">:</span>     <span class="nb">int</span><span class="p">(</span><span class="n">months_of_data</span><span class="p">),</span>
+        <span class="s2">"latest_mktcap_M"</span><span class="p">:</span>    <span class="nb">float</span><span class="p">(</span><span class="n">latest_mktcap_M</span><span class="p">),</span>
+        <span class="s2">"cum_return"</span><span class="p">:</span>         <span class="nb">float</span><span class="p">(</span><span class="n">cum_return</span><span class="p">),</span>
+        <span class="s2">"avg_monthly_return"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">avg_monthly_return</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="s2">"memo"</span><span class="p">:</span> <span class="n">NOTE</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"UG54::</span><span class="si">{</span><span class="n">checksum</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s2"> chars"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Submission form: https://forms.gle/YOUR_FORM_LINK_HERE"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>WRDS is queryable from Colab in 5 lines.</strong> <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">wrds</span></code>, <code class="docutils literal notranslate"><span class="pre">wrds.Connection()</span></code>, <code class="docutils literal notranslate"><span class="pre">db.raw_sql(...)</span></code> — done.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">permno</span></code> is the right identifier</strong>, not ticker. Tickers change and get reused.</p></li>
+<li><p><strong>The CRSP <code class="docutils literal notranslate"><span class="pre">ret</span></code> / <code class="docutils literal notranslate"><span class="pre">retx</span></code> split is useful.</strong> Lets you separate price-only return from total return — equivalent to extracting the dividend yield.</p></li>
+<li><p><strong>Cross-section queries: always filter <code class="docutils literal notranslate"><span class="pre">shrcd</span> <span class="pre">IN</span> <span class="pre">(10,</span> <span class="pre">11)</span></code></strong> for US common stock. Otherwise you get ETFs and ADRs mixed in.</p></li>
+<li><p><strong>Negative prices in CRSP are bid-ask midpoints, not errors.</strong> Use <code class="docutils literal notranslate"><span class="pre">abs(prc)</span></code>; consider dropping them depending on your analysis.</p></li>
+<li><p><strong>Compustat: ALWAYS include the four filters.</strong> <code class="docutils literal notranslate"><span class="pre">indfmt='INDL'</span></code>, <code class="docutils literal notranslate"><span class="pre">datafmt='STD'</span></code>, <code class="docutils literal notranslate"><span class="pre">popsrc='D'</span></code>, <code class="docutils literal notranslate"><span class="pre">consol='C'</span></code>. Without them you get 4x rows per firm-year.</p></li>
+<li><p><strong>Loose prompts produce subtly wrong SQL.</strong> Precise prompts name the table, columns, filters, and ordering explicitly. <strong>AI will not guess WRDS schema correctly</strong> — it has to be told.</p></li>
+<li><p><strong>The Specify → Implement → Validate loop applies to SQL too.</strong> Spec out your query in English; let AI write the SQL; verify columns and row count before trusting the data.</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="fallback-load-csvs-use-only-if-wrds-connection-fails">
+<h2>🚨 FALLBACK_LOAD_CSVS (use only if WRDS connection fails)<a class="headerlink" href="#fallback-load-csvs-use-only-if-wrds-connection-fails" title="Link to this heading">#</a></h2>
+<p>If your WRDS connection isn’t working <em>during class</em>, run this cell to load
+pre-pulled equivalents of the data the demos use. <strong>You still need to sort
+out your WRDS access after class</strong> — but this lets you follow along.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🚨 Fallback: load pre-pulled CSVs in place of WRDS queries</span>
+<span class="c1"># Only run this if `db.raw_sql(...)` is failing for you today.</span>
+
+<span class="n">base</span> <span class="o">=</span> <span class="s1">'https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data'</span>
+<span class="n">aapl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s1">/wrds_tour_aapl_full.csv'</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">])</span>
+<span class="n">aapl</span> <span class="o">=</span> <span class="n">aapl</span><span class="p">[(</span><span class="n">aapl</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="s1">'2010-01-01'</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">aapl</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="s1">'2024-12-31'</span><span class="p">)]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">xs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s1">/wrds_tour_crsp_xs.csv'</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">])</span>
+<span class="c1"># Compustat sample is provided as a single-firm history of AAPL fundamentals</span>
+<span class="c1"># stub — you should still pull your own from WRDS to complete the challenge</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Fallback data loaded. Continue with the demos using `aapl` and `xs`."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"⚠️ The CHALLENGE still requires WRDS — get your access working before next class."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-wrds">Why WRDS? <a id="why"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#your-first-wrds-connection">Your First WRDS Connection <a id="connect"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sanity-check-what-tables-are-available">Sanity check: what tables are available?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-wrds-loose-vs-precise-prompts">Querying WRDS: Loose vs Precise Prompts <a id="workflow"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-1-single-stock-aapl-monthly">Demo 1 — Single Stock (AAPL Monthly) <a id="demo1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loose-prompt-what-not-to-do">🔴 Loose prompt — what NOT to do</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-prompt-the-pattern-that-works">🟢 Precise prompt — the pattern that works</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-retx-trick-share-issuance">The <code class="docutils literal notranslate"><span class="pre">retx</span></code> Trick + Share Issuance <a id="retx"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#share-issuance-from-the-data">Share issuance from the data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-2-a-cross-section">Demo 2 — A Cross-Section <a id="demo2"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loose-prompt">🔴 Loose prompt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-prompt">🟢 Precise prompt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-in-the-cross-section-share-codes-exchanges-negative-prices">What’s IN the Cross-Section: Share Codes, Exchanges, Negative Prices <a id="xs"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#share-codes-shrcd-define-the-universe">Share codes (<code class="docutils literal notranslate"><span class="pre">shrcd</span></code>) define the universe</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exchanges-exchcd">Exchanges (<code class="docutils literal notranslate"><span class="pre">exchcd</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#negative-prices-a-crsp-convention">Negative prices — a CRSP convention</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-3-compustat-fundamentals">Demo 3 — Compustat Fundamentals <a id="demo3"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">🔴 Loose prompt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">🟢 Precise prompt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#book-to-market-and-the-value-premium-teaser">Book-to-Market and the Value Premium Teaser <a id="value"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-challenge-pull-your-own-stock">🎯 Final Challenge: Pull YOUR Own Stock <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-find-your-stock-s-permno">Step 1 — Find your stock’s permno</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-pull-5-years-of-monthly-data">Step 2 — Pull 5 years of monthly data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-compute-the-required-outputs">Step 3 — Compute the required outputs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-note-2-sentences">Step 4 — Note (2 sentences)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fallback-load-csvs-use-only-if-wrds-connection-fails">🚨 FALLBACK_LOAD_CSVS (use only if WRDS connection fails)</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

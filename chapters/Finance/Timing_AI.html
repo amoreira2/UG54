@@ -1,0 +1,1925 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Timing Strategies &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/Timing_AI';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/Timing_AI.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data-Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="L1_Welcome_Returns_AI.html">3. L1 · The Workflow, and What a Return Is</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L2_Panel_Portfolios_AI.html">4. L2 · The Panel and Portfolio Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L3_Sorts_AI.html">5. L3 · Sorts, Breakpoints, and Long-Short Portfolios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L4_PerfEval_Factors_AI.html">6. L4 · Performance Evaluation, and Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L5_Factor_Zoo_AI.html">7. L5 · Where Factors Come From, and the Factor Zoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L6_MultiFactor_AI.html">8. L6 · Multi-Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L7_Portfolio_Decomposition_AI.html">9. L7 · Decomposing a Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L8_Backtesting_Protocol.html">10. L8 · Backtesting Protocol  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L9_Anomalies.html">11. L9 · Anomalies  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L10_Momentum_and_Trend_Following.html">12. L10 · Momentum and Trend Following  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Conditional_Strategies_I.html">13. L11 · Conditional Strategies I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Conditional_Strategies_II.html">14. L12 · Conditional Strategies II — Factor Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_I.html">15. L13 · Capital Allocation I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Capital_Allocation_II.html">16. L14 · Capital Allocation II — Fragility  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L15_Fundamental_Risk_Models_BARRA.html">17. L15 · Fundamental Risk Models (BARRA)  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L16_Transaction_Costs.html">18. L16 · Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L17_Leverage_and_Shorting.html">19. L17 · Leverage and Shorting  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L18_PCA_and_Statistical_Factors.html">20. L18 · PCA and Statistical Factors  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L19_Machine_Learning.html">21. L19 · Machine Learning  ◦</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">22. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_AI.html">22.1. Assignment 1 — Python, pandas, and Data That Fights Back</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">22.5. Assignment 2 — Diversification, and Your First Sort</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A3_Beta_and_Alpha_AI.html">22.8. Assignment 3 — Beta, Alpha, and Whether You Have Either</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/SignalHygiene_AI.html">23. Appendix · Signal Hygiene</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">24. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">24.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">24.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">24.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">24.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">24.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">24.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">24.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">24.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">24.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">24.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">24.4.9. Cleaning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">24.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">24.5. Flow Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">24.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">24.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../scientific/linear_algebra1_c.html">25. Linear Algebra Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">26. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intro.html">27. Archive · Pre-AI Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="IntrotoReturns_c.html">27.1. Introduction to Asset Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">27.2. Choice of Frequency and Annualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">27.3. Data APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PortfolioMath_c.html">27.4. Portfolio Mathematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FactorModels_c.html">27.5. Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiFactorModels_c.html">27.6. Multi-Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">27.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="FactorModelEstimation_c.html">27.11. Factor Model Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crosssectionalequitystrategies.html">27.12. Cross-Sectional Equity Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">27.13. Momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">27.14. An Overview of Factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Timing_c.html">27.15. Timing Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">27.16. Expected-Return Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">27.17. Volatility Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationI_cc.html">27.18. Capital Allocation I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationII.html">27.19. Capital Allocation II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Performance_evaluation_c.html">27.20. Performance Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RiskManagement.html">27.21. Risk Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TradingCosts.html">27.22. Liquidity and Trading Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LeverageandShorting.html">27.23. Leverage, Shorting, Limits to Arbitrage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearning_cc.html">27.24. Machine Learning in Finance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LLMs.html">27.25. Gen AI and LLMs in Finance</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Finance/Timing_AI.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/Timing_AI.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/Timing_AI.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Timing Strategies</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Timing Strategies</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-kinds-of-timing">Two Kinds of Timing <a id="two"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-return-timing-market-timing">1. Expected Return Timing (Market Timing)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-timing-volatility-timing">2. Risk Timing (Volatility Timing)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-timing">🛡️ Pitfall Checklist for Timing <a id="pitfalls"></a></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#part-i-market-timing">Part I — Market Timing</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-predictability-puzzle">The Predictability Puzzle <a id="puzzle"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-is-this-surprising">Why is this surprising?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gordon-growth-framing">The Gordon growth framing</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-yield-as-a-signal">Dividend Yield as a Signal <a id="dy"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-1-forecasting-regression-with-hac">🔄 Live Demo 1: Forecasting Regression with HAC <a id="demo1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loose-prompt-what-not-to-do">🔴 Loose prompt — what NOT to do</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-prompt-the-pattern-that-works">🟢 Precise prompt — the pattern that works</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample-evaluation">Out-of-Sample Evaluation <a id="oos"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">From Signal to Weights <a id="weight"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-1-pick-your-own-predictor-from-fred">🛠️ Hands-On 1: Pick Your Own Predictor from FRED <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-is-open-ended">Why this is open-ended</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-menu-of-suggestions">A menu of suggestions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-fetch-your-series-from-fred">Step 1 — Fetch your series from FRED</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-merge-with-future-returns-and-check-correlation">Step 2 — Merge with future returns and check correlation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-run-the-hac-regression">Step 3 — Run the HAC regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-build-the-timing-strategy">Step 4 — Build the timing strategy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#part-ii-volatility-timing">Part II — Volatility Timing</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-volatility-timing-works">When Volatility Timing Works <a id="voltheory"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decomposition">The decomposition</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#realized-variance-from-daily-data">Realized Variance from Daily Data <a id="rv"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-2-building-the-vol-timed-strategy">🔄 Live Demo 2: Building the Vol-Timed Strategy <a id="demo2"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loose-prompt">🔴 Loose prompt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-prompt">🟢 Precise prompt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-2-vix2-as-a-forward-looking-variance-forecast">🛠️ Hands-On 2: VIX² as a Forward-Looking Variance Forecast <a id="ho2"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-fetch-vix-from-fred">Step 1 — Fetch VIX from FRED</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-convert-vix-to-monthly-variance-forecast">Step 2 — Convert VIX to monthly variance forecast</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-build-vix-based-timing-strategy">Step 3 — Build VIX-based timing strategy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-comparing-four-timing-approaches">🎯 Challenge: Comparing Four Timing Approaches <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-buy-and-hold-sharpe-post-1991">Q1 — Buy-and-hold Sharpe (post-1991)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-d-p-based-mean-timing-sharpe-post-1991-oos">Q2 — D/P-based mean-timing Sharpe (post-1991 OOS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-your-predictor-mean-timing-sharpe-oos">Q3 — Your-predictor mean-timing Sharpe (OOS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-rv-based-vol-timing-sharpe-full-sample">Q4 — RV-based vol-timing Sharpe (full sample)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q5-vix2-based-vol-timing-sharpe-post-1990">Q5 — VIX²-based vol-timing Sharpe (post-1990)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q6-the-memo">Q6 — The Memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="timing-strategies">
+<h1>Timing Strategies<a class="headerlink" href="#timing-strategies" title="Link to this heading">#</a></h1>
+<section id="learning-objectives">
+<h2>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of this notebook, you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Distinguish two timing strategies</strong> — predicting expected returns vs. responding to volatility</p></li>
+<li><p><strong>Run forecasting regressions</strong> with HAC standard errors for overlapping returns</p></li>
+<li><p><strong>Evaluate predictability out-of-sample</strong> with a simple train/test split</p></li>
+<li><p><strong>Construct a market-timing strategy</strong> by converting a signal into portfolio weights</p></li>
+<li><p><strong>Construct a volatility-timed strategy</strong> that scales allocation inversely to recent variance</p></li>
+<li><p><strong>Audit AI-generated timing code</strong> — look-ahead bias, overlap correction, weight blow-ups</p></li>
+</ol>
+</section>
+<section id="table-of-contents">
+<h2>📋 Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<p>This notebook is designed for <strong>two class sessions</strong>. Class 1 covers Part I,
+Class 2 covers Part II + the comparison challenge.</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#setup"><span class="xref myst">Setup</span></a></p></li>
+<li><p><a class="reference internal" href="#two"><span class="xref myst">Two Kinds of Timing</span></a></p></li>
+<li><p><a class="reference internal" href="#pitfalls"><span class="xref myst">Pitfall Checklist for Timing</span></a></p></li>
+</ol>
+<p><strong>Part I — Market Timing (expected-return timing) — Class 1</strong></p>
+<ol class="arabic simple" start="4">
+<li><p><a class="reference internal" href="#puzzle"><span class="xref myst">The Predictability Puzzle</span></a></p></li>
+<li><p><a class="reference internal" href="#dy"><span class="xref myst">Dividend Yield as a Signal</span></a></p></li>
+<li><p><a class="reference internal" href="#demo1"><span class="xref myst">Live Demo 1: Forecasting Regression with HAC</span></a></p></li>
+<li><p><a class="reference internal" href="#oos"><span class="xref myst">Out-of-Sample Evaluation</span></a></p></li>
+<li><p><a class="reference internal" href="#weight"><span class="xref myst">From Signal to Weights</span></a></p></li>
+<li><p><a class="reference internal" href="#ho1"><span class="xref myst">🛠️ Hands-On 1: Pick Your Own Predictor from FRED</span></a></p></li>
+</ol>
+<p><strong>Part II — Volatility Timing — Class 2</strong></p>
+<ol class="arabic simple" start="10">
+<li><p><a class="reference internal" href="#voltheory"><span class="xref myst">When Volatility Timing Works</span></a></p></li>
+<li><p><a class="reference internal" href="#rv"><span class="xref myst">Realized Variance from Daily Data</span></a></p></li>
+<li><p><a class="reference internal" href="#demo2"><span class="xref myst">Live Demo 2: Building the Vol-Timed Strategy</span></a></p></li>
+<li><p><a class="reference internal" href="#ho2"><span class="xref myst">🛠️ Hands-On 2: VIX² as a Forward-Looking Variance Forecast</span></a></p></li>
+<li><p><a class="reference internal" href="#challenge"><span class="xref myst">🎯 Challenge: Comparing Four Timing Approaches</span></a></p></li>
+<li><p><a class="reference internal" href="#submit"><span class="xref myst">Submission</span></a></p></li>
+<li><p><a class="reference internal" href="#takeaways"><span class="xref myst">Key Takeaways</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2>🛠️ Setup <a id="setup"></a><a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🛠️ Setup: Run this cell first</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">'seaborn-v0_8-whitegrid'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'font.size'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span><span class="p">;</span> <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataReader</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_factors</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">'daily'</span><span class="p">):</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="s1">''</span> <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s1">'monthly'</span> <span class="k">else</span> <span class="s1">'_'</span> <span class="o">+</span> <span class="n">freq</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="sa">f</span><span class="s2">"F-F_Research_Data_Factors</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"famafrench"</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s2">"1921-01-01"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">freq</span> <span class="o">==</span> <span class="s1">'monthly'</span><span class="p">:</span>
+        <span class="n">ff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ff</span> <span class="o">/</span> <span class="mi">100</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"✅ Loaded"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="two-kinds-of-timing">
+<h2>Two Kinds of Timing <a id="two"></a><a class="headerlink" href="#two-kinds-of-timing" title="Link to this heading">#</a></h2>
+<p>“Timing the market” means changing your allocation over time based on something
+you observe. There are <strong>two fundamentally different versions</strong> of this idea:</p>
+<section id="expected-return-timing-market-timing">
+<h3>1. Expected Return Timing (Market Timing)<a class="headerlink" href="#expected-return-timing-market-timing" title="Link to this heading">#</a></h3>
+<p><em>“The market is cheap right now — I’ll add exposure.”</em></p>
+<p>Find some signal <span class="math notranslate nohighlight">\(X_t\)</span> that predicts next-period expected excess return:</p>
+<div class="math notranslate nohighlight">
+\[r^e_{t+1} = a + b \cdot X_t + u_{t+1}\]</div>
+<p>Classic signals: <strong>dividend yield</strong>, earnings yield, the term-structure slope.</p>
+</section>
+<section id="risk-timing-volatility-timing">
+<h3>2. Risk Timing (Volatility Timing)<a class="headerlink" href="#risk-timing-volatility-timing" title="Link to this heading">#</a></h3>
+<p><em>“The market is volatile right now — I’ll reduce exposure.”</em></p>
+<p>Skip the question of expected returns. Just respond to risk:</p>
+<div class="math notranslate nohighlight">
+\[w_t = \frac{c}{\hat\sigma_{t+1}^2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat\sigma_{t+1}^2\)</span> is a forecast of next period’s variance (e.g.
+last month’s realized variance).</p>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<p>Expected-return timing requires forecasting something <em>hard</em> (<span class="math notranslate nohighlight">\(\mu_{t+1}\)</span>).
+Volatility timing only requires forecasting something <em>easier</em> (<span class="math notranslate nohighlight">\(\sigma^2_{t+1}\)</span>).
+The two strategies have very different track records — and the academic
+evidence favors the volatility version.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="pitfall-checklist-for-timing">
+<h2>🛡️ Pitfall Checklist for Timing <a id="pitfalls"></a><a class="headerlink" href="#pitfall-checklist-for-timing" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Pitfall</p></th>
+<th class="head"><p>What goes wrong</p></th>
+<th class="head"><p>🔍 How to detect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><strong>Look-ahead in signal construction</strong></p></td>
+<td><p>Using time-<span class="math notranslate nohighlight">\(t+1\)</span> data to compute the signal at <span class="math notranslate nohighlight">\(t\)</span></p></td>
+<td><p>Always <code class="docutils literal notranslate"><span class="pre">.shift(1)</span></code> your signal explicitly</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p><strong>Overlapping returns inflate t-stats</strong></p></td>
+<td><p>Regressing 5-year forward returns gives 59-month overlap; OLS standard errors are wildly understated</p></td>
+<td><p>Use HAC (Newey-West) standard errors with <code class="docutils literal notranslate"><span class="pre">maxlags</span> <span class="pre">=</span> <span class="pre">horizon</span> <span class="pre">×</span> <span class="pre">frequency</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><strong>In-sample R² looks great</strong></p></td>
+<td><p>OLS fit to the full sample fits any noise</p></td>
+<td><p>The OOS R² is what matters; it’s often <em>negative</em> for return predictability</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><strong>Weight blow-ups in vol timing</strong></p></td>
+<td><p><span class="math notranslate nohighlight">\(1/\sigma^2\)</span> explodes when vol is low; demand leverage &gt; 5x</p></td>
+<td><p>Clip weights or scale so average weight is 1</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><strong>Transaction costs ignored</strong></p></td>
+<td><p>High-turnover strategies look great gross</p></td>
+<td><p>Always estimate turnover × spread</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p><strong>Structural breaks</strong></p></td>
+<td><p>Dividend yield’s mean shifted post-1980s (buyback era)</p></td>
+<td><p>Plot the signal series; look for regime shifts</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p><strong>🤖 AI-Era Insight</strong></p>
+<p>AI will happily fit <code class="docutils literal notranslate"><span class="pre">smf.ols('ret</span> <span class="pre">~</span> <span class="pre">dy',</span> <span class="pre">data=df)</span></code> and report a t-stat. It
+rarely catches the overlap problem; it never asks about regime shifts in the
+signal; it treats in-sample R² as evidence. <strong>The audit is the work.</strong></p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section class="tex2jax_ignore mathjax_ignore" id="part-i-market-timing">
+<h1>Part I — Market Timing<a class="headerlink" href="#part-i-market-timing" title="Link to this heading">#</a></h1>
+<hr class="docutils" />
+<section id="the-predictability-puzzle">
+<h2>The Predictability Puzzle <a id="puzzle"></a><a class="headerlink" href="#the-predictability-puzzle" title="Link to this heading">#</a></h2>
+<p>One of the most famous findings in finance:</p>
+<blockquote>
+<div><p><strong>High dividend yield periods are followed by above-average returns.</strong></p>
+</div></blockquote>
+<p>This finding (Campbell-Shiller, 1988) earned Shiller a share of the 2013 Nobel.</p>
+<section id="why-is-this-surprising">
+<h3>Why is this surprising?<a class="headerlink" href="#why-is-this-surprising" title="Link to this heading">#</a></h3>
+<p>When prices are low relative to dividends (high D/P), you might expect:</p>
+<ul class="simple">
+<li><p>❌ Future dividends will fall — “bad news is priced in”</p></li>
+</ul>
+<p>But what actually happens:</p>
+<ul class="simple">
+<li><p>✅ Future <em>prices</em> go up — <strong>expected returns</strong> were high</p></li>
+</ul>
+</section>
+<section id="the-gordon-growth-framing">
+<h3>The Gordon growth framing<a class="headerlink" href="#the-gordon-growth-framing" title="Link to this heading">#</a></h3>
+<div class="math notranslate nohighlight">
+\[P = \frac{D}{r - g} \quad\Longrightarrow\quad \frac{D}{P} = r - g\]</div>
+<p>A low D/P ratio means either:</p>
+<ul class="simple">
+<li><p>Expected returns <span class="math notranslate nohighlight">\(r\)</span> are low, <strong>OR</strong></p></li>
+<li><p>Expected dividend growth <span class="math notranslate nohighlight">\(g\)</span> is high</p></li>
+</ul>
+<p>Shiller’s empirical finding: most of the variation in D/P reflects variation in
+<strong>expected returns</strong>, not in growth. This suggests expected returns are
+<em>time-varying</em> and <em>forecastable</em>.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<p>If expected returns vary predictably with D/P, you can build a <strong>timing
+strategy</strong> that invests more when expected returns are high.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="dividend-yield-as-a-signal">
+<h2>Dividend Yield as a Signal <a id="dy"></a><a class="headerlink" href="#dividend-yield-as-a-signal" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load CRSP market data with dividend yield</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">'https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/Markettiming_data1.csv'</span>
+<span class="n">crsp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">'date'</span><span class="p">)</span>
+<span class="n">crsp</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">crsp</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Range: </span><span class="si">{</span><span class="n">crsp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">crsp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Columns:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"  vwretd: value-weighted market return (with dividends)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"  vwretx: value-weighted market return (without dividends)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"  dp:     dividend yield (dividend / price)"</span><span class="p">)</span>
+<span class="n">crsp</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot annualized 12-month average dividend yield</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">dp_annual</span> <span class="o">=</span> <span class="n">crsp</span><span class="p">[</span><span class="s1">'dp'</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dp_annual</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Annualized Dividend Yield'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Market dividend yield over time'</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 Remember</strong></p>
+<p>Dividend yields ranged from 4-7% in the 1930s to ~2% today. This secular
+decline matters for interpretation:</p>
+<ul class="simple">
+<li><p>Firms increasingly return capital via <em>buybacks</em> instead of dividends</p></li>
+<li><p>So D/P alone may understate the true cash-return yield of the market</p></li>
+<li><p>Many academic papers replace D/P with the <strong>CAPE</strong> ratio (Shiller’s earnings yield) or with total-payout yield to handle the structural shift</p></li>
+</ul>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="live-demo-1-forecasting-regression-with-hac">
+<h2>🔄 Live Demo 1: Forecasting Regression with HAC <a id="demo1"></a><a class="headerlink" href="#live-demo-1-forecasting-regression-with-hac" title="Link to this heading">#</a></h2>
+<p>Test whether dividend yield predicts the <em>next 5-year</em> market return.</p>
+<section id="loose-prompt-what-not-to-do">
+<h3>🔴 Loose prompt — what NOT to do<a class="headerlink" href="#loose-prompt-what-not-to-do" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Test if dividend yield predicts future market returns.”</em></p>
+</div></blockquote>
+<p><strong>What AI is likely to produce:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">crsp</span><span class="p">[</span><span class="s1">'dp'</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">crsp</span><span class="p">[</span><span class="s1">'vwretd'</span><span class="p">]</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<p><strong>The bugs:</strong></p>
+<ul class="simple">
+<li><p>❌ Regressed <em>contemporaneous</em> returns on D/P — that’s not a <em>forecast</em>; you need a future return on the left</p></li>
+<li><p>❌ Picked monthly returns; for D/P the right horizon is multi-year (the variable is slow-moving)</p></li>
+<li><p>❌ Used <code class="docutils literal notranslate"><span class="pre">sm.OLS</span></code> standard errors — when returns <em>do</em> overlap (multi-year horizon), these will be ~5-10× too small</p></li>
+<li><p>❌ No <code class="docutils literal notranslate"><span class="pre">.dropna()</span></code> — <code class="docutils literal notranslate"><span class="pre">.fit()</span></code> will silently drop missing values without warning</p></li>
+</ul>
+</section>
+<section id="precise-prompt-the-pattern-that-works">
+<h3>🟢 Precise prompt — the pattern that works<a class="headerlink" href="#precise-prompt-the-pattern-that-works" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Compute the <strong>5-year forward annualized return</strong> of <code class="docutils literal notranslate"><span class="pre">crsp['vwretd']</span></code> for
+each month: take the rolling 60-month product of (1+ret), shift -60 months
+so the observation date aligns with the <em>start</em> of the forward window, take
+the 60th root and subtract 1.
+Construct the predictor as a smoothed annualized dividend yield:
+<code class="docutils literal notranslate"><span class="pre">crsp['dp'].rolling(12).mean()</span> <span class="pre">*</span> <span class="pre">12</span></code>.
+Regress future-returns on lagged D/P using HAC (Newey-West) standard errors
+with <code class="docutils literal notranslate"><span class="pre">maxlags</span> <span class="pre">=</span> <span class="pre">5*12</span> <span class="pre">=</span> <span class="pre">60</span></code> to correct for overlap. Print the summary.”</em></p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 🟢 Precise version</span>
+<span class="n">years</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="c1"># 5-year forward annualized return</span>
+<span class="n">crsp</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">crsp</span><span class="p">[</span><span class="s1">'vwretd'</span><span class="p">])</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">years</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="p">)</span>
+<span class="c1"># Annualized smoothed dividend yield</span>
+<span class="n">crsp</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span> <span class="o">=</span> <span class="n">crsp</span><span class="p">[</span><span class="s1">'dp'</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span>
+
+<span class="n">reg_df</span> <span class="o">=</span> <span class="n">crsp</span><span class="p">[[</span><span class="s1">'R_future'</span><span class="p">,</span> <span class="s1">'dp_avg'</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sample correlation: </span><span class="si">{</span><span class="n">reg_df</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">reg_df</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">])</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Observations:       </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">reg_df</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Naive OLS — INFLATED t-stat (overlapping returns problem)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">reg_df</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">reg_df</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">]</span>
+<span class="n">model_naive</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"===== Naive OLS ====="</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Slope (b):  </span><span class="si">{</span><span class="n">model_naive</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  t-stat:     </span><span class="si">{</span><span class="n">model_naive</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">    ← INFLATED"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  R²:         </span><span class="si">{</span><span class="n">model_naive</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># HAC-corrected — the honest standard error</span>
+<span class="n">model_hac</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">'HAC'</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">'maxlags'</span><span class="p">:</span> <span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"===== HAC (Newey-West) ====="</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Slope (b):  </span><span class="si">{</span><span class="n">model_hac</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  t-stat:     </span><span class="si">{</span><span class="n">model_hac</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">    ← honest"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  R²:         </span><span class="si">{</span><span class="n">model_hac</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>⚠️ Overlap inflates standard errors</strong></p>
+<p>The naive t-stat and the HAC t-stat differ by a factor of 2-3x. Both
+regressions fit the same line; only the inference about <em>whether the slope
+is different from zero</em> changes.</p>
+<p>Rule: <strong>use HAC whenever your dependent variable is a multi-period return.</strong>
+<code class="docutils literal notranslate"><span class="pre">maxlags</span></code> should be at least the number of overlapping periods (here, 60).</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="out-of-sample-evaluation">
+<h2>Out-of-Sample Evaluation <a id="oos"></a><a class="headerlink" href="#out-of-sample-evaluation" title="Link to this heading">#</a></h2>
+<p>In-sample fit is one thing. The question that matters for trading: <strong>does this
+predict OUT OF SAMPLE?</strong></p>
+<p>The simplest split: estimate the regression on early data, forecast on later
+data, see if the forecast tracks realized returns.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Train: 1950-1990. Test: 1991+.</span>
+<span class="n">estimation</span> <span class="o">=</span> <span class="n">crsp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1950'</span><span class="p">:</span><span class="s1">'1990'</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">test</span>       <span class="o">=</span> <span class="n">crsp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1991'</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">X_est</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">estimation</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">])</span>
+<span class="n">y_est</span> <span class="o">=</span> <span class="n">estimation</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">]</span>
+<span class="n">m_est</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y_est</span><span class="p">,</span> <span class="n">X_est</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">'drop'</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">cov_type</span><span class="o">=</span><span class="s1">'HAC'</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">'maxlags'</span><span class="p">:</span> <span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">})</span>
+
+<span class="c1"># Forecast for the test period using ESTIMATION-SAMPLE coefficients</span>
+<span class="n">test</span><span class="p">[</span><span class="s1">'forecast'</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_est</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span> <span class="o">+</span> <span class="n">m_est</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span> <span class="o">*</span> <span class="n">test</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">test</span><span class="p">[[</span><span class="s1">'R_future'</span><span class="p">,</span> <span class="s1">'forecast'</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Forecast vs realized 5-year-ahead returns (out-of-sample)"</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Annualized return"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OOS R-squared vs the in-sample mean (the proper benchmark)</span>
+<span class="n">r_past_avg</span> <span class="o">=</span> <span class="n">estimation</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">ss_residual</span> <span class="o">=</span> <span class="p">((</span><span class="n">test</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">]</span> <span class="o">-</span> <span class="n">test</span><span class="p">[</span><span class="s1">'forecast'</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">ss_baseline</span> <span class="o">=</span> <span class="p">((</span><span class="n">test</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">]</span> <span class="o">-</span> <span class="n">r_past_avg</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">oos_r2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">ss_residual</span> <span class="o">/</span> <span class="n">ss_baseline</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Out-of-sample R²: </span><span class="si">{</span><span class="n">oos_r2</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  (Negative = the in-sample mean predicts BETTER than the regression.)"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<p>A negative OOS R² is the dirty secret of the predictability literature. Even
+when the in-sample t-stat is significant, the out-of-sample forecast often
+performs <em>worse</em> than the long-run mean. Suggests the relationship may be
+unstable across regimes.</p>
+<p><strong>What could be going wrong?</strong></p>
+<ul class="simple">
+<li><p>Structural breaks (buybacks era, secular decline in yields)</p></li>
+<li><p>One-off shift in the risk premium with mean reversion around a new average</p></li>
+<li><p>Look-ahead in how the model was selected in published papers</p></li>
+</ul>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="from-signal-to-weights">
+<h2>From Signal to Weights <a id="weight"></a><a class="headerlink" href="#from-signal-to-weights" title="Link to this heading">#</a></h2>
+<p>Even with imperfect forecasts, you can still construct a strategy. By the
+single-asset MVE formula:</p>
+<div class="math notranslate nohighlight">
+\[x_t = \frac{\mu_t}{\gamma \sigma^2} = \frac{a + b \cdot DP_t}{\gamma \sigma^2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu_t\)</span> is the forecasted premium, <span class="math notranslate nohighlight">\(\gamma\)</span> is risk aversion, and
+<span class="math notranslate nohighlight">\(\sigma\)</span> is volatility (assumed constant for now).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Strategy parameters</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">vol</span>   <span class="o">=</span> <span class="mf">0.16</span>  <span class="c1"># constant 16%/yr vol assumption</span>
+
+<span class="n">test</span><span class="p">[</span><span class="s1">'weight'</span><span class="p">]</span>    <span class="o">=</span> <span class="n">test</span><span class="p">[</span><span class="s1">'forecast'</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">vol</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Get RF for the test period</span>
+<span class="n">ff_m</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">'monthly'</span><span class="p">)[[</span><span class="s1">'RF'</span><span class="p">]]</span>
+<span class="n">test_with_rf</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">ff_m</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+<span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'ret_timing'</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span> <span class="o">+</span> <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'weight'</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+    <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'vwretd'</span><span class="p">]</span> <span class="o">-</span> <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span>
+<span class="n">test_with_rf</span> <span class="o">=</span> <span class="n">test_with_rf</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'ret_timing'</span><span class="p">])</span>
+
+<span class="c1"># Cumulative</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'ret_timing'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Mean-timing strategy'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'vwretd'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Buy &amp; hold'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Growth of $1 (log)'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Mean-timing strategy vs buy-and-hold'</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">excess_timing</span> <span class="o">=</span> <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'ret_timing'</span><span class="p">]</span> <span class="o">-</span> <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span>
+<span class="n">excess_mkt</span>    <span class="o">=</span> <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'vwretd'</span><span class="p">]</span>    <span class="o">-</span> <span class="n">test_with_rf</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span>
+<span class="n">sr_timing</span> <span class="o">=</span> <span class="p">(</span><span class="n">excess_timing</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">excess_timing</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+<span class="n">sr_mkt</span>    <span class="o">=</span> <span class="p">(</span><span class="n">excess_mkt</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">)</span>    <span class="o">/</span> <span class="p">(</span><span class="n">excess_mkt</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sharpe (mean-timing):  </span><span class="si">{</span><span class="n">sr_timing</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sharpe (buy &amp; hold):   </span><span class="si">{</span><span class="n">sr_mkt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<p>Even when the OOS R² is small or negative, the <strong>trading strategy</strong> can
+still beat buy-and-hold on Sharpe. Why? Because the strategy uses the signal
+to <em>time the average exposure</em> — small but positive correlation between
+forecast and future returns translates into a Sharpe edge.</p>
+<p>This is the central puzzle of mean-timing: t-stats look bad, OOS R² looks
+bad, but Sharpe improvements sometimes appear anyway. <strong>Trust the Sharpe,
+not the R².</strong></p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="hands-on-1-pick-your-own-predictor-from-fred">
+<h2>🛠️ Hands-On 1: Pick Your Own Predictor from FRED <a id="ho1"></a><a class="headerlink" href="#hands-on-1-pick-your-own-predictor-from-fred" title="Link to this heading">#</a></h2>
+<p>You’ve seen dividend yield as a predictor. <strong>Your job: pick a different
+macro/financial variable from FRED and test whether it predicts the market.</strong></p>
+<section id="why-this-is-open-ended">
+<h3>Why this is open-ended<a class="headerlink" href="#why-this-is-open-ended" title="Link to this heading">#</a></h3>
+<p>There’s no “right” predictor of stock returns. Researchers have proposed dozens
+over the decades. Some work in some samples and fail in others. Your task is to
+pick something <em>you think plausibly predicts equity returns</em> and run the same
+test we ran for D/P.</p>
+</section>
+<section id="a-menu-of-suggestions">
+<h3>A menu of suggestions<a class="headerlink" href="#a-menu-of-suggestions" title="Link to this heading">#</a></h3>
+<p>These are all classic candidates. <strong>Pick one, or find your own on FRED:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>FRED series ID</p></th>
+<th class="head"><p>Variable</p></th>
+<th class="head"><p>Why it might predict</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">T10Y3M</span></code></p></td>
+<td><p>10Y − 3M Treasury yield spread</p></td>
+<td><p>Steep curve at recovery starts</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">T10Y2Y</span></code></p></td>
+<td><p>10Y − 2Y Treasury yield spread</p></td>
+<td><p>Same idea, different short rate</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BAA10Y</span></code></p></td>
+<td><p>Baa corporate − 10Y Treasury (credit spread)</p></td>
+<td><p>Wide credit spread at stress peaks</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">T10YIE</span></code></p></td>
+<td><p>10-year breakeven inflation</p></td>
+<td><p>Inflation expectations / real rates</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">UNRATE</span></code></p></td>
+<td><p>US unemployment rate (monthly)</p></td>
+<td><p>Labor-market / business cycle</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">VIXCLS</span></code></p></td>
+<td><p>VIX (option-implied vol)</p></td>
+<td><p>Risk premium proxy (we’ll use this in Part II too)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DGS10</span></code></p></td>
+<td><p>10-year Treasury yield</p></td>
+<td><p>Discount rate</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Browse the catalogue at <a class="reference external" href="https://fred.stlouisfed.org">https://fred.stlouisfed.org</a> if none of these inspire you.</p>
+<blockquote>
+<div><p><strong>📌 Pick now.</strong> Edit the cell below with your choice.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === EDIT THIS CELL: your predictor of choice ===</span>
+<span class="n">MY_PREDICTOR_ID</span>   <span class="o">=</span> <span class="s2">"T10Y3M"</span>   <span class="c1"># ← change to whatever FRED series ID you picked</span>
+<span class="n">MY_PREDICTOR_NAME</span> <span class="o">=</span> <span class="s2">"Term spread (10Y − 3M)"</span>  <span class="c1"># ← human-readable label for plots</span>
+
+<span class="c1"># ⚠️ Don't pick anything that contains stock returns directly (e.g., SP500). That's circular.</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"You picked: </span><span class="si">{</span><span class="n">MY_PREDICTOR_NAME</span><span class="si">}</span><span class="s2">  (FRED ID: </span><span class="si">{</span><span class="n">MY_PREDICTOR_ID</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-1-fetch-your-series-from-fred">
+<h3>Step 1 — Fetch your series from FRED<a class="headerlink" href="#step-1-fetch-your-series-from-fred" title="Link to this heading">#</a></h3>
+<p>We use <code class="docutils literal notranslate"><span class="pre">pandas-datareader</span></code> to pull from the St. Louis Fed (free, no API key needed).
+Plot the series and inspect: is it persistent? Does it spike around crises?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fetch your chosen series from FRED</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataReader</span>
+<span class="n">raw</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="n">MY_PREDICTOR_ID</span><span class="p">,</span> <span class="s1">'fred'</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s1">'1980-01-01'</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">raw</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span>
+
+<span class="c1"># Many FRED series are in percent (yield, inflation, etc.). Convert to decimal</span>
+<span class="c1"># unless your variable is naturally a level (e.g., unemployment rate stays in %).</span>
+<span class="c1"># Rule of thumb: if the average value is &gt; 1, divide by 100 to express in decimal.</span>
+<span class="c1"># We'll do that here automatically — feel free to override.</span>
+<span class="k">if</span> <span class="n">raw</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">raw</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Auto-scaled by 100 (mean &gt; 1 → likely in %)"</span><span class="p">)</span>
+
+<span class="c1"># Convert to monthly (end-of-month observation)</span>
+<span class="n">sig_monthly</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">'ME'</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Range: </span><span class="si">{</span><span class="n">sig_monthly</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">sig_monthly</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Months: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sig_monthly</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sig_monthly</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">MY_PREDICTOR_NAME</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">MY_PREDICTOR_NAME</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">MY_PREDICTOR_ID</span><span class="si">}</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-2-merge-with-future-returns-and-check-correlation">
+<h3>Step 2 — Merge with future returns and check correlation<a class="headerlink" href="#step-2-merge-with-future-returns-and-check-correlation" title="Link to this heading">#</a></h3>
+<p>Merge with the same 5-year-forward return we computed from CRSP earlier.
+Sample will shrink to whatever years your predictor is available for.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Merge your predictor with R_future</span>
+<span class="n">sig_reg</span> <span class="o">=</span> <span class="n">crsp</span><span class="p">[[</span><span class="s1">'R_future'</span><span class="p">]]</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">sig_monthly</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'inner'</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Regression sample: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sig_reg</span><span class="p">)</span><span class="si">}</span><span class="s2"> months "</span>
+      <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">sig_reg</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">sig_reg</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Correlation between </span><span class="si">{</span><span class="n">MY_PREDICTOR_NAME</span><span class="si">}</span><span class="s2"> and 5y forward return: "</span>
+      <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sig_reg</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">sig_reg</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">])</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3-run-the-hac-regression">
+<h3>Step 3 — Run the HAC regression<a class="headerlink" href="#step-3-run-the-hac-regression" title="Link to this heading">#</a></h3>
+<p>Same setup as the D/P regression — use HAC with <code class="docutils literal notranslate"><span class="pre">maxlags</span> <span class="pre">=</span> <span class="pre">60</span></code> (the overlap length).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">sig_reg</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">sig_reg</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">]</span>
+<span class="n">m_my</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">'HAC'</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">'maxlags'</span><span class="p">:</span> <span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"=== </span><span class="si">{</span><span class="n">MY_PREDICTOR_NAME</span><span class="si">}</span><span class="s2"> regression (HAC) ==="</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Slope:  </span><span class="si">{</span><span class="n">m_my</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  t-stat: </span><span class="si">{</span><span class="n">m_my</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  R²:     </span><span class="si">{</span><span class="n">m_my</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># Compare to D/P from earlier</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">D/P benchmark (full sample, HAC):"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Slope:  </span><span class="si">{</span><span class="n">model_hac</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  t-stat: </span><span class="si">{</span><span class="n">model_hac</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'dp_avg'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-4-build-the-timing-strategy">
+<h3>Step 4 — Build the timing strategy<a class="headerlink" href="#step-4-build-the-timing-strategy" title="Link to this heading">#</a></h3>
+<p>Pick an OOS split (e.g., midpoint of your sample) and train on the early half,
+test on the late half. Use the same template as for D/P.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Split at the midpoint of YOUR sample</span>
+<span class="n">mid_date</span> <span class="o">=</span> <span class="n">sig_reg</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">sig_reg</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Splitting at: </span><span class="si">{</span><span class="n">mid_date</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">sig_est</span>  <span class="o">=</span> <span class="n">sig_reg</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">mid_date</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">sig_test</span> <span class="o">=</span> <span class="n">sig_reg</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mid_date</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">m_est</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">sig_est</span><span class="p">[</span><span class="s1">'R_future'</span><span class="p">],</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">sig_est</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]),</span>
+               <span class="n">missing</span><span class="o">=</span><span class="s1">'drop'</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">'HAC'</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">'maxlags'</span><span class="p">:</span> <span class="n">years</span><span class="o">*</span><span class="mi">12</span><span class="p">})</span>
+<span class="n">sig_test</span><span class="p">[</span><span class="s1">'forecast'</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_est</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span> <span class="o">+</span> <span class="n">m_est</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span> <span class="o">*</span> <span class="n">sig_test</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span>
+
+<span class="c1"># Convert to weights (same γ, σ as for D/P)</span>
+<span class="n">gamma</span><span class="p">,</span> <span class="n">vol</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.16</span>
+<span class="n">sig_test</span><span class="p">[</span><span class="s1">'weight'</span><span class="p">]</span> <span class="o">=</span> <span class="n">sig_test</span><span class="p">[</span><span class="s1">'forecast'</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">vol</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Merge with market returns + RF for strategy P&amp;L</span>
+<span class="n">sig_test_full</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">sig_test</span>
+    <span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">crsp</span><span class="p">[[</span><span class="s1">'vwretd'</span><span class="p">]],</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">get_factors</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">'monthly'</span><span class="p">)[[</span><span class="s1">'RF'</span><span class="p">]],</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'vwretd'</span><span class="p">,</span> <span class="s1">'RF'</span><span class="p">,</span> <span class="s1">'weight'</span><span class="p">])</span>
+<span class="p">)</span>
+<span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'ret_timing'</span><span class="p">]</span> <span class="o">=</span> <span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span> <span class="o">+</span> <span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'weight'</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+    <span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'vwretd'</span><span class="p">]</span> <span class="o">-</span> <span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span>
+
+<span class="c1"># Sharpes (OOS test window)</span>
+<span class="n">sr_my</span>  <span class="o">=</span> <span class="p">((</span><span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'ret_timing'</span><span class="p">]</span> <span class="o">-</span> <span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+    <span class="p">(</span><span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'ret_timing'</span><span class="p">]</span> <span class="o">-</span> <span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+<span class="n">sr_bh_my</span> <span class="o">=</span> <span class="p">((</span><span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'vwretd'</span><span class="p">]</span> <span class="o">-</span> <span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+    <span class="p">(</span><span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'vwretd'</span><span class="p">]</span> <span class="o">-</span> <span class="n">sig_test_full</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">MY_PREDICTOR_NAME</span><span class="si">}</span><span class="s2"> timing Sharpe (OOS): </span><span class="si">{</span><span class="n">sr_my</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Buy-and-hold Sharpe over same OOS window:   </span><span class="si">{</span><span class="n">sr_bh_my</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>🤔 Reflect on what you found</strong></p>
+<p>Three questions to think about (you’ll write a memo on these at the end):</p>
+<ol class="arabic simple">
+<li><p><strong>Did your predictor beat buy-and-hold on Sharpe?</strong> Some classic predictors
+DO and some DON’T. There’s no single right answer — that’s part of the
+lesson.</p></li>
+<li><p><strong>Is it really a useful predictor, or is the result driven by one episode?</strong>
+Plot the cumulative wealth of your strategy vs buy-and-hold — does the
+outperformance come gradually, or from one or two big bets?</p></li>
+<li><p><strong>Does it capture something different from D/P?</strong> Or just the same business
+cycle in a different disguise?</p></li>
+</ol>
+<p>Compare notes with a neighbor who picked a different predictor.</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section class="tex2jax_ignore mathjax_ignore" id="part-ii-volatility-timing">
+<h1>Part II — Volatility Timing<a class="headerlink" href="#part-ii-volatility-timing" title="Link to this heading">#</a></h1>
+<hr class="docutils" />
+<section id="when-volatility-timing-works">
+<h2>When Volatility Timing Works <a id="voltheory"></a><a class="headerlink" href="#when-volatility-timing-works" title="Link to this heading">#</a></h2>
+<p>Same MVE formula:</p>
+<div class="math notranslate nohighlight">
+\[x_t = \frac{E_t[r^e_{t+1}]}{\gamma \cdot \text{Var}_t(r^e_{t+1})}\]</div>
+<p>Two extreme cases:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Case</p></th>
+<th class="head"><p>What you time</p></th>
+<th class="head"><p>Allocation rule</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong><span class="math notranslate nohighlight">\(\sigma^2\)</span> varies, <span class="math notranslate nohighlight">\(\mu\)</span> constant</strong></p></td>
+<td><p>Variance</p></td>
+<td><p><span class="math notranslate nohighlight">\(x_t = \frac{\mu}{\gamma \text{Var}_t}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><span class="math notranslate nohighlight">\(\mu\)</span> varies, <span class="math notranslate nohighlight">\(\sigma^2\)</span> constant</strong></p></td>
+<td><p>Expected returns</p></td>
+<td><p><span class="math notranslate nohighlight">\(x_t = \frac{\mu_t}{\gamma \sigma^2}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="the-decomposition">
+<h3>The decomposition<a class="headerlink" href="#the-decomposition" title="Link to this heading">#</a></h3>
+<p>If the risk premium is itself a function of variance, <span class="math notranslate nohighlight">\(E_t[r^e] = a + b \cdot \text{Var}_t\)</span>, then:</p>
+<div class="math notranslate nohighlight">
+\[x_t = \frac{a + b \cdot \text{Var}_t}{\gamma \cdot \text{Var}_t} = \underbrace{\frac{a}{\gamma \cdot \text{Var}_t}}_{\text{vol timing}} + \underbrace{\frac{b}{\gamma}}_{\text{constant}}\]</div>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<ul class="simple">
+<li><p>If <span class="math notranslate nohighlight">\(a = 0\)</span> (premium is <strong>proportional</strong> to variance): NO benefit from vol timing — they cancel</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(b = 0\)</span> (premium is <strong>constant</strong> in variance): MAXIMUM benefit from vol timing</p></li>
+<li><p>Reality is somewhere in between, but <strong>closer to <span class="math notranslate nohighlight">\(b = 0\)</span></strong> for most factors empirically</p></li>
+</ul>
+<p>Translation: high-vol months have similar <em>expected</em> returns to low-vol
+months, but enormously different <em>realized variance</em>. So reducing exposure
+when vol is high is unambiguously good.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>📌 Caveat</strong></p>
+<p>Vol timing only helps if the factor has a positive premium to begin with.
+If <span class="math notranslate nohighlight">\(E[r^e] = 0\)</span>, no amount of vol-scaling raises the Sharpe.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="realized-variance-from-daily-data">
+<h2>Realized Variance from Daily Data <a id="rv"></a><a class="headerlink" href="#realized-variance-from-daily-data" title="Link to this heading">#</a></h2>
+<p>Estimate variance using <strong>daily</strong> returns within each month:</p>
+<div class="math notranslate nohighlight">
+\[RV_t = \sum_{d \in \text{days in month } t} (r_d - \bar{r})^2\]</div>
+<p>This is a non-parametric, no-model variance estimate. Use the previous month’s
+<span class="math notranslate nohighlight">\(RV\)</span> to forecast next month’s — empirically, vol is persistent.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load FF daily market factor</span>
+<span class="n">ff_daily</span> <span class="o">=</span> <span class="n">get_factors</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">'daily'</span><span class="p">)</span>
+<span class="n">mkt_d</span> <span class="o">=</span> <span class="n">ff_daily</span><span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]</span>
+
+<span class="c1"># Monthly realized variance: sum of squared daily returns within each month</span>
+<span class="n">rv</span> <span class="o">=</span> <span class="n">mkt_d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">mkt_d</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_period</span><span class="p">(</span><span class="s1">'M'</span><span class="p">))</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<span class="n">rv</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">rv</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s1">'end'</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+<span class="n">rv</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">'RV'</span>
+
+<span class="c1"># Plot annualized realized vol</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rv</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Annualized realized vol'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Market realized volatility (annualized) — clearly time-varying'</span><span class="p">,</span>
+             <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verify persistence: regress RV on its own lag</span>
+<span class="n">rv_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">rv</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'RV_t'</span><span class="p">),</span> <span class="n">rv</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'RV_lag'</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">rv_df</span><span class="p">[</span><span class="s1">'RV_lag'</span><span class="p">])</span>
+<span class="n">m_ar1</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">rv_df</span><span class="p">[</span><span class="s1">'RV_t'</span><span class="p">],</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"AR(1) on RV: slope = </span><span class="si">{</span><span class="n">m_ar1</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'RV_lag'</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, t = </span><span class="si">{</span><span class="n">m_ar1</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'RV_lag'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"R²: </span><span class="si">{</span><span class="n">m_ar1</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">→ Last month's RV explains ~</span><span class="si">{</span><span class="n">m_ar1</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2"> of this month's RV. Strong persistence."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="live-demo-2-building-the-vol-timed-strategy">
+<h2>🔄 Live Demo 2: Building the Vol-Timed Strategy <a id="demo2"></a><a class="headerlink" href="#live-demo-2-building-the-vol-timed-strategy" title="Link to this heading">#</a></h2>
+<section id="loose-prompt">
+<h3>🔴 Loose prompt<a class="headerlink" href="#loose-prompt" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Scale market exposure inversely to realized variance.”</em></p>
+</div></blockquote>
+<p><strong>What AI is likely to produce:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">rv</span>
+<span class="n">strat</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">mkt_excess</span>
+</pre></div>
+</div>
+<p><strong>The bugs:</strong></p>
+<ul class="simple">
+<li><p>❌ No <strong>lag</strong> on <code class="docutils literal notranslate"><span class="pre">rv</span></code> — uses time-<span class="math notranslate nohighlight">\(t\)</span> realized variance to decide time-<span class="math notranslate nohighlight">\(t\)</span> position. Look-ahead.</p></li>
+<li><p>❌ Raw weight <span class="math notranslate nohighlight">\(1/RV\)</span> has no average target. May average to 50%, may average to 500%.</p></li>
+<li><p>❌ No clipping for the extreme low-vol months (<code class="docutils literal notranslate"><span class="pre">1/RV</span></code> can blow up).</p></li>
+<li><p>❌ Mixes monthly and daily data without aligning.</p></li>
+</ul>
+</section>
+<section id="precise-prompt">
+<h3>🟢 Precise prompt<a class="headerlink" href="#precise-prompt" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><em>“Align market monthly excess returns with realized variance. Lag RV by one
+period so weight at time <span class="math notranslate nohighlight">\(t\)</span> uses information available at <span class="math notranslate nohighlight">\(t-1\)</span>. Compute
+raw weight = <span class="math notranslate nohighlight">\(1 / RV_{t-1}\)</span>. Rescale so the average weight equals 1 (then
+the strategy is “same risk on average” as buy-and-hold). Clip the weight at
+3 to avoid blow-ups. Compute strategy returns and report Sharpe vs.
+buy-and-hold.”</em></p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Align monthly market excess returns with realized variance</span>
+<span class="n">mkt_m</span>   <span class="o">=</span> <span class="n">get_factors</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="s1">'monthly'</span><span class="p">)[</span><span class="s1">'Mkt-RF'</span><span class="p">]</span>
+<span class="n">both</span>    <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mkt_m</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'ret'</span><span class="p">),</span> <span class="n">rv</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">both</span><span class="p">[</span><span class="s1">'rv_lag'</span><span class="p">]</span> <span class="o">=</span> <span class="n">both</span><span class="p">[</span><span class="s1">'RV'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">both</span>    <span class="o">=</span> <span class="n">both</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="c1"># Raw weight = 1 / RV(t-1); scale so mean weight = 1; clip at 3</span>
+<span class="n">raw_w</span>   <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">both</span><span class="p">[</span><span class="s1">'rv_lag'</span><span class="p">]</span>
+<span class="n">c</span>       <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">raw_w</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">both</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">raw_w</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">upper</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="n">both</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">]</span> <span class="o">=</span> <span class="n">both</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span> <span class="o">*</span> <span class="n">both</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span>
+
+<span class="c1"># Sharpe comparison</span>
+<span class="n">sr_bh</span> <span class="o">=</span> <span class="p">(</span><span class="n">both</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>   <span class="o">/</span> <span class="n">both</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>   <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">sr_vt</span> <span class="o">=</span> <span class="p">(</span><span class="n">both</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">both</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># Cumulative wealth</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">both</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Buy &amp; hold (SR=</span><span class="si">{</span><span class="n">sr_bh</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">both</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Vol-timed (SR=</span><span class="si">{</span><span class="n">sr_vt</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Growth of $1 (log)'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Vol-timed market vs buy-and-hold'</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Buy-and-hold Sharpe:  </span><span class="si">{</span><span class="n">sr_bh</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Vol-timed   Sharpe:   </span><span class="si">{</span><span class="n">sr_vt</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Improvement:          </span><span class="si">{</span><span class="p">(</span><span class="n">sr_vt</span><span class="o">/</span><span class="n">sr_bh</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>💡 Key Insight</strong></p>
+<p>Vol-timing typically delivers a <strong>10-30% Sharpe improvement</strong> over buy-and-hold —
+and it does it without any forecasting of <em>expected returns</em>. You’re just
+responding to risk. The empirical fact that <span class="math notranslate nohighlight">\(b \approx 0\)</span> (premia don’t scale
+with variance) makes this work.</p>
+<p>Compare to the mean-timing strategy from Part I, which depended on a noisy
+forecast of expected returns. Vol timing is the <strong>easier, more reliable</strong>
+version of timing.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="hands-on-2-vix2-as-a-forward-looking-variance-forecast">
+<h2>🛠️ Hands-On 2: VIX² as a Forward-Looking Variance Forecast <a id="ho2"></a><a class="headerlink" href="#hands-on-2-vix2-as-a-forward-looking-variance-forecast" title="Link to this heading">#</a></h2>
+<p>So far we used <strong>realized variance</strong> (RV) — the variance computed from <em>past</em>
+daily returns. There’s a competing forecast available off-the-shelf: the <strong>VIX</strong>.</p>
+<p><strong>VIX</strong> is the market’s option-implied 30-day expected vol of the S&amp;P 500. It’s
+computed from option prices and updated continuously. Key properties:</p>
+<ul class="simple">
+<li><p>It’s <strong>forward-looking</strong> (options price expected future vol, not past vol)</p></li>
+<li><p>It typically <strong>spikes BEFORE</strong> RV does (options price stress before it happens)</p></li>
+<li><p>It carries a <strong>variance risk premium</strong> — VIX² tends to exceed subsequent realized
+variance by 1-3 percentage points (vol-squared), which is itself tradable</p></li>
+<li><p>It’s only available from <strong>1990 onward</strong></p></li>
+</ul>
+<p><strong>Your job:</strong> fetch VIX from FRED, square it to get implied variance, build
+the same vol-timing strategy using VIX² instead of RV, compare.</p>
+<section id="step-1-fetch-vix-from-fred">
+<h3>Step 1 — Fetch VIX from FRED<a class="headerlink" href="#step-1-fetch-vix-from-fred" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># VIX from FRED (series ID: VIXCLS) — daily close, in PERCENT</span>
+<span class="n">vix_daily</span> <span class="o">=</span> <span class="n">DataReader</span><span class="p">(</span><span class="s1">'VIXCLS'</span><span class="p">,</span> <span class="s1">'fred'</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s1">'1990-01-01'</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">vix_daily</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'vix'</span><span class="p">]</span>
+<span class="c1"># Convert to decimal (annualized vol) and take month-end</span>
+<span class="n">vix_monthly</span> <span class="o">=</span> <span class="n">vix_daily</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">'ME'</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span> <span class="o">/</span> <span class="mi">100</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"VIX range: </span><span class="si">{</span><span class="n">vix_monthly</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">vix_monthly</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Months: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vix_monthly</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># Plot — compare to realized vol from Part II</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">vix_monthly</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'VIX (option-implied vol)'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rv</span> <span class="o">*</span> <span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Realized vol (annualized)'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Annualized volatility'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'VIX vs realized vol — note VIX spikes ahead of realized'</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-2-convert-vix-to-monthly-variance-forecast">
+<h3>Step 2 — Convert VIX to monthly variance forecast<a class="headerlink" href="#step-2-convert-vix-to-monthly-variance-forecast" title="Link to this heading">#</a></h3>
+<p>VIX is in <em>annualized</em> vol units. To compare with our monthly RV:</p>
+<ul class="simple">
+<li><p>VIX² = annualized implied variance</p></li>
+<li><p>VIX² / 12 = monthly implied variance</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Monthly implied variance</span>
+<span class="n">vix_monthly</span><span class="p">[</span><span class="s1">'ivar_monthly'</span><span class="p">]</span> <span class="o">=</span> <span class="n">vix_monthly</span><span class="p">[</span><span class="s1">'vix'</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">12</span>
+
+<span class="c1"># Compare to RV — should be highly correlated</span>
+<span class="n">both_vol</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">rv</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'RV'</span><span class="p">),</span> <span class="n">vix_monthly</span><span class="p">[</span><span class="s1">'ivar_monthly'</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">corr</span> <span class="o">=</span> <span class="n">both_vol</span><span class="p">[</span><span class="s1">'RV'</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">both_vol</span><span class="p">[</span><span class="s1">'ivar_monthly'</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Corr(RV, VIX²/12): </span><span class="si">{</span><span class="n">corr</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># And: VIX² &gt; RV on average? (variance risk premium)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Mean monthly RV:        </span><span class="si">{</span><span class="n">both_vol</span><span class="p">[</span><span class="s1">'RV'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean monthly VIX²/12:   </span><span class="si">{</span><span class="n">both_vol</span><span class="p">[</span><span class="s1">'ivar_monthly'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Difference (VRP, monthly): </span><span class="si">{</span><span class="p">(</span><span class="n">both_vol</span><span class="p">[</span><span class="s1">'ivar_monthly'</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">both_vol</span><span class="p">[</span><span class="s1">'RV'</span><span class="p">])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"→ VIX² systematically overpredicts realized variance — that's the variance risk premium."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3-build-vix-based-timing-strategy">
+<h3>Step 3 — Build VIX-based timing strategy<a class="headerlink" href="#step-3-build-vix-based-timing-strategy" title="Link to this heading">#</a></h3>
+<p>Same template as Part II, but use <strong>VIX²_{t-1}</strong> instead of <strong>RV_{t-1}</strong> as the
+inverse-weight signal. Lag by one period (VIX is observed end-of-month; we
+trade at the start of the next month).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Align market monthly excess returns with VIX</span>
+<span class="n">both_vix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mkt_m</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'ret'</span><span class="p">),</span> <span class="n">vix_monthly</span><span class="p">[[</span><span class="s1">'ivar_monthly'</span><span class="p">]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">both_vix</span><span class="p">[</span><span class="s1">'ivar_lag'</span><span class="p">]</span> <span class="o">=</span> <span class="n">both_vix</span><span class="p">[</span><span class="s1">'ivar_monthly'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">both_vix</span> <span class="o">=</span> <span class="n">both_vix</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="n">raw_w_vix</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">both_vix</span><span class="p">[</span><span class="s1">'ivar_lag'</span><span class="p">]</span>
+<span class="n">c_vix</span>     <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">raw_w_vix</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">both_vix</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span>     <span class="o">=</span> <span class="p">(</span><span class="n">c_vix</span> <span class="o">*</span> <span class="n">raw_w_vix</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">upper</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="n">both_vix</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">]</span> <span class="o">=</span> <span class="n">both_vix</span><span class="p">[</span><span class="s1">'w'</span><span class="p">]</span> <span class="o">*</span> <span class="n">both_vix</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span>
+
+<span class="c1"># Sharpe comparison</span>
+<span class="n">sr_bh_v</span>   <span class="o">=</span> <span class="p">(</span><span class="n">both_vix</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>   <span class="o">/</span> <span class="n">both_vix</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>   <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">sr_vix</span>    <span class="o">=</span> <span class="p">(</span><span class="n">both_vix</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">both_vix</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># Also recompute RV-based Sharpe on the SAME (post-1990) sample for apples-to-apples</span>
+<span class="n">both_aligned</span> <span class="o">=</span> <span class="n">both</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">both_vix</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">():]</span>    <span class="c1"># restrict to VIX-available period</span>
+<span class="n">sr_rv_aligned</span> <span class="o">=</span> <span class="p">(</span><span class="n">both_aligned</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">both_aligned</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">())</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"=== Same sample (post-1990) ==="</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Buy-and-hold:          </span><span class="si">{</span><span class="n">sr_bh_v</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Vol-timing with RV:    </span><span class="si">{</span><span class="n">sr_rv_aligned</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Vol-timing with VIX²:  </span><span class="si">{</span><span class="n">sr_vix</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cumulative wealth comparison</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">both_vix</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Buy &amp; hold (SR=</span><span class="si">{</span><span class="n">sr_bh_v</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">both_aligned</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Vol-timed (RV-based, SR=</span><span class="si">{</span><span class="n">sr_rv_aligned</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">both_vix</span><span class="p">[</span><span class="s1">'strat'</span><span class="p">])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Vol-timed (VIX²-based, SR=</span><span class="si">{</span><span class="n">sr_vix</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Growth of $1 (log)'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Vol timing: RV vs VIX² (post-1990)'</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>🤔 Compare RV vs VIX²</strong></p>
+<p>The two strategies are <em>very similar</em> in structure but use different vol
+forecasts:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head"><p>RV (realized)</p></th>
+<th class="head"><p>VIX² (implied)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Information used</strong></p></td>
+<td><p>Past month’s daily returns</p></td>
+<td><p>Today’s option prices</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Type</strong></p></td>
+<td><p>Backward-looking</p></td>
+<td><p>Forward-looking</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Coverage</strong></p></td>
+<td><p>Available whenever you have daily data (~1926+)</p></td>
+<td><p>Only 1990+</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Bias</strong></p></td>
+<td><p>Slight underestimate during crises</p></td>
+<td><p>Carries variance risk premium</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Spikes</strong></p></td>
+<td><p>After the event</p></td>
+<td><p>Before the event</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Reliability</strong></p></td>
+<td><p>Smooth, persistent</p></td>
+<td><p>More volatile, occasional jumps</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Either typically gives a 10-20% Sharpe boost. The relative performance depends
+on the sample and the type of crisis. <strong>You don’t need to pick one — most
+practitioners use both, combined via averaging or shrinkage.</strong></p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="challenge-comparing-four-timing-approaches">
+<h2>🎯 Challenge: Comparing Four Timing Approaches <a id="challenge"></a><a class="headerlink" href="#challenge-comparing-four-timing-approaches" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>Setup.</strong> Across the lecture you’ve now built four different timing strategies:</p>
+<ol class="arabic simple">
+<li><p><strong>D/P-based mean timing</strong> (Part I demo, post-1991 OOS)</p></li>
+<li><p><strong>Your-chosen-FRED-predictor mean timing</strong> (Hands-On 1)</p></li>
+<li><p><strong>RV-based vol timing</strong> (Part II demo, full sample)</p></li>
+<li><p><strong>VIX²-based vol timing</strong> (Hands-On 2, post-1990)</p></li>
+</ol>
+<p>Plus a <strong>buy-and-hold</strong> baseline.</p>
+<p>Collect the Sharpe ratios for each and write a memo comparing them.</p>
+</div></blockquote>
+<section id="q1-buy-and-hold-sharpe-post-1991">
+<h3>Q1 — Buy-and-hold Sharpe (post-1991)<a class="headerlink" href="#q1-buy-and-hold-sharpe-post-1991" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📌 Required:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sharpe_buyhold</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># use the post-1991 sample from test_with_rf</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">sharpe_buyhold</span> <span class="o">=</span> <span class="n">____</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Buy-and-hold Sharpe (post-1991): </span><span class="si">{</span><span class="n">sharpe_buyhold</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q2-d-p-based-mean-timing-sharpe-post-1991-oos">
+<h3>Q2 — D/P-based mean-timing Sharpe (post-1991 OOS)<a class="headerlink" href="#q2-d-p-based-mean-timing-sharpe-post-1991-oos" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📌 Required:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sharpe_mean_timing_dp</span> <span class="o">=</span> <span class="n">____</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">sharpe_mean_timing_dp</span> <span class="o">=</span> <span class="n">____</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean-timing Sharpe (D/P, post-1991 OOS): </span><span class="si">{</span><span class="n">sharpe_mean_timing_dp</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q3-your-predictor-mean-timing-sharpe-oos">
+<h3>Q3 — Your-predictor mean-timing Sharpe (OOS)<a class="headerlink" href="#q3-your-predictor-mean-timing-sharpe-oos" title="Link to this heading">#</a></h3>
+<p>From the <code class="docutils literal notranslate"><span class="pre">sig_test_full</span></code> DataFrame you built in Hands-On 1 (using YOUR chosen
+FRED predictor).</p>
+<blockquote>
+<div><p><strong>📌 Required:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_predictor_id</span>              <span class="o">=</span> <span class="s2">"____"</span>   <span class="c1"># the FRED ID you picked (e.g., "T10Y3M")</span>
+<span class="n">sharpe_mean_timing_predictor</span> <span class="o">=</span> <span class="n">____</span>     <span class="c1"># the OOS Sharpe for your predictor's strategy</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">my_predictor_id</span>              <span class="o">=</span> <span class="s2">"____"</span>
+<span class="n">sharpe_mean_timing_predictor</span> <span class="o">=</span> <span class="n">____</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"My predictor: </span><span class="si">{</span><span class="n">my_predictor_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean-timing Sharpe (</span><span class="si">{</span><span class="n">my_predictor_id</span><span class="si">}</span><span class="s2">, OOS): </span><span class="si">{</span><span class="n">sharpe_mean_timing_predictor</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q4-rv-based-vol-timing-sharpe-full-sample">
+<h3>Q4 — RV-based vol-timing Sharpe (full sample)<a class="headerlink" href="#q4-rv-based-vol-timing-sharpe-full-sample" title="Link to this heading">#</a></h3>
+<p>From the <code class="docutils literal notranslate"><span class="pre">both</span></code> DataFrame in Part II.</p>
+<blockquote>
+<div><p><strong>📌 Required:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sharpe_vol_timing_rv</span> <span class="o">=</span> <span class="n">____</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">sharpe_vol_timing_rv</span> <span class="o">=</span> <span class="n">____</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Vol-timing Sharpe (RV, full sample): </span><span class="si">{</span><span class="n">sharpe_vol_timing_rv</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q5-vix2-based-vol-timing-sharpe-post-1990">
+<h3>Q5 — VIX²-based vol-timing Sharpe (post-1990)<a class="headerlink" href="#q5-vix2-based-vol-timing-sharpe-post-1990" title="Link to this heading">#</a></h3>
+<p>From the <code class="docutils literal notranslate"><span class="pre">both_vix</span></code> DataFrame in Hands-On 2.</p>
+<blockquote>
+<div><p><strong>📌 Required:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sharpe_vol_timing_vix</span> <span class="o">=</span> <span class="n">____</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">sharpe_vol_timing_vix</span> <span class="o">=</span> <span class="n">____</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Vol-timing Sharpe (VIX², post-1990): </span><span class="si">{</span><span class="n">sharpe_vol_timing_vix</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q6-the-memo">
+<h3>Q6 — The Memo<a class="headerlink" href="#q6-the-memo" title="Link to this heading">#</a></h3>
+<p>Write a memo (max 6 sentences) addressed to your CIO. Cover:</p>
+<ol class="arabic simple">
+<li><p><strong>Which timing approach delivered the largest Sharpe improvement?</strong></p></li>
+<li><p><strong>Mean timing vs vol timing</strong> — why does one work better than the other in
+practice? (Hint: think about which is easier to forecast — <span class="math notranslate nohighlight">\(\mu_t\)</span> or
+<span class="math notranslate nohighlight">\(\sigma_t^2\)</span> — and why.)</p></li>
+<li><p><strong>Within mean timing</strong>: D/P vs your-chosen-predictor — are they capturing
+different information? What’s the case for using both?</p></li>
+<li><p><strong>Within vol timing</strong>: RV (backward-looking) vs VIX² (forward-looking) —
+what are the practical pros and cons of each?</p></li>
+<li><p><strong>Your recommendation</strong> — if you could deploy ONE timing overlay on your
+fund’s market exposure, which would you pick and why?</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MEMO</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">Write your 5-sentence-max memo here.</span>
+<span class="s2">"""</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">MEMO</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="submission">
+<h2>📤 Submission <a id="submit"></a><a class="headerlink" href="#submission" title="Link to this heading">#</a></h2>
+<p>Run the cell below. Copy the line that starts with <code class="docutils literal notranslate"><span class="pre">UG54::</span></code> into the submission
+form: <strong><a class="reference external" href="https://forms.gle/YOUR_FORM_LINK_HERE">https://forms.gle/YOUR_FORM_LINK_HERE</a></strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"sharpe_buyhold"</span><span class="p">,</span>
+    <span class="s2">"sharpe_mean_timing_dp"</span><span class="p">,</span>
+    <span class="s2">"sharpe_mean_timing_predictor"</span><span class="p">,</span>   <span class="c1"># YOUR chosen FRED predictor</span>
+    <span class="s2">"sharpe_vol_timing_rv"</span><span class="p">,</span>
+    <span class="s2">"sharpe_vol_timing_vix"</span><span class="p">,</span>
+    <span class="s2">"MEMO"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="c1"># my_predictor_id is a string — bundle separately so it survives JSON serialization</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">()]</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">❌ Missing: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"assignment"</span><span class="p">:</span> <span class="s2">"Timing_AI"</span><span class="p">,</span>
+    <span class="s2">"ts"</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">"seconds"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"Z"</span><span class="p">,</span>
+    <span class="s2">"answers"</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"MEMO"</span><span class="p">},</span>
+    <span class="s2">"memo"</span><span class="p">:</span> <span class="n">MEMO</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+    <span class="s2">"my_predictor_id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">my_predictor_id</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"UG54::</span><span class="si">{</span><span class="n">checksum</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span><span class="o">*</span><span class="mi">72</span><span class="p">);</span> <span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">);</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span><span class="o">*</span><span class="mi">72</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Two flavors of timing:</strong> mean timing (forecast <span class="math notranslate nohighlight">\(\mu\)</span>) and vol timing (forecast <span class="math notranslate nohighlight">\(\sigma^2\)</span>). They are different problems and have different track records.</p></li>
+<li><p><strong>Mean timing is hard.</strong> Even the famous D/P regression has OOS R² near zero. The Sharpe improvement is small and unreliable.</p></li>
+<li><p><strong>Vol timing is easier and works.</strong> <span class="math notranslate nohighlight">\(\sigma^2\)</span> is highly persistent (AR(1) R² ≈ 50-70%); you don’t need to forecast <span class="math notranslate nohighlight">\(\mu\)</span>.</p></li>
+<li><p><strong>The math is the same MVE formula.</strong> <span class="math notranslate nohighlight">\(x_t = \mu_t/(\gamma \sigma_t^2)\)</span> — but which input you let vary determines which strategy you’re running.</p></li>
+<li><p><strong>Always HAC for multi-period forecasts.</strong> Overlapping windows inflate t-stats by 2-3x. Use Newey-West with <code class="docutils literal notranslate"><span class="pre">maxlags</span> <span class="pre">≥</span> <span class="pre">horizon</span></code>.</p></li>
+<li><p><strong>Always lag your signal.</strong> <code class="docutils literal notranslate"><span class="pre">.shift(1)</span></code> is the line between honest backtest and look-ahead bias.</p></li>
+<li><p><strong>AI writes the regression. You catch the lookahead, choose the HAC lags, and decide whether the strategy is deployable after costs.</strong></p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Timing Strategies</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">📋 Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">🛠️ Setup <a id="setup"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-kinds-of-timing">Two Kinds of Timing <a id="two"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-return-timing-market-timing">1. Expected Return Timing (Market Timing)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#risk-timing-volatility-timing">2. Risk Timing (Volatility Timing)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-timing">🛡️ Pitfall Checklist for Timing <a id="pitfalls"></a></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#part-i-market-timing">Part I — Market Timing</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-predictability-puzzle">The Predictability Puzzle <a id="puzzle"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-is-this-surprising">Why is this surprising?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gordon-growth-framing">The Gordon growth framing</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dividend-yield-as-a-signal">Dividend Yield as a Signal <a id="dy"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-1-forecasting-regression-with-hac">🔄 Live Demo 1: Forecasting Regression with HAC <a id="demo1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loose-prompt-what-not-to-do">🔴 Loose prompt — what NOT to do</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-prompt-the-pattern-that-works">🟢 Precise prompt — the pattern that works</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample-evaluation">Out-of-Sample Evaluation <a id="oos"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-signal-to-weights">From Signal to Weights <a id="weight"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-1-pick-your-own-predictor-from-fred">🛠️ Hands-On 1: Pick Your Own Predictor from FRED <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-is-open-ended">Why this is open-ended</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-menu-of-suggestions">A menu of suggestions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-fetch-your-series-from-fred">Step 1 — Fetch your series from FRED</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-merge-with-future-returns-and-check-correlation">Step 2 — Merge with future returns and check correlation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-run-the-hac-regression">Step 3 — Run the HAC regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-build-the-timing-strategy">Step 4 — Build the timing strategy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#part-ii-volatility-timing">Part II — Volatility Timing</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-volatility-timing-works">When Volatility Timing Works <a id="voltheory"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decomposition">The decomposition</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#realized-variance-from-daily-data">Realized Variance from Daily Data <a id="rv"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-2-building-the-vol-timed-strategy">🔄 Live Demo 2: Building the Vol-Timed Strategy <a id="demo2"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loose-prompt">🔴 Loose prompt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precise-prompt">🟢 Precise prompt</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-2-vix2-as-a-forward-looking-variance-forecast">🛠️ Hands-On 2: VIX² as a Forward-Looking Variance Forecast <a id="ho2"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-fetch-vix-from-fred">Step 1 — Fetch VIX from FRED</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-convert-vix-to-monthly-variance-forecast">Step 2 — Convert VIX to monthly variance forecast</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-build-vix-based-timing-strategy">Step 3 — Build VIX-based timing strategy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-comparing-four-timing-approaches">🎯 Challenge: Comparing Four Timing Approaches <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-buy-and-hold-sharpe-post-1991">Q1 — Buy-and-hold Sharpe (post-1991)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-d-p-based-mean-timing-sharpe-post-1991-oos">Q2 — D/P-based mean-timing Sharpe (post-1991 OOS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-your-predictor-mean-timing-sharpe-oos">Q3 — Your-predictor mean-timing Sharpe (OOS)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-rv-based-vol-timing-sharpe-full-sample">Q4 — RV-based vol-timing Sharpe (full sample)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q5-vix2-based-vol-timing-sharpe-post-1990">Q5 — VIX²-based vol-timing Sharpe (post-1990)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q6-the-memo">Q6 — The Memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">🧠 Key Takeaways <a id="takeaways"></a></a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

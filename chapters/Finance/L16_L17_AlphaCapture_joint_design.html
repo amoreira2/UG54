@@ -1,0 +1,1031 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>L16 + L17 Joint Redesign — Performance Evaluation × Capital Allocation &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/L16_L17_AlphaCapture_joint_design';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/L16_L17_AlphaCapture_joint_design.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data-Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="L1_Welcome_Returns_AI.html">3. L1 · The Workflow, and What a Return Is</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L2_Panel_Portfolios_AI.html">4. L2 · The Panel and Portfolio Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L3_Sorts_AI.html">5. L3 · Sorts, Breakpoints, and Long-Short Portfolios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L4_PerfEval_Factors_AI.html">6. L4 · Performance Evaluation, and Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L5_Factor_Zoo_AI.html">7. L5 · Where Factors Come From, and the Factor Zoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L6_MultiFactor_AI.html">8. L6 · Multi-Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L7_Portfolio_Decomposition_AI.html">9. L7 · Decomposing a Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L8_Backtesting_Protocol.html">10. L8 · Backtesting Protocol  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L9_Anomalies.html">11. L9 · Anomalies  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L10_Momentum_and_Trend_Following.html">12. L10 · Momentum and Trend Following  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Conditional_Strategies_I.html">13. L11 · Conditional Strategies I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Conditional_Strategies_II.html">14. L12 · Conditional Strategies II — Factor Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_I.html">15. L13 · Capital Allocation I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Capital_Allocation_II.html">16. L14 · Capital Allocation II — Fragility  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L15_Fundamental_Risk_Models_BARRA.html">17. L15 · Fundamental Risk Models (BARRA)  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L16_Transaction_Costs.html">18. L16 · Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L17_Leverage_and_Shorting.html">19. L17 · Leverage and Shorting  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L18_PCA_and_Statistical_Factors.html">20. L18 · PCA and Statistical Factors  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L19_Machine_Learning.html">21. L19 · Machine Learning  ◦</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">22. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_AI.html">22.1. Assignment 1 — Python, pandas, and Data That Fights Back</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">22.5. Assignment 2 — Diversification, and Your First Sort</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A3_Beta_and_Alpha_AI.html">22.8. Assignment 3 — Beta, Alpha, and Whether You Have Either</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/SignalHygiene_AI.html">23. Appendix · Signal Hygiene</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">24. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">24.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">24.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">24.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">24.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">24.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">24.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">24.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">24.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">24.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">24.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">24.4.9. Cleaning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">24.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">24.5. Flow Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">24.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">24.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../scientific/linear_algebra1_c.html">25. Linear Algebra Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">26. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intro.html">27. Archive · Pre-AI Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="IntrotoReturns_c.html">27.1. Introduction to Asset Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">27.2. Choice of Frequency and Annualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">27.3. Data APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PortfolioMath_c.html">27.4. Portfolio Mathematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FactorModels_c.html">27.5. Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiFactorModels_c.html">27.6. Multi-Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">27.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="FactorModelEstimation_c.html">27.11. Factor Model Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crosssectionalequitystrategies.html">27.12. Cross-Sectional Equity Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">27.13. Momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">27.14. An Overview of Factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Timing_c.html">27.15. Timing Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">27.16. Expected-Return Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">27.17. Volatility Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationI_cc.html">27.18. Capital Allocation I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationII.html">27.19. Capital Allocation II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Performance_evaluation_c.html">27.20. Performance Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RiskManagement.html">27.21. Risk Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TradingCosts.html">27.22. Liquidity and Trading Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LeverageandShorting.html">27.23. Leverage, Shorting, Limits to Arbitrage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearning_cc.html">27.24. Machine Learning in Finance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LLMs.html">27.25. Gen AI and LLMs in Finance</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/L16_L17_AlphaCapture_joint_design.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/L16_L17_AlphaCapture_joint_design.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>L16 + L17 Joint Redesign — Performance Evaluation × Capital Allocation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-one-idea">1. The one idea</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-fits-plan-md">2. How it fits PLAN.md</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-a-evaluating-the-talent-l16-performance-evaluation">3. Lecture A — “Evaluating the Talent” (L16, Performance Evaluation)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#min-arc-3-micro-structure">75-min arc (§3 micro-structure)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-kept-from-the-draft-what-is-alpha-that-already-mined-l16">Content KEPT (from the draft + What-Is-Alpha that already mined L16)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-cut-or-compressed-to-make-room-for-the-spine">Content CUT or COMPRESSED (to make room for the spine)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-6-items">Pitfall checklist (6 items)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-shrinkage-rule-we-teach-classroom-version">The shrinkage rule we teach (classroom version)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-b-sizing-the-bets-l17-capital-allocation-under-uncertainty">4. Lecture B — “Sizing the Bets” (L17, Capital Allocation under Uncertainty)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#min-arc">75-min arc</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-kept">Content KEPT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-added-the-spine-this-is-the-new-center-of-gravity">Content ADDED (the spine; this is the new center of gravity)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-cut-or-compressed">Content CUT or COMPRESSED</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Pitfall checklist (6 items)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shared-dataset-one-synthetic-pod-shop-used-by-both-lectures">5. Shared dataset — one synthetic pod shop, used by both lectures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-a-l16-grade-the-roster">Challenge A (L16) — “Grade the roster”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-b-l17-size-the-roster-fire-decision">Challenge B (L17) — “Size the roster + fire decision”</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-deliverables-after-approval-per-plan-8">6. Build deliverables (after approval, per PLAN §8)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-questions-before-building">7. Open questions before building</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="l16-l17-joint-redesign-performance-evaluation-capital-allocation">
+<h1>L16 + L17 Joint Redesign — Performance Evaluation × Capital Allocation<a class="headerlink" href="#l16-l17-joint-redesign-performance-evaluation-capital-allocation" title="Link to this heading">#</a></h1>
+<p><strong>Status:</strong> Design doc for review (not yet built). Once approved, build per <a class="reference external" href="http://PLAN.md">PLAN.md</a> §8.
+<strong>Scope:</strong> Rebuild L16 (Performance Evaluation) and L17 (Capital Allocation II)
+as a single integrated 2-lecture unit. Capital Allocation I (L7) stays where it
+is — these two lectures call back to it.
+<strong>Spine:</strong> Ken Griffin / Citadel multimanager “pod shop” + the buyside
+alpha-capture program. One running example that makes the nesting concrete.
+<strong>Last updated:</strong> 2026-06-03</p>
+<hr class="docutils" />
+<section id="the-one-idea">
+<h2>1. The one idea<a class="headerlink" href="#the-one-idea" title="Link to this heading">#</a></h2>
+<p>A pod shop’s entire business is two steps run in a loop:</p>
+<blockquote>
+<div><p><strong>(1) grade PMs → (2) size bets on them → (3) re-grade, re-size, fire Dave.</strong></p>
+</div></blockquote>
+<p>Step 1 is <strong>performance evaluation</strong>. Step 2 is <strong>capital allocation</strong>. They are
+<em>nested</em>: you cannot size what you cannot evaluate, and the only reason to
+evaluate is to size. The alpha-capture program is the same loop applied to
+<em>rented</em> signals instead of in-house PMs — which is why it makes Citadel money:
+it buys <strong>breadth</strong> without buying headcount.</p>
+<p>This is the thread that ties the whole unit together, and it converts two
+abstract estimation lectures into one concrete business problem the students
+can hold in their heads.</p>
+<p>Levine’s two sentences map exactly onto the two lectures:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Levine</p></th>
+<th class="head"><p>Lecture</p></th>
+<th class="head"><p>Concept</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>“edge ∝ skill × number of independent decisions”</p></td>
+<td><p><strong>L17</strong></p></td>
+<td><p>Fundamental Law: IR = IC·√BR</p></td>
+</tr>
+<tr class="row-odd"><td><p>“they know how confident they are; you know how confident they <em>should</em> be”</p></td>
+<td><p><strong>L16</strong></p></td>
+<td><p>shrinking a self-reported track record toward zero by its t-stat</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The handoff between the lectures is a single object: <strong>L16 produces a shrunk,
+honestly-graded alpha for each PM; L17 consumes those as the <code class="docutils literal notranslate"><span class="pre">μ</span></code> it sizes on.</strong></p>
+</section>
+<hr class="docutils" />
+<section id="how-it-fits-plan-md">
+<h2>2. How it fits <a class="reference external" href="http://PLAN.md">PLAN.md</a><a class="headerlink" href="#how-it-fits-plan-md" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Schedule:</strong> no change to slots. L16 (Mon Nov 2) = Lecture A; L17 (Wed Nov 4)
+= Lecture B. Both are currently ⚠️ Draft in §10 — this is their rebuild pass.</p></li>
+<li><p><strong>Callbacks to Capital Allocation I (L7, ✅ built), reused, not re-taught:</strong></p>
+<ul>
+<li><p>single-asset weight <code class="docutils literal notranslate"><span class="pre">w*</span> <span class="pre">=</span> <span class="pre">μ/(γσ²)</span></code> and vol allocation <code class="docutils literal notranslate"><span class="pre">w*σ</span> <span class="pre">=</span> <span class="pre">SR/γ</span></code></p></li>
+<li><p>MVE weights <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">=</span> <span class="pre">Σ⁻¹μ</span></code></p></li>
+<li><p><strong>Sharpe-Pythagoras</strong> <code class="docutils literal notranslate"><span class="pre">SR²</span> <span class="pre">=</span> <span class="pre">SR₁²</span> <span class="pre">+</span> <span class="pre">SR₂²</span></code> for uncorrelated bets — this is
+the seed of the Fundamental Law, so L17 is literally “Cap Alloc I, but with
+N PMs and estimation error.”
+L17’s cold open should explicitly say “remember Sharpe-Pythagoras from L7?”</p></li>
+</ul>
+</li>
+<li><p><strong>No redundancy:</strong> L7 derives the optimizer assuming you <em>know</em> μ and Σ.
+This unit is about where those numbers come from (L16) and what breaks when
+they’re estimated (L17). Clean division of labor.</p></li>
+<li><p><strong>Conventions honored:</strong> standard 75-min arc (§3), notebook anatomy (§4),
+paste-token submission (§5), 6–8-item pitfall checklist, 2 live AI moments,
+single scenario challenge, drop-the-hype tone (§1).</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="lecture-a-evaluating-the-talent-l16-performance-evaluation">
+<h2>3. Lecture A — “Evaluating the Talent” (L16, Performance Evaluation)<a class="headerlink" href="#lecture-a-evaluating-the-talent-l16-performance-evaluation" title="Link to this heading">#</a></h2>
+<p><strong>Core narrative (the one thing to remember):</strong> a track record is a noisy
+estimate of skill. Grading it means (a) stripping out factor beta that isn’t
+skill, and (b) discounting what’s left by how uncertain it is. <em>That discount
+is the edge a good allocator has over the PM pitching to them.</em></p>
+<section id="min-arc-3-micro-structure">
+<h3>75-min arc (§3 micro-structure)<a class="headerlink" href="#min-arc-3-micro-structure" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Phase</p></th>
+<th class="head"><p>Content</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Cold open (3)</p></td>
+<td><p>The Bloomberg alpha-capture story. “Citadel will pay outside managers for their trade signals. Why would a $60B fund buy other people’s ideas? Because their edge isn’t ideas — it’s <em>grading</em> ideas.”</p></td>
+</tr>
+<tr class="row-odd"><td><p>Motivate (12)</p></td>
+<td><p>The pod-shop loop. Today = step 1: how do you grade a PM? Set up the alpha-attribution regression (CAPM→FF3→FF6).</p></td>
+</tr>
+<tr class="row-even"><td><p>Pitfall checklist (5)</p></td>
+<td><p>6 items (below).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Live AI #1 (12)</p></td>
+<td><p><strong>Specify → Implement → Validate</strong>: regress a real fund (ARKK) on FF6, audit the output. Is the “alpha” real or just small-cap/growth beta?</p></td>
+</tr>
+<tr class="row-even"><td><p>Concept (8)</p></td>
+<td><p>“Is it real?” — Sharpe standard error (Lo 2002) and the alpha t-stat. Short track records → wide CIs.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Live AI #2 (12)</p></td>
+<td><p>Regress Berkshire (BRK) on FF6 → genuine residual alpha (quality/low-beta tilt the 6 factors miss). Contrast with ARKK.</p></td>
+</tr>
+<tr class="row-even"><td><p>Concept (8)</p></td>
+<td><p><strong>Statistical shrinkage</strong> — the handoff. Pull α̂ toward zero by its t-stat (rule below). Distinguish from benchmark re-attribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Challenge (18)</p></td>
+<td><p>Grade a pitched PM (synthetic). See §5.</p></td>
+</tr>
+<tr class="row-even"><td><p>Wrap (4)</p></td>
+<td><p>Two takeaways: “alpha shrinks twice — once for beta, once for noise”; “the shrunk alpha is what tomorrow’s lecture sizes.” Preview L17.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="content-kept-from-the-draft-what-is-alpha-that-already-mined-l16">
+<h3>Content KEPT (from the draft + What-Is-Alpha that already mined L16)<a class="headerlink" href="#content-kept-from-the-draft-what-is-alpha-that-already-mined-l16" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Multifactor alpha attribution (CAPM/FF3/FF6); “alpha shrinks as you add factors.”</p></li>
+<li><p>ARKK (fake alpha = factor beta) and Buffett (real alpha) cases — these are the
+vivid hands-on hooks; keep both.</p></li>
+<li><p>Sharpe standard error and the alpha t-stat as the “is this real?” test.</p></li>
+<li><p>The honesty pitfalls: survivorship, multiple testing, sample cherry-picking.</p></li>
+</ul>
+</section>
+<section id="content-cut-or-compressed-to-make-room-for-the-spine">
+<h3>Content CUT or COMPRESSED (to make room for the spine)<a class="headerlink" href="#content-cut-or-compressed-to-make-room-for-the-spine" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Drop the standalone “overfitting / in-sample vs OOS” mini-section as its own
+beat — fold it into the multiple-testing pitfall (one line: “in-sample Sharpe
+is the ultimate multiple-test winner”).</p></li>
+<li><p>Bonferroni mechanics → mention as a one-liner, don’t derive.</p></li>
+<li><p>Keep the regression itself entirely in the AI-demo cells (don’t teach OLS
+again; L4/L5 did that).</p></li>
+</ul>
+</section>
+<section id="pitfall-checklist-6-items">
+<h3>Pitfall checklist (6 items)<a class="headerlink" href="#pitfall-checklist-6-items" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Single-factor benchmark</strong> — “alpha” that’s just size/value/momentum loading. Detect: always run FF6, watch α collapse.</p></li>
+<li><p><strong>Sample-period cherry-picking</strong> — report sub-period alphas, not one number.</p></li>
+<li><p><strong>Survivorship in the PM universe</strong> — grading only survivors inflates average skill 1–2%/yr. Detect: is the dead PM in your sample?</p></li>
+<li><p><strong>Multiple testing</strong> — 500 PMs → ~25 fake stars at p&lt;0.05. The pitched track record is <em>self-selected</em> to look good.</p></li>
+<li><p><strong>Sharpe SE units</strong> — compute SE in the <em>return frequency</em> used, then annualize SE by √12. Mixing frequencies is the classic silent bug.</p></li>
+<li><p><strong>t-stat ≠ economic size</strong> — a t=3 on 0.1%/yr alpha is real but worthless; a t=1 on 8%/yr is huge but unproven.</p></li>
+</ol>
+</section>
+<section id="the-shrinkage-rule-we-teach-classroom-version">
+<h3>The shrinkage rule we teach (classroom version)<a class="headerlink" href="#the-shrinkage-rule-we-teach-classroom-version" title="Link to this heading">#</a></h3>
+<p>Two different things both get called “shrinkage” — separate them explicitly:</p>
+<ul class="simple">
+<li><p><strong>(a) Benchmark re-attribution:</strong> α falls as you add factors (CAPM 8% → FF6
+2%). This is <em>not</em> shrinkage — it’s correctly reclassifying beta as not-alpha.</p></li>
+<li><p><strong>(b) Statistical shrinkage (the handoff):</strong> even the FF6 α̂ is noisy. Best
+estimate of <em>true</em> skill pulls it toward zero:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\tilde\alpha = \hat\alpha \cdot \max\!\left(0,\; 1 - \tfrac{1}{t^2}\right), \qquad t = \hat\alpha / \text{SE}(\hat\alpha)\]</div>
+<p>This is a James–Stein–flavored heuristic, defensible and <em>teachable</em>: a t≈2
+alpha is cut ~25%; a t≈1 alpha collapses to ~0. It ties the discount directly
+to the t-stat, which <em>is</em> “knowing how confident they should be.” (Flag in the
+notes that this is one convenient rule, not the unique Bayesian answer — the
+fuller normal-normal posterior is an aside.)</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="lecture-b-sizing-the-bets-l17-capital-allocation-under-uncertainty">
+<h2>4. Lecture B — “Sizing the Bets” (L17, Capital Allocation under Uncertainty)<a class="headerlink" href="#lecture-b-sizing-the-bets-l17-capital-allocation-under-uncertainty" title="Link to this heading">#</a></h2>
+<p><strong>Core narrative:</strong> given a roster of graded PMs, how many dollars on each? Two
+forces fight: <strong>breadth</strong> (more independent bets → higher Sharpe) pushes you to
+add PMs; <strong>estimation error and crowding</strong> push you to bet less than the
+formula says. The optimizer <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">=</span> <span class="pre">Σ⁻¹μ</span></code> handles both — if you feed it shrunk
+inputs and an honest Σ.</p>
+<section id="min-arc">
+<h3>75-min arc<a class="headerlink" href="#min-arc" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Phase</p></th>
+<th class="head"><p>Content</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Cold open (3)</p></td>
+<td><p>Back to Citadel: “You graded Alice, Bob, Claire, Dave yesterday. Now — how many dollars on each, and why does adding a <em>mediocre</em> fifth PM still make Griffin richer?”</p></td>
+</tr>
+<tr class="row-odd"><td><p>Motivate (12)</p></td>
+<td><p><strong>More independent bets → higher Sharpe.</strong> Straight implication of Sharpe-Pythagoras (L7): N independent equal-skill PMs → <code class="docutils literal notranslate"><span class="pre">SR_combined</span> <span class="pre">=</span> <span class="pre">√N</span> <span class="pre">·</span> <span class="pre">SR_individual</span></code>. So doubling your roster of <em>uncorrelated</em> PMs multiplies Sharpe by √2 — why pod shops scale and why alpha capture exists: buy independent bets cheaply. <em>(Note: people sometimes call this the “Fundamental Law of Active Management,” written <code class="docutils literal notranslate"><span class="pre">IR</span> <span class="pre">=</span> <span class="pre">IC·√BR</span></code> where BR = number of independent bets.)</em></p></td>
+</tr>
+<tr class="row-even"><td><p>Pitfall checklist (5)</p></td>
+<td><p>6 items (below).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Live AI #1 (12)</p></td>
+<td><p>Specify→Implement→Validate: equal-weight-combine the PM panel, compute combined Sharpe, compare to √N prediction. Audit: does it match? If not, why (correlation)?</p></td>
+</tr>
+<tr class="row-even"><td><p>Concept (10)</p></td>
+<td><p><strong>Correlation cancels the √N gain.</strong> If PMs are correlated (ρ), the combined Sharpe stops growing: it behaves like only <code class="docutils literal notranslate"><span class="pre">N/(1+(N−1)ρ)</span></code> independent PMs, which →1/ρ as N→∞. The crowded pair counts as ~one PM. This is exactly what Σ in <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">=</span> <span class="pre">Σ⁻¹μ</span></code> already encodes. <em>(Note: that count is sometimes called “effective breadth.”)</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>Live AI #2 (12)</p></td>
+<td><p>Plug-in <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">=</span> <span class="pre">Σ̂⁻¹μ̂</span></code> on the panel → absurd leverage. Then feed <em>shrunk</em> μ (from L16’s rule) + shrunk Σ → sane weights. Audit the difference.</p></td>
+</tr>
+<tr class="row-even"><td><p>Concept (8)</p></td>
+<td><p><strong>Bet less than the formula says.</strong> Because μ̂ is noisy, shrink it toward zero (mean shrinkage, already taught), so the weight <code class="docutils literal notranslate"><span class="pre">w</span> <span class="pre">=</span> <span class="pre">μ̃/(γσ²)</span></code> comes down — equivalently, a noisier estimate means a higher effective γ. Biasing toward zero is cheap; over-betting is not. <em>(Note: taking a fixed fraction of the raw plug-in weight is sometimes called “fractional / half-Kelly.”)</em></p></td>
+</tr>
+<tr class="row-odd"><td><p>Challenge (18)</p></td>
+<td><p>Size the roster + fire decision (synthetic). See §5.</p></td>
+</tr>
+<tr class="row-even"><td><p>Wrap (4)</p></td>
+<td><p>Close the loop: “evaluation set the μ, allocation set the W, next quarter you re-grade and fire Dave.” The pod-shop loop, complete.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="content-kept">
+<h3>Content KEPT<a class="headerlink" href="#content-kept" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Estimation-error fragility of <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">=</span> <span class="pre">Σ⁻¹μ</span></code> (plug-in over-betting).</p></li>
+<li><p>Shrinkage of μ (James–Stein / toward grand mean) and Σ (Ledoit–Wolf, stated as a closed form, not derived).</p></li>
+<li><p>Robust sizing via mean shrinkage of μ̂ (equivalently, a larger γ in <code class="docutils literal notranslate"><span class="pre">w</span> <span class="pre">=</span> <span class="pre">μ̃/(γσ²)</span></code>); backtest Sharpe overstates OOS, so discount it.</p></li>
+</ul>
+</section>
+<section id="content-added-the-spine-this-is-the-new-center-of-gravity">
+<h3>Content ADDED (the spine; this is the new center of gravity)<a class="headerlink" href="#content-added-the-spine-this-is-the-new-center-of-gravity" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The √N result — combined Sharpe grows with the number of <em>independent</em> bets
+(taught as a direct implication of L7’s Sharpe-Pythagoras, with the
+“Fundamental Law / IR = IC·√BR” name relegated to a side note).</p></li>
+<li><p>How correlation cancels that gain — the rigor payoff; “independent” is the
+load-bearing word (the “effective breadth” name kept as a side note only).</p></li>
+</ul>
+</section>
+<section id="content-cut-or-compressed">
+<h3>Content CUT or COMPRESSED<a class="headerlink" href="#content-cut-or-compressed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Black–Litterman</strong> (draft LO #3): cut to a single sentence (“mixing a prior
+with views is the same shrinkage idea, formalized”) — don’t teach the
+machinery. It’s an aside, not core, and the t-stat shrinkage rule already
+delivers the intuition.</p></li>
+<li><p>Transaction-cost penalty in the optimizer → one pitfall-table line; the full
+treatment lives in L20 Implementation.</p></li>
+<li><p>Condition-number / singular-Σ mechanics → keep as a pitfall line, not a section.</p></li>
+</ul>
+</section>
+<section id="id1">
+<h3>Pitfall checklist (6 items)<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Plug-in optimization</strong> — using μ̂ as if it were μ → wild leverage. Detect: |w| &gt; 2.</p></li>
+<li><p><strong>Correlation ignored (“counting crowded bets as independent”)</strong> — √N only holds at ρ=0; check the off-diagonals before claiming breadth.</p></li>
+<li><p><strong>Near-singular Σ</strong> — N assets need T ≫ N²; condition number &gt; 100 → unstable inverse → shrink Σ.</p></li>
+<li><p><strong>No shrinkage on μ</strong> — un-shrunk alpha sizes the lucky fake star largest. Feed L16’s shrunk α.</p></li>
+<li><p><strong>Backtest-Sharpe optimism</strong> — the in-sample optimal weights look great in-sample by construction. Discount.</p></li>
+<li><p><strong>Ignoring costs/turnover</strong> — optimal weights demand 100% turnover (→ L20).</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="shared-dataset-one-synthetic-pod-shop-used-by-both-lectures">
+<h2>5. Shared dataset — one synthetic pod shop, used by both lectures<a class="headerlink" href="#shared-dataset-one-synthetic-pod-shop-used-by-both-lectures" title="Link to this heading">#</a></h2>
+<p>A single seeded generator produces a panel of monthly PM returns plus the
+factor returns they were built from. <strong>L16 grades the PMs; L17 sizes the
+survivors.</strong> Reusing one dataset across both lectures is what makes the
+nesting tangible.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">build_podshop_challenge_data.py</span></code> → <code class="docutils literal notranslate"><span class="pre">assets/data/podshop_AI_challenge.csv</span></code></strong>
+(+ <code class="docutils literal notranslate"><span class="pre">podshop_factors_AI.csv</span></code> for the attribution regressions). Seeded, no web
+fetch, so the belt-and-suspenders appendix is N/A (document the seed instead).</p>
+<p>Roster designed so each pitfall has a poster child:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>PM</p></th>
+<th class="head"><p>True α</p></th>
+<th class="head"><p>Truth</p></th>
+<th class="head"><p>Teaching role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Alice</p></td>
+<td><p>+4%/yr, t≈2.5</p></td>
+<td><p>real skill</p></td>
+<td><p>the keeper; survives shrinkage</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bob</p></td>
+<td><p>+2%/yr, t≈1.8</p></td>
+<td><p>marginal</p></td>
+<td><p>shrinks a lot; “fund small”</p></td>
+</tr>
+<tr class="row-even"><td><p>Claire</p></td>
+<td><p>0, but high in-sample SR over short history</p></td>
+<td><p><strong>lucky fake star</strong></p></td>
+<td><p>multiple-testing / shrinkage hard to ~0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dave</p></td>
+<td><p>slightly negative</p></td>
+<td><p>the <strong>fire</strong></p></td>
+<td><p>the re-allocation decision</p></td>
+</tr>
+<tr class="row-even"><td><p>Erin &amp; Frank</p></td>
+<td><p>each +3%/yr but ρ(Erin,Frank) ≈ 0.9</p></td>
+<td><p><strong>crowded pair</strong></p></td>
+<td><p>effective-breadth collapse</p></td>
+</tr>
+<tr class="row-odd"><td><p>Grace</p></td>
+<td><p>+3%/yr but only 18 months of data</p></td>
+<td><p>short history</p></td>
+<td><p>wide Sharpe SE</p></td>
+</tr>
+<tr class="row-even"><td><p>(Heidi)</p></td>
+<td><p>blew up / removed mid-sample</p></td>
+<td><p><strong>survivorship</strong></p></td>
+<td><p>only appears in the “full” file, not the “surviving” file</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Construction: simulate FF-style factor returns, give each PM a beta vector +
+true α + idiosyncratic noise so an FF6 regression recovers (β, α̂, t) cleanly.
+Calibrate noise so Claire’s <em>realized</em> in-sample Sharpe is tempting but her
+t-stat is weak — that’s the whole lesson.</p>
+<section id="challenge-a-l16-grade-the-roster">
+<h3>Challenge A (L16) — “Grade the roster”<a class="headerlink" href="#challenge-a-l16-grade-the-roster" title="Link to this heading">#</a></h3>
+<p>Required outputs (variable-stub pattern, §4):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">arkk_ff6_alpha</span>   <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized, from the demo fund</span>
+<span class="n">claire_t_stat</span>    <span class="o">=</span> <span class="n">____</span>   <span class="c1"># the lucky star's alpha t-stat</span>
+<span class="n">claire_alpha_shrunk</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># apply the (1 - 1/t²) rule → ~0</span>
+<span class="n">n_real_skill</span>     <span class="o">=</span> <span class="n">____</span>   <span class="c1"># how many PMs survive shrinkage (alpha_shrunk &gt; 0)</span>
+<span class="n">MEMO</span>             <span class="o">=</span> <span class="s2">"..."</span>  <span class="c1"># which PMs are real, which are noise, and why</span>
+</pre></div>
+</div>
+<p>Memo rubric (Pattern C, §5): rewards naming Claire as a multiple-testing
+artifact, citing the t-stat (not the raw Sharpe), and flagging survivorship.</p>
+</section>
+<section id="challenge-b-l17-size-the-roster-fire-decision">
+<h3>Challenge B (L17) — “Size the roster + fire decision”<a class="headerlink" href="#challenge-b-l17-size-the-roster-fire-decision" title="Link to this heading">#</a></h3>
+<p>Builds directly on A’s shrunk alphas.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sr_equal_weight</span>  <span class="o">=</span> <span class="n">____</span>   <span class="c1"># combined Sharpe, equal-weight across survivors</span>
+<span class="n">sr_sqrt_n_pred</span>   <span class="o">=</span> <span class="n">____</span>   <span class="c1"># √N · avg individual Sharpe (the naive prediction)</span>
+<span class="n">breadth_effective</span> <span class="o">=</span> <span class="n">____</span>  <span class="c1"># N/(1+(N-1)ρ) using the Erin/Frank crowding</span>
+<span class="n">w_plugin_max</span>     <span class="o">=</span> <span class="n">____</span>   <span class="c1"># max |weight| from plug-in Σ⁻¹μ̂ (shows over-betting)</span>
+<span class="n">w_robust_alice</span>   <span class="o">=</span> <span class="n">____</span>   <span class="c1"># Alice's weight using shrunk μ̃ (smaller, sane)</span>
+<span class="n">fire_dave</span>        <span class="o">=</span> <span class="n">____</span>   <span class="c1"># 1.0 / 0.0</span>
+<span class="n">MEMO</span>             <span class="o">=</span> <span class="s2">"..."</span>  <span class="c1"># the allocation + who to fund/fire and why</span>
+</pre></div>
+</div>
+<p>Memo rubric: rewards explaining why equal-weight Sharpe falls short of √N
+(crowding), why plug-in over-bets, and sizing on <em>shrunk</em> not raw alpha.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="build-deliverables-after-approval-per-plan-8">
+<h2>6. Build deliverables (after approval, per PLAN §8)<a class="headerlink" href="#build-deliverables-after-approval-per-plan-8" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_perf_eval_ai_notebook.py</span></code> → <code class="docutils literal notranslate"><span class="pre">PerformanceEval_AI.ipynb</span></code></p></td>
+<td><p>rebuild Lecture A</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">build_cap_alloc_ii_ai_notebook.py</span></code> → <code class="docutils literal notranslate"><span class="pre">CapitalAllocationII_AI.ipynb</span></code></p></td>
+<td><p>rebuild Lecture B</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">build_podshop_challenge_data.py</span></code> → <code class="docutils literal notranslate"><span class="pre">assets/data/podshop_AI_challenge.csv</span></code> (+ factors)</p></td>
+<td><p>shared dataset</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PerformanceEval_AI_runsheet.md</span></code>, <code class="docutils literal notranslate"><span class="pre">CapitalAllocationII_AI_runsheet.md</span></code></p></td>
+<td><p>run sheets (§3 timing)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto_evaluator.py</span></code> entries: <code class="docutils literal notranslate"><span class="pre">PerfEval_AI</span></code>, <code class="docutils literal notranslate"><span class="pre">CapAllocII_AI</span></code></p></td>
+<td><p>answer keys + memo rubrics</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Keep existing filenames (<code class="docutils literal notranslate"><span class="pre">PerformanceEval_AI.ipynb</span></code>, <code class="docutils literal notranslate"><span class="pre">CapitalAllocationII_AI.ipynb</span></code>)
+to avoid churn; the rebuild overwrites the drafts. ARKK/BRK + FF6 in the demo
+cells get the belt-and-suspenders appendix (§1); the synthetic challenge data
+does not need it.</p>
+</section>
+<hr class="docutils" />
+<section id="open-questions-before-building">
+<h2>7. Open questions before building<a class="headerlink" href="#open-questions-before-building" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>ARKK/BRK real data vs fully synthetic cases.</strong> Real names are more vivid
+but add a yfinance/Ken-French fetch (mitigated by the appendix). I lean
+real for the <em>demo</em> cases, synthetic for the <em>graded</em> challenge. OK?</p></li>
+<li><p><strong>γ (risk aversion) convention</strong> across L7/L16/L17 — keep γ=3 annual as in
+the Cap Alloc I draft, for continuity?</p></li>
+<li><p><strong>Scrub “Kelly” from the existing L17 draft.</strong> Robust sizing is taught only
+via mean shrinkage of μ̂ + the <code class="docutils literal notranslate"><span class="pre">w</span> <span class="pre">=</span> <span class="pre">μ̃/(γσ²)</span></code> formula already in Cap Alloc I.
+The draft’s “Fractional Kelly” section gets removed. (Confirmed direction —
+noting it here so the build does it.)</p></li>
+<li><p><strong>Survivorship PM (Heidi):</strong> include the two-file (full vs surviving) device,
+or is that one pitfall too many for a 75-min slot? I lean keep — it’s the
+most underappreciated bias and the dataset makes it free.</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-one-idea">1. The one idea</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-fits-plan-md">2. How it fits PLAN.md</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-a-evaluating-the-talent-l16-performance-evaluation">3. Lecture A — “Evaluating the Talent” (L16, Performance Evaluation)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#min-arc-3-micro-structure">75-min arc (§3 micro-structure)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-kept-from-the-draft-what-is-alpha-that-already-mined-l16">Content KEPT (from the draft + What-Is-Alpha that already mined L16)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-cut-or-compressed-to-make-room-for-the-spine">Content CUT or COMPRESSED (to make room for the spine)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-6-items">Pitfall checklist (6 items)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-shrinkage-rule-we-teach-classroom-version">The shrinkage rule we teach (classroom version)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lecture-b-sizing-the-bets-l17-capital-allocation-under-uncertainty">4. Lecture B — “Sizing the Bets” (L17, Capital Allocation under Uncertainty)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#min-arc">75-min arc</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-kept">Content KEPT</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-added-the-spine-this-is-the-new-center-of-gravity">Content ADDED (the spine; this is the new center of gravity)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#content-cut-or-compressed">Content CUT or COMPRESSED</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Pitfall checklist (6 items)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shared-dataset-one-synthetic-pod-shop-used-by-both-lectures">5. Shared dataset — one synthetic pod shop, used by both lectures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-a-l16-grade-the-roster">Challenge A (L16) — “Grade the roster”</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-b-l17-size-the-roster-fire-decision">Challenge B (L17) — “Size the roster + fire decision”</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-deliverables-after-approval-per-plan-8">6. Build deliverables (after approval, per PLAN §8)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-questions-before-building">7. Open questions before building</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

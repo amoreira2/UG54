@@ -508,9 +508,8 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-sorts">5.6. 🛡️ Pitfall Checklist for Sorts <a id="pitfalls"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-sorting-on-value">5.7. 🔄 Live Demo: Sorting on Value <a id="demo"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">5.7.1. Step 1 — The specification</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">5.7.2. Step 2 — Implementation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">5.7.3. Step 3 — Validate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-ai-prompt">5.7.1. 🤖  The AI prompt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">5.7.2. Step 3 — Validate</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#breakpoints-and-the-size-disaster">5.8. 2. Breakpoints, and the Size Disaster <a id="breakpoints"></a></a><ul class="nav section-nav flex-column">
@@ -596,9 +595,6 @@ a property of the signal</p></li>
 <div><p><strong>📎 Winsorizing and z-scoring</strong> live in the Appendix —
 <code class="docutils literal notranslate"><span class="pre">chapters/Appendix/SignalHygiene_AI.ipynb</span></code>. Ranking is scale-free so a sort
 doesn’t need them, but you will if you combine two signals for Assignment 1.</p>
-<p><strong>📎 Sharpe and information ratios</strong> moved to Lecture 4, <em>Introduction to
-Performance Evaluation</em>, where they sit with the appraisal ratio once a
-factor model gives you alpha.</p>
 </div></blockquote>
 </section>
 <hr class="docutils" />
@@ -622,7 +618,7 @@ factor model gives you alpha.</p>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"panel: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows, </span><span class="si">{</span><span class="n">panel</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span><span class="si">}</span><span class="s2"> months"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"menu : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="si">}</span><span class="s2"> signals available</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">menu</span><span class="p">[[</span><span class="s1">'Acronym'</span><span class="p">,</span> <span class="s1">'Authors'</span><span class="p">,</span> <span class="s1">'Year'</span><span class="p">,</span> <span class="s1">'Cat.Economic'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">menu</span><span class="p">[[</span><span class="s1">'Acronym'</span><span class="p">,</span> <span class="s1">'Authors'</span><span class="p">,</span> <span class="s1">'Year'</span><span class="p">,</span> <span class="s1">'Cat.Economic'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -742,7 +738,7 @@ capture some real economics</strong>; the sort only harvests what is already the
 </tr>
 <tr class="row-even"><td><p>5</p></td>
 <td><p><strong>Dropping missing signal values after bucketing</strong></p></td>
-<td><p>Bucket sizes become unequal and the spread is mismeasured</p></td>
+<td><p>Bucket sizes become unequal</p></td>
 <td><p>Drop first, then rank</p></td>
 </tr>
 <tr class="row-odd"><td><p>6</p></td>
@@ -767,44 +763,18 @@ result.</p>
 <p>Book-to-market — book value divided by market value. High means the market
 prices the firm cheaply relative to its accounting value. Graham and Dodd in
 1934, Stattman in 1980, Fama and French in 1992.</p>
-<section id="step-1-the-specification">
-<h3><span class="section-number">5.7.1. </span>Step 1 — The specification<a class="headerlink" href="#step-1-the-specification" title="Link to this heading">#</a></h3>
+<section id="the-ai-prompt">
+<h3><span class="section-number">5.7.1. </span>🤖  The AI prompt<a class="headerlink" href="#the-ai-prompt" title="Link to this heading">#</a></h3>
 <blockquote>
-<div><p><strong>📝 Spec</strong></p>
-<p>Merge the <code class="docutils literal notranslate"><span class="pre">BM</span></code> signal onto the panel. Within <strong>each month</strong>, rank stocks by
+<div><p>Merge the <code class="docutils literal notranslate"><span class="pre">BM</span></code> signal onto the panel. rank stocks by
 <code class="docutils literal notranslate"><span class="pre">BM</span></code> and cut into 10 equal-count buckets. For each bucket and month, compute
-the equal-weighted average of <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>. Report each decile’s annualized mean
+the equal-weighted average of returns. Report each decile’s annualized mean
 return and the annualized decile-10-minus-decile-1 spread with its t-statistic.
-Drop rows with missing <code class="docutils literal notranslate"><span class="pre">BM</span></code>, <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>, or <code class="docutils literal notranslate"><span class="pre">me</span></code> before ranking.</p>
-</div></blockquote>
-</section>
-<section id="step-2-implementation">
-<h3><span class="section-number">5.7.2. </span>Step 2 — Implementation<a class="headerlink" href="#step-2-implementation" title="Link to this heading">#</a></h3>
-<blockquote>
-<div><p><strong>🤖 AI prompt:</strong></p>
-<p><em>“Merge signal df onto panel on permno and date. Drop missing. Within each
-date, use pd.qcut on the signal to make 10 buckets labelled 0-9. Group by date
-and bucket, take the mean of ret_fwd. Compute the time series of bucket 9
-minus bucket 0, and report its annualized mean and Newey-West-free t-stat.”</em></p>
+Drop rows with missing market cap, signal, and returns.</p>
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bm</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/BM.parquet"</span><span class="p">)</span>
-<span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">'permno'</span><span class="p">,</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">'inner'</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'BM'</span><span class="p">,</span><span class="s1">'ret_fwd'</span><span class="p">,</span><span class="s1">'me'</span><span class="p">])</span>
-
-<span class="c1"># rank WITHIN each month (pitfall 4)</span>
-<span class="n">d</span><span class="p">[</span><span class="s1">'decile'</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)[</span><span class="s1">'BM'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
-    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">'drop'</span><span class="p">))</span>
-
-<span class="n">bucket</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'date'</span><span class="p">,</span><span class="s1">'decile'</span><span class="p">])[</span><span class="s1">'ret_fwd'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
-<span class="n">ls</span> <span class="o">=</span> <span class="p">(</span><span class="n">bucket</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">bucket</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Annualized mean return by book-to-market decile (1 = growth, 10 = value)"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  D</span><span class="si">{</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">&lt;2d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">bucket</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">7.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">D10 - D1 : </span><span class="si">{</span><span class="n">ls</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"t-stat   : </span><span class="si">{</span><span class="n">ls</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">ls</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">))</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"months   : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># write your work here</span>
 </pre></div>
 </div>
 </div>
@@ -824,13 +794,11 @@ minus bucket 0, and report its annualized mean and Newey-West-free t-stat.”</e
 </div>
 </section>
 <section id="step-3-validate">
-<h3><span class="section-number">5.7.3. </span>Step 3 — Validate<a class="headerlink" href="#step-3-validate" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">5.7.2. </span>Step 3 — Validate<a class="headerlink" href="#step-3-validate" title="Link to this heading">#</a></h3>
 <blockquote>
 <div><p><strong>🤔 Read the bar chart before the t-stat.</strong></p>
-<p>Is the pattern <strong>monotone</strong> — does each decile beat the one below it? A
-monotone sort is much stronger evidence than a big spread between the two
-extremes. If only D10 and D1 are unusual and the middle is flat, you may be
-looking at two small groups of odd firms rather than a pervasive relationship.</p>
+<p>Is the pattern <strong>monotone</strong> — does each decile beat the one below it?
+What to make of it?</p>
 </div></blockquote>
 <p>Also check both legs separately (pitfall 6): a spread built entirely from a
 disastrous short leg is a different claim from one where both sides contribute.</p>
@@ -987,17 +955,8 @@ is dominated by companies worth a few million dollars.</p>
 about <strong>3,106</strong> names — half the market — and the extreme microcap tail no
 longer drives the average.</p>
 <blockquote>
-<div><p><strong>⚠️ Caution: the +20.7% is real in the data and uninvestable in the world</strong></p>
-<p>Nothing is wrong with the arithmetic. That portfolio requires buying equal
-dollar amounts of 600 of the smallest listed companies in America and
-rebalancing monthly. The bid-ask spreads alone would consume most of it, and
-that’s before you ask whether you could buy at all. We quantify this in
-Lecture 16.</p>
+<div><p><strong>⚠️ Caution: In what sense +20.7% is real and what sense it is not?</strong></p>
 </div></blockquote>
-<p>This is also the answer to something you saw last week: equal-weighting lost to
-value-weighting over these twenty years. The size premium Banz published in
-1981 does not survive contact with sensible implementation choices over
-1980–2000.</p>
 </section>
 <section id="a-second-piece-of-evidence-the-extremes-didn-t-trade">
 <h3><span class="section-number">5.8.7. </span>A second piece of evidence: the extremes didn’t trade<a class="headerlink" href="#a-second-piece-of-evidence-the-extremes-didn-t-trade" title="Link to this heading">#</a></h3>
@@ -1114,8 +1073,13 @@ volatility fast, which is what makes the bucket’s mean return measurable at al
 </tbody>
 </table>
 </div>
-<p>Ten is a convention that balances these. Let’s check whether it’s a good one.</p>
-<div class="cell docutils container">
+<p>Ten is a convention that balances these. How would you check if it is a good one?</p>
+<div class="cell tag_hide-cell docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell content</p>
+<p class="expanded admonition-title">Hide code cell content</p>
+</summary>
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">]:</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">'permno'</span><span class="p">,</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">'inner'</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'BM'</span><span class="p">,</span><span class="s1">'ret_fwd'</span><span class="p">,</span><span class="s1">'me'</span><span class="p">])</span>
@@ -1130,6 +1094,7 @@ volatility fast, which is what makes the bucket’s mean return measurable at al
 </pre></div>
 </div>
 </div>
+</details>
 </div>
 <blockquote>
 <div><p><strong>💡 Key Insight</strong></p>
@@ -1138,11 +1103,7 @@ to 29% at 50 buckets. The top 2% of stocks by book-to-market really are
 cheaper than the top 10%, and they really do earn more.</p>
 <p>But look at the t-statistic. It rises to about 7.2 at 20 buckets and then
 <strong>falls</strong>. Past that point each bucket holds so few stocks that the extra
-signal is swamped by the extra noise — you are paying in precision faster than
-you are gaining in strength.</p>
-<p>That is the trade-off, visible in four lines of output. Deciles sit
-essentially at the top of the curve, which is why the literature settled
-there — not because ten is a round number.</p>
+signal is swamped by the extra noise. This noise is not only impacting t-stat–but it is real risk that you have to bear.</p>
 </div></blockquote>
 </section>
 <hr class="docutils" />
@@ -1239,7 +1200,7 @@ fail differently, and neither raises anything.</p>
 </table>
 </div>
 <blockquote>
-<div><p><strong>🤖 AI-Era Insight: this is the whole course in one cell</strong></p>
+<div><p><strong>🤖 AI-Era Insight</strong></p>
 <p>Ask an AI to “sort stocks into deciles on this signal” and you will get
 version A or version B. Both run. Neither warns you. Version B in particular
 hands you a result that looks exactly like every other result in this
@@ -1311,6 +1272,7 @@ the original authors reported. Pick one and test it.</p>
 <li><p>Report your t-statistic next to the published one</p></li>
 <li><p>Be ready to say out loud whether it replicated</p></li>
 </ol>
+<p>How would you make a combo?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># The menu — 30 published signals</span>
@@ -1334,42 +1296,7 @@ the original authors reported. Pick one and test it.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
-<span class="c1"># Fill in the two blanks to complete the standard sort.</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">long_short</span><span class="p">(</span><span class="n">signal_name</span><span class="p">,</span> <span class="n">breakpoints</span><span class="o">=</span><span class="s1">'nyse'</span><span class="p">,</span> <span class="n">weighting</span><span class="o">=</span><span class="s1">'vw'</span><span class="p">):</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">signal_name</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">'permno'</span><span class="p">,</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">'inner'</span><span class="p">)</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">signal_name</span><span class="p">,</span> <span class="s1">'ret_fwd'</span><span class="p">,</span> <span class="s1">'me'</span><span class="p">])</span>          <span class="c1"># drop FIRST</span>
-
-    <span class="k">if</span> <span class="n">breakpoints</span> <span class="o">==</span> <span class="s1">'nyse'</span><span class="p">:</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)[</span><span class="n">signal_name</span><span class="p">]</span>
-               <span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">'lo'</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">'hi'</span><span class="p">}))</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'date'</span><span class="p">)</span>
-        <span class="n">d</span><span class="p">[</span><span class="s1">'g'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">signal_name</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
-                   <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">signal_name</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s1">'g'</span><span class="p">]</span> <span class="o">=</span> <span class="n">____</span>        <span class="c1"># hint: d.groupby('date')[signal_name].transform(</span>
-                             <span class="c1">#        lambda x: pd.qcut(x,10,labels=False,duplicates='drop'))</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'g'</span><span class="p">])</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">])]</span>
-
-    <span class="n">agg</span> <span class="o">=</span> <span class="p">((</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">'ret_fwd'</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">'me'</span><span class="p">]))</span> <span class="k">if</span> <span class="n">weighting</span> <span class="o">==</span> <span class="s1">'vw'</span>
-           <span class="k">else</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">g</span><span class="p">[</span><span class="s1">'ret_fwd'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'date'</span><span class="p">,</span><span class="s1">'g'</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">agg</span><span class="p">)</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">____</span>                 <span class="c1"># hint: (p[9] - p[0]).dropna()   — long top, short bottom</span>
-    <span class="k">return</span> <span class="n">r</span>
-
-<span class="n">r</span> <span class="o">=</span> <span class="n">long_short</span><span class="p">(</span><span class="n">MY_SIGNAL</span><span class="p">)</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
-<span class="n">pub</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">menu</span><span class="o">.</span><span class="n">Acronym</span> <span class="o">==</span> <span class="n">MY_SIGNAL</span><span class="p">,</span> <span class="s1">'T-Stat'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  return   </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  vol      </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Sharpe   </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  t-stat   </span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">      published: </span><span class="si">{</span><span class="n">pub</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  verdict  </span><span class="si">{</span><span class="s1">'REPLICATES'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'does not clear |t| &gt; 2'</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># your turn:</span>
 </pre></div>
 </div>
 </div>
@@ -1382,8 +1309,7 @@ one near zero on a signal whose authors reported 8.</p>
 <p>Both are honest results from the same code.</p>
 <blockquote>
 <div><p><strong>🤔 Before we move on</strong></p>
-<p>Your sample is 1980–2000. Look up the sample period the original paper used —
-it’s in <code class="docutils literal notranslate"><span class="pre">menu</span></code>. If your window barely overlaps theirs, what exactly have you
+<p>Your sample is 1980–2000. Look up the sample period the original paper used. If your window barely overlaps theirs, what exactly have you
 tested? And if a published t-statistic of 8 becomes 1 in a different window,
 which number should you believe?</p>
 </div></blockquote>
@@ -1663,9 +1589,8 @@ a return” from “this strategy earns a return <em>you couldn’t have got for
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-sorts">5.6. 🛡️ Pitfall Checklist for Sorts <a id="pitfalls"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#live-demo-sorting-on-value">5.7. 🔄 Live Demo: Sorting on Value <a id="demo"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-the-specification">5.7.1. Step 1 — The specification</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-implementation">5.7.2. Step 2 — Implementation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">5.7.3. Step 3 — Validate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-ai-prompt">5.7.1. 🤖  The AI prompt</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-validate">5.7.2. Step 3 — Validate</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#breakpoints-and-the-size-disaster">5.8. 2. Breakpoints, and the Size Disaster <a id="breakpoints"></a></a><ul class="nav section-nav flex-column">
