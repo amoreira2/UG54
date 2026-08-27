@@ -72,129 +72,169 @@ Bonferroni moves **into L8**, which makes the split cleaner, not messier:
 
 ---
 
-## Proposed structure — revised
+## Proposed structure — v3, built around the process
 
-Target **1,400 lectured words**. Six sections is too many; five, with §1 kept to
-a paragraph.
+**Revised 2026-08-27 after AM.** The focus is the **process**, not the measures.
+The measures get *shown* — they are what the process outputs — but the lecture is
+about **Estimate → Tune → Test** and the techniques that keep the test honest.
 
-### §1 · You have one history, and you tried several things on it
+This also solves the MVE problem. The old notebook needed `Σ⁻¹μ` to have something
+to tune. We do not: **"take the top *N* signals and combine them with weights
+*W*"** is a rule with two knobs and no optimizer. *N* and *W* are the tuning
+parameters. No mean-variance required, so it fits at meeting 8.
 
-Open on A3: every group ran their signal up four models and reported the
-interesting rung. *How many signals did your group look at before choosing one?*
+### §1 · You have one history and you tried several things on it
 
-### §2 · Pick the winner, then look
+Open on A3. *How many signals did your group look at before choosing one?*
 
-Split the panel at 1990, rank all 29 signals by in-sample Sharpe, take the best,
-then look at 1991–2000. **Verified:**
+### §2 · Estimate → Tune → Test
 
-| | in-sample | out-of-sample |
-|---|---|---|
-| **IdioVol3F** — the winner | **1.37** | **0.24** |
-| top-5 average | 1.25 | 0.62 |
-| all 29 average | 0.49 | 0.35 |
-| rank correlation | | **+0.53** |
+Three disjoint samples, three different jobs. Nothing else in the lecture matters
+as much as this.
 
-The +0.53 keeps this honest rather than nihilistic: there *is* real signal, and
-the average strategy keeps most of its Sharpe. What does not survive is the
-winner's *margin* — the thing that made you pick it.
+| sample | dates | months | its job |
+|---|---|---|---|
+| **Estimate** | 1980–89 | 119 | rank the 29 signals |
+| **Tune** | 1990–94 | 60 | choose *N* and *W* |
+| **Test** | 1995–2000 | 72 | report, **once** |
 
-Calibrate with 29 worthless strategies over the same 131 months: the max Sharpe
-by chance has **median 0.60, 95th percentile 0.89**.
+Top of the estimate ranking: ShareIss5Y 1.17, IdioVol3F 1.17, AnnouncementReturn
+1.13, DivSeason 1.11.
 
-Then the splitting taxonomy in four bullets — rolling, odd/even, two-way,
-three-way — and the rule that the split is chosen *before* the first backtest.
+Show the **tune grid** first — this is all you are allowed to look at:
 
-### §3 · Leakage
+| N | ew | ivol | sharpe |
+|---|---|---|---|
+| 1 | 0.99 | 0.99 | 0.99 |
+| 3 | 1.56 | 1.84 | 1.54 |
+| 5 | 1.27 | 1.82 | 1.29 |
+| 10 | 1.31 | 1.62 | 1.29 |
+| 20 | 1.61 | **1.90** | 1.46 |
+| 29 | 1.67 | 1.66 | 1.50 |
 
-EQI's one-line rule, quoted:
+Tuning picks **N = 20, inverse-vol**. *Then* reveal the test grid:
 
-> *"Never use data in a backtest on a certain date that we are not able to use
-> in production today."*
-
-Four instances, three of them callbacks: `ret` vs `ret_fwd` (L2's P3 — for
-STreversal that off-by-one turns t = −0.4 into **+70**); survivorship (L2);
-financial statements dated to the quarter rather than the release day; and
-**split-adjusted prices**, which is new and the best of the four — a low price
-long ago tells you the stock split later, which tells you it went up.
-
-### §4 · Five checks, on your own strategy
-
-The heart of the lecture. Every one runs on a return series, so each group
-applies them to their own long-short. **Verified on ours:**
-
-| | Sharpe | SE | t(SR) | boot 5% | frac→half | \|r\|>3σ | maxDD |
-|---|---|---|---|---|---|---|---|
-| the market | 1.01 | 0.22 | 4.53 | 0.62 | 9.2% | 0.8% | −30% |
-| Mom12m | 0.99 | 0.22 | 4.42 | 0.61 | 8.4% | 1.6% | −30% |
-| GP | 0.61 | 0.22 | 2.75 | 0.26 | 4.4% | 1.6% | −35% |
-| BM | 0.39 | 0.22 | 1.77 | 0.03 | 2.4% | 0.4% | −47% |
-| STreversal | 0.08 | 0.22 | 0.35 | **−0.28** | 0.4% | 2.0% | −60% |
-
-Three things this table does that no single number does:
-
-1. **The SE is 0.22 for all five.** It depends on how long you looked, not on
-   what you looked at. `SE(SR) ≈ sqrt((1 + SR²/2)/T)`.
-2. **The bootstrap 5th percentile separates BM from GP** in a way the Sharpe
-   ratio does not: 0.03 against 0.26. BM's is a hair above zero.
-3. **Fraction to half is a fragility test, not a performance test.** The market
-   needs 9.2% of its best months removed to halve its Sharpe; STreversal needs
-   **0.4%**. Whatever STreversal has rests on a handful of dates.
-
-Every check orders the five strategies the same way, which is itself worth
-saying out loud — they are not five independent opinions.
-
-### §5 · You tried more than one
-
-**Bonferroni**, as a table rather than a formula:
-
-| signals tried | 1 | 5 | 10 | 20 | 29 | 100 | 300 |
-|---|---|---|---|---|---|---|---|
-| t you need | 1.96 | 2.58 | 2.81 | 3.02 | **3.13** | 3.48 | 3.76 |
-
-Most of the correction happens in the first few. **29 is our signal menu**, so
-the threshold for anything found by searching it is **3.13, not 1.96**.
-
-Then the demonstration — 100 worthless strategies over 24 months:
-
-| threshold | how many of 100 look significant |
+| | TEST Sharpe |
 |---|---|
-| t > 1.64 | **6.1** |
-| t > 1.96 | 3.4 |
-| t > 3.48 (Bonferroni) | 0.1 |
+| the tuned choice, N=20 ivol | **1.13** |
+| naive — the single best signal from the estimate sample | **−0.08** |
+| no tuning at all — all 29, equal-weighted | 0.85 |
+| average over the whole grid | 0.59 |
 
-And the trade-off, which is the best cell in either old notebook. One real
-signal (Sharpe 1.0) hidden among 100, 48 months:
+**The naive rule is the disaster.** ShareIss5Y had a 1.17 Sharpe in the estimate
+sample and delivers **−0.08** in the test. Meanwhile the crudest possible rule —
+hold everything, weight equally, tune nothing — delivers 0.85.
 
-| cutoff | hit rate | detection rate |
+**Robustness, checked across five split dates.** The ordering never flips:
+
+| estimate ends | tuned pick | TEST tuned | best-1 | all-29 |
+|---|---|---|---|---|
+| 1987-12 | N=20, ivol | 1.33 | 0.26 | 1.02 |
+| 1988-12 | N=5, ivol | 1.28 | 0.02 | 0.91 |
+| 1989-12 | N=20, ivol | 1.14 | −0.04 | 0.85 |
+| 1990-12 | N=29, ew | 0.85 | 0.26 | 0.85 |
+| 1991-12 | N=3, ivol | 1.26 | 0.80 | 0.83 |
+
+Tuning beats no-tuning every time and beats best-1 every time. Worth saying that
+in four of five it also lands on the best cell in the grid — which is partly
+luck, and should be said rather than implied.
+
+### §3 · Walk-forward, and a trap I fell into
+
+Re-rank, re-tune and re-invest every year on an expanding window, then stitch the
+monthly returns. 1990–2000, 132 months:
+
+| | return/yr | vol/yr | **Sharpe** | maxDD |
+|---|---|---|---|---|
+| re-tuned every year | 5.7% | 4.0% | **1.42** | **−4%** |
+| always the single best | 11.8% | 15.3% | 0.77 | −24% |
+| always all 29, equal-weighted | 4.8% | 4.8% | 0.99 | −12% |
+
+**On raw return the naive rule "wins" — 11.8% against 5.7%.** It loses on every
+risk-adjusted measure and carries a −24% drawdown against −4%.
+
+I made exactly this mistake building the demo: my first walk-forward compared
+mean returns and concluded the naive rule was best. **Put that in the notebook.**
+It is L1's lesson — return alone is not quality — arriving unannounced five
+lectures later, and it is a live example of the thing the course is about.
+
+### §4 · What you report at the end
+
+The measures, shown as the *output* of the test stage rather than as a topic.
+Run on the test sample only, for the tuned strategy and for the market:
+
+Sharpe · **SE(Sharpe)** and its t · **bootstrap 5th percentile** · **alpha, its
+SE, and the appraisal ratio** · **fraction to half** · tails beyond ±3σ · max
+drawdown.
+
+Verified on the full sample as a reference:
+
+| | vol/yr | Sharpe | SE(SR) | boot 5% | alpha | SE(α) | t(α) | appraisal | frac→half | maxDD |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Mom12m | 20.1% | 0.99 | 0.22 | 0.61 | 18.2% | 4.4% | 4.10 | 0.91 | 8.4% | −30% |
+| GP | 11.0% | 0.61 | 0.22 | 0.26 | 6.3% | 2.4% | 2.59 | 0.58 | 4.4% | −35% |
+| BM | 13.5% | 0.39 | 0.22 | 0.03 | 7.2% | 2.9% | 2.45 | 0.54 | 2.4% | −47% |
+| STreversal | 18.4% | 0.08 | 0.22 | −0.28 | −1.2% | 4.0% | −0.29 | −0.06 | 0.4% | −60% |
+
+**On SE(Sharpe) being ~0.22 for all of them.** This is right, and it is
+counterintuitive enough to be worth a box. Volatility cancels: SR = mean/sd, and
+both the numerator and the denominator of the *estimate* scale with σ, so only
+*T* and *SR* survive — `SE(SR) ≈ sqrt((1 + SR²/2)/T)`. Simulated at a true Sharpe
+of 0.5 over 250 months, the sampling sd of the estimate is 0.220 at 5% annual
+volatility and 0.220 at 80%.
+
+The intuition that it *should* depend on volatility is correct for everything in
+return units, and the table shows it: **SE(mean)** runs 2.4% to 4.4% and
+**SE(α)** runs 2.4% to 4.4%, both tracking vol exactly. Put the two side by side
+— the contrast is the lesson.
+
+### §5 · Leakage
+
+EQI's rule, quoted:
+
+> *"Never use data in a backtest on a certain date that we are not able to use in
+> production today."*
+
+Four instances, three of them callbacks: `ret` vs `ret_fwd` (L2's P3 — STreversal
+goes t = −0.4 to **+70**); survivorship (L2); financial statements dated to the
+quarter rather than the release day; and **split-adjusted prices**, new and the
+best of the four.
+
+### §6 · You tried more than one — short
+
+Bonferroni as a table, not a formula:
+
+| signals tried | 1 | 10 | 20 | **29** | 100 | 300 |
+|---|---|---|---|---|---|---|
+| t you need | 1.96 | 2.81 | 3.02 | **3.13** | 3.48 | 3.76 |
+
+100 worthless strategies over 24 months flag **6.1** at t > 1.64, 3.4 at 1.96,
+0.1 at Bonferroni. Then the trade-off — one real signal of Sharpe 1.0 among 100,
+48 months:
+
+| cutoff | hit rate | detection |
 |---|---|---|
 | 1.96 | 15% | 52% |
 | 3.00 | 45% | 17% |
 | 3.48 | 63% | 8% |
 
-At the conventional threshold, **85% of what you flag is false**. At Bonferroni
-you are right most of the time and you find the real signal once in twelve.
-There is no cutoff that fixes this — only a choice about which error you prefer.
-
-Then run it again at 120 months: 1.96 gives 26%/90%, 3.48 gives 93%/41%.
-**Length of sample is the only thing that buys you both.**
+At 120 months: 1.96 → 26%/90%, 3.48 → 93%/41%. **Only a longer sample buys both.**
 
 ---
 
 ## The prompt-it moment
 
 **The train/test split.** *"We want to test this out of sample. Split the data."*
-
-The common AI answer is `train_test_split(..., shuffle=True)` — a random split,
-which on a time series trains on 1997 and tests on 1985. The check cell prints
-the random-split OOS Sharpe (close to in-sample, because it is not out of sample)
-against the chronological split (1.37 → 0.24).
+The common AI answer is `train_test_split(..., shuffle=True)` — random, which on
+a time series trains on 1997 and tests on 1985. The check prints the random split
+against the chronological one.
 
 ---
 
-## Appendix (new page, not lectured)
+## Appendix (not lectured)
 
-- the full `Diagnostics()` function — **ship it working**, so groups can run all
-  five checks on their own strategy in one call
+- the full `Diagnostics()` function — **shipped working**, so groups run every
+  check on their own strategy in one call
 - the odd/even interleaved cross-validation split
 - the "is 10 years enough?" power calculation
 - literature list
