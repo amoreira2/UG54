@@ -1,0 +1,891 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>L8 · Backtesting Protocol — design note &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/L8_DESIGN';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/L8_DESIGN.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data-Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="L1_Welcome_Returns_AI.html">3. L1 · The Workflow, and What a Return Is</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L2_Panel_Portfolios_AI.html">4. L2 · The Panel and Portfolio Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L3_Sorts_AI.html">5. L3 · Sorts, Breakpoints, and Long-Short Portfolios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L4_PerfEval_Factors_AI.html">6. L4 · Performance Evaluation, and Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L5_Factor_Zoo_AI.html">7. L5 · Where Factors Come From, and the Factor Zoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L6_MultiFactor_AI.html">8. L6 · Multi-Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L7_Portfolio_Decomposition_AI.html">9. L7 · Decomposing a Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L8_Backtesting_Protocol.html">10. L8 · Backtesting Protocol  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L9_Anomalies.html">11. L9 · Anomalies  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L10_Momentum_and_Trend_Following.html">12. L10 · Momentum and Trend Following  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Conditional_Strategies_I.html">13. L11 · Conditional Strategies I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Conditional_Strategies_II.html">14. L12 · Conditional Strategies II — Factor Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_I.html">15. L13 · Capital Allocation I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Capital_Allocation_II.html">16. L14 · Capital Allocation II — Fragility  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L15_Fundamental_Risk_Models_BARRA.html">17. L15 · Fundamental Risk Models (BARRA)  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L16_Transaction_Costs.html">18. L16 · Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L17_Leverage_and_Shorting.html">19. L17 · Leverage and Shorting  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L18_PCA_and_Statistical_Factors.html">20. L18 · PCA and Statistical Factors  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L19_Machine_Learning.html">21. L19 · Machine Learning  ◦</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">22. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_AI.html">22.1. Assignment 1 — Python, pandas, and Data That Fights Back</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">22.5. Assignment 2 — Diversification, and Your First Sort</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A3_Beta_and_Alpha_AI.html">22.8. Assignment 3 — Beta, Alpha, and Whether You Have Either</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/SignalHygiene_AI.html">23. Appendix · Signal Hygiene</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">24. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">24.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">24.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">24.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">24.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">24.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">24.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">24.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">24.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">24.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">24.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">24.4.9. Cleaning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">24.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">24.5. Flow Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">24.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">24.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../scientific/linear_algebra1_c.html">25. Linear Algebra Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">26. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intro.html">27. Archive · Pre-AI Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="IntrotoReturns_c.html">27.1. Introduction to Asset Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">27.2. Choice of Frequency and Annualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">27.3. Data APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PortfolioMath_c.html">27.4. Portfolio Mathematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FactorModels_c.html">27.5. Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiFactorModels_c.html">27.6. Multi-Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">27.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="FactorModelEstimation_c.html">27.11. Factor Model Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crosssectionalequitystrategies.html">27.12. Cross-Sectional Equity Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">27.13. Momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">27.14. An Overview of Factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Timing_c.html">27.15. Timing Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">27.16. Expected-Return Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">27.17. Volatility Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationI_cc.html">27.18. Capital Allocation I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationII.html">27.19. Capital Allocation II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Performance_evaluation_c.html">27.20. Performance Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RiskManagement.html">27.21. Risk Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TradingCosts.html">27.22. Liquidity and Trading Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LeverageandShorting.html">27.23. Leverage, Shorting, Limits to Arbitrage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearning_cc.html">27.24. Machine Learning in Finance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LLMs.html">27.25. Gen AI and LLMs in Finance</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/L8_DESIGN.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/L8_DESIGN.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>L8 · Backtesting Protocol — design note</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-one-idea">The one idea</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-old-notebooks-give-us-and-what-they-cost">What the old notebooks give us, and what they cost</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-blocking-problem">The blocking problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verdict-on-each-section">Verdict on each section</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-l8-l9-boundary">The L8 / L9 boundary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#proposed-structure">Proposed structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#you-already-have-the-problem">§1 · You already have the problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-demo-pick-the-winner-then-look">§2 · The demo — pick the winner, then look</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#leakage-using-data-you-could-not-have-had">§3 · Leakage — using data you could not have had</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-protocol-decide-before-you-look">§4 · The protocol — decide before you look</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-numbers-you-can-actually-compute">§5 · Two numbers you can actually compute</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fine-tuning-live-old-application-2">§6 · Fine-tuning, live (old Application 2)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moment">The prompt-it moment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-new-page-not-lectured">Appendix (new page, not lectured)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#on-eqi-chapter-4">On EQI Chapter 4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="l8-backtesting-protocol-design-note">
+<h1>L8 · Backtesting Protocol — design note<a class="headerlink" href="#l8-backtesting-protocol-design-note" title="Link to this heading">#</a></h1>
+<p><strong>Slot:</strong> Meeting 8, Wed 30 Sep. <strong>Feeds:</strong> A4, due Thu 8 Oct.
+<strong>Status:</strong> planned, not built.</p>
+<hr class="docutils" />
+<section id="the-one-idea">
+<h2>The one idea<a class="headerlink" href="#the-one-idea" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>A backtest is not evidence. The protocol you followed <em>before you looked</em> is
+what turns it into evidence.</strong></p>
+</div></blockquote>
+<p>Everything in L1–L7 has been in-sample. Students have now run their own signal up
+four rungs of a factor ladder and reported what they found. L8 is where that gets
+audited.</p>
+</section>
+<hr class="docutils" />
+<section id="what-the-old-notebooks-give-us-and-what-they-cost">
+<h2>What the old notebooks give us, and what they cost<a class="headerlink" href="#what-the-old-notebooks-give-us-and-what-they-cost" title="Link to this heading">#</a></h2>
+<p>Two exist: <code class="docutils literal notranslate"><span class="pre">Performance_evaluation.ipynb</span></code> (original, 4,470 md words) and
+<code class="docutils literal notranslate"><span class="pre">Performance_evaluation_c.ipynb</span></code> (curated, 2,833 words, 339 code lines).
+<strong>The curated one is already 2.0 lectures of prose</strong> on our calibration. Neither
+can be lifted; both need surgery.</p>
+<section id="the-blocking-problem">
+<h3>The blocking problem<a class="headerlink" href="#the-blocking-problem" title="Link to this heading">#</a></h3>
+<p>Both are organised around <strong>“Alpha Testing: the pod manager problem”</strong> and
+<strong>“MVE Example: Overfitting in Action”</strong> — and the MVE example needs
+<code class="docutils literal notranslate"><span class="pre">Σ⁻¹μ</span></code>, which is <strong>L13</strong>. Our L8 sits five lectures earlier. So the spine of both
+old notebooks is unusable here.</p>
+<p>That is the real reason they feel heavy: they are a <em>capital-allocation</em> lecture
+wearing a backtesting title.</p>
+</section>
+<section id="verdict-on-each-section">
+<h3>Verdict on each section<a class="headerlink" href="#verdict-on-each-section" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Old section</p></th>
+<th class="head"><p>L8?</p></th>
+<th class="head"><p>Why</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Alpha Testing: the pod manager problem</p></td>
+<td><p>✗ <strong>skip</strong></p></td>
+<td><p>Needs a fund-management frame students don’t have. Better in L14 or dropped.</p></td>
+</tr>
+<tr class="row-odd"><td><p>When to fire a pod / abandon a strategy</p></td>
+<td><p>✗ appendix</p></td>
+<td><p>Good material, wrong audience at meeting 8.</p></td>
+</tr>
+<tr class="row-even"><td><p>MVE Example: Overfitting in Action</p></td>
+<td><p>✗ <strong>→ L14</strong></p></td>
+<td><p>Needs mean-variance. This is exactly L14’s fragility lecture.</p></td>
+</tr>
+<tr class="row-odd"><td><p>The basic problem of overfitting</p></td>
+<td><p>✓ <strong>core</strong></p></td>
+<td><p>Rewrite around sorts, not MVE.</p></td>
+</tr>
+<tr class="row-even"><td><p>Be clear about your goal</p></td>
+<td><p>✓ <strong>core</strong>, short</p></td>
+<td><p>One paragraph.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Sharpe ratio standard error</p></td>
+<td><p>✓ <strong>core</strong></p></td>
+<td><p>Needs only a Sharpe. Cheap and load-bearing.</p></td>
+</tr>
+<tr class="row-even"><td><p>“Fraction to half”</p></td>
+<td><p>✗ appendix</p></td>
+<td><p>Interesting, not essential.</p></td>
+</tr>
+<tr class="row-odd"><td><p>The complete diagnostics function</p></td>
+<td><p>✗ appendix</p></td>
+<td><p>60 lines of code that reads as a black box.</p></td>
+</tr>
+<tr class="row-even"><td><p>Adjusting for multiple testing</p></td>
+<td><p>◐ <strong>plant here, deliver in L9</strong></p></td>
+<td><p>See boundary below.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Sample splitting strategies</p></td>
+<td><p>✓ <strong>core</strong></p></td>
+<td><p>The whole point of the lecture.</p></td>
+</tr>
+<tr class="row-even"><td><p>Application 1: momentum + value combination</p></td>
+<td><p>◐ maybe</p></td>
+<td><p>Good, but it is a second demo and we will be over.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Application 2: fine-tuning the look-back</p></td>
+<td><p>✓ <strong>core</strong></p></td>
+<td><p>The best demo in the old notebook — keep.</p></td>
+</tr>
+<tr class="row-even"><td><p>Publication bias</p></td>
+<td><p>✗ <strong>→ L9</strong></p></td>
+<td><p>Belongs with anomalies.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Literature</p></td>
+<td><p>✗ appendix</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-l8-l9-boundary">
+<h2>The L8 / L9 boundary<a class="headerlink" href="#the-l8-l9-boundary" title="Link to this heading">#</a></h2>
+<p>They overlap badly if we are not deliberate. Proposed split:</p>
+<ul class="simple">
+<li><p><strong>L8 is about <em>your own</em> research process.</strong> You have one history, you will try
+several things on it, and here is the discipline that keeps your answer honest.
+Leakage, splitting, the standard error of a Sharpe ratio.</p></li>
+<li><p><strong>L9 is about <em>the literature’s</em> research process.</strong> 300 published anomalies,
+publication bias, formal multiple-testing corrections, what survives
+replication.</p></li>
+</ul>
+<p>L8 plants multiple testing with one number and hands it to L9. L9 does not
+re-teach splitting.</p>
+</section>
+<hr class="docutils" />
+<section id="proposed-structure">
+<h2>Proposed structure<a class="headerlink" href="#proposed-structure" title="Link to this heading">#</a></h2>
+<p>Same shape as L1–L7: objectives → plan → setup → sections → pitfall checklist →
+live demo with a prompt moment → hands-on → challenge → takeaways → appendix.</p>
+<section id="you-already-have-the-problem">
+<h3>§1 · You already have the problem<a class="headerlink" href="#you-already-have-the-problem" title="Link to this heading">#</a></h3>
+<p>Open on what they did in A3: every group ran their signal up four models and
+reported the interesting rung. Ask how many signals the group looked at before
+choosing one. <strong>That is the lecture.</strong></p>
+</section>
+<section id="the-demo-pick-the-winner-then-look">
+<h3>§2 · The demo — pick the winner, then look<a class="headerlink" href="#the-demo-pick-the-winner-then-look" title="Link to this heading">#</a></h3>
+<p>The central exhibit, verified on our own data. Split the panel at 1990, rank all
+29 signals by in-sample Sharpe, pick the best, then look at 1991–2000:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>in-sample</p></th>
+<th class="head"><p>out-of-sample</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>IdioVol3F</strong> — the in-sample winner</p></td>
+<td><p><strong>1.37</strong></p></td>
+<td><p><strong>0.24</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>top-5 average</p></td>
+<td><p>1.25</p></td>
+<td><p>0.62</p></td>
+</tr>
+<tr class="row-even"><td><p>all 29, average</p></td>
+<td><p>0.49</p></td>
+<td><p>0.35</p></td>
+</tr>
+<tr class="row-odd"><td><p>rank correlation IS vs OOS</p></td>
+<td><p></p></td>
+<td><p><strong>+0.53</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The +0.53 is what makes this honest rather than nihilistic: <strong>there is real
+signal here.</strong> The average strategy holds most of its Sharpe. What does not
+survive is <em>the winner’s margin</em> — the thing that made you pick it.</p>
+<p>Then the calibration that makes it quantitative. Simulate 29 <strong>worthless</strong>
+strategies over the same 131 months:</p>
+<blockquote>
+<div><p>max Sharpe by pure chance: <strong>median 0.60, 95th percentile 0.89</strong></p>
+</div></blockquote>
+<p>So a searched-for Sharpe of 0.9 is unremarkable. 1.37 is genuinely above the
+noise floor — and still lost three quarters of itself.</p>
+</section>
+<section id="leakage-using-data-you-could-not-have-had">
+<h3>§3 · Leakage — using data you could not have had<a class="headerlink" href="#leakage-using-data-you-could-not-have-had" title="Link to this heading">#</a></h3>
+<p>Paleologo’s one-line rule (EQI §4.1), which is worth quoting:</p>
+<blockquote>
+<div><p><em>“Never use data in a backtest on a certain date that we are not able to use
+in production today.”</em></p>
+</div></blockquote>
+<p>Four instances, three of which are callbacks students already own:</p>
+<ol class="arabic simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">ret</span></code> instead of <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code></strong> — L2’s P3, now quantified: for STreversal that
+single off-by-one turns t = −0.4 into <strong>+70</strong>.</p></li>
+<li><p><strong>Survivorship</strong> — L2’s CRSP section.</p></li>
+<li><p><strong>Financial statements dated to the quarter they describe</strong> rather than the
+day they were released. New.</p></li>
+<li><p><strong>Split-adjusted prices</strong> — new, from EQI, and the best of the four because
+nobody sees it coming: <em>a low price in the distant past tells you the stock
+split later, which tells you it went up.</em> The adjusted price series contains
+the future. Use adjusted prices for returns; use as-of-date prices for
+signals.</p></li>
+</ol>
+</section>
+<section id="the-protocol-decide-before-you-look">
+<h3>§4 · The protocol — decide before you look<a class="headerlink" href="#the-protocol-decide-before-you-look" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Train / holdout, with a <strong>buffer</strong> between them (EQI §4.2.1)</p></li>
+<li><p>Walk-forward, in one picture</p></li>
+<li><p><strong>The rule that does the work:</strong> the universe, the dataset and the protocol are
+fixed <em>before</em> the first backtest. Changing your inclusion rule because of a
+backtest result is itself leakage (EQI is explicit about this).</p></li>
+<li><p><strong>Have a theory</strong> — pre-register the prediction. This is already wired in:
+A2 Q7 makes them commit to an economic story before computing anything, and
+this is where we tell them why.</p></li>
+</ul>
+</section>
+<section id="two-numbers-you-can-actually-compute">
+<h3>§5 · Two numbers you can actually compute<a class="headerlink" href="#two-numbers-you-can-actually-compute" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Standard error of a Sharpe ratio:</strong> <code class="docutils literal notranslate"><span class="pre">SE(SR)</span> <span class="pre">≈</span> <span class="pre">sqrt((1</span> <span class="pre">+</span> <span class="pre">SR²/2)</span> <span class="pre">/</span> <span class="pre">T)</span></code>.
+At T = 250 months and SR = 0.5, that is ~0.065 annualised — so a Sharpe of 0.5
+and a Sharpe of 0.7 are not distinguishable.</p></li>
+<li><p><strong>How long to establish a Sharpe of 0.5 at 95% confidence?</strong> Invert it. The
+answer is uncomfortable and it is the point.</p></li>
+</ul>
+</section>
+<section id="fine-tuning-live-old-application-2">
+<h3>§6 · Fine-tuning, live (old Application 2)<a class="headerlink" href="#fine-tuning-live-old-application-2" title="Link to this heading">#</a></h3>
+<p>Tune one parameter in-sample — the momentum look-back, or the number of buckets
+from L3 — show the in-sample optimum, then reveal the holdout. Short.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-prompt-it-moment">
+<h2>The prompt-it moment<a class="headerlink" href="#the-prompt-it-moment" title="Link to this heading">#</a></h2>
+<p><strong>One, and it is a good one: the train/test split.</strong></p>
+<blockquote>
+<div><p><em>“We want to test this out of sample. Split the data.”</em></p>
+</div></blockquote>
+<p>Ask an AI to split a dataset for validation and the overwhelmingly common answer
+is <code class="docutils literal notranslate"><span class="pre">train_test_split(...,</span> <span class="pre">shuffle=True)</span></code> — a <strong>random</strong> split. On a time series
+that trains on 1997 and tests on 1985. Every serial correlation, every regime,
+leaks backwards.</p>
+<ul class="simple">
+<li><p><strong>Wrong:</strong> random split → OOS Sharpe close to in-sample, because it is not out
+of sample at all.</p></li>
+<li><p><strong>Right:</strong> chronological split with a buffer → the 1.37 → 0.24 collapse.</p></li>
+</ul>
+<p>The check cell prints both. Numbers to be measured when building.</p>
+</section>
+<hr class="docutils" />
+<section id="appendix-new-page-not-lectured">
+<h2>Appendix (new page, not lectured)<a class="headerlink" href="#appendix-new-page-not-lectured" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>the complete diagnostics function from <code class="docutils literal notranslate"><span class="pre">Performance_evaluation_c</span></code></p></li>
+<li><p>“fraction to half”</p></li>
+<li><p>the pod-manager alpha test</p></li>
+<li><p>cross-validation folds in detail</p></li>
+<li><p>literature list</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="on-eqi-chapter-4">
+<h2>On EQI Chapter 4<a class="headerlink" href="#on-eqi-chapter-4" title="Link to this heading">#</a></h2>
+<p>Genuinely useful, and <strong>not to be followed structurally</strong> — it is a practitioner
+checklist, not a lecture.</p>
+<p><strong>Take:</strong> the leakage definition (one sentence); split-adjusted prices; financial
+statement timing; point-in-time vs restated; “have a theory”; “define the
+protocol and dataset beforehand”; train/holdout with a buffer.</p>
+<p><strong>Skip:</strong> all of §4.1’s data-sourcing checklist (vendor provenance, quality
+assurance, exploring alternatives) — real, and meaningless to someone who has
+never bought data. <strong>Skip §4.3 entirely</strong>: the Rademacher Anti-Serum is a
+uniform finite-sample bound on the Sharpe ratio over a strategy family. It is the
+chapter’s contribution and it is a graduate topic.</p>
+</section>
+<hr class="docutils" />
+<section id="length-budget">
+<h2>Length budget<a class="headerlink" href="#length-budget" title="Link to this heading">#</a></h2>
+<p>Target <strong>1,400 lectured words</strong>, which is one session. The curated old notebook
+is 2,833. The block L1–L7 already runs 15.3 lectures in 7 slots; L8 should not
+add to the debt.</p>
+<p>Discipline: §2 is the lecture. §3 is four bullets and a quote. §5 is two
+formulas. If §6 does not fit, it becomes the Hands-On.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-one-idea">The one idea</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-old-notebooks-give-us-and-what-they-cost">What the old notebooks give us, and what they cost</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-blocking-problem">The blocking problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verdict-on-each-section">Verdict on each section</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-l8-l9-boundary">The L8 / L9 boundary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#proposed-structure">Proposed structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#you-already-have-the-problem">§1 · You already have the problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-demo-pick-the-winner-then-look">§2 · The demo — pick the winner, then look</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#leakage-using-data-you-could-not-have-had">§3 · Leakage — using data you could not have had</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-protocol-decide-before-you-look">§4 · The protocol — decide before you look</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-numbers-you-can-actually-compute">§5 · Two numbers you can actually compute</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fine-tuning-live-old-application-2">§6 · Fine-tuning, live (old Application 2)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moment">The prompt-it moment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-new-page-not-lectured">Appendix (new page, not lectured)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#on-eqi-chapter-4">On EQI Chapter 4</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
