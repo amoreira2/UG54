@@ -18,7 +18,7 @@ Two things changed from the v1 plan:
 
 1. **The 19 per-lecture challenges are no longer the whole assessment.** They
    remain, auto-graded, as *formative* practice. On top of them sit seven
-   submission-only milestones (A1–A7) in which each group applies that block's
+   submission-only milestones (A1–A8) in which each group applies that block's
    technique to **their own trading strategy**, plus two in-class pitch days.
 2. **The lecture order changed** so students hold a long-short portfolio by
    week 3 instead of week 9.
@@ -63,7 +63,7 @@ topic. Students use these as a checklist on milestones.
 | Tier | What | Graded how | Cadence |
 |------|------|-----------|---------|
 | **In-lecture challenge** | Scenario on the *same data for everyone*, `____` stubs + memo, paste-token | **Auto-graded** — fixed answer keys in `auto_evaluator.py` | Every lecture |
-| **Milestone A1–A7** | The same technique applied to **your group's own strategy** | **Submission only** (completion) | Every ~2 weeks |
+| **Milestone A1–A8** | The same technique applied to **your group's own strategy** (A1 is a Python warm-up on shared data) | **Submission only** (completion) | Every ~2 weeks |
 
 The split is what makes both tractable: the in-lecture challenge has one right
 answer because everyone uses the same data, so it can be auto-graded. The
@@ -140,30 +140,30 @@ differs — it has Nov 25–29 off. The UG bulletin governs).
 | # | Date | Session | Due |
 |---|------|---------|-----|
 | 1 | Wed Sep 2 | **L1** Course intro + AI workflow + asset returns | |
-| 2 | Wed Sep 9 | **L2** The panel + portfolio mathematics | *groups formed* |
+| 2 | Wed Sep 9 | **L2** The panel + portfolio mathematics | *groups formed · A1 due Thu Sep 10* |
 | 3 | Mon Sep 14 | **L3** Sorts, breakpoints, long-short; **WRDS at the end** | *strategy chosen* |
-| 4 | Wed Sep 16 | **L4** Intro to Performance Evaluation + Factor Models I `(2B)` | *A1 due Thu Sep 17* |
+| 4 | Wed Sep 16 | **L4** Intro to Performance Evaluation + Factor Models I `(2B)` | *A2 due Thu Sep 17* |
 | 5 | Mon Sep 21 | **L5** Factor models II — types, the zoo `(3A)` | |
 | 6 | Wed Sep 23 | **L6** Factor models III — multi-factor, Fama-MacBeth `(3B)` | |
-| 7 | Mon Sep 28 | **L7** Portfolio decomposition — top-down / bottom-up / characteristic | *A2 was due Thu Sep 24* |
+| 7 | Mon Sep 28 | **L7** Portfolio decomposition — top-down / bottom-up / characteristic | *A3 was due Thu Sep 24* |
 | 8 | Wed Sep 30 | **L8** Backtesting protocol `(4A)` | |
-| 9 | Mon Oct 5 | **L9** Anomalies `(4B)` | *A3 due Thu Oct 8* |
+| 9 | Mon Oct 5 | **L9** Anomalies `(4B)` | *A4 due Thu Oct 8* |
 | 10 | Wed Oct 7 | **Project pitches I** — 5 min × 10 groups | pitch deck |
 | — | Mon Oct 12 | *Fall Break — no class* | |
 | 11 | Wed Oct 14 | **Review** *(Legislative Day)* | |
 | 12 | Mon Oct 19 | **MIDTERM** | |
 | 13 | Wed Oct 21 | **L10** Momentum and trend following `(5A)` | |
-| 14 | Mon Oct 26 | **L11** Conditional strategies I `(5B)` | *A4 was due Thu Oct 22* |
+| 14 | Mon Oct 26 | **L11** Conditional strategies I `(5B)` | *A5 was due Thu Oct 22* |
 | 15 | Wed Oct 28 | **L12** Conditional strategies II — factor timing | |
-| 16 | Mon Nov 2 | **L13** Capital allocation I | *A5 due Thu Nov 5* |
+| 16 | Mon Nov 2 | **L13** Capital allocation I | *A6 due Thu Nov 5* |
 | 17 | Wed Nov 4 | **L14** Capital allocation II — fragility | |
 | 18 | Mon Nov 9 | **Guest 1** | |
 | 19 | Wed Nov 11 | **L15** BARRA / fundamental risk models `(7A)` | |
-| 20 | Mon Nov 16 | **L16** Transaction costs `(7B)` | *A6 due Thu Nov 19* |
+| 20 | Mon Nov 16 | **L16** Transaction costs `(7B)` | *A7 due Thu Nov 19* |
 | 21 | Wed Nov 18 | **Project pitches II** — 5 min × 10 | |
 | 22 | Mon Nov 23 | **L17** Leverage and shorting | |
 | 23 | Wed Nov 25 | **L18** PCA / statistical factors `(6)` | |
-| 24 | Mon Nov 30 | **Guest 2** | *A7 due Thu Dec 3* |
+| 24 | Mon Nov 30 | **Guest 2** | *A8 due Thu Dec 3* |
 | 25 | Wed Dec 2 | **L19** Machine learning | |
 | 26 | Mon Dec 7 | **Presentations I** | report + code **Fri Dec 4** |
 | 27 | Wed Dec 9 | **Presentations II** | slides AM of your slot |
@@ -255,32 +255,38 @@ term. Groups may change strategy during the course — each milestone is a
 self-contained exercise on *whatever strategy you currently have*, not a rigid
 chain. Pitch day I is the natural point to commit.
 
-### A1–A7 — same skill, their strategy
+### A1–A8 — same skill, their strategy
 
 The lecture block fixes the **skill**; the group's own strategy supplies the
 **data**.
 
 | | Due (Thu, midnight) | Last lecture it needs | The task |
 |---|-----|-------|----------|
-| **A1** | **Thu Sep 17** | L3 (Mon Sep 14) | Decile-sort your signal. Long-short spread, turnover, Sharpe. |
-| **A2** | **Thu Sep 24** | L6 (Wed Sep 23) | Regress your long-short return on FF6. Alpha, betas, t-stat, R². Skill or exposure? |
-| **A3** | **Thu Oct 8** | L9 (Mon Oct 5) | Split your sample. IS vs OOS Sharpe, how many variants you tried, a multiple-testing haircut. |
-| **A4** | **Thu Oct 22** | L10 (Wed Oct 21) | Build the (12,1) benchmark. Your signal's correlation with it, and its alpha controlling for momentum. **Is your signal just momentum?** |
-| **A5** | **Thu Nov 5** | L13 (Mon Nov 2) | Vol-scale your strategy; MVE combination with the market; optimal weight. |
-| **A6** | **Thu Nov 19** | L16 (Mon Nov 16) | Bootstrap your Sharpe SE; apply a cost model; net-of-cost Sharpe. |
-| **A7** | **Thu Dec 3** | L17 (Mon Nov 23) | Long-only vs long-short. What does the shorting constraint cost you? |
+| **A1** | **Thu Sep 10** | L2 (Wed Sep 9) | Python and pandas warm-up on the 49-industry file. Execution order, the compounding bug, sentinel values, dates, units, excess returns, moments. *Not strategy-specific.* |
+| **A2** | **Thu Sep 17** | L3 (Mon Sep 14) | Diversification lab, then decile-sort your signal. Long-short spread, Sharpe, both legs, monotonicity. |
+| **A3** | **Thu Sep 24** | L6 (Wed Sep 23) | Regress your long-short return on FF6. Alpha, betas, t-stat, R². Skill or exposure? Plus the beta-mandate and largest-alpha questions from the old Assignment 3. |
+| **A4** | **Thu Oct 8** | L9 (Mon Oct 5) | Split your sample. IS vs OOS Sharpe, how many variants you tried, a multiple-testing haircut. |
+| **A5** | **Thu Oct 22** | L10 (Wed Oct 21) | Build the (12,1) benchmark. Your signal's correlation with it, and its alpha controlling for momentum. **Is your signal just momentum?** |
+| **A6** | **Thu Nov 5** | L13 (Mon Nov 2) | Vol-scale your strategy; MVE combination with the market; optimal weight. |
+| **A7** | **Thu Nov 19** | L16 (Mon Nov 16) | Bootstrap your Sharpe SE; apply a cost model; net-of-cost Sharpe. Turnover is defined here. |
+| **A8** | **Thu Dec 3** | L17 (Mon Nov 23) | Long-only vs long-short. What does the shorting constraint cost you? |
 
-**Every assignment is due Thursday at midnight.** One weekday, all term, so
-nobody has to look it up. Gaps run 1–3 days after the last lecture the
-assignment needs; a Wednesday lecture means it is due the next night, which is
-fine because the assignment applies a technique the lecture has just shown.
+**Eight assignments, due Thursday at midnight, drop one — seven count.** One
+weekday all term, so nobody has to look it up. Gaps run 1–3 days after the last
+lecture the assignment needs; a Wednesday lecture means it is due the next night,
+which is fine because the assignment applies a technique the lecture has just
+shown.
 
-**A7 is the exception and it is worth watching.** Its Thursday is Nov 26 —
-Thanksgiving — so it slips a week to **Dec 3, the day before the final report**.
-Ten days after L17 rather than three, and it lands in the project crunch. Since
-students drop one of seven, **A7 is the natural drop** for anyone squeezed;
-that should be said out loud rather than discovered. The alternative is to cut
-A7 and run six.
+**A1 is the warm-up** and is the only one that is not strategy-specific. It
+exists because everything after it assumes students can get data into Python and
+distrust what comes out. Built from the pre-AI Assignments 1 and 2, keeping only
+what AI will not do for you.
+
+**A8 is the exception on timing.** Its Thursday is Nov 26 — Thanksgiving — so it
+slips a week to **Dec 3, the day before the final report**. Ten days after L17
+rather than three, and it lands in the project crunch. Since students drop one
+of eight, **A8 is the natural drop** for anyone squeezed; that should be said out
+loud rather than discovered. Whether to cut it outright is **still open**.
 
 ### Pitch days
 
@@ -289,7 +295,7 @@ A7 and run six.
 - **Pitches II (Mtg 21, Wed Nov 18)** — 5 min × 10. What survived, what broke,
   what's left to do.
 
-These are the feedback mechanism for the project, since A1–A7 are not graded on
+These are the feedback mechanism for the project, since A1–A8 are not graded on
 content. Adopt the Columbia device: cold-call one member per group to explain a
 decision — *why this approach, what alternatives did you consider, why did you
 reject them.*
