@@ -1,4 +1,4 @@
-# L12 · Leverage, Shorting, and the Capital Base
+# L11 · Transaction Costs
 
 ```{admonition} Not yet posted
 :class: warning
@@ -6,11 +6,11 @@ This page marks the slot so the shape of the term is visible. The notebook goes
 up here before we meet.
 ```
 
-**When:** Mtg 15 · Wed Oct 28
+**When:** Mtg 14 · Mon Oct 26
 
 ## What it covers
 
-What the shorting constraint costs, margin, and the limits to arbitrage that keep obvious mispricings alive.
+Turnover — defined here for the first time — spreads, price impact, and what the +20.7% size spread from L3 actually costs to harvest.
 
 ## Feeds
 
@@ -18,7 +18,7 @@ A6 — Thu Nov 5
 
 ## Source material
 
-Draws on `LeverageandShorting.ipynb`.
+Draws on `TradingCosts_revamped_curated.ipynb`.
 
 ---
 

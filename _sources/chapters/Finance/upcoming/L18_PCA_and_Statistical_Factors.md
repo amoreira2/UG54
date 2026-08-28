@@ -1,9 +1,9 @@
 # L18 · PCA and Statistical Factors
 
-```{admonition} Not yet written
+```{admonition} Not yet posted
 :class: warning
-This lecture is planned but not built. The page exists so the shape of the term
-is visible while the book renders. It will be replaced by a notebook.
+This page marks the slot so the shape of the term is visible. The notebook goes
+up here before we meet.
 ```
 
 **When:** Mtg 23 · Wed Nov 25
