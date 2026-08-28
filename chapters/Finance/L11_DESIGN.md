@@ -203,22 +203,26 @@ position drops from 1,406% of monthly volume to 100% — but **turnover jumps fr
 20.1% to 26.2% at $250m. The lecture now shows that failure and then uses the
 blunter fix: drop the least liquid 40% before sorting. That gives the α/β/σ(ε)
 framework a proper workout — β 1.04, σ(ε) 3.6%/yr, **α −2.1%/yr with t = −2.46**,
-R² 0.97 — and a genuine size-dependent answer: the screen loses at $50m and wins
-from $100m up.
+R² 0.97 — and a genuine size-dependent answer: the screen loses at $1bn and wins
+from about $5bn up.
 
-**Verified numbers as shipped.** Turnover 68.2%/mo for momentum against 12.2% for
-value; the drift correction is worth 4% on momentum and 36% on value, which is a
-better prompt-moment payoff than expected. Used volume: median 0.4%, p95 21%,
-**1.13% of trades need more than the stock's entire monthly volume**. Cost 4.0%
-at $10m rising to 126.9% at $10bn; **break-even $236m**; net Sharpe 1.00 gross →
-0.54 at $50m → −0.02 at $250m → −0.98 at $1bn. Decay: momentum 1.12 → 0.26 at six
-months and −0.38 at twelve; value 0.44 → 0.45 → 0.22.
+**Verified numbers as shipped** — all post-recalibration; see the section below
+for what changed and why. Turnover 68.2%/mo for momentum against 12.2% for value,
+and the drift correction is worth 4% on momentum but 36% on value, which is a
+better prompt-moment payoff than expected. Used volume at $10bn: median 16.2%,
+p95 846%, **23.1% of trades need more than the stock's entire monthly volume**
+(4.3% at $1bn). Cost 3.4% at $100m rising to 50.0% at $100bn; **break-even
+$13.4bn**; net Sharpe 1.00 gross → 0.82 at $100m → 0.65 at $1bn → 0.12 at $10bn →
+−1.41 at $100bn. Decay: momentum 1.12 → 0.26 at six months and −0.38 at twelve;
+value 0.44 → 0.45 → 0.22.
 
-**Challenge answer key.** `value_capacity` **$859m** (3.6× momentum's, on a
-smaller gross return, purely because it trades 5.6× less). `patient_net`
-**−1.4%** at $1bn against −20.6% impatient — rebalancing every second month buys
-19 points by giving up 2.9 points of gross return. `screen_wins_at` **$100m**,
-and it is marginal there (0.351 against 0.348), which is worth saying.
+**Challenge answer key.** `value_capacity` **$53.8bn** — four times momentum's, on
+a third of the gross return, purely because value trades 5.6× less.
+`patient_net` **+10.1%** at $10bn against +2.4% impatient: rebalancing every
+second month buys 8 points by giving up 2.9 points of gross return.
+`screen_wins_at` **$10,000m** on the net-Sharpe criterion the question specifies
+(the net-*return* crossover is earlier, around $5bn — worth being precise about
+which one you ask for).
 
 **Data shipped:** `l11_costs.parquet` (240×29), `l11_usedvolume.parquet` (424k
 stock-months), `l11_decay.parquet`. Built by `build_l11_cost_cache.py`. Notebook
@@ -270,6 +274,8 @@ $$c_i = \tfrac12\text{spread} + \kappa\,\sigma_i^{\text{daily}}\sqrt{Q_i/V_i},
 | net Sharpe at $1bn | −0.98 | **+0.65** |
 | screen starts winning | $100m | ~$5bn (net return), $10bn (Sharpe) |
 | value capacity | $859m | **$53.8bn** |
+| `screen_wins_at` (Sharpe) | $100m | **$10bn** |
+| `patient_net` | −1.4% at $1bn | **+10.1% at $10bn** |
 
 The lesson survives intact and is now *more* honest: momentum is a real business
 at $1bn (12.8%/yr net, Sharpe 0.65) and dead by $25bn. It also agrees with FIM's
