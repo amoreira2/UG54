@@ -604,6 +604,8 @@ condensing, and two genuinely new pieces.
 
 - [x] ~~**L8** rebuild~~ — **done 2026-08-27.** Repackaged around signal
       selection exactly as planned; the MVE overfitting demo moves to L14.
+- [x] ~~**L9 built**~~ — **2026-08-28.** `L9_WhyShouldThisWork_AI.ipynb`, 1.65
+      lectured sessions. Prompt moment is the drawdown-definition trap.
 - [x] ~~**L9 design decision**~~ — **resolved 2026-08-27.** Not a tour, a deep
       dive, or a replication exercise: *Why Should This Work?* Risk is a property
       of an asset **for a given investor**; a high expected return is a low price

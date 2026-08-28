@@ -1,4 +1,4 @@
-# L9 · Anomalies
+# L16 · Conditional Strategies II — Factor Timing
 
 ```{admonition} Not yet written
 :class: warning
@@ -6,19 +6,19 @@ This lecture is planned but not built. The page exists so the shape of the term
 is visible while the book renders. It will be replaced by a notebook.
 ```
 
-**When:** Mtg 9 · Mon Oct 5
+**When:** Mtg 20 · Mon Nov 16
 
 ## What it covers
 
-What has actually worked in the cross-section, and the multiple-testing problem underneath it. Why 300 published predictors is not 300 pieces of evidence, and what a haircut on a t-statistic looks like.
+Volatility timing and factor timing. When conditioning helps, and the much larger set of cases where it is overfitting with extra steps.
 
 ## Feeds
 
-A4 — Thu Oct 8
+A7 — Thu Nov 19
 
 ## Source material
 
-Draws on `Factors.ipynb`, L5's factor zoo.
+Draws on `Volatilitytiming_c.ipynb`.
 
 ---
 
