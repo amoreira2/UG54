@@ -568,10 +568,9 @@ document.write(`
 <ol class="arabic simple">
 <li><p><a class="reference internal" href="#where"><span class="xref myst">Where signals come from</span></a></p></li>
 <li><p><a class="reference internal" href="#claim"><span class="xref myst">The claim</span></a></p></li>
-<li><p><a class="reference internal" href="#build"><span class="xref myst">🔄 Build it from raw returns</span></a></p></li>
-<li><p><a class="reference internal" href="#prompt"><span class="xref myst">🎯 Prompt it: compute 12-month momentum</span></a></p></li>
+<li><p><a class="reference internal" href="#build"><span class="xref myst">🔄 Build it from the paper</span></a> — <em>🎯 prompt it</em></p></li>
 <li><p><a class="reference internal" href="#tree"><span class="xref myst">The decision tree, priced</span></a></p></li>
-<li><p><a class="reference internal" href="#ind"><span class="xref myst">Stocks or industries?</span></a></p></li>
+<li><p><a class="reference internal" href="#ind"><span class="xref myst">Within industries, or across them?</span></a> — <em>🎯 prompt it</em></p></li>
 <li><p><a class="reference internal" href="#crash"><span class="xref myst">Crashes</span></a></p></li>
 <li><p><a class="reference internal" href="#ho1"><span class="xref myst">🛠️ Hands-On: your signal’s decision tree</span></a></p></li>
 <li><p><a class="reference internal" href="#challenge"><span class="xref myst">🎯 Challenge: the other end of the horizon</span></a> — <em>homework</em></p></li>
@@ -687,22 +686,12 @@ risen.</p>
 <p><strong>Same kind of bet, different windows, opposite directions.</strong> Which window is
 right is an empirical question, and by the end of today you will have the answer
 for every window between one month and five years.</p>
-<p>Here is the construction everybody quotes, from Daniel and Moskowitz:</p>
-<blockquote>
-<div><p><em>“To form the momentum portfolios, we first rank stocks based on their
-cumulative returns from 12 months before to one month before the formation date
-(i.e., the t−12 to t−2 month returns). We use a one month gap between the end
-of the ranking period and the start of the holding period to avoid the
-short-term reversals documented by Jegadeesh (1990) and Lehmann (1990).”</em></p>
-</div></blockquote>
-<p>Every clause in that sentence is a decision. We are going to take them one at a
-time and find out what each is worth.</p>
 </section>
 <hr class="docutils" />
 <section id="build-it-from-the-paper">
 <h2><span class="section-number">12.6. </span>🔄 3 · Build it from the paper <a id="build"></a><a class="headerlink" href="#build-it-from-the-paper" title="Link to this heading">#</a></h2>
 <p>Zero to one hundred, and we start where you would actually start: with what the
-authors wrote. Here is Daniel and Moskowitz describing their construction.</p>
+authors wrote. Here is Daniel and Moskowitz on how they build it.</p>
 <blockquote>
 <div><p><em>“To form the momentum portfolios, we first rank stocks based on their
 cumulative returns from 12 months before to one month before the formation
@@ -714,14 +703,14 @@ distribution.”</em></p>
 </div></blockquote>
 <p>That paragraph is the entire specification. Build it.</p>
 <details>
-<summary><b>Stuck? The recipe in words</b> — but try the prompt first</summary>
+<summary><b>Stuck? The questions you have to answer</b> — but try the prompt first</summary>
 <br>
 <ol class="arabic simple">
-<li><p>Keep common shares on the three main exchanges — <code class="docutils literal notranslate"><span class="pre">shrcd</span></code> in (10, 11), <code class="docutils literal notranslate"><span class="pre">exchcd</span></code> in (1, 2, 3).</p></li>
-<li><p>For each stock, compound its returns over a window of months.</p></li>
-<li><p>Step the window back so the most recent completed month is not in it.</p></li>
-<li><p>Each month, rank stocks on that signal and cut into ten groups on NYSE breakpoints.</p></li>
-<li><p>Value-weight inside each group, then take the top group minus the bottom group.</p></li>
+<li><p>Which securities should we keep?</p></li>
+<li><p>How should I compound the returns?</p></li>
+<li><p>Should I lag it?</p></li>
+<li><p>How do I use the signals to form the portfolios?</p></li>
+<li><p>How do I weight the stocks in each portfolio?</p></li>
 </ol>
 <p><code class="docutils literal notranslate"><span class="pre">panel</span></code> has <code class="docutils literal notranslate"><span class="pre">permno</span></code>, <code class="docutils literal notranslate"><span class="pre">date</span></code>, <code class="docutils literal notranslate"><span class="pre">ret</span></code>, <code class="docutils literal notranslate"><span class="pre">me</span></code>, <code class="docutils literal notranslate"><span class="pre">exchcd</span></code>, <code class="docutils literal notranslate"><span class="pre">shrcd</span></code>, and <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> — the
 return earned in the month <em>after</em> <code class="docutils literal notranslate"><span class="pre">date</span></code>, so tradability is already handled for
@@ -742,7 +731,35 @@ you. Every decision left is about the signal.</p>
 <div><p><strong>🤔 Before you run the check.</strong> Write down the Sharpe ratio you expect. The
 shipped <code class="docutils literal notranslate"><span class="pre">Mom12m</span></code> long-short earns about 20% a year, so you have an anchor.</p>
 </div></blockquote>
-<div class="cell docutils container">
+<details>
+<summary><b>Stuck? Here is the code</b></summary>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">shrcd</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">panel</span><span class="o">.</span><span class="n">exchcd</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">'permno'</span><span class="p">,</span> <span class="s1">'date'</span><span class="p">])</span>
+<span class="n">p</span><span class="p">[</span><span class="s1">'1+ret'</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="c1"># --- 1 --- compound each stock's returns over 11 months: (1+r)(1+r)...(1+r)</span>
+<span class="n">p</span><span class="p">[</span><span class="s1">'cumret'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'1+ret'</span><span class="p">]</span>
+                 <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                 <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="c1"># --- 2 --- step it back one month: why?</span>
+<span class="n">p</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'cumret'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># --- 3 --- each month, cut into deciles on NYSE breakpoints (Lecture 3)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">,</span> <span class="s1">'ret_fwd'</span><span class="p">,</span> <span class="s1">'me'</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deciles</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'signal'</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)))</span>
+    <span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">],</span> <span class="n">edges</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">'drop'</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="n">group_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">deciles</span><span class="p">))</span>
+
+<span class="c1"># --- 4 --- value-weight inside each decile, then top minus bottom</span>
+<span class="n">dec</span>  <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'group'</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ret_fwd</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">me</span><span class="p">))</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+<span class="n">mine</span> <span class="o">=</span> <span class="p">(</span><span class="n">dec</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">dec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">mine</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">mine</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>     <span class="c1"># date it by the month EARNED</span>
+</pre></div>
+</div>
+</details><div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Reference implementation — four steps</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">shrcd</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">panel</span><span class="o">.</span><span class="n">exchcd</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -754,7 +771,7 @@ shipped <code class="docutils literal notranslate"><span class="pre">Mom12m</spa
                  <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                  <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
-<span class="c1"># --- 2 --- step it back one month: the clause everyone drops (see below)</span>
+<span class="c1"># --- 2 --- step it back one month: why?</span>
 <span class="n">p</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'cumret'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># --- 3 --- each month, cut into deciles on NYSE breakpoints (Lecture 3)</span>
