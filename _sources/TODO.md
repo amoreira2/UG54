@@ -263,6 +263,10 @@ Three things the reorder surfaced:
 
 ## Done
 
+- ✅ **2026-08-28** — **L11 built** (`L11_TransactionCosts_AI.ipynb`, 41 cells,
+      1.55 lectured sessions). Turnover finally defined, drift-aware. Momentum is
+      a **$236m strategy**. Ships three cache files.
+
 - ✅ **2026-08-28** — **L10 built** (`L10_Momentum_AI.ipynb`, 48 cells, 2,201
       lectured words = 1.55 sessions). Zero-to-one-hundred strategy construction:
       the signal survey, momentum rebuilt from the raw panel, the construction

@@ -197,7 +197,7 @@
 <li class="toctree-l1"><a class="reference internal" href="L8_Backtesting_AI.html">10. L8 · Backtesting: Estimate, Tune, Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="L9_WhyShouldThisWork_AI.html">11. L9 · Why Should This Work?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="L10_Momentum_AI.html">12. L10 · Momentum: One Signal, All the Way Down</a></li>
-<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Transaction_Costs.html">13. L11 · Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L11_TransactionCosts_AI.html">13. L11 · Transaction Costs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Leverage_and_Shorting.html">14. L12 · Leverage, Shorting, and the Capital Base  ◦</a></li>
 <li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_I.html">15. L13 · Capital Allocation I  ◦</a></li>
 <li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Capital_Allocation_II.html">16. L14 · Capital Allocation II — Estimation Error  ◦</a></li>
@@ -483,6 +483,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moments-two-per-plan-md">The prompt-it moments — two, per <code class="docutils literal notranslate"><span class="pre">PLAN.md</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#built-what-changed-from-this-plan">Built — what changed from this plan</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-question-for-am">Open question for AM</a></li>
 </ul>
             </nav>
@@ -498,7 +499,8 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="l11-transaction-costs-design-note">
 <h1>L11 · Transaction Costs — design note<a class="headerlink" href="#l11-transaction-costs-design-note" title="Link to this heading">#</a></h1>
 <p><strong>Slot:</strong> Meeting 14, Mon Oct 26 (the meeting after momentum). <strong>Feeds:</strong> A6.
-<strong>Status:</strong> planned, not built.</p>
+<strong>Status:</strong> <strong>built 2026-08-28</strong> — <code class="docutils literal notranslate"><span class="pre">L11_TransactionCosts_AI.ipynb</span></code>, 41 cells,
+2,197 lectured words = 1.55 sessions, 10 lecture cells clean in 2 s.</p>
 <hr class="docutils" />
 <section id="the-one-idea">
 <h2>The one idea<a class="headerlink" href="#the-one-idea" title="Link to this heading">#</a></h2>
@@ -688,6 +690,35 @@ $23.5bn of monthly volume.</p>
 <p>A cached <code class="docutils literal notranslate"><span class="pre">momentum_costs.parquet</span></code> will probably be wanted for §4, since the
 net-of-cost backtest at five fund sizes is a slow loop.</p>
 </section>
+<section id="built-what-changed-from-this-plan">
+<h2>Built — what changed from this plan<a class="headerlink" href="#built-what-changed-from-this-plan" title="Link to this heading">#</a></h2>
+<p><strong>§5’s premise was wrong and the data said so.</strong> The notebook proposed
+volume-weighting as the implementation portfolio. It does fix the tail — the worst
+position drops from 1,406% of monthly volume to 100% — but <strong>turnover jumps from
+68% to 82%</strong> because volume is noisier than market cap, and total cost goes <em>up</em>,
+20.1% to 26.2% at <span class="math notranslate nohighlight">\(250m. The lecture now shows that failure and then uses the
+blunter fix: drop the least liquid 40% before sorting. That gives the α/β/σ(ε)
+framework a proper workout — β 1.04, σ(ε) 3.6%/yr, **α −2.1%/yr with t = −2.46**,
+R² 0.97 — and a genuine size-dependent answer: the screen loses at \)</span>50m and wins
+from $100m up.</p>
+<p><strong>Verified numbers as shipped.</strong> Turnover 68.2%/mo for momentum against 12.2% for
+value; the drift correction is worth 4% on momentum and 36% on value, which is a
+better prompt-moment payoff than expected. Used volume: median 0.4%, p95 21%,
+<strong>1.13% of trades need more than the stock’s entire monthly volume</strong>. Cost 4.0%
+at <span class="math notranslate nohighlight">\(10m rising to 126.9% at \)</span>10bn; **break-even <span class="math notranslate nohighlight">\(236m**; net Sharpe 1.00 gross →
+0.54 at \)</span>50m → −0.02 at <span class="math notranslate nohighlight">\(250m → −0.98 at \)</span>1bn. Decay: momentum 1.12 → 0.26 at six
+months and −0.38 at twelve; value 0.44 → 0.45 → 0.22.</p>
+<p><strong>Challenge answer key.</strong> <code class="docutils literal notranslate"><span class="pre">value_capacity</span></code> **<span class="math notranslate nohighlight">\(859m** (3.6× momentum's, on a
+smaller gross return, purely because it trades 5.6× less). `patient_net`
+**−1.4%** at \)</span>1bn against −20.6% impatient — rebalancing every second month buys
+19 points by giving up 2.9 points of gross return. <code class="docutils literal notranslate"><span class="pre">screen_wins_at</span></code> <strong>$100m</strong>,
+and it is marginal there (0.351 against 0.348), which is worth saying.</p>
+<p><strong>Data shipped:</strong> <code class="docutils literal notranslate"><span class="pre">l11_costs.parquet</span></code> (240×29), <code class="docutils literal notranslate"><span class="pre">l11_usedvolume.parquet</span></code> (424k
+stock-months), <code class="docutils literal notranslate"><span class="pre">l11_decay.parquet</span></code>. Built by <code class="docutils literal notranslate"><span class="pre">build_l11_cost_cache.py</span></code>. Notebook
+content lives in <code class="docutils literal notranslate"><span class="pre">l11_content.txt</span></code> and is assembled by
+<code class="docutils literal notranslate"><span class="pre">build_l11_transaction_costs.py</span></code> — the split avoids the quote-escaping problems
+that bit the L10 build.</p>
+</section>
 <section id="open-question-for-am">
 <h2>Open question for AM<a class="headerlink" href="#open-question-for-am" title="Link to this heading">#</a></h2>
 <p>The break-even uses <strong>κ = 1</strong>, which is the aggressive end of the published
@@ -763,6 +794,7 @@ sensitivity visible and it is one more argument to <code class="docutils literal
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moments-two-per-plan-md">The prompt-it moments — two, per <code class="docutils literal notranslate"><span class="pre">PLAN.md</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#built-what-changed-from-this-plan">Built — what changed from this plan</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-question-for-am">Open question for AM</a></li>
 </ul>
   </nav></div>

@@ -1,7 +1,8 @@
 # L11 · Transaction Costs — design note
 
 **Slot:** Meeting 14, Mon Oct 26 (the meeting after momentum). **Feeds:** A6.
-**Status:** planned, not built.
+**Status:** **built 2026-08-28** — `L11_TransactionCosts_AI.ipynb`, 41 cells,
+2,197 lectured words = 1.55 sessions, 10 lecture cells clean in 2 s.
 
 ---
 
@@ -192,6 +193,38 @@ $23.5bn of monthly volume.
 
 A cached `momentum_costs.parquet` will probably be wanted for §4, since the
 net-of-cost backtest at five fund sizes is a slow loop.
+
+## Built — what changed from this plan
+
+**§5's premise was wrong and the data said so.** The notebook proposed
+volume-weighting as the implementation portfolio. It does fix the tail — the worst
+position drops from 1,406% of monthly volume to 100% — but **turnover jumps from
+68% to 82%** because volume is noisier than market cap, and total cost goes *up*,
+20.1% to 26.2% at $250m. The lecture now shows that failure and then uses the
+blunter fix: drop the least liquid 40% before sorting. That gives the α/β/σ(ε)
+framework a proper workout — β 1.04, σ(ε) 3.6%/yr, **α −2.1%/yr with t = −2.46**,
+R² 0.97 — and a genuine size-dependent answer: the screen loses at $50m and wins
+from $100m up.
+
+**Verified numbers as shipped.** Turnover 68.2%/mo for momentum against 12.2% for
+value; the drift correction is worth 4% on momentum and 36% on value, which is a
+better prompt-moment payoff than expected. Used volume: median 0.4%, p95 21%,
+**1.13% of trades need more than the stock's entire monthly volume**. Cost 4.0%
+at $10m rising to 126.9% at $10bn; **break-even $236m**; net Sharpe 1.00 gross →
+0.54 at $50m → −0.02 at $250m → −0.98 at $1bn. Decay: momentum 1.12 → 0.26 at six
+months and −0.38 at twelve; value 0.44 → 0.45 → 0.22.
+
+**Challenge answer key.** `value_capacity` **$859m** (3.6× momentum's, on a
+smaller gross return, purely because it trades 5.6× less). `patient_net`
+**−1.4%** at $1bn against −20.6% impatient — rebalancing every second month buys
+19 points by giving up 2.9 points of gross return. `screen_wins_at` **$100m**,
+and it is marginal there (0.351 against 0.348), which is worth saying.
+
+**Data shipped:** `l11_costs.parquet` (240×29), `l11_usedvolume.parquet` (424k
+stock-months), `l11_decay.parquet`. Built by `build_l11_cost_cache.py`. Notebook
+content lives in `l11_content.txt` and is assembled by
+`build_l11_transaction_costs.py` — the split avoids the quote-escaping problems
+that bit the L10 build.
 
 ## Open question for AM
 
