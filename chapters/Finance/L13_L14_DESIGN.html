@@ -1,0 +1,1011 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>L13 + L14 · Capital Allocation — joint design note &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/L13_L14_DESIGN';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/L13_L14_DESIGN.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data-Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="L1_Welcome_Returns_AI.html">3. L1 · The Workflow, and What a Return Is</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L2_Panel_Portfolios_AI.html">4. L2 · The Panel and Portfolio Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L3_Sorts_AI.html">5. L3 · Sorts, Breakpoints, and Long-Short Portfolios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L4_PerfEval_Factors_AI.html">6. L4 · Performance Evaluation, and Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L5_Factor_Zoo_AI.html">7. L5 · Where Factors Come From, and the Factor Zoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L6_MultiFactor_AI.html">8. L6 · Multi-Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L7_Portfolio_Decomposition_AI.html">9. L7 · Decomposing a Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L8_Backtesting_AI.html">10. L8 · Backtesting: Estimate, Tune, Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L9_WhyShouldThisWork_AI.html">11. L9 · Why Should This Work?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L10_Momentum_AI.html">12. L10 · Momentum: One Signal, All the Way Down</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Transaction_Costs.html">13. L11 · Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Leverage_and_Shorting.html">14. L12 · Leverage, Shorting, and the Capital Base  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_I.html">15. L13 · Capital Allocation I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Capital_Allocation_II.html">16. L14 · Capital Allocation II — Estimation Error  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L15_Conditional_Strategies_I.html">17. L15 · Conditional Strategies I — Volatility Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L16_Conditional_Strategies_II.html">18. L16 · Conditional Strategies II — Factor Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L17_Fundamental_Risk_Models_BARRA.html">19. L17 · Fundamental Risk Models (BARRA)  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L18_PCA_and_Statistical_Factors.html">20. L18 · PCA and Statistical Factors  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L19_Machine_Learning.html">21. L19 · Machine Learning  ◦</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">22. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_AI.html">22.1. Assignment 1 — Python, pandas, and Data That Fights Back</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">22.5. Assignment 2 — Diversification, and Your First Sort</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A3_Beta_and_Alpha_AI.html">22.8. Assignment 3 — Beta, Alpha, and Whether You Have Either</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/SignalHygiene_AI.html">23. Appendix · Signal Hygiene</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">24. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">24.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">24.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">24.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">24.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">24.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">24.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">24.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">24.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">24.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">24.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">24.4.9. Cleaning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">24.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">24.5. Flow Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">24.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">24.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../scientific/linear_algebra1_c.html">25. Linear Algebra Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">26. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intro.html">27. Archive · Pre-AI Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="IntrotoReturns_c.html">27.1. Introduction to Asset Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">27.2. Choice of Frequency and Annualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">27.3. Data APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PortfolioMath_c.html">27.4. Portfolio Mathematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FactorModels_c.html">27.5. Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiFactorModels_c.html">27.6. Multi-Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">27.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="FactorModelEstimation_c.html">27.11. Factor Model Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crosssectionalequitystrategies.html">27.12. Cross-Sectional Equity Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">27.13. Momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">27.14. An Overview of Factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Timing_c.html">27.15. Timing Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">27.16. Expected-Return Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">27.17. Volatility Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationI_cc.html">27.18. Capital Allocation I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationII.html">27.19. Capital Allocation II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Performance_evaluation_c.html">27.20. Performance Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RiskManagement.html">27.21. Risk Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TradingCosts.html">27.22. Liquidity and Trading Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LeverageandShorting.html">27.23. Leverage, Shorting, Limits to Arbitrage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearning_cc.html">27.24. Machine Learning in Finance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LLMs.html">27.25. Gen AI and LLMs in Finance</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/L13_L14_DESIGN.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/L13_L14_DESIGN.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>L13 + L14 · Capital Allocation — joint design note</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-spine-across-both-meetings">The spine, across both meetings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-dropping-l12-frees-a-meeting">First: dropping L12 frees a meeting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sources-honestly-assessed">The sources, honestly assessed</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capitalallocationi-ipynb-2-858-words-strong"><code class="docutils literal notranslate"><span class="pre">CapitalAllocationI.ipynb</span></code> — 2,858 words, strong</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capitalallocationii-ipynb-2-099-words-strong"><code class="docutils literal notranslate"><span class="pre">CapitalAllocationII.ipynb</span></code> — 2,099 words, strong</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eqi-chapters-8-and-9">EQI chapters 8 and 9</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l13-capital-allocation-i-the-formula">L13 · Capital Allocation I — the formula</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#who-decides-how-much-risk">§1 · Who decides how much risk?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-asset-no-matrices">§2 · One asset, no matrices</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#many-assets">§3 · Many assets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-bets-where-the-inverse-disappears">§4 · Alpha bets — where the inverse disappears</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-bets">§5 · Combining bets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pod-shops">§6 · Pod shops</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-capital-allocation-ii-the-formula-breaks">L14 · Capital Allocation II — the formula breaks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-in-sample-illusion">§1 · The in-sample illusion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-it-breaks">§2 · Why it breaks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bet-sizing-menu">§3 · The bet-sizing menu</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-horse-race">§4 · The horse race</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-constraints-help">§5 · Why constraints help</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-should-actually-do">§6 · What you should actually do</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moments-one-per-meeting">The prompt-it moments — one per meeting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-questions-for-am">Open questions for AM</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="l13-l14-capital-allocation-joint-design-note">
+<h1>L13 + L14 · Capital Allocation — joint design note<a class="headerlink" href="#l13-l14-capital-allocation-joint-design-note" title="Link to this heading">#</a></h1>
+<p><strong>Slots:</strong> Meetings 16 and 17 (Mon Nov 2, Wed Nov 4). <strong>Feeds:</strong> A6.
+<strong>Status:</strong> planned, not built. Written as one design because the split only
+makes sense jointly.</p>
+<hr class="docutils" />
+<section id="the-spine-across-both-meetings">
+<h2>The spine, across both meetings<a class="headerlink" href="#the-spine-across-both-meetings" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>How much do you bet, and on what? There is exactly one formula. It is
+beautiful, it is three lines of linear algebra, and it stops working the
+moment you have to estimate its inputs.</strong></p>
+</div></blockquote>
+<p><strong>L13 builds the formula and shows what it buys you.</strong> <strong>L14 breaks it and
+rebuilds something you would actually run.</strong> Neither half works alone: L13 on its
+own is a maths lecture students will never use, and L14 on its own is a list of
+heuristics with no reason behind them.</p>
+<p>The unifying result, which appears three times in three costumes:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>where</p></th>
+<th class="head"><p>form</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>L13 §5, two uncorrelated bets</p></td>
+<td><p><span class="math notranslate nohighlight">\(SR = \sqrt{SR_A^2 + SR_B^2}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>L13 §6, pod shops</p></td>
+<td><p><span class="math notranslate nohighlight">\(SR_{\text{pool}} = \sqrt{N}\,SR_{\text{pod}}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>EQI §8.5, the Fundamental Law</p></td>
+<td><p><span class="math notranslate nohighlight">\(IR = IC\sqrt{nT}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>All three say: <strong>skill times breadth.</strong> Getting students to see that these are one
+theorem is the intellectual job of L13.</p>
+</section>
+<hr class="docutils" />
+<section id="first-dropping-l12-frees-a-meeting">
+<h2>First: dropping L12 frees a meeting<a class="headerlink" href="#first-dropping-l12-frees-a-meeting" title="Link to this heading">#</a></h2>
+<p>AM is skipping leverage and shorting. That empties <strong>meeting 15, Wed Oct 28</strong>,
+which sits directly before this block. Three options:</p>
+<ol class="arabic simple">
+<li><p><strong>Momentum part 2 takes it.</strong> L10 is 2.80 lectured sessions and already needs
+a second meeting; the content exists and the break at §4/§5 is clean.</p></li>
+<li><p><strong>Capital allocation takes three meetings</strong> (15–17).</p></li>
+<li><p>Shift everything a meeting earlier and bank the slack.</p></li>
+</ol>
+<p><strong>Recommend (1).</strong> Splitting L10 is free — the material is built and over-length,
+so this costs nothing but the slot. Capital allocation at two well-designed
+meetings is enough, and three meetings of <code class="docutils literal notranslate"><span class="pre">Σ⁻¹</span></code> is more than an undergraduate
+elective should spend on the hardest mathematics in the course. Option (3) is
+worth keeping in reserve for when something slips, which it will.</p>
+</section>
+<hr class="docutils" />
+<section id="the-sources-honestly-assessed">
+<h2>The sources, honestly assessed<a class="headerlink" href="#the-sources-honestly-assessed" title="Link to this heading">#</a></h2>
+<section id="capitalallocationi-ipynb-2-858-words-strong">
+<h3><code class="docutils literal notranslate"><span class="pre">CapitalAllocationI.ipynb</span></code> — 2,858 words, strong<a class="headerlink" href="#capitalallocationi-ipynb-2-858-words-strong" title="Link to this heading">#</a></h3>
+<p>The best of the four CA-I variants. Take almost all of it:</p>
+<ul class="simple">
+<li><p><strong>The two-decision framing</strong> — how much risk, then how to spread it — and the
+fact that they separate. This is the organising idea of the whole block.</p></li>
+<li><p><strong>Principal vs delegate.</strong> <em>“Who is choosing the portfolio, and what do they
+care about?”</em> Preferences, horizon, goals, <strong>background risk</strong>. This is L9 §3
+returning with a portfolio attached, and it is the right way in.</p></li>
+<li><p>The single-asset derivation, which needs no matrices:
+<span class="math notranslate nohighlight">\(x^\star = \frac{1}{\gamma}\frac{\mu}{\sigma^2}\)</span>, and therefore
+<strong>optimal volatility <span class="math notranslate nohighlight">\(= \frac{1}{\gamma}\times\)</span> Sharpe ratio.</strong></p></li>
+<li><p><span class="math notranslate nohighlight">\(W^\star = \frac{1}{\gamma}\Sigma^{-1}\mu\)</span> and <strong>two-fund separation</strong> —
+<em>“a risk-averse investor does not hold safer assets, it holds a safer
+portfolio.”</em></p></li>
+<li><p><strong>Alpha bets vs factor bets</strong>, and the diagonal case where no inversion is
+needed at all: <span class="math notranslate nohighlight">\(w_i \propto \alpha_i/\sigma^2_{\epsilon,i}\)</span>, so that
+<span class="math notranslate nohighlight">\(w_i\sigma_{\epsilon,i} = \alpha_i/\sigma_{\epsilon,i}\)</span> — <strong>the volatility you
+allocate to a strategy is its appraisal ratio.</strong> That single line is the payoff
+of L4 and L7 and it belongs at the centre of L13.</p></li>
+<li><p><span class="math notranslate nohighlight">\(SR = \sqrt{SR_A^2+SR_B^2}\)</span>, and <em>“the appraisal ratio is the Sharpe ratio
+cousin that actually matters.”</em></p></li>
+</ul>
+<p><strong>Skip:</strong> the <code class="docutils literal notranslate"><span class="pre">get_factors</span></code> plumbing, and the frontier plot (pretty, and it needs
+a no-risk-free-asset detour we do not want).</p>
+</section>
+<section id="capitalallocationii-ipynb-2-099-words-strong">
+<h3><code class="docutils literal notranslate"><span class="pre">CapitalAllocationII.ipynb</span></code> — 2,099 words, strong<a class="headerlink" href="#capitalallocationii-ipynb-2-099-words-strong" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Estimation risk framed exactly right: <strong>in-sample MVO delivers the highest
+in-sample Sharpe by construction — it is just algebra</strong>, so the number tells
+you nothing.</p></li>
+<li><p>Perturb μ within its standard error and watch the weights move.</p></li>
+<li><p><strong>The bet-sizing menu</strong>: mean-variance, 1/N, proportional, risk parity,
+minimum-variance, shrinkage — each with the assumption that justifies it. Risk
+parity is <em>“assume all appraisal ratios are equal”</em>, which is the honest way to
+present it.</p></li>
+<li><p><strong>The pod-shop calculation.</strong> <span class="math notranslate nohighlight">\(SR_{\text{pool}} = \sqrt{N}SR_{\text{pod}}\)</span>,
+and <em>“finding a new uncorrelated idea is super valuable.”</em> This is the best
+single passage in either notebook and it is the natural climax of L13, not L14.</p></li>
+</ul>
+<p><strong>Skip:</strong> Black–Litterman (needs a Bayesian detour we cannot afford).</p>
+</section>
+<section id="eqi-chapters-8-and-9">
+<h3>EQI chapters 8 and 9<a class="headerlink" href="#eqi-chapters-8-and-9" title="Link to this heading">#</a></h3>
+<p>Chapter 8 is <em>Portfolio Management: The Basics</em>, chapter 9 <em>Beyond Simple
+Mean-Variance</em>. Unlike chapter 10, <strong>most of this is usable</strong>, and four things are
+genuinely additive:</p>
+<ul class="simple">
+<li><p><strong>§8.5, the Fundamental Law of Active Management: <span class="math notranslate nohighlight">\(IR = IC\sqrt{nT}\)</span>.</strong> The
+missing conceptual glue — performance is <em>skill</em> (the information coefficient,
+a cross-sectional correlation between your alphas and realised returns) times
+<em>breadth</em>. Insight 8.3 makes IC concrete: <span class="math notranslate nohighlight">\(IC^2\)</span> is the <span class="math notranslate nohighlight">\(R^2\)</span> of the
+cross-sectional predictive regression, so students can compute their own.</p></li>
+<li><p><strong>§8.4, “alpha orthogonal is the golden currency in investing”</strong>, and the recipe
+is orthogonalise then inverse-variance weight — the same two steps as CA I’s
+alpha bets, said better.</p></li>
+<li><p><strong>§9.1, naive MVO shorts a positive-Sharpe asset</strong> whenever
+<span class="math notranslate nohighlight">\(s_2/s_1 &lt; \rho\)</span>. Deeply counterintuitive, easy to demonstrate in two lines,
+and it is <em>why</em> the optimizer misbehaves rather than just <em>that</em> it does.
+<strong>Insight 9.2 is quotable: forecast error routinely costs 10–50% of the Sharpe
+ratio.</strong></p></li>
+<li><p><strong>§9.2.2, constraints worsen performance if your inputs are right and can
+improve it if they are estimated.</strong> This is the theoretical licence for
+everything in L14 §4 — 1/N and long-only stop being embarrassing hacks and
+become regularisation.</p></li>
+</ul>
+<p><strong>Skip:</strong> all of §8.7 (convex duality, local analysis) and §9.5 (operator-norm
+theorems, Lemmas 9.1, 9.3, 9.4). Graduate material with no undergraduate path.
+<strong>Defer:</strong> §9.4, trading Sharpe for capacity — L11 already did the capacity work
+and re-opening it here would blur both.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="l13-capital-allocation-i-the-formula">
+<h2>L13 · Capital Allocation I — the formula<a class="headerlink" href="#l13-capital-allocation-i-the-formula" title="Link to this heading">#</a></h2>
+<section id="who-decides-how-much-risk">
+<h3>§1 · Who decides how much risk?<a class="headerlink" href="#who-decides-how-much-risk" title="Link to this heading">#</a></h3>
+<p>Principal versus delegate, from CA I. Preferences, horizon, goals, background
+risk. Explicitly a callback: L9 said risk is a property of an asset <em>for an
+investor</em>; this is that statement turned into a number.</p>
+</section>
+<section id="one-asset-no-matrices">
+<h3>§2 · One asset, no matrices<a class="headerlink" href="#one-asset-no-matrices" title="Link to this heading">#</a></h3>
+<p><span class="math notranslate nohighlight">\(\max_x\ x\mu - \frac{\gamma}{2}x^2\sigma^2 \Rightarrow x^\star = \frac{\mu}{\gamma\sigma^2}\)</span>,
+hence <span class="math notranslate nohighlight">\(x^\star\sigma = \frac{1}{\gamma}\times SR\)</span>.</p>
+<p><strong>How much volatility you run is your Sharpe ratio divided by your risk
+aversion.</strong> Everything else in the lecture is this line with more indices.</p>
+</section>
+<section id="many-assets">
+<h3>§3 · Many assets<a class="headerlink" href="#many-assets" title="Link to this heading">#</a></h3>
+<p><span class="math notranslate nohighlight">\(W^\star = \frac{1}{\gamma}\Sigma^{-1}\mu\)</span>, derived the same way. Two-fund
+separation, and the point that <span class="math notranslate nohighlight">\(\gamma\)</span> only sets leverage — the <em>composition</em> is
+the same for everyone.</p>
+</section>
+<section id="alpha-bets-where-the-inverse-disappears">
+<h3>§4 · Alpha bets — where the inverse disappears<a class="headerlink" href="#alpha-bets-where-the-inverse-disappears" title="Link to this heading">#</a></h3>
+<p>Their strategies are already market-hedged (L4, L7). If the residuals are
+uncorrelated, <span class="math notranslate nohighlight">\(\Sigma_\epsilon\)</span> is diagonal and the formula collapses to
+<span class="math notranslate nohighlight">\(w_i \propto \alpha_i/\sigma^2_{\epsilon,i}\)</span>, i.e.</p>
+<div class="math notranslate nohighlight">
+\[\underbrace{w_i\sigma_{\epsilon,i}}_{\text{vol you allocate}} \;=\; \underbrace{\frac{\alpha_i}{\sigma_{\epsilon,i}}}_{\text{appraisal ratio}}\]</div>
+<p><strong>No matrix inversion, and the answer is a quantity they already know.</strong> State the
+diagonality assumption as an assumption — L14 attacks it.</p>
+</section>
+<section id="combining-bets">
+<h3>§5 · Combining bets<a class="headerlink" href="#combining-bets" title="Link to this heading">#</a></h3>
+<p><span class="math notranslate nohighlight">\(SR = \sqrt{SR_A^2+SR_B^2}\)</span> for orthogonal strategies, then the general
+<span class="math notranslate nohighlight">\(\sqrt{\sum_i AR_i^2}\)</span>, then the Fundamental Law as the same statement:
+<strong>skill × √breadth</strong>.</p>
+</section>
+<section id="pod-shops">
+<h3>§6 · Pod shops<a class="headerlink" href="#pod-shops" title="Link to this heading">#</a></h3>
+<p>Why Citadel and Millennium are organised the way they are. <span class="math notranslate nohighlight">\(\sqrt{N}\)</span>, and then
+the reality check on our own data:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mean individual Sharpe of our 29 long-shorts</p></td>
+<td><p><strong>0.40</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>best single</p></td>
+<td><p>1.36</p></td>
+</tr>
+<tr class="row-even"><td><p>equal-volatility pool of all 29</p></td>
+<td><p><strong>1.38</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\sqrt{29}\times 0.40\)</span> if truly uncorrelated</p></td>
+<td><p>2.13</p></td>
+</tr>
+<tr class="row-even"><td><p>mean pairwise correlation</p></td>
+<td><p><strong>0.05</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Pooling turns 0.40 into 1.38 — a 3.4× gain from breadth alone. It does not reach
+2.13, and <strong>the gap is entirely the correlation.</strong> That single table earns §5 and
+sets up L14.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="l14-capital-allocation-ii-the-formula-breaks">
+<h2>L14 · Capital Allocation II — the formula breaks<a class="headerlink" href="#l14-capital-allocation-ii-the-formula-breaks" title="Link to this heading">#</a></h2>
+<section id="the-in-sample-illusion">
+<h3>§1 · The in-sample illusion<a class="headerlink" href="#the-in-sample-illusion" title="Link to this heading">#</a></h3>
+<p>On the six Fama–French factors, 1980–2026:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Sharpe</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>in-sample MVE</p></td>
+<td><p><strong>1.17</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>equal-weighted</p></td>
+<td><p>1.03</p></td>
+</tr>
+<tr class="row-even"><td><p>best single factor (market)</p></td>
+<td><p>0.57</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>MVE wins <strong>by construction</strong> — it is the algebraic maximum. And it beats naive
+equal weighting by only 0.14. Ask what that 0.14 is worth before believing it.</p>
+</section>
+<section id="why-it-breaks">
+<h3>§2 · Why it breaks<a class="headerlink" href="#why-it-breaks" title="Link to this heading">#</a></h3>
+<p>First the mechanism, from EQI §9.1: with two assets, the optimizer <strong>shorts a
+positive-Sharpe asset</strong> whenever <span class="math notranslate nohighlight">\(s_2/s_1 &lt; \rho\)</span>. Not a bug — it is using the
+asset as a hedge — but it means the weights depend on differences between
+similar, badly estimated numbers.</p>
+<p>Then the demonstration. Perturb each expected return by <strong>one standard error</strong>
+and ask how often the sign of the weight flips:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Mkt</p></th>
+<th class="head"><p>SMB</p></th>
+<th class="head"><p>HML</p></th>
+<th class="head"><p>RMW</p></th>
+<th class="head"><p>CMA</p></th>
+<th class="head"><p>UMD</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>P(sign flips)</p></td>
+<td><p>0%</p></td>
+<td><p>20%</p></td>
+<td><p><strong>46%</strong></p></td>
+<td><p>0%</p></td>
+<td><p>5%</p></td>
+<td><p>0%</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>HML flips essentially at random.</strong> The optimizer is not telling you to go long
+value; it is telling you that it cannot tell.</p>
+<p>Then EQI’s Insight 9.2 for the scale of the damage: 10–50% of the Sharpe ratio,
+routinely.</p>
+</section>
+<section id="the-bet-sizing-menu">
+<h3>§3 · The bet-sizing menu<a class="headerlink" href="#the-bet-sizing-menu" title="Link to this heading">#</a></h3>
+<p>Mean-variance, 1/N, proportional, risk parity, minimum-variance, shrinkage — each
+presented as <strong>an assumption, not a hack</strong>:</p>
+<ul class="simple">
+<li><p>1/N: “I know the sign and nothing else”</p></li>
+<li><p>risk parity: “all appraisal ratios are equal”</p></li>
+<li><p>minimum-variance: “all alphas are equal”</p></li>
+<li><p>shrinkage: “the truth is between my estimate and a simple prior”</p></li>
+</ul>
+</section>
+<section id="the-horse-race">
+<h3>§4 · The horse race<a class="headerlink" href="#the-horse-race" title="Link to this heading">#</a></h3>
+<p>Expanding-window, 120-month burn-in, out of sample:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>rule</p></th>
+<th class="head"><p>OOS Sharpe</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>1/N</strong></p></td>
+<td><p><strong>0.92</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>mean-variance</p></td>
+<td><p>0.83</p></td>
+</tr>
+<tr class="row-even"><td><p>minimum-variance</p></td>
+<td><p>0.77</p></td>
+</tr>
+<tr class="row-odd"><td><p>risk parity</p></td>
+<td><p>0.76</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Equal weighting beats the optimizer.</strong> This is DeMiguel, Garlappi and Uppal
+(2009) reproduced on our data, and it is the emotional centre of the lecture: the
+formula they spent all of L13 deriving loses to dividing by six.</p>
+</section>
+<section id="why-constraints-help">
+<h3>§5 · Why constraints help<a class="headerlink" href="#why-constraints-help" title="Link to this heading">#</a></h3>
+<p>EQI §9.2.2, and it rescues the lecture from nihilism. Constraints <em>must</em> reduce
+performance if your inputs are correct. They can <em>improve</em> it when your inputs
+are estimated, because they are regularisation — a constraint is a penalty
+(§9.2.3), and a penalty is a prior. <strong>1/N is not giving up; it is an extreme
+prior, and on this data it is a better prior than the sample mean.</strong></p>
+</section>
+<section id="what-you-should-actually-do">
+<h3>§6 · What you should actually do<a class="headerlink" href="#what-you-should-actually-do" title="Link to this heading">#</a></h3>
+<p>Estimate → Tune → Test from L8, applied to the choice of rule itself. Choose the
+bet-sizing rule on the tune sample; report on the test sample once. Close on the
+honest position: use the optimizer on inputs you trust (covariances, which are
+estimable) and shrink hard toward simple priors on inputs you do not (means,
+which are not).</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-prompt-it-moments-one-per-meeting">
+<h2>The prompt-it moments — one per meeting<a class="headerlink" href="#the-prompt-it-moments-one-per-meeting" title="Link to this heading">#</a></h2>
+<p><strong>L13: “Find me the optimal portfolio weights.”</strong> Load-bearing, and
+underspecified in three ways that change the answer: maximum-Sharpe (scale-free)
+or a volatility target; full <span class="math notranslate nohighlight">\(\Sigma^{-1}\)</span> or the diagonal idiosyncratic version;
+and with or without the risk-free asset. A terse prompt returns
+<code class="docutils literal notranslate"><span class="pre">np.linalg.inv(cov)</span> <span class="pre">&#64;</span> <span class="pre">mu</span></code> with no scaling and no statement of which problem it
+solved.</p>
+<p><strong>L14: “Is this out of sample?”</strong> The horse race is only meaningful if every
+rule is estimated on data strictly before the return it earns. The trap is the
+expanding window: it is easy to write a loop that refits on <code class="docutils literal notranslate"><span class="pre">F.iloc[:t+1]</span></code> and
+then earns <code class="docutils literal notranslate"><span class="pre">F.iloc[t]</span></code>. One index, and 1/N stops beating mean-variance.</p>
+</section>
+<hr class="docutils" />
+<section id="length-budget">
+<h2>Length budget<a class="headerlink" href="#length-budget" title="Link to this heading">#</a></h2>
+<p><strong>1,500 lectured words each.</strong> L13 is derivation-heavy and will <em>feel</em> longer
+than it reads, so the word count understates it — budget accordingly and move the
+frontier plot to the appendix if it runs.</p>
+</section>
+<section id="data">
+<h2>Data<a class="headerlink" href="#data" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ff_monthly.csv</span></code> (six factors, 1980–2026) for the optimizer work and the horse
+race; <code class="docutils literal notranslate"><span class="pre">longshort_29.parquet</span></code> for the pod-shop table and the alpha-bets version.
+Both already shipped. A small cache of the horse-race series is probably worth
+building so the expanding-window loop does not run in class.</p>
+</section>
+<section id="open-questions-for-am">
+<h2>Open questions for AM<a class="headerlink" href="#open-questions-for-am" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Meeting 15</strong> — momentum part 2, as recommended, or a third capital-allocation
+meeting?</p></li>
+<li><p><strong>Does the Fundamental Law earn its place?</strong> <span class="math notranslate nohighlight">\(IR = IC\sqrt{nT}\)</span> is the best
+organising idea available and it is one more formula in the most formula-dense
+lecture of the term. My view: keep it in L13 §5 as <em>interpretation only</em> —
+state it, connect it to the two results they have just derived, and never
+compute an IC.</p></li>
+<li><p><strong>A6 currently says “scale your strategy by volatility, combine with the
+market, find the max-Sharpe weight.”</strong> That is L13 material and lands Thu Nov 5,
+the day after L14. Worth rewriting so it spans both meetings — the natural
+assignment is <em>“size your own strategy three ways and defend one.”</em></p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-spine-across-both-meetings">The spine, across both meetings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-dropping-l12-frees-a-meeting">First: dropping L12 frees a meeting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sources-honestly-assessed">The sources, honestly assessed</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capitalallocationi-ipynb-2-858-words-strong"><code class="docutils literal notranslate"><span class="pre">CapitalAllocationI.ipynb</span></code> — 2,858 words, strong</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#capitalallocationii-ipynb-2-099-words-strong"><code class="docutils literal notranslate"><span class="pre">CapitalAllocationII.ipynb</span></code> — 2,099 words, strong</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eqi-chapters-8-and-9">EQI chapters 8 and 9</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l13-capital-allocation-i-the-formula">L13 · Capital Allocation I — the formula</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#who-decides-how-much-risk">§1 · Who decides how much risk?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-asset-no-matrices">§2 · One asset, no matrices</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#many-assets">§3 · Many assets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-bets-where-the-inverse-disappears">§4 · Alpha bets — where the inverse disappears</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-bets">§5 · Combining bets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pod-shops">§6 · Pod shops</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-capital-allocation-ii-the-formula-breaks">L14 · Capital Allocation II — the formula breaks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-in-sample-illusion">§1 · The in-sample illusion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-it-breaks">§2 · Why it breaks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bet-sizing-menu">§3 · The bet-sizing menu</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-horse-race">§4 · The horse race</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-constraints-help">§5 · Why constraints help</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-you-should-actually-do">§6 · What you should actually do</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moments-one-per-meeting">The prompt-it moments — one per meeting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-questions-for-am">Open questions for AM</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
