@@ -226,11 +226,69 @@ content lives in `l11_content.txt` and is assembled by
 `build_l11_transaction_costs.py` — the split avoids the quote-escaping problems
 that bit the L10 build.
 
-## Open question for AM
+## Recalibrated 2026-08-28 after AM
 
-The break-even uses **κ = 1**, which is the aggressive end of the published
-range, and 1980–2000 volumes are far below today's. The qualitative result — a
-few hundred million, not tens of billions — is robust, but the point estimate is
-soft. Two options: present κ as a dial students can turn, or calibrate it to a
-published estimate and cite. **Recommend the dial**, since it makes the
-sensitivity visible and it is one more argument to `momentum()`-style code.
+AM: *"I don't like this theory mumbo jumbo for the square root law... motivate
+instead that it is natural that the participation rate matters... and that
+volatility will matter due for example to adverse selection, and then discuss how
+this empirically kind of fits the data — which is the most important thing. Cite
+the Moskowitz et al. paper."*
+
+**The dimensional-analysis derivation is out.** §2 now motivates the two
+arguments directly — participation because liquidity is a finite resource that
+refills, volatility because the counterparty bears inventory risk *and* cannot
+tell whether you are informed, which is L9's adverse selection in its original
+habitat — and then asks whether the shape fits.
+
+It does. `assets/plots/marketimpact.jpg` was already in the repo: it is
+**Frazzini, Israel and Moskowitz, "Trading Costs of Asset Pricing Anomalies"**,
+realised impact on ~$1.7tn of live AQR trades. Fitting the 2004–07 curve gives
+**9bp + 144bp·√(participation)**, tracking the data across the whole range, with
+costs falling by 2010–13 and roughly doubling in 2008–09.
+`marketimpact2.jpg` — the anatomy of one order, 11bp average impact split 2.5bp
+temporary and 8.5bp permanent — opens the section.
+
+### Checking against FIM caught a real error
+
+Calibrating to that figure exposed a **units bug in the cost model**. Almgren's σ
+is the volatility over the *execution horizon*; spreading a month's trade across
+the month makes that **daily** volatility, and the first build used monthly. That
+overcharged by √21 ≈ 4.6, and κ = 1 against FIM's implied 0.55 added the rest:
+**costs were 8.4× too high, capacity 70× too low.**
+
+Corrected model, now in `build_l11_cost_cache.py`:
+
+$$c_i = \tfrac12\text{spread} + \kappa\,\sigma_i^{\text{daily}}\sqrt{Q_i/V_i},
+\qquad \kappa = 0.55,\ \text{spread}/2 = 20\text{bp}$$
+
+### What the numbers became
+
+| | before | after |
+|---|---|---|
+| break-even | $236m | **$13.4bn** |
+| cost at $1bn | 40.1% | 6.7% |
+| net Sharpe at $1bn | −0.98 | **+0.65** |
+| screen starts winning | $100m | ~$5bn (net return), $10bn (Sharpe) |
+| value capacity | $859m | **$53.8bn** |
+
+The lesson survives intact and is now *more* honest: momentum is a real business
+at $1bn (12.8%/yr net, Sharpe 0.65) and dead by $25bn. It also agrees with FIM's
+own headline — proxy-based academic estimates overstated costs by roughly an
+order of magnitude, and anomaly capacity is far larger than the pessimistic
+literature claimed.
+
+Two caveats are now in the notebook rather than in this file: κ comes from
+post-2004 large-cap institutional flow while our sample is 1980–2000 when spreads
+were quoted in eighths, so **every cost is an underestimate for the period**; and
+the units trap is written up as a warning box, because the formula does not carry
+its units with it.
+
+**Lectured length rose to 1.84 sessions** from 1.55 — §2 is longer as prose than
+it was as a derivation.
+
+## Open question for AM — resolved
+
+Both, in the end. κ is **calibrated to FIM's figure** (0.55) rather than
+asserted, and it is still a dial the Hands-On makes students turn. The earlier
+worry that "a few hundred million" was the robust answer turned out to be wrong
+in the other direction — it was an artefact of the units bug.

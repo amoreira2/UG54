@@ -127,45 +127,81 @@ $$\text{cost} = \underbrace{\text{spread}}_{\text{crossing the bid-ask}}
 + \underbrace{\text{temporary impact}}_{\text{your own pressure, which decays}}
 + \underbrace{\text{permanent impact}}_{\text{what your trade revealed}}$$
 
-For an institutional order **temporary impact dominates**, and it is the only one
-we model. You are pushing the price against yourself while you execute, and the
-more of the available liquidity you demand, the harder you push.
+Here is what that looks like for one real order. The price drifts up while you
+buy, peaks when you finish, then falls part of the way back — the part that comes
+back was temporary, the part that stays is permanent.
 
-The standard model is the **square-root law**:
+![Anatomy of a trade](https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/plots/marketimpact2.jpg)
 
-$$c \;\approx\; \kappa\,\sigma\,\sqrt{Q/V}$$
+Two things should drive the size of that move, and neither needs a model.
 
-where $Q$ is what you trade, $V$ is what everyone trades in the same window,
-$\sigma$ is the stock's volatility, and $\kappa$ is a constant near one. $Q/V$ is
-the **participation rate**.
+**Participation rate.** Liquidity is a finite resource that refills over time. If
+you buy 1% of a day's volume you are noise inside everyone else's trading. If you
+buy 50% of it, you *are* the market that day — the natural sellers ran out and
+you are paying progressively worse prices to induce reluctant ones. The relevant
+quantity is not how many dollars you trade, it is **how many relative to how many
+are already trading**: $Q/V$.
 
-### Where the square root comes from
+**Volatility.** Whoever takes the other side has to hold your position until they
+can offload it, and in a volatile stock that inventory is more dangerous, so they
+charge more for holding it. There is a second reason, and it is Lecture 9's
+adverse selection in its original habitat: **the counterparty does not know
+whether you know something.** The more the price could move, the more that
+possibility costs them, and the wider they quote. Volatile stocks are expensive
+to trade for both reasons at once.
 
-You can get the exponent without any finance at all — from units.
+So cost should rise in $Q/V$ and in $\sigma$. That is as far as reasoning gets
+you. The shape is an empirical question.
 
-The cost $c$ is a fraction, so it is **dimensionless**. Three things can matter:
-$Q$ and $V$, both in dollars, and $\sigma$, which is a volatility and therefore
-carries units of $1/\sqrt{\text{time}}$. Write the cost as a product of powers:
+### Does it fit?
 
-$$[\,\text{dimensionless}\,] = [\text{currency}]^{a}\,[\text{currency}]^{b}\,
-\left[\tfrac{1}{\sqrt{\text{time}}}\right]^{c}$$
+This is the part that matters. The figure below is from **Frazzini, Israel and
+Moskowitz, "Trading Costs of Asset Pricing Anomalies"** — realised market impact
+on roughly **$1.7 trillion of live trades** executed by AQR, plotted against the
+fraction of daily volume the order represented.
 
-Currency must cancel, so $a + b = 0$. Time must cancel, and $\sigma$ is the only
-term carrying it, so $c$ pairs with the currency exponent: $-a - c/2 = 0$. Set
-$a = -\tfrac12$ and everything follows — $b = \tfrac12$, $c = 1$:
+![Market impact](https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/plots/marketimpact.jpg)
 
-$$c \;\propto\; V^{-1/2}\,Q^{1/2}\,\sigma \;=\; \sigma\sqrt{Q/V}$$
+Read three things off it.
 
-**The exponent is one half because volatility scales with the square root of
-time.** No data, no regression, no model of the order book.
+**It is concave, and close to a square root.** Fitting
+$c \approx a + b\sqrt{Q/V}$ to the middle curve gives about
+**9bp + 144bp × √(participation)**, which tracks the data across the whole range.
+Doubling your participation does not double your cost — it multiplies it by
+about 1.4.
 
-> **📌 Cost per dollar rises with the square root of size. Total cost rises with
-> the three-halves power.**
->
-> Double the fund and each dollar costs 1.41× as much, so the bill is 2.83× as
-> large. That convexity is the whole of the next two sections.
-@@CELL@@markdown@@
----
+**The level is low.** At 10% of daily volume the impact is around **50 basis
+points**. That is far below what the academic literature assumed for years, and
+it is the paper's main point: studies that priced anomalies using quoted spreads
+from public data overstated real execution costs by roughly an order of
+magnitude. Whether a strategy survives costs is an empirical question, and the
+answer came out friendlier than the theory suggested.
+
+**It moves.** Costs fell between 2004–07 and 2010–13 as markets got more liquid,
+and roughly doubled in 2008–09. Liquidity is not a constant of nature; it is
+scarcest exactly when you most want to trade.
+
+### The model we will use
+
+$$c_i \;=\; \underbrace{\tfrac{1}{2}\,\text{spread}}_{20\text{bp}}
+\;+\; \kappa\,\sigma_i^{\text{daily}}\sqrt{Q_i/V_i},
+\qquad \kappa = 0.55$$
+
+κ is set so the second term reproduces the slope of that figure at typical
+volatility. Two warnings, both of which matter:
+
+> **⚠️ σ must be measured over the horizon you execute over.** Spread a month's
+> trade over the month and each day you are trading a day's worth against a day's
+> volume, so the relevant volatility is *daily* — monthly volatility is √21 ≈ 4.6
+> times too big. **My first version of this notebook made exactly that mistake
+> and overcharged by a factor of eight.** It is an easy error because the formula
+> does not carry its units with it.
+
+> **⚠️ This is calibrated on 2004–2013 large-cap institutional flow, and our
+> sample is 1980–2000.** Spreads then were quoted in eighths, and the small stocks
+> in our universe were far worse than AQR's. Every cost below is an
+> **underestimate** for the period. Treat the shape as reliable and the level as
+> optimistic.
 
 ## 3 · Absorption capacity <a id="absorb"></a>
 
@@ -177,24 +213,25 @@ Below a few percent you transact near the posted price. As it approaches one you
 are the market, and the price goes where you push it.
 
 Here is that number for momentum, every stock, every month, for a fund running
-**$250 million** on the long side.
+**$10 billion** on the long side — roughly the size §4 will show it can bear.
 @@CELL@@code@@
-#@title 🔒 How much of the market would you be?
+#@title 🔒 How much of the market would you be, at $10bn?
 u = UV['used_volume']
-for q in [0.50, 0.75, 0.95, 0.99, 0.999]:
+for q in [0.50, 0.75, 0.95, 0.99]:
     print(f"  {q:>6.1%} of trades   {u.quantile(q):>9.1%} of the stock's monthly volume")
-print(f"\n  worst single trade: {u.max():,.0%}")
-print(f"  trades needing MORE than the entire month's volume: {(u > 1).mean():.2%}")
+print(f"\n  trades needing MORE than the entire month's volume: {(u > 1).mean():.1%}")
+print(f"  ... and at $1bn instead:  {(u/10 > 1).mean():.1%}")
 @@CELL@@markdown@@
 ### The median is fine. The tail is not.
 
-Half of all trades use less than **0.4%** of a stock's monthly volume — invisible.
-The 95th percentile is 21%, which is large but executable over a few days.
+At $10bn the median trade takes **16%** of a stock's monthly volume — large, but
+executable if you spread it out. The 95th percentile is **846%**: eight months of
+the stock's entire trading, for one position.
 
-Then it falls apart. **1.13% of the trades this strategy wants to make would
-require more than the stock's entire monthly volume**, and the worst wants six
-thousand times it. Those trades do not get executed at a bad price. They do not
-get executed.
+**Almost a quarter of the trades this strategy wants to make would need more than
+the whole month's volume.** Those do not execute at a bad price — they do not
+execute. Drop to $1bn and it falls to 4%, which is the same fact from the other
+side: capacity is exactly the size at which the tail stops being ignorable.
 
 > **⚠️ Capacity is set by the weakest link, not the average.**
 >
@@ -202,8 +239,8 @@ get executed.
 > participation rate of a strategy is like reporting the average depth of a river
 > you are about to walk across.
 
-That 1.13% is small enough to look ignorable and is exactly where the money goes,
-which is the subject of §5.
+The average cost is set by the whole distribution, but whether the strategy is
+*runnable* is set by its tail — which is the subject of §5.
 @@CELL@@markdown@@
 ---
 
@@ -213,10 +250,10 @@ Now put the two halves together. We know how much the strategy trades and what a
 trade costs, so we can run the backtest again with the bill included.
 
 > **🤔 Predict first.** Momentum's gross Sharpe ratio is 1.00. Write down the
-> fund size at which you think it goes to zero.
+> fund size at which you think it goes to zero. Most people guess low.
 @@CELL@@code@@
 #@title 🔒 The same strategy, at seven fund sizes
-AUMS = [10, 50, 100, 250, 500, 1000, 5000]
+AUMS = [100, 500, 1000, 5000, 10000, 25000, 50000, 100000]
 rows = {}
 for A in AUMS:
     net = D.mom_gross - D[f'cost_{A}'].fillna(0)
@@ -226,12 +263,13 @@ t = pd.DataFrame(rows).T
 print(f"  gross:  {D.mom_gross.mean()*12:+.1%}/yr   Sharpe {sharpe(D.mom_gross):.2f}\n")
 print(t.to_string(formatters={'cost/yr':'{:.1%}'.format, 'net/yr':'{:+.1%}'.format,
                               'net Sharpe':'{:+.2f}'.format}))
-c100 = D.cost_100.mean()*12
-print(f"\n  break-even fund size: ${100*(D.mom_gross.mean()*12/c100)**2:,.0f}m")
+au = sorted(int(c.split('_')[1]) for c in D.columns if c.startswith('cost_'))
+cy = [D[f'cost_{a}'].mean()*12 for a in au]
+be = np.interp(D.mom_gross.mean()*12, cy, np.sqrt(au))**2
+print(f"\n  break-even fund size: ${be/1000:,.1f}bn")
 @@CELL@@code@@
 #@title 🔒 Sharpe ratio against fund size
-grid = [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]
-have = [a for a in grid if f'cost_{a}' in D.columns]
+have = sorted(int(c.split('_')[1]) for c in D.columns if c.startswith('cost_'))
 srs  = [sharpe(D.mom_gross - D[f'cost_{a}'].fillna(0)) for a in have]
 
 fig, ax = plt.subplots()
@@ -245,10 +283,11 @@ ax.annotate('gross', xy=(11, sharpe(D.mom_gross)), xytext=(0, 5),
             textcoords='offset points', fontsize=9, color='#888888')
 plt.tight_layout(); plt.show()
 @@CELL@@markdown@@
-### Momentum is a $236 million strategy
+### Momentum is a $13 billion strategy
 
-Not a good strategy or a bad one — **a $236 million one.** At $50m it earns 10.6%
-a year net and a Sharpe of 0.54. At $1bn it loses 20% a year.
+Not a good strategy or a bad one — **a $13 billion one.** At $1bn it earns 12.8%
+a year net with a Sharpe of 0.65, which is a real business. At $25bn it loses
+money.
 
 Nothing about the signal changed. The alpha is identical in every row of that
 table. What changed is how much of it you tried to collect.
@@ -263,11 +302,11 @@ said that a premium which is other people's risk becomes yours as you scale. Her
 is the mechanism: **the market charges you for the privilege of taking the
 position, and the charge grows faster than the position.**
 
-> **⚠️ One dial to be honest about.** We set $\kappa = 1$, the aggressive end of
-> the published range, on 1980–2000 volumes that are far below today's. Move
-> $\kappa$ and the break-even moves with its square — $\kappa = 0.5$ gives four
-> times the capacity. The order of magnitude is the finding; the third digit is
-> not. The Hands-On makes you turn the dial.
+> **⚠️ The dial.** Capacity moves with $1/\kappa^2$, so halving κ quadruples it.
+> Our κ comes from AQR's post-2004 large-cap flow and our sample is 1980–2000,
+> when spreads were quoted in eighths — so **$13bn is generous for this period**
+> and the honest claim is "ten billion, not one and not a hundred". The Hands-On
+> makes you turn the dial and see how much it matters.
 @@CELL@@markdown@@
 ---
 
@@ -289,17 +328,17 @@ by *volume* rather than market cap, so that every position uses the same fractio
 of available liquidity.
 @@CELL@@code@@
 #@title 🔒 Does volume-weighting help?
-for lab, g, c, tn in [('wish: value-weighted', 'mom_gross', 'cost_250', 'turn_mom'),
-                      ('volume-weighted',      'vw_gross',  'vwcost_250', 'turn_vw')]:
+for lab, g, c, tn in [('wish: value-weighted', 'mom_gross', 'cost_1000', 'turn_mom'),
+                      ('volume-weighted',      'vw_gross',  'vwcost_1000', 'turn_vw')]:
     print(f"  {lab:24s} gross {D[g].mean()*12:+6.1%}   turnover {D[tn].mean():5.1%}/mo   "
-          f"cost@$250m {D[c].mean()*12:5.1%}")
+          f"cost@$1bn {D[c].mean()*12:5.1%}")
 @@CELL@@markdown@@
 ### It does not — and the reason is worth having
 
-Volume-weighting does fix the tail: the worst position drops from 1,406% of
-monthly volume to 100%. But **turnover jumps from 68% to 82% a month**, because
-volume is noisier than market cap and the weights chase it. Total cost goes *up*,
-from 20.1% to 26.2%.
+Volume-weighting does fix the tail — it spreads the trade across names in
+proportion to what each can absorb. But **turnover jumps from 68% to 82% a
+month**, because volume is noisier than market cap and the weights chase it.
+Total cost goes *up*, from 6.7% to 9.0% at $1bn.
 
 You solved the problem you were looking at and made the bill larger.
 
@@ -313,7 +352,7 @@ r = sm.OLS(j.screened, sm.add_constant(j.wish)).fit()
 print(f"  alpha      {r.params.iloc[0]*12:+.1%}/yr   (t = {r.tvalues.iloc[0]:+.2f})")
 print(f"  beta       {r.params.iloc[1]:.2f}")
 print(f"  resid vol  {r.resid.std()*np.sqrt(12):.1%}/yr        R-squared {r.rsquared:.2f}\n")
-for A in [50, 100, 250, 1000]:
+for A in [1000, 5000, 10000, 25000]:
     nw = D.mom_gross - D[f'cost_{A}'].fillna(0)
     ns = D.scr_gross - D[f'scrcost_{A}'].fillna(0)
     win = 'screen' if ns.mean() > nw.mean() else 'wish'
@@ -334,10 +373,11 @@ Regress the implementation portfolio on the wish portfolio and read it off:
 > conflates all three.** It mixes a β you could fix in one line with noise you
 > could diversify and a genuine expected loss. Separate them before you decide.
 
-And the decision depends on size. **Below about $100m the screen is not worth
-it** — you are paying 2.1% of alpha to solve a problem you do not have. Above it,
-the cost saving grows with $\sqrt{\text{AUM}}$ while the alpha loss stays fixed,
-and by $1bn the screen is worth 4 points a year.
+And the decision depends on size. **At $1bn the screen is not worth it** — you
+pay 2.1% of alpha to solve a problem you do not yet have. It breaks even around
+$5bn, and above that the cost saving keeps growing while the alpha loss stays
+fixed: by $25bn the screen is worth about 2 points a year, and the difference
+between a Sharpe of −0.32 and −0.21.
 
 **The right portfolio is a function of how much money you run.** Same signal,
 same data, different correct answer.
@@ -413,8 +453,9 @@ print(f"{MY_SIGNAL}: turnover {my_turnover:.1%}/mo, gross {my_gross:+.1%}/yr, "
 @@CELL@@markdown@@
 ### Compare with the room
 
-- **Where did you land?** Under $100m and your strategy is a personal account,
-  not a business. Over $5bn and you should suspect your turnover calculation.
+- **Where did you land?** Under $1bn and your signal is niche — fine for a small
+  fund, not for an allocator. Over $100bn and you should suspect your turnover
+  calculation.
 - **How much did κ move it?** It enters squared, so halving κ quadruples the
   capacity. If your answer changes by more than that, something else is wrong.
 - **Would the liquidity screen help you?** Only if your capacity is binding.
@@ -452,13 +493,13 @@ print(f"value break-even: ${value_capacity:,.0f}m")
 @@CELL@@markdown@@
 ### Q2 — What patience is worth
 
-A momentum manager at $1bn could trade half as often — rebalancing every two
+A momentum manager at $10bn could trade half as often — rebalancing every two
 months instead of every month. That halves turnover and therefore halves cost,
 but it means implementing with an average delay of about one month.
 
-Using the `DEC` table for the return cost of a one-month lag and `cost_1000` for
+Using the `DEC` table for the return cost of a one-month lag and `cost_10000` for
 the saving, report the **net annual return** of the patient momentum strategy at
-$1bn, as a decimal.
+$10bn, as a decimal.
 
 > **📌 Required variable names:**
 > ```python
@@ -470,13 +511,13 @@ $1bn, as a decimal.
 
 patient_net = ____
 
-print(f"patient momentum at $1bn: {patient_net:+.1%}/yr")
+print(f"patient momentum at $10bn: {patient_net:+.1%}/yr")
 @@CELL@@markdown@@
 ### Q3 — The screen at your size
 
 Find the fund size at which the liquidity-screened portfolio's **net Sharpe
 ratio** first exceeds the wish portfolio's. Search over
-`[50, 100, 250, 500, 1000, 2500, 5000]`.
+`[100, 500, 1000, 5000, 10000, 25000]`.
 
 > **📌 Required variable names:**
 > ```python
@@ -494,7 +535,7 @@ print(f"the screen starts winning at ${screen_wins_at:,}m")
 
 > **📝 Your task — maximum eight sentences.**
 >
-> You are pitching momentum to an allocator who wants to put **$2 billion** into
+> You are pitching momentum to an allocator who wants to put **$40 billion** into
 > it. Tell them what happens.
 >
 > Give the net return and Sharpe ratio at that size, and say what you would have
@@ -547,28 +588,33 @@ print("Submission form: https://forms.gle/yazZ8bbatL87jdJi7")
 
 2. **Momentum turns over 819% a year.** Value turns over 146%.
 
-3. **Cost per dollar goes as √size, so the bill goes as size^(3/2).** The
-   exponent comes from units alone: volatility carries 1/√time and nothing else
-   can cancel it.
+3. **Cost rises with participation and with volatility** — the first because
+   liquidity is finite, the second because whoever takes the other side bears
+   inventory risk and cannot tell whether you know something.
 
-4. **Capacity is set by the weakest link.** Half of momentum's trades are
-   invisible; 1.13% of them need more than the stock's entire monthly volume.
+4. **The shape is a square root, and that is an empirical fact, not a theorem.**
+   $1.7 trillion of live AQR trades: about 9bp + 144bp·√(participation), and the
+   level is roughly a tenth of what proxy-based academic estimates assumed.
 
-5. **Momentum is a $236 million strategy** — 10.6% a year net at $50m, −20% at
-   $1bn. Same alpha in every row.
+5. **Momentum is a $13 billion strategy** — 12.8% a year net at $1bn, negative by
+   $25bn. Same alpha in every row.
 
 6. **"Does this work?" is a function, not a number**, and its argument is your
    size. Every backtest before today evaluated it at zero.
 
 7. **Volume-weighting fixes the tail and raises the bill** — turnover 68% → 82%.
-   The blunt screen is better.
+   The blunt screen is better, and only above $10bn.
 
 8. **β is free, σ(ε) is noise, α is the cost.** One tracking-error number hides
    all three.
 
 9. **A signal that decays fast cannot be traded slowly**, so it cannot use the
-   one tool that makes turnover affordable. That is a second, independent reason
-   momentum's capacity is small.
+   one tool that makes turnover affordable. Value's capacity is four times
+   momentum's on a third of the gross return.
+
+10. **Volatility has to be measured over the horizon you execute over.** Using
+    monthly volatility for a trade spread across a month overstates the cost by
+    √21 — a units error the formula will not catch for you.
 
 ---
 
