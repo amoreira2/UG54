@@ -21,10 +21,12 @@ through and dated rather than deleted, so the reasoning survives.
       conclusion cannot be checked on small caps — where momentum is strongest
       (Sharpe 1.09 vs 0.47). A WRDS `crsp.msenames.siccd` pull mapped to FF49
       would cover everything.
-- [ ] **L10 is 1.98 lectured sessions** — genuinely two lectures now that §5b
-      exists. Either trim, or move §6 (crashes, vol-scaling) into L15 volatility
-      timing, where it is the natural motivating example and would cost L10 only
-      ~220 words.
+- [ ] **L10 is 2.23 lectured sessions** — genuinely two lectures. §3 (0.58) and
+      §5b are each half a session on their own. Options, cheapest first: move §6
+      (crashes, vol-scaling, 0.15) into L15 volatility timing where it is the
+      natural motivating example; cut §1's signal survey (0.19) to a handout;
+      or split the lecture and give momentum two meetings, which the reorder
+      does not currently have room for.
 - [ ] **Assignments 4–8 do not exist yet.** A1, A2 and A3 are built and tested.
       **A4 can now be written** — L8 and L9 both exist. A5–A8 wait on their
       lectures, and A5's due date needs the fix noted below.

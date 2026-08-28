@@ -133,35 +133,72 @@ Every clause in that sentence is a decision. We are going to take them one at a
 time and find out what each is worth.
 """)
 
-# ── §2 build
+# ── §3 build from the paper
 md("""
 ---
 
-## 🔄 3 · Build it from raw returns <a id="build"></a>
+## 🔄 3 · Build it from the paper <a id="build"></a>
 
-Zero to one hundred. We start from the CRSP panel — `permno`, `date`, `ret`,
-`me` — and finish with a monthly track record.
+Zero to one hundred, and we start where you would actually start: with what the
+authors wrote. Here is Daniel and Moskowitz describing their construction.
 
-> **🤔 Predict first.** Our shipped `Mom12m` long-short earns about 20% a year.
-> When we rebuild it from scratch, how close do you expect to get?
+> *"To form the momentum portfolios, we first rank stocks based on their
+> cumulative returns from 12 months before to one month before the formation
+> date (i.e., the t−12 to t−2 month returns). We use a one month gap between the
+> end of the ranking period and the start of the holding period to avoid the
+> short-term reversals documented by Jegadeesh (1990) and Lehmann (1990). In
+> particular we will focus on the 10% and 90% quantiles of the signal
+> distribution."*
+
+That paragraph is the entire specification. Build it.
+
+<details>
+<summary><b>Stuck? The recipe in words</b> — but try the prompt first</summary>
+
+<br>
+
+1. Keep common shares on the three main exchanges — `shrcd` in (10, 11), `exchcd` in (1, 2, 3).
+2. For each stock, compound its returns over a window of months.
+3. Step the window back so the most recent completed month is not in it.
+4. Each month, rank stocks on that signal and cut into ten groups on NYSE breakpoints.
+5. Value-weight inside each group, then take the top group minus the bottom group.
+
+`panel` has `permno`, `date`, `ret`, `me`, `exchcd`, `shrcd`, and `ret_fwd` — the
+return earned in the month *after* `date`, so tradability is already handled for
+you. Every decision left is about the signal.
+
+</details>
 """)
 
-co("""
-#@title 🔒 Raw panel to long-short, one step at a time
+co('''
+# === YOUR TURN ===
+MY_PROMPT = """
+                                    ← write your prompt here
+"""
+
+# ---- paste the AI's code below, then compare with the cell after ----
+''')
+
+md('''
+> **🤔 Before you run the check.** Write down the Sharpe ratio you expect. The
+> shipped `Mom12m` long-short earns about 20% a year, so you have an anchor.
+''')
+
+co('''
+#@title 🔒 Reference implementation — four steps
 p = panel[panel.shrcd.isin([10, 11]) & panel.exchcd.isin([1, 2, 3])].copy()
 p = p.sort_values(['permno', 'date'])
 p['1+ret'] = p['ret'] + 1
 
-# ── step 1 ── cumulative return over the last `lookback` months, stock by stock
-#    (1+r_{t-10})(1+r_{t-9})...(1+r_t)   —  a rolling PRODUCT, exactly the formula
+# --- 1 --- compound each stock's returns over 11 months: (1+r)(1+r)...(1+r)
 p['cumret'] = (p.groupby('permno')['1+ret']
                  .rolling(11, min_periods=11).apply(np.prod, raw=True)
                  .reset_index(level=0, drop=True))
 
-# ── step 2 ── step it back so the month before formation is not in the signal
+# --- 2 --- step it back one month: the clause everyone drops (see below)
 p['signal'] = p.groupby('permno')['cumret'].shift(1)
 
-# ── step 3 ── each month, cut into deciles on NYSE breakpoints (Lecture 3)
+# --- 3 --- each month, cut into deciles on NYSE breakpoints (Lecture 3)
 d = p.dropna(subset=['signal', 'ret_fwd', 'me'])
 def deciles(x):
     edges = np.unique(np.quantile(x.loc[x.exchcd == 1, 'signal'], np.linspace(0, 1, 11)))
@@ -169,37 +206,15 @@ def deciles(x):
     return pd.cut(x['signal'], edges, labels=False, duplicates='drop')
 d = d.assign(group=d.groupby('date', group_keys=False).apply(deciles))
 
-# ── step 4 ── value-weight inside each decile, then top minus bottom
+# --- 4 --- value-weight inside each decile, then top minus bottom
 dec  = d.groupby(['date', 'group']).apply(lambda x: np.average(x.ret_fwd, weights=x.me)).unstack()
 mine = (dec[9] - dec[0]).dropna()
+mine.index = mine.index + pd.offsets.MonthEnd(1)     # date it by the month EARNED
 
 print(f"  ours      mean {mine.mean()*12:+.1%}/yr   Sharpe {sharpe(mine):.2f}")
 print(f"  shipped   mean {L['Mom12m'].mean()*12:+.1%}/yr   Sharpe {sharpe(L['Mom12m']):.2f}")
-print(f"\\n  correlation with the shipped series: "
-      f"{pd.concat([mine, L['Mom12m']], axis=1).dropna().corr().iloc[0,1]:.3f}")
-""")
-
-md("""
-### Same mean, same Sharpe ratio, correlation 0.11
-
-Stop on that. The two series agree on every summary statistic and disagree
-month by month. If you had built this and seen 0.11, you would reasonably
-conclude you had built a *different* strategy.
-
-You have not. You have built the same strategy with a different date on it.
-
-Our `mine` is indexed by the month the portfolio was **formed**. The shipped
-series is indexed by the month the return was **earned** — one month later,
-because `ret_fwd` at date *t* is the return you collect during *t+1*.
-""")
-
-co("""
-#@title 🔒 Move the index one month and look again
-mine.index = mine.index + pd.offsets.MonthEnd(1)          # date it by the month EARNED
-j = pd.concat([mine.rename('ours'), L['Mom12m'].rename('shipped')], axis=1).dropna()
-print(f"  correlation after aligning: {j.corr().iloc[0,1]:.3f}   ({len(j)} months)")
-print(j.head(3).to_string())
-""")
+print(f"  correlation {pd.concat([mine, L['Mom12m']], axis=1).dropna().corr().iloc[0,1]:.3f}")
+''')
 
 md("""
 ### Wrap it, so the decisions become arguments
@@ -247,81 +262,118 @@ std = momentum(p)                      # the standard construction, ~2 seconds
 print(f"momentum(lookback=11, skip=1)   mean {std.mean()*12:+.1%}/yr   Sharpe {sharpe(std):.2f}")
 """)
 
-md("""
-> **📌 Two series can match on every statistic and still be misaligned.**
+md('''
+### Did your version skip the month?
+
+If it did not, you are in good company — it is one subordinate clause in the
+middle of a long sentence, and it reads like housekeeping. It is not.
+
+**Leaving that month in costs 0.32 of Sharpe ratio: 1.03 becomes 0.70.**
+
+And notice what the skip is *not* for. It is not about making the strategy
+tradable — `ret_fwd` already does that, and every version we have built is
+implementable. The month is dropped for an economic reason, and the authors say
+it outright: **to avoid the short-term reversals.**
+
+So look at what the discarded month does on its own. Sort stocks on last month's
+return, hold for one month.
+''')
+
+co('''
+#@title 🔒 The month momentum throws away, traded on its own
+print("buy last month's LOSERS, short last month's winners  (D1 - D10)\\n")
+for w in ['value', 'equal']:
+    for bp in ['nyse', 'all']:
+        r = -sort_portfolios(p.assign(signal=p['ret']), weights=w, breakpoints=bp)
+        print(f"  {w:5s}-weighted, {bp:4s} breakpoints    mean {r.mean()*12:+7.1%}   "
+              f"Sharpe {sharpe(r):+.2f}")
+''')
+
+md('''
+### Momentum and reversal are opposite bets one month apart
+
+Last month's losers beat last month's winners. Equal-weighted that is a **1.54**
+Sharpe ratio — one of the largest numbers in this course — and it is one of our
+29 strategies, `STreversal`.
+
+Value-weighted it is **0.08**, essentially nothing. Reversal lives in small,
+illiquid stocks, where much of what looks like a price move is the bid-ask spread
+bouncing. Weight by market cap and it disappears.
+
+Now put the two together. A momentum signal that includes last month is a
+momentum bet **plus** a reversal bet pointing the other way. If that is the
+mechanism, the skip should be worth more exactly where reversal is stronger.
+''')
+
+co('''
+#@title 🔒 Does the cost of not skipping track the strength of reversal?
+p['no_skip'] = (p.groupby('permno')['1+ret']
+                  .rolling(12, min_periods=12).apply(np.prod, raw=True)
+                  .reset_index(level=0, drop=True))
+print(f"{'construction':22s}{'reversal':>10s}{'skip':>8s}{'no skip':>9s}{'cost':>8s}")
+for w in ['value', 'equal']:
+    for bp in ['nyse', 'all']:
+        rev = sharpe(-sort_portfolios(p.assign(signal=p['ret']), weights=w, breakpoints=bp))
+        a   = sharpe(sort_portfolios(p, weights=w, breakpoints=bp))
+        b   = sharpe(sort_portfolios(p.assign(signal=p['no_skip']), weights=w, breakpoints=bp))
+        print(f"  {w+'/'+bp:20s}{rev:>10.2f}{a:>8.2f}{b:>9.2f}{b-a:>8.2f}")
+''')
+
+md('''
+Reversal runs from 0.08 to 1.56 across the four constructions, and the cost of
+leaving the month in runs from −0.30 to −0.58, in the same order. The mechanism
+is not asserted, it is visible.
+
+> **📌 One clause in an abstract was worth a third of the strategy.**
 >
-> A correlation is the only summary that notices. Whenever you build something
-> that should replicate a reference, correlate it — do not compare means. This is
-> the `ret_fwd` question from Lecture 2, arriving as a bug rather than a warning.
-""")
+> Not because of a coding rule, but because a different anomaly lives in that
+> month and points the other way. You cannot get that from the code, and you
+> cannot get it from a prompt that says *"compute 12-month momentum"*. You get it
+> from reading why the authors did what they did.
 
-# ── prompt moment
+One thing the skip is *not* is an excuse to skip more. Month t−1 is contaminated;
+month t−2 is signal — and §4 puts a number on that too.
+''')
+
 md("""
-### 🎯 Prompt it — compute 12-month momentum <a id="prompt"></a>
+### Three other ways to misread the same sentence
 
-Everything below depends on this one signal being right, so it is worth being
-slow about.
-
-> **🤔 The question.** *"Compute 12-month momentum for each stock."*
->
-> Write the prompt. There are at least four decisions buried in that sentence,
-> and one of them is a one-character error that will not raise, warn, or look
-> wrong.
+The skip is the clause people drop. These are the ones they get wrong without
+noticing — same instruction, same valid-looking code.
 """)
 
 co("""
-# === YOUR TURN ===
-MY_PROMPT = \"\"\"
-                                    ← write your prompt here
-\"\"\"
-
-# ---- paste the AI's code below ----
-
-""")
-
-co("""
-#@title 🔒 Check — five readings, all of them valid code
-def variant(lookback, skip, label):
-    r = momentum(p, lookback=lookback, skip=skip)
-    print(f"  {label:38s} mean {r.mean()*12:+8.1%}   Sharpe {sharpe(r):+.2f}")
-
+#@title 🔒 Same request, four readings
 print("«Compute 12-month momentum for each stock»\\n")
-variant(11,  1, "t-12 to t-2  (11 months, skip 1)")
-variant(12,  1, "t-12 to t-1  (12 months, skip 1)")
-variant(12,  0, "t-11 to t     (includes this month)")
-variant(11, -1, "shift(-1) instead of shift(1)")
+for lb, sk, lab in [(11,  1, "t-12 to t-2  (the standard)"),
+                    (12,  1, "t-12 to t-1  (12 months, still skipped)"),
+                    (11, -1, "shift(-1) instead of shift(1)")]:
+    r = momentum(p, lookback=lb, skip=sk)
+    print(f"  {lab:42s} mean {r.mean()*12:+8.1%}   Sharpe {sharpe(r):+.2f}")
 
-# and one that is not a shift at all: summing returns instead of compounding them
 q = p.copy()
 q['cumret'] = (q.groupby('permno')['ret'].rolling(11, min_periods=11).sum()
                 .reset_index(level=0, drop=True))
 q['signal'] = q.groupby('permno')['cumret'].shift(1)
 r = sort_portfolios(q)
-print(f"  {'sums returns instead of compounding':38s} mean {r.mean()*12:+8.1%}   Sharpe {sharpe(r):+.2f}")
+print(f"  {'sums returns instead of compounding':42s} mean {r.mean()*12:+8.1%}   Sharpe {sharpe(r):+.2f}")
 """)
 
 md("""
 ### A Sharpe ratio of 6.58 is not a discovery
 
-The last row is `shift(-1)` where the standard is `shift(1)`. One character. It
-ranks stocks on a window that runs one month into the future, so the "signal"
-partly contains the return it is predicting.
+The third row is `shift(-1)` where the standard is `shift(1)`. One character. It
+ranks stocks on a window running one month into the future, so the signal partly
+contains the return it is predicting.
 
 It does not raise. It does not warn. It returns a clean DataFrame and a track
 record of **+144% a year**.
 
-The other three are not errors at all — they are defensible readings of the same
-English sentence, and they span a Sharpe ratio from 0.70 to 1.03. Including the
-current month costs you a third of the strategy, which is the short-term reversal
-Daniel and Moskowitz skip the month to avoid.
-
-> **⚠️ The only defence against `shift(-1)` is knowing roughly what the answer
-> should be before you compute it.** No test catches it. No error message
-> mentions it. You catch it because 6.58 is not a number this strategy produces,
-> and you knew that in advance.
+> **⚠️ No test catches this.** You catch it because 6.58 is not a number this
+> strategy produces, and you knew that before you ran it. That is the whole
+> argument for writing down your expected answer first.
 """)
 
-# ── §3 the grid
 md("""
 ---
 
@@ -352,7 +404,8 @@ for j, v in zip(J, sh): print(f"  lookback = {j:2d} months   Sharpe {v:+.2f}")
 md("""
 The peak is at eleven months, exactly where Jegadeesh and Titman put it, and it
 falls off hard on both sides. Six months gets you 0.71; seventeen months gets you
-0.51. **Half the effect lives in the choice of window.**
+0.51. **Half the effect lives in the choice of window** — and that is on top of
+the 0.32 the skip was worth in §3.
 
 Now the part worth arguing about. The textbook picture of this chart is a *wave*:
 reversal at short horizons, continuation in the middle, and reversal again at
@@ -366,22 +419,6 @@ Three possibilities, and it is Lecture 9's list arriving on a chart you built
 yourself: the long-horizon reversal was never there; it was there and has decayed
 since DeBondt and Thaler's 1926–1982 sample; or our construction differs from
 theirs in a way that matters. **The homework makes you take a position.**
-""")
-
-co("""
-#@title 🔒 What is the skip month worth?
-for k in [0, 1, 2, 3, 6]:
-    r = momentum(p, lookback=11, skip=k)
-    star = "   <- the standard" if k == 1 else ""
-    print(f"  skip {k} month(s)   mean {r.mean()*12:+7.1%}   Sharpe {sharpe(r):+.2f}{star}")
-""")
-
-md("""
-**Not skipping costs 38% of the Sharpe ratio** — 0.64 against 1.03. That is one
-`.shift()`, and it is the single most valuable line in the construction.
-
-Skipping *more* than one month costs you too, and for the opposite reason: by
-month six you have thrown away the signal along with the noise.
 """)
 
 co("""
