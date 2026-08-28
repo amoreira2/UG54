@@ -26,11 +26,12 @@ md("""
 2. [The claim](#claim)
 3. [🔄 Build it from the paper](#build) — *🎯 prompt it*
 4. [The decision tree, priced](#tree)
-5. [Within industries, or across them?](#ind) — *🎯 prompt it*
-6. [Crashes](#crash)
-7. [🛠️ Hands-On: your signal's decision tree](#ho1)
-8. [🎯 Challenge: the other end of the horizon](#challenge) — *homework*
-9. [Key takeaways](#takeaways)
+5. [The many momenta](#many)
+6. [Within industries, or across them?](#ind) — *🎯 prompt it*
+7. [Crashes](#crash)
+8. [🛠️ Hands-On: your signal's decision tree](#ho1)
+9. [🎯 Challenge: the other end of the horizon](#challenge) — *homework*
+10. [Key takeaways](#takeaways)
 """)
 
 md("""
@@ -485,11 +486,117 @@ Two of them are worth naming:
 > tests and must say so.
 """)
 
+# ── §5 the many momenta
+md('''
+---
+
+## 5 · The many momenta <a id="many"></a>
+
+Momentum is not a strategy. It is a family, and every member is a published paper
+that changed one detail. Here is a partial list — partial because there are
+hundreds.
+
+| Variation | What changes | Paper |
+|---|---|---|
+| **(12,1) cross-sectional** | the original | [Jegadeesh & Titman 1993](https://scholar.google.com/scholar?q=Returns+to+Buying+Winners+and+Selling+Losers+Jegadeesh+Titman+1993), *JF* |
+| **UMD as a factor** | it becomes a benchmark, not a trade | [Carhart 1997](https://scholar.google.com/scholar?q=On+Persistence+in+Mutual+Fund+Performance+Carhart+1997), *JF* |
+| **earnings momentum** | the signal is the announcement return, not the price | [Chan, Jegadeesh & Lakonishok 1996](https://scholar.google.com/scholar?q=Momentum+Strategies+Chan+Jegadeesh+Lakonishok+1996), *JF* |
+| **industry momentum** | rank industries, not stocks | [Moskowitz & Grinblatt 1999](https://scholar.google.com/scholar?q=Do+Industries+Explain+Momentum+Moskowitz+Grinblatt+1999), *JF* |
+| **slow information diffusion** | it is stronger where coverage is thin | [Hong, Lim & Stein 2000](https://scholar.google.com/scholar?q=Bad+News+Travels+Slowly+Hong+Lim+Stein+2000), *JF* |
+| **volume-conditioned** | interact the signal with turnover | [Lee & Swaminathan 2000](https://scholar.google.com/scholar?q=Price+Momentum+and+Trading+Volume+Lee+Swaminathan+2000), *JF* |
+| **beta-hedged** | strip out the time-varying market exposure | [Grundy & Martin 2001](https://scholar.google.com/scholar?q=Understanding+the+Nature+of+the+Risks+and+the+Source+of+the+Rewards+to+Momentum+Investing), *RFS* |
+| **52-week high** | distance from a high, not a cumulative return | [George & Hwang 2004](https://scholar.google.com/scholar?q=The+52-Week+High+and+Momentum+Investing+George+Hwang), *JF* |
+| **residual momentum** | momentum in Fama-French residuals | [Blitz, Huij & Martens 2011](https://scholar.google.com/scholar?q=Residual+Momentum+Blitz+Huij+Martens), *JEmpFin* |
+| **the echo** | months 7-12 only, not 2-12 | [Novy-Marx 2012](https://scholar.google.com/scholar?q=Is+momentum+really+momentum+Novy-Marx), *JFE* |
+| **time-series momentum** | your own past return, not a relative rank | [Moskowitz, Ooi & Pedersen 2012](https://scholar.google.com/scholar?q=Time+Series+Momentum+Moskowitz+Ooi+Pedersen), *JFE* |
+| **everywhere** | the same signal in bonds, FX, commodities | [Asness, Moskowitz & Pedersen 2013](https://scholar.google.com/scholar?q=Value+and+Momentum+Everywhere+Asness+Moskowitz+Pedersen), *JF* |
+| **frog in the pan** | gradual news beats sudden news | [Da, Gurun & Warachka 2014](https://scholar.google.com/scholar?q=Frog+in+the+Pan+Continuous+Information+Da+Gurun+Warachka), *RFS* |
+| **risk-managed** | scale the position by trailing volatility | [Barroso & Santa-Clara 2015](https://scholar.google.com/scholar?q=Momentum+has+its+moments+Barroso+Santa-Clara), *JFE* |
+| **crashes** | when and why it fails | [Daniel & Moskowitz 2016](https://scholar.google.com/scholar?q=Momentum+crashes+Daniel+Moskowitz), *JFE* |
+
+Read that list as a warning, not a menu. §4 showed that mechanical choices nobody
+writes down move the Sharpe ratio from 0.45 to 1.13. This table is the same fact
+in the literature's own voice: **fifteen careers' worth of work, and much of it is
+the same trade with one dial turned.**
+
+Two of these we can settle right now, because `momentum()` already takes the dial
+as an argument.
+''')
+
+co('''
+#@title 🔒 Novy-Marx (2012) — is momentum really momentum?
+# His claim: the effect lives in months 7-12 before the holding month,
+# not in the recent months 2-6 that everyone assumes.
+std    = momentum(p, lookback=11, skip=1)    # months 2-12, the standard
+recent = momentum(p, lookback=5,  skip=1)    # months 2-6
+echo   = momentum(p, lookback=6,  skip=6)    # months 7-12
+
+for lab, x in [('standard  months 2-12', std), ('recent    months 2-6', recent),
+               ('ECHO      months 7-12', echo)]:
+    print(f"  {lab:24s} mean {x.mean()*12:+7.1%}   Sharpe {sharpe(x):+.2f}")
+
+j = pd.concat([recent.rename('recent'), echo.rename('echo')], axis=1).dropna()
+print(f"\\n  correlation {j.corr().iloc[0,1]:.2f}")
+for y, x in [('echo', 'recent'), ('recent', 'echo')]:
+    r = sm.OLS(j[y], sm.add_constant(j[x])).fit()
+    print(f"  {y:6s} on {x:6s}   alpha {r.params.iloc[0]*12:+7.1%}/yr   t {r.tvalues.iloc[0]:+.2f}")
+''')
+
+md('''
+### The echo replicates
+
+Months 7–12 earn a **0.85** Sharpe ratio; the recent months 2–6 earn 0.62. Run
+the ladder and the older window survives the recent one — **+10.7% a year,
+t = 2.88** — while the recent window does not survive the older one (+6.3%,
+t = 1.56).
+
+So the part of momentum that works is the part you would have thought was stale.
+Novy-Marx's title is the point: is momentum really momentum, or is it something
+else wearing momentum's clothes?
+
+Note what just happened, and hold it against §6. **This published result
+replicated in our sample.** Two lectures ago the same kind of test on 27 published
+signals had six survive. Replication is not hopeless — it is variable, and the
+only way to know which case you are in is to run it.
+''')
+
+co('''
+#@title 🔒 Four more variants — we are already holding them
+fam = ['Mom12m', 'Mom6m', 'ResidualMomentum', 'AnnouncementReturn']
+menu = pd.read_csv(f"{BASE}/signal_menu.csv").set_index('Acronym')
+for s in fam:
+    print(f"  {s:20s} {str(menu.loc[s,'Authors'])[:30]:32s}{int(menu.loc[s,'Year'])}   "
+          f"Sharpe {sharpe(L[s]):+.2f}")
+print()
+print(L[fam].corr().round(2).to_string())
+''')
+
+md('''
+### Same family, genuinely different trades
+
+Correlations run from **0.24 to 0.79**. `Mom12m` and `Mom6m` are the same idea at
+two windows and correlate 0.79 — one trade. But residual momentum correlates only
+0.53 with plain momentum, and earnings momentum only 0.24, while earning the
+highest Sharpe ratio of the four.
+
+That is the useful half of the table above. Some variations are relabelling — §2
+of Lecture 9, three volatility papers correlating 0.96. Others genuinely change
+what you hold. **You cannot tell which from the name; you have to correlate the
+returns.**
+
+And it cuts the other way for your project. If your signal correlates 0.8 with
+momentum, you have not found something new, whatever you call it. If it
+correlates 0.2, you have — and now you owe an explanation of why.
+
+The next section takes one variation and works it all the way through, because it
+is the one where the answer is least obvious in advance.
+''')
+
 # ── §4 industries
 md("""
 ---
 
-## 5 · Within industries, or across them? <a id="ind"></a>
+## 6 · Within industries, or across them? <a id="ind"></a>
 
 A real question about what momentum *is*. When the winner decile beats the loser
 decile, which of these are you actually being paid for?
@@ -511,7 +618,7 @@ of the cost. If it is within, you cannot.
 Moskowitz and Grinblatt (1999) asked exactly this. We will do it twice — first
 the easy way, with industry portfolios, then properly, at the stock level.
 
-### 5a · Across industries — the easy half
+### 6a · Across industries — the easy half
 """)
 
 co("""
@@ -576,7 +683,7 @@ while we compare two portfolios. Any of the three could do it.
 Which means the honest statement is that we do not know — and that finding out
 would be a real piece of work, not a rerun.
 
-### 5b · Within industries — the half that needs stock-level data
+### 6b · Within industries — the half that needs stock-level data
 
 That test compared two *portfolios*. It cannot tell us whether the stock-level
 effect is peers-beating-peers, because it never looked inside an industry.
@@ -590,7 +697,7 @@ characteristics dataset.
 Check it before interpreting anything.
 """)
 
-# ── §5 crashes
+# ── §7 crashes
 co("""
 #@title 🔒 First: what does restricting the universe cost?
 lab = pd.read_parquet(f"{BASE}/industry_labels.parquet")
@@ -690,7 +797,7 @@ md("""
 
 Within-industry momentum survives across-industry momentum: **+6.1%/yr, t = 2.77**.
 Across-industry momentum does not survive within: +1.5%/yr, t = 0.48. Same
-direction as §5a, now measured at the stock level.
+direction as §6a, now measured at the stock level.
 
 The third line goes further. **Plain momentum has no alpha against
 industry-neutral momentum** — −1.2%/yr, t = −0.41. Once you own the
@@ -703,7 +810,7 @@ Which is a practical conclusion, not just a classification. If you run momentum,
 you should probably run it industry-neutral: same idea, better Sharpe ratio, and
 you stop making a sector bet you never intended to make.
 
-> **⚠️ Two caveats, and they are real.** The whole of §5b runs on 950 large
+> **⚠️ Two caveats, and they are real.** The whole of §6b runs on 950 large
 > stocks, where momentum is weak to begin with — none of these Sharpe ratios is
 > the 1.03 from earlier. And the gain disappears if you value-weight. What we
 > can say is that within and across are genuinely different strategies and the
@@ -714,7 +821,7 @@ you stop making a sector bet you never intended to make.
 md("""
 ---
 
-## 6 · Crashes <a id="crash"></a>
+## 7 · Crashes <a id="crash"></a>
 
 Our panel stops in 2000, which is a problem, because the thing you most need to
 know about momentum happened in 2009. The Fama-French momentum factor runs to
