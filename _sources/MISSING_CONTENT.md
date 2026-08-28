@@ -172,7 +172,22 @@ Deliberately postponed. All of it needs the portfolio/matrix view.
 | 5d.1 | ☑ **Bottom-up vs top-down decomposition** | **Done — L7 §3–4 (2026-08-08).** |
 | 5d.2 | **Characteristic-adjusted returns — the CRITIQUE**: ignores covariances (characteristic-neutral ≠ factor-neutral); OLS overloads small stocks; fix by WLS on market cap or restrict to the largest 20% | **L14** — this is BARRA construction practice |
 
-### 5e. A conceptual / theory lecture, late in the term
+### 5e. A conceptual / theory lecture — **split, 2026-08-27**
+
+**The foundations move to L9** (*Why Should This Work?*, meeting 9) — risk in bad
+times, deviate only if you differ from the average investor, background risk, the
+"can everyone pick it up?" test, and the practitioner's five questions. See
+`L9_DESIGN.md`. They move forward because the project needs them at Pitches I,
+two days after L9, and because they answer the question L9 §1 leaves open.
+
+**What stays late** is the scaling half, which needs machinery L9 does not have:
+crowding, equilibrium net of trading costs (L16), multifactor equilibrium and
+adding an anomaly as a factor (L15), and how many distinct risks the data
+supports (L18). That is a different and better lecture than originally planned —
+provisionally *"What survives contact with costs"* — and it can only be built
+after the back half exists.
+
+**Original note follows.**
 
 **Decided: build one, toward the end.** `InterpretingFactorModels.ipynb` is the
 skeleton and it is entirely absent from L4–L6 today:

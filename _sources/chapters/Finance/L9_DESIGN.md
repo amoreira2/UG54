@@ -21,6 +21,37 @@ who gets to collect.
 
 ---
 
+## Two constraints on the build
+
+**No mean-variance.** Students have not seen `Σ⁻¹μ`, the tangency portfolio, or
+the efficient frontier — that is L13. `InterpretingFactorModels` leans on the
+tangency portfolio in places and **those passages must be rewritten**, not
+lifted. What students *do* have is **CAPM logic**, from L4 and L6, and that is
+enough: "hold the market unless you differ from the average investor" is a CAPM
+statement. They also have the **appraisal ratio** from L4, which the source
+notebook uses.
+
+**Use the source notebook's wording.** `InterpretingFactorModels.ipynb` already
+says most of this well. Phrases to carry over intact:
+
+- *"Assets earn higher expected returns not because they're riskier in general,
+  but because they perform poorly in bad times and are hard to hold when
+  investors are most stressed."*
+- *"Even if your data says 'this works', equilibrium forces might say 'this
+  can't scale.'"* — and the test: **"Can the world support everyone picking it
+  up?"**
+- *"This links alpha to **who you are**, not just what you believe."*
+- The **background risk** example, verbatim: you work in the automobile industry
+  with specialized human capital, your income already moves with that sector, so
+  hold the market *minus* autos. It is the cleanest statement of "risk for whom"
+  in the repo.
+- *"If you find alpha, at least one of these must be false: the model is
+  correct, or markets are efficient."* — L4 already plants this; L9 says the
+  choice between them is **economic, not statistical**.
+- The practitioner's five questions, which become §6.
+
+---
+
 ## Structure
 
 ### §1 · The gap, and three explanations you cannot tell apart
@@ -75,6 +106,19 @@ not. **It is a property of an asset for a particular investor.**
 > **Deviate from the market only if you are different from the average
 > investor.**
 
+Why should any asset earn more? Not because it is volatile — because it
+**performs poorly in bad times, and is hard to hold when investors are most
+stressed**. CAPM is one narrow version of that: it declares "bad times" to be
+months when the market falls. But "bad times" is a statement about people, and
+different people have different ones — a consumption drop, a lost job, a housing
+crash, a credit freeze.
+
+Which is why the same asset is not equally risky for everyone. The clearest case
+is **background risk**: you work in the automobile industry with specialised
+human capital, so your income already moves with that sector. The right response
+is not to avoid equities — it is to hold the market *minus* autos. Your
+portfolio is different from the average investor's because **you** are.
+
 Three cases, and only one of them is a strategy:
 
 | | | What you should do |
@@ -82,6 +126,8 @@ Three cases, and only one of them is a strategy:
 | **You are the average investor** | your circumstances are the market's | hold the market. Any deviation is a bet you have no reason to win |
 | **You genuinely differ** | the thing that frightens them does not frighten you | take the other side, and collect for it |
 | **You think you differ and do not** | the most common case | you will discover this at the worst possible time |
+
+> **💡 This links alpha to who you are, not just what you believe.**
 
 Then the part that makes it self-limiting, and which is easy to miss:
 
@@ -92,6 +138,13 @@ Then the part that makes it self-limiting, and which is easy to miss:
 > now yours — you are the one who must hold through the drawdown, meet the
 > margin call, and explain it to a client. The premium was never free; it was
 > compensation, and at scale you have taken the job of earning it.
+>
+> The same logic scales past you. If *everyone* tried to hold it, prices would
+> adjust, expected returns would fall, and the premium would shrink. So even
+> when you have found what looks like a hundred-dollar bill on the pavement,
+> ask: **can the world support everyone picking it up?** A strategy that
+> requires you to be one of the few is a strategy with a capacity, and you
+> should know roughly what it is.
 
 ### §4 · Adverse selection: a high expected return is a low price
 
@@ -171,20 +224,58 @@ Short closing checklist, and the thing to take to the project:
 
 ---
 
-## What this replaces and what it costs
+## What L9 takes from the late conceptual lecture — and what is left
 
-**Dropped from the old L9 sketch:** the file-drawer histogram (nice, not load
-bearing), the decay test we cannot run, Harvey–Liu–Zhu, McLean–Pontiff. §1
-carries the statistical argument in a third of the space.
+L9 pulls the Tier 5e material forward. Here is the honest accounting of what is
+then covered here rather than there, and whether the late slot still has a job.
 
-**Pulled forward:** the Tier 5e conceptual lecture from `MISSING_CONTENT`, which
-was homeless and scheduled vaguely "toward the end." L5 already points forward to
-it. Bringing it here means L5's pointer resolves one lecture later instead of ten,
-and the equilibrium argument arrives while the anomaly evidence is still warm.
+### Covered in L9 — gone from the late lecture
 
-**Cost of that move:** the late-term slot loses its planned content. Options are
-to let it go — this lecture covers the argument — or to keep a shorter version
-late as a synthesis once students have seen costs, leverage and PCA.
+| From `InterpretingFactorModels` | Why it belongs at meeting 9 |
+|---|---|
+| Risk in bad times as the reason a premium exists | It is the answer to the question §1 leaves open. Waiting ten lectures means the anomaly evidence has gone cold. |
+| Deviate only if you differ from the average investor | Needs only CAPM, which they have. |
+| Background risk — the auto-worker example | Same. |
+| Alpha means the model is wrong **or** markets are — and the choice is economic | L4 already plants half of it; leaving the resolution to December is too long a gap. |
+| "Can the world support everyone picking it up?" | The natural close to §3's scaling argument. |
+| The practitioner's five questions | They become §6, and the project needs them **now** — groups are choosing what to defend at Pitches I two days later. |
+| CAPM as a special case of a general principle | Free: they know CAPM and nothing else is required. |
+
+### Left for a late lecture — and it is not nothing
+
+| Still uncovered | Why it cannot come forward |
+|---|---|
+| **Crowding** — *"how will I know if this trade is getting crowded?"* | Needs capacity and price impact, which is **L16**. Asking it at meeting 9 gets a shrug. |
+| **Equilibrium with trading costs** — a premium that exists gross and not net | Needs L16 too, and it is the sharpest version of "can everyone do this?" |
+| **Multifactor equilibrium** — what a second priced factor even means | Needs L15's risk models to be more than a list. |
+| **Adding the anomaly as a factor** — the Case (1) response | Needs L15 and L18: you cannot sensibly add a factor to a model you cannot estimate. |
+| **What the eigenvalue structure says about how many risks there are** | L18. |
+| **Synthesis** — the whole argument re-run once costs, leverage and PCA are known | Only possible at the end, by construction. |
+
+### Verdict
+
+**The late slot survives, with a different job.** L9 takes the *foundations* —
+why a premium can exist and who is entitled to collect it. What is left is the
+*scaling* half: what happens to that argument once you know what trading costs,
+how much capacity a strategy has, and how many distinct risks the data supports.
+
+That is a better late lecture than the one currently planned, because it can use
+everything the back half teaches instead of being a philosophy session grafted
+onto the end. It should probably be retitled — something like *"What survives
+contact with costs"* — and `MISSING_CONTENT` Tier 5e updated to say so.
+
+**If you would rather not run it at all,** the loss is real but bounded: crowding
+and net-of-cost equilibrium would need a home in L16, and the multifactor
+material would go unsaid. That is a defensible trade if the slot is needed
+elsewhere.
+
+---
+
+## What this replaces from the old sketch
+
+**Dropped:** the file-drawer histogram (nice, not load-bearing), the decay test
+we cannot run, Harvey–Liu–Zhu, McLean–Pontiff. §1 carries the statistical
+argument in a third of the space the old note gave it.
 
 **Still owed by L5 and paid here:** risk vs mispricing. §3 and §4 are what that
 dichotomy actually rests on, and §5 gives it a worked case.
@@ -193,12 +284,37 @@ dichotomy actually rests on, and §5 gives it a worked case.
 
 ## The prompt-it moment
 
-Candidate: **"Is the low-vol premium still there?"** — a question with no
-well-defined answer until you say over what period, against what benchmark, and
-whether you are asking about the raw return or the alpha. Worth building the
-check so that four defensible specifications give four different answers.
+**"What was this strategy's worst drawdown?"**
 
-Needs testing before it goes in.
+Load-bearing: §5's argument is that harvesting the premium needed leverage and
+the drawdown is what turns that into a forced exit. You cannot make that argument
+without the number.
+
+And the number is not one number. A long-short portfolio's weights sum to zero —
+**there is no capital**, which is the thing Lecture 1 established and nobody
+remembers by October. So "drawdown" is undefined until you say what you are
+dividing by. Five defensible answers, all verified:
+
+| definition | answer | trough |
+|---|---|---|
+| compounded, funded 1-for-1 with equity | **−75%** | 2000-02 |
+| cumulative sum of returns, no capital base assumed | **−121%** | 2000-02 |
+| compounded at 2× leverage | **−96%** | 2000-02 |
+| compounded at 3× leverage | **−100%** — wiped out | 2000-06 |
+| worst rolling 12 months | **−98%** | 2000-02 |
+
+A terse prompt — *"how did it do in 1999?"* — returns **−82%**, the calendar
+year, and misses that the worst twelve months run **March 1999 to February
+2000**, straddling the year end and 16 points worse.
+
+Two things make this the right moment rather than a puzzle:
+
+1. The failure is **conceptual, not syntactic**. Every one of those five lines is
+   correct code. Choosing between them requires knowing that a self-financed
+   position has no denominator until you supply one.
+2. The last two rows **are the lecture**. At 2× you lose almost everything; at 3×
+   you are gone before the recovery. The leverage that was required to harvest
+   the premium is what stops you being there to collect it.
 
 ---
 
