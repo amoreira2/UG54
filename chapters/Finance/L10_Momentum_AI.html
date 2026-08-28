@@ -499,11 +499,12 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">12.3. 🛠️ Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-signals-come-from">12.4. 1 · Where signals come from <a id="where"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-claim">12.5. 2 · The claim <a id="claim"></a></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-from-raw-returns">12.6. 🔄 3 · Build it from raw returns <a id="build"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#same-mean-same-sharpe-ratio-correlation-0-11">12.6.1. Same mean, same Sharpe ratio, correlation 0.11</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-it-so-the-decisions-become-arguments">12.6.2. Wrap it, so the decisions become arguments</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-it-compute-12-month-momentum">12.6.3. 🎯 Prompt it — compute 12-month momentum <a id="prompt"></a></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-sharpe-ratio-of-6-58-is-not-a-discovery">12.6.4. A Sharpe ratio of 6.58 is not a discovery</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-from-the-paper">12.6. 🔄 3 · Build it from the paper <a id="build"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-it-so-the-decisions-become-arguments">12.6.1. Wrap it, so the decisions become arguments</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#did-your-version-skip-the-month">12.6.2. Did your version skip the month?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum-and-reversal-are-opposite-bets-one-month-apart">12.6.3. Momentum and reversal are opposite bets one month apart</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#three-other-ways-to-misread-the-same-sentence">12.6.4. Three other ways to misread the same sentence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-sharpe-ratio-of-6-58-is-not-a-discovery">12.6.5. A Sharpe ratio of 6.58 is not a discovery</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decision-tree-priced">12.7. 4 · The decision tree, priced <a id="tree"></a></a><ul class="nav section-nav flex-column">
@@ -698,31 +699,65 @@ short-term reversals documented by Jegadeesh (1990) and Lehmann (1990).”</em><
 time and find out what each is worth.</p>
 </section>
 <hr class="docutils" />
-<section id="build-it-from-raw-returns">
-<h2><span class="section-number">12.6. </span>🔄 3 · Build it from raw returns <a id="build"></a><a class="headerlink" href="#build-it-from-raw-returns" title="Link to this heading">#</a></h2>
-<p>Zero to one hundred. We start from the CRSP panel — <code class="docutils literal notranslate"><span class="pre">permno</span></code>, <code class="docutils literal notranslate"><span class="pre">date</span></code>, <code class="docutils literal notranslate"><span class="pre">ret</span></code>,
-<code class="docutils literal notranslate"><span class="pre">me</span></code> — and finish with a monthly track record.</p>
+<section id="build-it-from-the-paper">
+<h2><span class="section-number">12.6. </span>🔄 3 · Build it from the paper <a id="build"></a><a class="headerlink" href="#build-it-from-the-paper" title="Link to this heading">#</a></h2>
+<p>Zero to one hundred, and we start where you would actually start: with what the
+authors wrote. Here is Daniel and Moskowitz describing their construction.</p>
 <blockquote>
-<div><p><strong>🤔 Predict first.</strong> Our shipped <code class="docutils literal notranslate"><span class="pre">Mom12m</span></code> long-short earns about 20% a year.
-When we rebuild it from scratch, how close do you expect to get?</p>
+<div><p><em>“To form the momentum portfolios, we first rank stocks based on their
+cumulative returns from 12 months before to one month before the formation
+date (i.e., the t−12 to t−2 month returns). We use a one month gap between the
+end of the ranking period and the start of the holding period to avoid the
+short-term reversals documented by Jegadeesh (1990) and Lehmann (1990). In
+particular we will focus on the 10% and 90% quantiles of the signal
+distribution.”</em></p>
+</div></blockquote>
+<p>That paragraph is the entire specification. Build it.</p>
+<details>
+<summary><b>Stuck? The recipe in words</b> — but try the prompt first</summary>
+<br>
+<ol class="arabic simple">
+<li><p>Keep common shares on the three main exchanges — <code class="docutils literal notranslate"><span class="pre">shrcd</span></code> in (10, 11), <code class="docutils literal notranslate"><span class="pre">exchcd</span></code> in (1, 2, 3).</p></li>
+<li><p>For each stock, compound its returns over a window of months.</p></li>
+<li><p>Step the window back so the most recent completed month is not in it.</p></li>
+<li><p>Each month, rank stocks on that signal and cut into ten groups on NYSE breakpoints.</p></li>
+<li><p>Value-weight inside each group, then take the top group minus the bottom group.</p></li>
+</ol>
+<p><code class="docutils literal notranslate"><span class="pre">panel</span></code> has <code class="docutils literal notranslate"><span class="pre">permno</span></code>, <code class="docutils literal notranslate"><span class="pre">date</span></code>, <code class="docutils literal notranslate"><span class="pre">ret</span></code>, <code class="docutils literal notranslate"><span class="pre">me</span></code>, <code class="docutils literal notranslate"><span class="pre">exchcd</span></code>, <code class="docutils literal notranslate"><span class="pre">shrcd</span></code>, and <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> — the
+return earned in the month <em>after</em> <code class="docutils literal notranslate"><span class="pre">date</span></code>, so tradability is already handled for
+you. Every decision left is about the signal.</p>
+</details><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">                                    ← write your prompt here</span>
+<span class="s2">"""</span>
+
+<span class="c1"># ---- paste the AI's code below, then compare with the cell after ----</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>🤔 Before you run the check.</strong> Write down the Sharpe ratio you expect. The
+shipped <code class="docutils literal notranslate"><span class="pre">Mom12m</span></code> long-short earns about 20% a year, so you have an anchor.</p>
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Raw panel to long-short, one step at a time</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Reference implementation — four steps</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">shrcd</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">panel</span><span class="o">.</span><span class="n">exchcd</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">'permno'</span><span class="p">,</span> <span class="s1">'date'</span><span class="p">])</span>
 <span class="n">p</span><span class="p">[</span><span class="s1">'1+ret'</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
 
-<span class="c1"># ── step 1 ── cumulative return over the last `lookback` months, stock by stock</span>
-<span class="c1">#    (1+r_{t-10})(1+r_{t-9})...(1+r_t)   —  a rolling PRODUCT, exactly the formula</span>
+<span class="c1"># --- 1 --- compound each stock's returns over 11 months: (1+r)(1+r)...(1+r)</span>
 <span class="n">p</span><span class="p">[</span><span class="s1">'cumret'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'1+ret'</span><span class="p">]</span>
                  <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                  <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
-<span class="c1"># ── step 2 ── step it back so the month before formation is not in the signal</span>
+<span class="c1"># --- 2 --- step it back one month: the clause everyone drops (see below)</span>
 <span class="n">p</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'cumret'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="c1"># ── step 3 ── each month, cut into deciles on NYSE breakpoints (Lecture 3)</span>
+<span class="c1"># --- 3 --- each month, cut into deciles on NYSE breakpoints (Lecture 3)</span>
 <span class="n">d</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">,</span> <span class="s1">'ret_fwd'</span><span class="p">,</span> <span class="s1">'me'</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">deciles</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'signal'</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)))</span>
@@ -730,41 +765,20 @@ When we rebuild it from scratch, how close do you expect to get?</p>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">],</span> <span class="n">edges</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">'drop'</span><span class="p">)</span>
 <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="n">group_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">deciles</span><span class="p">))</span>
 
-<span class="c1"># ── step 4 ── value-weight inside each decile, then top minus bottom</span>
+<span class="c1"># --- 4 --- value-weight inside each decile, then top minus bottom</span>
 <span class="n">dec</span>  <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'group'</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ret_fwd</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">me</span><span class="p">))</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
 <span class="n">mine</span> <span class="o">=</span> <span class="p">(</span><span class="n">dec</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">dec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">mine</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">mine</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>     <span class="c1"># date it by the month EARNED</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ours      mean </span><span class="si">{</span><span class="n">mine</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">mine</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  shipped   mean </span><span class="si">{</span><span class="n">L</span><span class="p">[</span><span class="s1">'Mom12m'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="s1">'Mom12m'</span><span class="p">])</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  correlation with the shipped series: "</span>
-      <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mine</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">[</span><span class="s1">'Mom12m'</span><span class="p">]],</span><span class="w"> </span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  correlation </span><span class="si">{</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mine</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">[</span><span class="s1">'Mom12m'</span><span class="p">]],</span><span class="w"> </span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<section id="same-mean-same-sharpe-ratio-correlation-0-11">
-<h3><span class="section-number">12.6.1. </span>Same mean, same Sharpe ratio, correlation 0.11<a class="headerlink" href="#same-mean-same-sharpe-ratio-correlation-0-11" title="Link to this heading">#</a></h3>
-<p>Stop on that. The two series agree on every summary statistic and disagree
-month by month. If you had built this and seen 0.11, you would reasonably
-conclude you had built a <em>different</em> strategy.</p>
-<p>You have not. You have built the same strategy with a different date on it.</p>
-<p>Our <code class="docutils literal notranslate"><span class="pre">mine</span></code> is indexed by the month the portfolio was <strong>formed</strong>. The shipped
-series is indexed by the month the return was <strong>earned</strong> — one month later,
-because <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> at date <em>t</em> is the return you collect during <em>t+1</em>.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Move the index one month and look again</span>
-<span class="n">mine</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">mine</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>          <span class="c1"># date it by the month EARNED</span>
-<span class="n">j</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mine</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'ours'</span><span class="p">),</span> <span class="n">L</span><span class="p">[</span><span class="s1">'Mom12m'</span><span class="p">]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'shipped'</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  correlation after aligning: </span><span class="si">{</span><span class="n">j</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">   (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="si">}</span><span class="s2"> months)"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
 <section id="wrap-it-so-the-decisions-become-arguments">
-<h3><span class="section-number">12.6.2. </span>Wrap it, so the decisions become arguments<a class="headerlink" href="#wrap-it-so-the-decisions-become-arguments" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">12.6.1. </span>Wrap it, so the decisions become arguments<a class="headerlink" href="#wrap-it-so-the-decisions-become-arguments" title="Link to this heading">#</a></h3>
 <p>Those four steps are the whole recipe, and every choice we are about to argue
 about is one of them. So put them in a function and let the choices be
 <strong>arguments</strong> — then changing your mind is one keystroke, not one edit.</p>
@@ -808,76 +822,109 @@ what you will do to your own signal in a moment.</p>
 </div>
 </div>
 </div>
-<blockquote>
-<div><p><strong>📌 Two series can match on every statistic and still be misaligned.</strong></p>
-<p>A correlation is the only summary that notices. Whenever you build something
-that should replicate a reference, correlate it — do not compare means. This is
-the <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> question from Lecture 2, arriving as a bug rather than a warning.</p>
-</div></blockquote>
 </section>
-<section id="prompt-it-compute-12-month-momentum">
-<h3><span class="section-number">12.6.3. </span>🎯 Prompt it — compute 12-month momentum <a id="prompt"></a><a class="headerlink" href="#prompt-it-compute-12-month-momentum" title="Link to this heading">#</a></h3>
-<p>Everything below depends on this one signal being right, so it is worth being
-slow about.</p>
-<blockquote>
-<div><p><strong>🤔 The question.</strong> <em>“Compute 12-month momentum for each stock.”</em></p>
-<p>Write the prompt. There are at least four decisions buried in that sentence,
-and one of them is a one-character error that will not raise, warn, or look
-wrong.</p>
-</div></blockquote>
+<section id="did-your-version-skip-the-month">
+<h3><span class="section-number">12.6.2. </span>Did your version skip the month?<a class="headerlink" href="#did-your-version-skip-the-month" title="Link to this heading">#</a></h3>
+<p>If it did not, you are in good company — it is one subordinate clause in the
+middle of a long sentence, and it reads like housekeeping. It is not.</p>
+<p><strong>Leaving that month in costs 0.32 of Sharpe ratio: 1.03 becomes 0.70.</strong></p>
+<p>And notice what the skip is <em>not</em> for. It is not about making the strategy
+tradable — <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> already does that, and every version we have built is
+implementable. The month is dropped for an economic reason, and the authors say
+it outright: <strong>to avoid the short-term reversals.</strong></p>
+<p>So look at what the discarded month does on its own. Sort stocks on last month’s
+return, hold for one month.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
-<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">"""</span>
-<span class="s2">                                    ← write your prompt here</span>
-<span class="s2">"""</span>
-
-<span class="c1"># ---- paste the AI's code below ----</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 The month momentum throws away, traded on its own</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"buy last month's LOSERS, short last month's winners  (D1 - D10)</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'value'</span><span class="p">,</span> <span class="s1">'equal'</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">bp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'nyse'</span><span class="p">,</span> <span class="s1">'all'</span><span class="p">]:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="o">-</span><span class="n">sort_portfolios</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">signal</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]),</span> <span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">breakpoints</span><span class="o">=</span><span class="n">bp</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">w</span><span class="si">:</span><span class="s2">5s</span><span class="si">}</span><span class="s2">-weighted, </span><span class="si">{</span><span class="n">bp</span><span class="si">:</span><span class="s2">4s</span><span class="si">}</span><span class="s2"> breakpoints    mean </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.1%</span><span class="si">}</span><span class="s2">   "</span>
+              <span class="sa">f</span><span class="s2">"Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
+</section>
+<section id="momentum-and-reversal-are-opposite-bets-one-month-apart">
+<h3><span class="section-number">12.6.3. </span>Momentum and reversal are opposite bets one month apart<a class="headerlink" href="#momentum-and-reversal-are-opposite-bets-one-month-apart" title="Link to this heading">#</a></h3>
+<p>Last month’s losers beat last month’s winners. Equal-weighted that is a <strong>1.54</strong>
+Sharpe ratio — one of the largest numbers in this course — and it is one of our
+29 strategies, <code class="docutils literal notranslate"><span class="pre">STreversal</span></code>.</p>
+<p>Value-weighted it is <strong>0.08</strong>, essentially nothing. Reversal lives in small,
+illiquid stocks, where much of what looks like a price move is the bid-ask spread
+bouncing. Weight by market cap and it disappears.</p>
+<p>Now put the two together. A momentum signal that includes last month is a
+momentum bet <strong>plus</strong> a reversal bet pointing the other way. If that is the
+mechanism, the skip should be worth more exactly where reversal is stronger.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — five readings, all of them valid code</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">variant</span><span class="p">(</span><span class="n">lookback</span><span class="p">,</span> <span class="n">skip</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">momentum</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">lookback</span><span class="o">=</span><span class="n">lookback</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">38s</span><span class="si">}</span><span class="s2"> mean </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+8.1%</span><span class="si">}</span><span class="s2">   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Does the cost of not skipping track the strength of reversal?</span>
+<span class="n">p</span><span class="p">[</span><span class="s1">'no_skip'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'1+ret'</span><span class="p">]</span>
+                  <span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                  <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'construction'</span><span class="si">:</span><span class="s2">22s</span><span class="si">}{</span><span class="s1">'reversal'</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}{</span><span class="s1">'skip'</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">'no skip'</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}{</span><span class="s1">'cost'</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'value'</span><span class="p">,</span> <span class="s1">'equal'</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">bp</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'nyse'</span><span class="p">,</span> <span class="s1">'all'</span><span class="p">]:</span>
+        <span class="n">rev</span> <span class="o">=</span> <span class="n">sharpe</span><span class="p">(</span><span class="o">-</span><span class="n">sort_portfolios</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">signal</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]),</span> <span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">breakpoints</span><span class="o">=</span><span class="n">bp</span><span class="p">))</span>
+        <span class="n">a</span>   <span class="o">=</span> <span class="n">sharpe</span><span class="p">(</span><span class="n">sort_portfolios</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">breakpoints</span><span class="o">=</span><span class="n">bp</span><span class="p">))</span>
+        <span class="n">b</span>   <span class="o">=</span> <span class="n">sharpe</span><span class="p">(</span><span class="n">sort_portfolios</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">signal</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="s1">'no_skip'</span><span class="p">]),</span> <span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">breakpoints</span><span class="o">=</span><span class="n">bp</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">w</span><span class="o">+</span><span class="s1">'/'</span><span class="o">+</span><span class="n">bp</span><span class="si">:</span><span class="s2">20s</span><span class="si">}{</span><span class="n">rev</span><span class="si">:</span><span class="s2">&gt;10.2f</span><span class="si">}{</span><span class="n">a</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}{</span><span class="n">b</span><span class="si">:</span><span class="s2">&gt;9.2f</span><span class="si">}{</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Reversal runs from 0.08 to 1.56 across the four constructions, and the cost of
+leaving the month in runs from −0.30 to −0.58, in the same order. The mechanism
+is not asserted, it is visible.</p>
+<blockquote>
+<div><p><strong>📌 One clause in an abstract was worth a third of the strategy.</strong></p>
+<p>Not because of a coding rule, but because a different anomaly lives in that
+month and points the other way. You cannot get that from the code, and you
+cannot get it from a prompt that says <em>“compute 12-month momentum”</em>. You get it
+from reading why the authors did what they did.</p>
+</div></blockquote>
+<p>One thing the skip is <em>not</em> is an excuse to skip more. Month t−1 is contaminated;
+month t−2 is signal — and §4 puts a number on that too.</p>
+</section>
+<section id="three-other-ways-to-misread-the-same-sentence">
+<h3><span class="section-number">12.6.4. </span>Three other ways to misread the same sentence<a class="headerlink" href="#three-other-ways-to-misread-the-same-sentence" title="Link to this heading">#</a></h3>
+<p>The skip is the clause people drop. These are the ones they get wrong without
+noticing — same instruction, same valid-looking code.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Same request, four readings</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"«Compute 12-month momentum for each stock»</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">variant</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="s2">"t-12 to t-2  (11 months, skip 1)"</span><span class="p">)</span>
-<span class="n">variant</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="s2">"t-12 to t-1  (12 months, skip 1)"</span><span class="p">)</span>
-<span class="n">variant</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="s2">"t-11 to t     (includes this month)"</span><span class="p">)</span>
-<span class="n">variant</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"shift(-1) instead of shift(1)"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">lb</span><span class="p">,</span> <span class="n">sk</span><span class="p">,</span> <span class="n">lab</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">11</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="s2">"t-12 to t-2  (the standard)"</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mi">12</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="s2">"t-12 to t-1  (12 months, still skipped)"</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"shift(-1) instead of shift(1)"</span><span class="p">)]:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">momentum</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">lookback</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">sk</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">lab</span><span class="si">:</span><span class="s2">42s</span><span class="si">}</span><span class="s2"> mean </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+8.1%</span><span class="si">}</span><span class="s2">   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># and one that is not a shift at all: summing returns instead of compounding them</span>
 <span class="n">q</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">q</span><span class="p">[</span><span class="s1">'cumret'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
                 <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 <span class="n">q</span><span class="p">[</span><span class="s1">'signal'</span><span class="p">]</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'cumret'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">r</span> <span class="o">=</span> <span class="n">sort_portfolios</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'sums returns instead of compounding'</span><span class="si">:</span><span class="s2">38s</span><span class="si">}</span><span class="s2"> mean </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+8.1%</span><span class="si">}</span><span class="s2">   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'sums returns instead of compounding'</span><span class="si">:</span><span class="s2">42s</span><span class="si">}</span><span class="s2"> mean </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+8.1%</span><span class="si">}</span><span class="s2">   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
 <section id="a-sharpe-ratio-of-6-58-is-not-a-discovery">
-<h3><span class="section-number">12.6.4. </span>A Sharpe ratio of 6.58 is not a discovery<a class="headerlink" href="#a-sharpe-ratio-of-6-58-is-not-a-discovery" title="Link to this heading">#</a></h3>
-<p>The last row is <code class="docutils literal notranslate"><span class="pre">shift(-1)</span></code> where the standard is <code class="docutils literal notranslate"><span class="pre">shift(1)</span></code>. One character. It
-ranks stocks on a window that runs one month into the future, so the “signal”
-partly contains the return it is predicting.</p>
+<h3><span class="section-number">12.6.5. </span>A Sharpe ratio of 6.58 is not a discovery<a class="headerlink" href="#a-sharpe-ratio-of-6-58-is-not-a-discovery" title="Link to this heading">#</a></h3>
+<p>The third row is <code class="docutils literal notranslate"><span class="pre">shift(-1)</span></code> where the standard is <code class="docutils literal notranslate"><span class="pre">shift(1)</span></code>. One character. It
+ranks stocks on a window running one month into the future, so the signal partly
+contains the return it is predicting.</p>
 <p>It does not raise. It does not warn. It returns a clean DataFrame and a track
 record of <strong>+144% a year</strong>.</p>
-<p>The other three are not errors at all — they are defensible readings of the same
-English sentence, and they span a Sharpe ratio from 0.70 to 1.03. Including the
-current month costs you a third of the strategy, which is the short-term reversal
-Daniel and Moskowitz skip the month to avoid.</p>
 <blockquote>
-<div><p><strong>⚠️ The only defence against <code class="docutils literal notranslate"><span class="pre">shift(-1)</span></code> is knowing roughly what the answer
-should be before you compute it.</strong> No test catches it. No error message
-mentions it. You catch it because 6.58 is not a number this strategy produces,
-and you knew that in advance.</p>
+<div><p><strong>⚠️ No test catches this.</strong> You catch it because 6.58 is not a number this
+strategy produces, and you knew that before you ran it. That is the whole
+argument for writing down your expected answer first.</p>
 </div></blockquote>
 </section>
 </section>
@@ -909,7 +956,8 @@ from the function you just read, called in a loop.</p>
 </div>
 <p>The peak is at eleven months, exactly where Jegadeesh and Titman put it, and it
 falls off hard on both sides. Six months gets you 0.71; seventeen months gets you
-0.51. <strong>Half the effect lives in the choice of window.</strong></p>
+0.51. <strong>Half the effect lives in the choice of window</strong> — and that is on top of
+the 0.32 the skip was worth in §3.</p>
 <p>Now the part worth arguing about. The textbook picture of this chart is a <em>wave</em>:
 reversal at short horizons, continuation in the middle, and reversal again at
 three to five years — DeBondt and Thaler (1985), winners eventually lose.</p>
@@ -920,21 +968,6 @@ winners. Nothing turns over.</p>
 yourself: the long-horizon reversal was never there; it was there and has decayed
 since DeBondt and Thaler’s 1926–1982 sample; or our construction differs from
 theirs in a way that matters. <strong>The homework makes you take a position.</strong></p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 What is the skip month worth?</span>
-<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]:</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">momentum</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">lookback</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
-    <span class="n">star</span> <span class="o">=</span> <span class="s2">"   &lt;- the standard"</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">""</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  skip </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> month(s)   mean </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.1%</span><span class="si">}</span><span class="s2">   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}{</span><span class="n">star</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p><strong>Not skipping costs 38% of the Sharpe ratio</strong> — 0.64 against 1.03. That is one
-<code class="docutils literal notranslate"><span class="pre">.shift()</span></code>, and it is the single most valuable line in the construction.</p>
-<p>Skipping <em>more</em> than one month costs you too, and for the opposite reason: by
-month six you have thrown away the signal along with the noise.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Weighting, breakpoints, and how many buckets  (~15 seconds)</span>
@@ -1578,11 +1611,12 @@ a 20% return once you pay for it.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">12.3. 🛠️ Setup</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-signals-come-from">12.4. 1 · Where signals come from <a id="where"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-claim">12.5. 2 · The claim <a id="claim"></a></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-from-raw-returns">12.6. 🔄 3 · Build it from raw returns <a id="build"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#same-mean-same-sharpe-ratio-correlation-0-11">12.6.1. Same mean, same Sharpe ratio, correlation 0.11</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-it-so-the-decisions-become-arguments">12.6.2. Wrap it, so the decisions become arguments</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-it-compute-12-month-momentum">12.6.3. 🎯 Prompt it — compute 12-month momentum <a id="prompt"></a></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-sharpe-ratio-of-6-58-is-not-a-discovery">12.6.4. A Sharpe ratio of 6.58 is not a discovery</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-from-the-paper">12.6. 🔄 3 · Build it from the paper <a id="build"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wrap-it-so-the-decisions-become-arguments">12.6.1. Wrap it, so the decisions become arguments</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#did-your-version-skip-the-month">12.6.2. Did your version skip the month?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum-and-reversal-are-opposite-bets-one-month-apart">12.6.3. Momentum and reversal are opposite bets one month apart</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#three-other-ways-to-misread-the-same-sentence">12.6.4. Three other ways to misread the same sentence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-sharpe-ratio-of-6-58-is-not-a-discovery">12.6.5. A Sharpe ratio of 6.58 is not a discovery</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decision-tree-priced">12.7. 4 · The decision tree, priced <a id="tree"></a></a><ul class="nav section-nav flex-column">

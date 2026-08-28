@@ -59,6 +59,49 @@ taking it apart: rank on cumulative returns from t−12 to t−2, skipping one m
 
 ---
 
+## §3 · Build it from the paper — revised 2026-08-28 after AM
+
+**The skip month was priced but never explained, and the explanation given was
+wrong.** The code comment said the shift exists "so the month before formation is
+not in the signal", which reads as a tradability rule — but `ret_fwd` already
+handles tradability, so that was not the reason. Daniel and Moskowitz state the
+real one: *to avoid the short-term reversals*.
+
+**New shape, per AM.** The construction is no longer handed over as code. Students
+get the Daniel–Moskowitz paragraph and nothing else, with the recipe in words
+inside a collapsed `<details>` block as a fallback. They build it by prompting.
+Then the reveal, and then the skip.
+
+The skip is the clause everyone drops — one subordinate phrase in the middle of a
+long sentence — and it is worth **0.32 of Sharpe ratio**, 1.03 down to 0.70.
+
+**The mechanism, demonstrated rather than asserted.** Trade the discarded month on
+its own — sort on last month's return, buy the losers:
+
+| | reversal (D1−D10) | momentum, skip | no skip | cost |
+|---|---|---|---|---|
+| value / NYSE | **0.08** | 1.03 | 0.70 | −0.32 |
+| value / all | 0.11 | 1.13 | 0.83 | −0.30 |
+| equal / NYSE | **1.54** | 0.93 | 0.53 | −0.40 |
+| equal / all | **1.56** | 0.70 | 0.12 | −0.58 |
+
+Reversal is a *small-stock* effect — 1.54 equal-weighted, 0.08 value-weighted,
+because much of it is the bid-ask spread bouncing. And **the cost of not skipping
+tracks the strength of reversal across all four constructions.** A momentum signal
+that includes last month is a momentum bet plus a reversal bet pointing the other
+way. `STreversal`, one of our 29, is exactly that month traded on purpose.
+
+**What this replaced.** The old §3 centrepiece was the correlation-0.11 alignment
+trap. It is demoted — the reference implementation now does the shift itself and
+reports 0.999 — because the skip is the better teaching moment and the alignment
+point was, as AM noted, resting on a wrong explanation of the skip.
+
+**Consolidation.** The skip had been taught three times (the five-readings check,
+§4's own skip sweep, and now §3). §4's skip section is gone and points back; the
+second build-momentum prompt moment is folded into a short warning that keeps the
+`shift(-1)` → 6.58 finding. L10 now has exactly two prompt moments, which is the
+`PLAN.md` budget: build-from-the-paper (§3) and industry-neutral (§5b).
+
 ## §2 · Build it, and check it
 
 From the raw panel: log returns → rolling 11-month sum → shift 1 → NYSE

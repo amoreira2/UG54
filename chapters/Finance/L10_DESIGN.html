@@ -466,6 +466,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-one-idea">The one idea</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-signals-come-from-the-survey">§0 · Where signals come from (the survey)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-claim">§1 · The claim</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-from-the-paper-revised-2026-08-28-after-am">§3 · Build it from the paper — revised 2026-08-28 after AM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-and-check-it">§2 · Build it, and check it</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decision-tree-measured">§3 · The decision tree — measured</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-or-industries">§4 · Stocks or industries?</a><ul class="nav section-nav flex-column">
@@ -577,6 +578,73 @@ taking it apart: rank on cumulative returns from t−12 to t−2, skipping one m
 “to avoid the short-term reversals documented by Jegadeesh (1990).”</p>
 </section>
 <hr class="docutils" />
+<section id="build-it-from-the-paper-revised-2026-08-28-after-am">
+<h2>§3 · Build it from the paper — revised 2026-08-28 after AM<a class="headerlink" href="#build-it-from-the-paper-revised-2026-08-28-after-am" title="Link to this heading">#</a></h2>
+<p><strong>The skip month was priced but never explained, and the explanation given was
+wrong.</strong> The code comment said the shift exists “so the month before formation is
+not in the signal”, which reads as a tradability rule — but <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> already
+handles tradability, so that was not the reason. Daniel and Moskowitz state the
+real one: <em>to avoid the short-term reversals</em>.</p>
+<p><strong>New shape, per AM.</strong> The construction is no longer handed over as code. Students
+get the Daniel–Moskowitz paragraph and nothing else, with the recipe in words
+inside a collapsed <code class="docutils literal notranslate"><span class="pre">&lt;details&gt;</span></code> block as a fallback. They build it by prompting.
+Then the reveal, and then the skip.</p>
+<p>The skip is the clause everyone drops — one subordinate phrase in the middle of a
+long sentence — and it is worth <strong>0.32 of Sharpe ratio</strong>, 1.03 down to 0.70.</p>
+<p><strong>The mechanism, demonstrated rather than asserted.</strong> Trade the discarded month on
+its own — sort on last month’s return, buy the losers:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>reversal (D1−D10)</p></th>
+<th class="head"><p>momentum, skip</p></th>
+<th class="head"><p>no skip</p></th>
+<th class="head"><p>cost</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>value / NYSE</p></td>
+<td><p><strong>0.08</strong></p></td>
+<td><p>1.03</p></td>
+<td><p>0.70</p></td>
+<td><p>−0.32</p></td>
+</tr>
+<tr class="row-odd"><td><p>value / all</p></td>
+<td><p>0.11</p></td>
+<td><p>1.13</p></td>
+<td><p>0.83</p></td>
+<td><p>−0.30</p></td>
+</tr>
+<tr class="row-even"><td><p>equal / NYSE</p></td>
+<td><p><strong>1.54</strong></p></td>
+<td><p>0.93</p></td>
+<td><p>0.53</p></td>
+<td><p>−0.40</p></td>
+</tr>
+<tr class="row-odd"><td><p>equal / all</p></td>
+<td><p><strong>1.56</strong></p></td>
+<td><p>0.70</p></td>
+<td><p>0.12</p></td>
+<td><p>−0.58</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Reversal is a <em>small-stock</em> effect — 1.54 equal-weighted, 0.08 value-weighted,
+because much of it is the bid-ask spread bouncing. And <strong>the cost of not skipping
+tracks the strength of reversal across all four constructions.</strong> A momentum signal
+that includes last month is a momentum bet plus a reversal bet pointing the other
+way. <code class="docutils literal notranslate"><span class="pre">STreversal</span></code>, one of our 29, is exactly that month traded on purpose.</p>
+<p><strong>What this replaced.</strong> The old §3 centrepiece was the correlation-0.11 alignment
+trap. It is demoted — the reference implementation now does the shift itself and
+reports 0.999 — because the skip is the better teaching moment and the alignment
+point was, as AM noted, resting on a wrong explanation of the skip.</p>
+<p><strong>Consolidation.</strong> The skip had been taught three times (the five-readings check,
+§4’s own skip sweep, and now §3). §4’s skip section is gone and points back; the
+second build-momentum prompt moment is folded into a short warning that keeps the
+<code class="docutils literal notranslate"><span class="pre">shift(-1)</span></code> → 6.58 finding. L10 now has exactly two prompt moments, which is the
+<code class="docutils literal notranslate"><span class="pre">PLAN.md</span></code> budget: build-from-the-paper (§3) and industry-neutral (§5b).</p>
+</section>
 <section id="build-it-and-check-it">
 <h2>§2 · Build it, and check it<a class="headerlink" href="#build-it-and-check-it" title="Link to this heading">#</a></h2>
 <p>From the raw panel: log returns → rolling 11-month sum → shift 1 → NYSE
@@ -1044,6 +1112,7 @@ teaches). Built by <code class="docutils literal notranslate"><span class="pre">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-one-idea">The one idea</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-signals-come-from-the-survey">§0 · Where signals come from (the survey)</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-claim">§1 · The claim</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-from-the-paper-revised-2026-08-28-after-am">§3 · Build it from the paper — revised 2026-08-28 after AM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-and-check-it">§2 · Build it, and check it</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decision-tree-measured">§3 · The decision tree — measured</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-or-industries">§4 · Stocks or industries?</a><ul class="nav section-nav flex-column">
