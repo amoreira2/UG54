@@ -1,0 +1,203 @@
+# L11 · Transaction Costs — design note
+
+**Slot:** Meeting 14, Mon Oct 26 (the meeting after momentum). **Feeds:** A6.
+**Status:** planned, not built.
+
+---
+
+## The one idea
+
+> **Every backtest in this course bought at the closing price. Nobody can do
+> that. Whether a strategy survives is not a property of the strategy — it is a
+> property of the strategy *and how much money you run*.**
+
+The reorder put costs here for a reason: L10 just showed momentum earning 20% a
+year, and momentum's turnover is **820% annualised**. The standard objection to
+momentum is that trading eats it. That objection is now a computation.
+
+**The number the lecture is built around, verified:**
+
+| gross AUM (long side) | annual cost |
+|---|---|
+| $10m | 4.2% |
+| $100m | 13.2% |
+| $1bn | 41.6% |
+| $10bn | 132% |
+
+Momentum's ~20%/yr gross is gone at about **$230 million**. Same signal, same
+data, same alpha — and it is a good business at $50m and a bad one at $500m.
+That is Lecture 9's *"as you scale up you become the investor who bears the
+risk"*, made arithmetic.
+
+---
+
+## The two sources, honestly assessed
+
+### `TradingCosts_revamped_curated.ipynb` — 1,057 words, never taught
+
+Better than its history suggests. Four things are load-bearing and go straight in:
+
+- **The four sources of illiquidity** — exogenous costs, demand pressure,
+  inventory risk, private information. One paragraph, and the last one is L9's
+  adverse selection wearing a market-microstructure hat.
+- **Implementation shortfall** = wish − actual, split into **execution cost**
+  (trading toward the target) and **opportunity cost** (not getting there). The
+  trade-off between them is the whole subject.
+- **Absorption capacity** — `UsedVolume = trade / volume`, and the **max across
+  stocks is the weakest link**. The right diagnostic, and it is one line.
+- **The wish vs implementation portfolio regression.** This is the notebook's
+  original contribution and nothing in EQI matches it: regress the implementable
+  portfolio's return on the wish portfolio's, and read three numbers —
+  **β ≠ 1 is free to fix** (lever up), **σ(ε) is noise you can only reduce by
+  tracking more closely**, and **α is the actual cost of deviating.** The
+  industry's single tracking-error number conflates all three and hides α.
+
+Also worth keeping: the drift formula. You do not trade the whole target weight,
+only the difference between it and what returns already left you holding.
+
+**Skip:** the published-factor comparison at the end. L10 §5 now does that job
+better, with correlations across four variants.
+
+### EQI Chapter 10, "Market-Impact-Aware Portfolio Management" (pp. 365–386)
+
+**Most of this chapter is unusable here, and it is worth saying why.** From
+§10.3 on it is Baldacci–Benveniste–Ritter: adjoint operators, first-order
+conditions on functionals, a matrix ODE, Kronecker products. That is a PhD
+treatment and there is no undergraduate path through it.
+
+Three things are gold:
+
+- **The decomposition.** Cost = spread + temporary impact + permanent impact,
+  and temporary impact dominates. Quotable in three lines.
+- **The square-root law**, `c ≈ κ σ √(Q/V)`, *with its dimensional-analysis
+  derivation.* This is the gem of the chapter and it is completely accessible:
+  cost is dimensionless; you have dollars traded, dollars of market volume, and
+  a volatility carrying units of 1/√time; there is only one way to combine them.
+  **A physical-units argument that pins the exponent at ½ without any finance.**
+  Students should see this — it is the best example in the course of a result
+  you can get before you have any data.
+- **Optimal liquidation as exponential decay.** With no alpha, the optimal policy
+  is `x(t) = e^{−Γt} x(0)`: bleed the position out, faster when risk aversion or
+  volatility is high, slower when costs are high. The single-asset version is
+  scalar and needs no matrices.
+
+**Deliberately deferred:** the no-impact limit recovering mean-variance is a
+lovely result and it needs L13. Note it forward; do not teach it.
+
+---
+
+## Structure
+
+### §1 · Turnover — the primitive nobody defined
+
+`TODO.md` has flagged this since August: **turnover is never defined in L1–L10
+and appears in none of the old assignments.** It gets defined here.
+
+Turnover is not "how much you hold", it is **how much you replace**, and the
+subtlety is that returns move your weights for free. You only trade the gap
+between the new target and where drift left you:
+
+$$w^{\text{drift}}_{i,t+1} = \frac{w^*_{i,t}(1+r_{i,t+1})}{1+r^p_{t+1}}
+\qquad
+\text{turnover}_t = \tfrac{1}{2}\sum_i \left| w^*_{i,t+1} - w^{\text{drift}}_{i,t+1}\right|$$
+
+Verified for momentum, VW NYSE deciles: **66% one-way per month, 820% a year.**
+Compare with value, which rebalances annually. The contrast is the section.
+
+### §2 · What one trade costs
+
+The decomposition, then the square-root law, then the derivation.
+
+$$c \;\approx\; \kappa\,\sigma\sqrt{Q/V}$$
+
+Do the dimensional analysis on the board. It takes four lines and it produces the
+exponent ½ out of nothing but units. Then calibrate κ and show what the formula
+says: **cost is convex in size**, so doubling your fund does not double your
+costs, it multiplies them by √2 — per dollar. Total cost rises with the 3/2
+power.
+
+### §3 · Absorption capacity — how big can you get?
+
+`UsedVolume = trade / volume`, per stock per month. The max is the weakest link;
+the 95th percentile tells you whether dropping the worst 5% of names would fix
+it.
+
+Then the headline table above, and the break-even. **This is the centre of the
+lecture.** It is also the answer to a question every group will face in the
+project: *how much money could this actually run?*
+
+### §4 · What's left — the net-of-cost backtest
+
+Re-run L10's momentum net of costs at several fund sizes and plot the Sharpe
+ratio against AUM. The gross number is a horizontal line; the net number crosses
+zero. Everything students have built so far lives on that horizontal line.
+
+### §5 · Making it cheaper
+
+The wish vs implementation portfolio. Volume-weight instead of value-weight, or
+drop the illiquid tail, then run the regression and read β, σ(ε), α.
+
+The lesson is that **you buy cost reduction with tracking error**, and the
+question is the exchange rate. α is what you actually paid.
+
+### §6 · Trade slower — and how slow
+
+EQI's optimal-liquidation intuition, single asset, no matrices. You never
+rebalance all the way to the target; you move part of the way, and the fraction
+depends on three things: how fast the signal decays, how expensive trading is,
+and how much tracking error you will tolerate.
+
+This is where momentum's problem becomes visible from a second angle: a signal
+that decays in months *cannot* be traded slowly. **Value can be implemented
+patiently; momentum cannot.** That is why they have different capacities even
+though the cost formula is the same.
+
+Close with the practical rule from the notebook: set a tracking-error band, do
+nothing inside it, trade back to the edge when you leave it.
+
+---
+
+## The prompt-it moments — two, per `PLAN.md`
+
+**P1 · "How much does this strategy trade?"** Load-bearing, since every cost
+number is turnover times a rate. Underspecified in at least four ways: one-way or
+two-way; as a fraction of what; does drift count as trading; and what about the
+short leg. A terse prompt returns `weights.diff().abs().sum()`, which ignores
+drift entirely and overstates momentum's turnover by a wide margin. The check
+prints the drift-aware and drift-naive numbers side by side.
+
+**P2 · "Apply a cost model and tell me what's left."** The question the whole
+lecture points at, and it cannot be answered without stating the fund size — a
+parameter the request does not contain and the model will silently invent.
+
+---
+
+## Length budget
+
+**Target 1,500 lectured words.** L10 came in at 2.80 and is being split; L11 must
+not repeat that. Discipline: §3 and §4 are the lecture. §1 is a formula and one
+table. §6 is prose and one picture, no derivation.
+
+If it runs long, §5 is the section to move to the appendix — it is the most
+self-contained and the least load-bearing for A6.
+
+## Data
+
+Everything needed exists. Dollar volume is recoverable from
+`signals/DolVol.parquet`, which stores **−log(dollar volume in $m)** — the signal
+files are sign-flipped so that high means long, and `Size` correlating −1.000
+with log market cap is the proof. Verified: monthly volume/market-cap runs 4–6%
+across size buckets, and GE in December 2000 shows $475bn of market cap against
+$23.5bn of monthly volume.
+
+A cached `momentum_costs.parquet` will probably be wanted for §4, since the
+net-of-cost backtest at five fund sizes is a slow loop.
+
+## Open question for AM
+
+The break-even uses **κ = 1**, which is the aggressive end of the published
+range, and 1980–2000 volumes are far below today's. The qualitative result — a
+few hundred million, not tens of billions — is robust, but the point estimate is
+soft. Two options: present κ as a dial students can turn, or calibrate it to a
+published estimate and cite. **Recommend the dial**, since it makes the
+sensitivity visible and it is one more argument to `momentum()`-style code.
