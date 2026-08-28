@@ -12,6 +12,11 @@ through and dated rather than deleted, so the reasoning survives.
 - [ ] **A8 (Thu Dec 3).** Its Thursday is Thanksgiving so it slips to the day
       before the final report. Keep it and let students drop it, or cut it and
       run seven? *Postponed — nothing dropped for now.*
+- [ ] **Ship stock-level industry codes.** `L10` can compare stock momentum with
+      *industry* momentum (49 FF portfolios) but cannot build **industry-neutral**
+      momentum — ranking each stock against its own industry peers — because the
+      panel carries no SIC code. A short WRDS pull (`crsp.msenames.siccd`, mapped
+      to FF49) would unlock it, and several project groups will want it.
 - [ ] **Assignments 4–8 do not exist yet.** A1, A2 and A3 are built and tested.
       **A4 can now be written** — L8 and L9 both exist. A5–A8 wait on their
       lectures, and A5's due date needs the fix noted below.
@@ -184,7 +189,7 @@ labelling it that way is what stops it working. The rest are mine; the grep in
 
 **Reordered 2026-08-28** — see `chapters/Finance/BACK_HALF_PLAN.md`.
 
-L10 momentum (13) ·
+
 **L11 transaction costs (14)** · **L12 leverage and shorting (15)** · L13–L14
 capital allocation (16–17) · **L15–L16 conditional strategies (19–20)** ·
 **L17 BARRA (22)** · L18 PCA (23) · L19 ML (24).
@@ -210,6 +215,11 @@ Three things the reorder surfaced:
 ---
 
 ## Done
+
+- ✅ **2026-08-28** — **L10 built** (`L10_Momentum_AI.ipynb`, 48 cells, 2,201
+      lectured words = 1.55 sessions). Zero-to-one-hundred strategy construction:
+      the signal survey, momentum rebuilt from the raw panel, the construction
+      grid priced, stocks-vs-industries, and crashes.
 
 - ✅ **2026-08-28** — **L9 built** (`L9_WhyShouldThisWork_AI.ipynb`, 39 cells,
       2,339 lectured words = 1.65 sessions). Back-half reorder applied to the
