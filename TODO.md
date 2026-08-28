@@ -12,11 +12,19 @@ through and dated rather than deleted, so the reasoning survives.
 - [ ] **A8 (Thu Dec 3).** Its Thursday is Thanksgiving so it slips to the day
       before the final report. Keep it and let students drop it, or cut it and
       run seven? *Postponed — nothing dropped for now.*
-- [ ] **Ship stock-level industry codes.** `L10` can compare stock momentum with
-      *industry* momentum (49 FF portfolios) but cannot build **industry-neutral**
-      momentum — ranking each stock against its own industry peers — because the
-      panel carries no SIC code. A short WRDS pull (`crsp.msenames.siccd`, mapped
-      to FF49) would unlock it, and several project groups will want it.
+- [x] ~~Ship stock-level industry codes~~ — **done 2026-08-28.**
+      `industry_labels.parquet`, 48 industries × ~950 stocks/month, 1980–2000,
+      recovered from `indmom` in the characteristics files (see
+      `build_industry_labels.py`). No WRDS pull needed.
+- [ ] **Widen the industry labels if a group needs them.** Coverage is the ~950
+      largest stocks a month, not the full 5,400-stock panel, so L10 §5b's
+      conclusion cannot be checked on small caps — where momentum is strongest
+      (Sharpe 1.09 vs 0.47). A WRDS `crsp.msenames.siccd` pull mapped to FF49
+      would cover everything.
+- [ ] **L10 is 1.98 lectured sessions** — genuinely two lectures now that §5b
+      exists. Either trim, or move §6 (crashes, vol-scaling) into L15 volatility
+      timing, where it is the natural motivating example and would cost L10 only
+      ~220 words.
 - [ ] **Assignments 4–8 do not exist yet.** A1, A2 and A3 are built and tested.
       **A4 can now be written** — L8 and L9 both exist. A5–A8 wait on their
       lectures, and A5's due date needs the fix noted below.

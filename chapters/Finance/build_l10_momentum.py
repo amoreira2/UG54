@@ -382,17 +382,29 @@ Two of them are worth naming:
 md("""
 ---
 
-## 5 · Stocks or industries? <a id="ind"></a>
+## 5 · Within industries, or across them? <a id="ind"></a>
 
 A real question about what momentum *is*. When the winner decile beats the loser
-decile, is that a hundred individual stocks with individual momentum — or is it
-mostly that some *industries* went up and their stocks came along?
+decile, which of these are you actually being paid for?
 
-The question matters for trading. If it is industries, you can run it with 49
-liquid industry portfolios instead of a thousand single stocks, at a fraction of
-the cost.
+- **Across industries.** Some *industries* went up and their stocks came along.
+  Your winner decile is full of whatever sector ran, and you are making a sector
+  bet with extra steps.
+- **Within industries.** Inside every industry, the stocks that beat their own
+  peers keep beating them. Your winner decile is full of relative winners, and
+  the industry mix is incidental.
 
-Moskowitz and Grinblatt (1999) asked exactly this. Let us build it.
+These are different trades with different costs, and they are not the same
+strategy at all.
+
+The question matters for trading. If it is across, you can run the whole thing
+with 49 liquid industry ETFs instead of a thousand single stocks, at a fraction
+of the cost. If it is within, you cannot.
+
+Moskowitz and Grinblatt (1999) asked exactly this. We will do it twice — first
+the easy way, with industry portfolios, then properly, at the stock level.
+
+### 5a · Across industries — the easy half
 """)
 
 co("""
@@ -457,13 +469,144 @@ while we compare two portfolios. Any of the three could do it.
 Which means the honest statement is that we do not know — and that finding out
 would be a real piece of work, not a rerun.
 
-> **⚠️ What we cannot do with this data.** *Industry-neutral* momentum — ranking
-> each stock against its own industry peers rather than against everything —
-> needs a stock-level industry code, and our panel does not carry one. That is a
-> data limitation, not a result. If your project wants it, you need SIC codes.
+### 5b · Within industries — the half that needs stock-level data
+
+That test compared two *portfolios*. It cannot tell us whether the stock-level
+effect is peers-beating-peers, because it never looked inside an industry.
+
+For that you need to know each stock's industry, which the panel does not carry.
+We ship it separately: `industry_labels.parquet` gives an industry for **about
+950 stocks a month across 48 industries**, recovered from a standard
+characteristics dataset.
+
+**That is a smaller universe than the panel, and the difference is not small.**
+Check it before interpreting anything.
 """)
 
 # ── §5 crashes
+co("""
+#@title 🔒 First: what does restricting the universe cost?
+lab = pd.read_parquet(f"{BASE}/industry_labels.parquet")
+m = p.merge(lab, on=['permno', 'date'], how='inner').dropna(subset=['mom', 'ret_fwd', 'me'])
+
+def ls(df, col, vw=True, nq=10):
+    d = df.dropna(subset=[col]).copy()
+    def cut(x):
+        e = np.unique(np.quantile(x[col], np.linspace(0, 1, nq+1))); e[0], e[-1] = -np.inf, np.inf
+        return pd.cut(x[col], e, labels=False, duplicates='drop')
+    d['q'] = d.groupby('date', group_keys=False).apply(cut)
+    f = (lambda x: np.average(x.ret_fwd, weights=x.me)) if vw else (lambda x: x.ret_fwd.mean())
+    r = d.groupby(['date', 'q']).apply(f).unstack()
+    s = (r[nq-1] - r[0]).dropna(); s.index = s.index + pd.offsets.MonthEnd(1); return s
+
+same = p[p.date.isin(m.date.unique())].dropna(subset=['mom', 'ret_fwd', 'me'])
+print(f"  all stocks         {same.groupby('date').permno.nunique().median():.0f}/month   "
+      f"Sharpe {sharpe(ls(same,'mom')):.2f}")
+print(f"  labelled universe  {m.groupby('date').permno.nunique().median():.0f}/month   "
+      f"Sharpe {sharpe(ls(m,'mom')):.2f}")
+""")
+
+md("""
+**1.09 against 0.47.** Same dates, same construction, same everything — the only
+difference is that one runs on 5,400 stocks and the other on the largest 950.
+
+**Momentum is largely a small- and mid-cap phenomenon.** That is a finding in its
+own right, it is the reason the industry numbers below look modest, and it is the
+first thing your project should check about your own signal. It also matters
+enormously for next lecture: the place momentum works best is the place it costs
+most to trade.
+
+From here everything runs on the 950-stock universe, so every number is
+comparable to every other number.
+""")
+
+md("""
+### 🎯 Prompt it — build industry-neutral momentum <a id="prompt2"></a>
+
+> **🤔 The question.** You have `m` with columns `mom`, `ind`, `date`, `ret_fwd`
+> and `me`. Ask for **momentum that is neutral to industry** — the strategy that
+> buys stocks beating their own peers rather than stocks in industries that ran.
+>
+> Write the prompt. There is more than one defensible construction, and the
+> weighting decision changes the answer's *sign*.
+""")
+
+co("""
+# === YOUR TURN ===
+MY_PROMPT = \"\"\"
+                                    ← write your prompt here
+\"\"\"
+
+# ---- paste the AI's code below ----
+
+""")
+
+co("""
+#@title 🔒 Check — four ways to slice it, both weightings
+D = pd.read_parquet(f"{BASE}/momentum_industry.parquet")
+tab = pd.DataFrame({k: {'VW mean': D[f'{k}_VW'].mean()*12, 'VW Sharpe': sharpe(D[f'{k}_VW']),
+                        'EW mean': D[f'{k}_EW'].mean()*12, 'EW Sharpe': sharpe(D[f'{k}_EW'])}
+                    for k in ['plain', 'neutral', 'within', 'across']}).T
+print(tab.to_string(formatters={'VW mean': '{:+.1%}'.format, 'EW mean': '{:+.1%}'.format,
+                                'VW Sharpe': '{:.2f}'.format, 'EW Sharpe': '{:.2f}'.format}))
+for line in ["  plain    rank all stocks on raw momentum",
+             "  neutral  subtract the industry mean momentum, then rank all stocks",
+             "  within   rank inside each industry, top third minus bottom third, averaged",
+             "  across   rank the 48 industries, top 8 minus bottom 8"]:
+    print(line)
+""")
+
+md("""
+### Industry-neutral momentum is the best of the four — if you equal-weight
+
+**Equal-weighted: 0.75 for industry-neutral against 0.53 for plain.** Taking the
+industry bet *out* makes the strategy better. You are not giving up a source of
+return by neutralising; you are removing noise.
+
+**Value-weighted: 0.42 against 0.47.** It goes the other way.
+
+That is the lecture's theme arriving at the worst possible moment — the answer to
+"is momentum within or across industries?" depends on a weighting choice that has
+nothing to do with industries. Both weightings are standard. Neither is wrong.
+
+Run the ladder on the equal-weighted versions, where the effect is strong enough
+to test.
+""")
+
+co("""
+#@title 🔒 The ladder, at the stock level
+for y, x in [('neutral_EW', 'across_EW'), ('across_EW', 'neutral_EW'), ('plain_EW', 'neutral_EW')]:
+    r = sm.OLS(D[y], sm.add_constant(D[x])).fit()
+    print(f"  {y:11s} on {x:11s} alpha {r.params.iloc[0]*12:+7.1%}/yr   t {r.tvalues.iloc[0]:+.2f}")
+print(f"\\n  correlation(neutral, across) = {D[['neutral_EW','across_EW']].corr().iloc[0,1]:.2f}")
+""")
+
+md("""
+### The same asymmetry, and one more step
+
+Within-industry momentum survives across-industry momentum: **+5.4%/yr, t = 2.31**.
+Across-industry momentum does not survive within: +1.2%/yr, t = 0.40. Same
+direction as §5a, now measured at the stock level.
+
+And the third line is the one to sit on. **Plain momentum has no alpha against
+industry-neutral momentum** — −2.5%/yr, t = −0.85. Once you own the
+within-industry version, the ordinary version adds nothing.
+
+> **📌 Momentum is stocks beating their peers. The industry bet that comes along
+> with it is not paying you — and at equal weights it is costing you.**
+
+Which is a practical conclusion, not just a classification. If you run momentum,
+you should probably run it industry-neutral: same idea, better Sharpe ratio, and
+you stop making a sector bet you never intended to make.
+
+> **⚠️ Two caveats, and they are real.** The whole of §5b runs on 950 large
+> stocks, where momentum is weak to begin with — none of these Sharpe ratios is
+> the 1.03 from earlier. And the conclusion flips if you value-weight. What we
+> can say is that within and across are genuinely different strategies and the
+> within one is not the passenger. What we cannot say is that this holds on the
+> full universe, because we cannot label the full universe.
+""")
+
 md("""
 ---
 
