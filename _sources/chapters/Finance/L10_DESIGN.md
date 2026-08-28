@@ -156,9 +156,55 @@ their 1963–1995), 49 industries rather than 20, and they industry-adjust at th
 stock level while we compare two portfolios. Any of those could do it. The honest
 statement is that we cannot tell which, which is exactly L9 §1.
 
-**Limitation to state out loud.** True industry-*neutral* momentum — ranking
-stocks against their own industry peers — needs a stock-level industry code, and
-the panel has none. Shipping SIC codes would unlock it; a note goes in TODO.
+### §5b · Within industries — solved 2026-08-28
+
+The first pass called within-industry momentum impossible for want of SIC codes.
+**It is recoverable.** The KNS-style characteristics files carry `indmom`, the
+stock's *industry* momentum, which is identical for every stock in the same
+industry on the same date. Used purely as a group label it yields **48 industries
+covering ~950 stocks a month, 1980–2000** — shipped as `industry_labels.parquet`,
+built by `build_industry_labels.py`.
+
+(Union-find over the whole sample collapses to two components, because stocks
+change industry across 20 years. The per-date label is what is wanted anyway.)
+
+**First, the price of the smaller universe.** Same dates, same construction:
+Sharpe **1.09** on all 5,427 stocks against **0.47** on the largest 950.
+*Momentum is largely a small- and mid-cap phenomenon*, which is a finding in its
+own right and the reason every number below is modest. It also sets up L11: the
+place momentum works best is the place it costs most to trade.
+
+**Four constructions on the 950-stock universe:**
+
+| | VW mean | VW Sharpe | EW mean | EW Sharpe |
+|---|---|---|---|---|
+| plain | +11.6% | 0.47 | +12.1% | 0.53 |
+| **industry-neutral** (demean the signal by industry) | +6.5% | 0.42 | +9.5% | **0.75** |
+| pure within-industry (T3 − T1, averaged) | +3.8% | 0.44 | +4.5% | 0.53 |
+| across-industry (top 8 − bottom 8) | +5.0% | 0.32 | +8.4% | 0.53 |
+
+**Equal-weighted, neutralising the industry bet makes momentum better: 0.75
+against 0.53.** Value-weighted it does not: 0.42 against 0.47. Both weightings
+are standard, and the answer to "within or across?" flips between them — which is
+this lecture's own theme landing at the worst possible moment, and should be said
+rather than smoothed over.
+
+**The ladder, equal-weighted:**
+
+| | alpha | t |
+|---|---|---|
+| within-neutral on across | **+5.4%/yr** | **2.31** |
+| across on within-neutral | +1.2%/yr | 0.40 |
+| **plain on within-neutral** | **−2.5%/yr** | −0.85 |
+
+Same asymmetry as §5a, now at the stock level — and one step further: **plain
+momentum has no alpha against the industry-neutral version.** Once you own
+within-industry momentum, ordinary momentum adds nothing. The practical
+conclusion is that momentum should probably be run industry-neutral.
+
+**Caveats to state:** 950 large stocks only, where momentum is weak to begin
+with; and the conclusion is weighting-dependent. We cannot verify it on the full
+universe because we cannot label the full universe.
 
 ---
 

@@ -468,7 +468,10 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-claim">§1 · The claim</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-and-check-it">§2 · Build it, and check it</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decision-tree-measured">§3 · The decision tree — measured</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-or-industries">§4 · Stocks or industries?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-or-industries">§4 · Stocks or industries?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-within-industries-solved-2026-08-28">§5b · Within industries — solved 2026-08-28</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#crashes">§5 · Crashes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moment">The prompt-it moment</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-answer-key">Challenge answer key</a></li>
@@ -767,9 +770,96 @@ not hide this — it is L9 arriving on schedule. Different sample (1980–2000 v
 their 1963–1995), 49 industries rather than 20, and they industry-adjust at the
 stock level while we compare two portfolios. Any of those could do it. The honest
 statement is that we cannot tell which, which is exactly L9 §1.</p>
-<p><strong>Limitation to state out loud.</strong> True industry-<em>neutral</em> momentum — ranking
-stocks against their own industry peers — needs a stock-level industry code, and
-the panel has none. Shipping SIC codes would unlock it; a note goes in TODO.</p>
+<section id="b-within-industries-solved-2026-08-28">
+<h3>§5b · Within industries — solved 2026-08-28<a class="headerlink" href="#b-within-industries-solved-2026-08-28" title="Link to this heading">#</a></h3>
+<p>The first pass called within-industry momentum impossible for want of SIC codes.
+<strong>It is recoverable.</strong> The KNS-style characteristics files carry <code class="docutils literal notranslate"><span class="pre">indmom</span></code>, the
+stock’s <em>industry</em> momentum, which is identical for every stock in the same
+industry on the same date. Used purely as a group label it yields <strong>48 industries
+covering ~950 stocks a month, 1980–2000</strong> — shipped as <code class="docutils literal notranslate"><span class="pre">industry_labels.parquet</span></code>,
+built by <code class="docutils literal notranslate"><span class="pre">build_industry_labels.py</span></code>.</p>
+<p>(Union-find over the whole sample collapses to two components, because stocks
+change industry across 20 years. The per-date label is what is wanted anyway.)</p>
+<p><strong>First, the price of the smaller universe.</strong> Same dates, same construction:
+Sharpe <strong>1.09</strong> on all 5,427 stocks against <strong>0.47</strong> on the largest 950.
+<em>Momentum is largely a small- and mid-cap phenomenon</em>, which is a finding in its
+own right and the reason every number below is modest. It also sets up L11: the
+place momentum works best is the place it costs most to trade.</p>
+<p><strong>Four constructions on the 950-stock universe:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>VW mean</p></th>
+<th class="head"><p>VW Sharpe</p></th>
+<th class="head"><p>EW mean</p></th>
+<th class="head"><p>EW Sharpe</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>plain</p></td>
+<td><p>+11.6%</p></td>
+<td><p>0.47</p></td>
+<td><p>+12.1%</p></td>
+<td><p>0.53</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>industry-neutral</strong> (demean the signal by industry)</p></td>
+<td><p>+6.5%</p></td>
+<td><p>0.42</p></td>
+<td><p>+9.5%</p></td>
+<td><p><strong>0.75</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>pure within-industry (T3 − T1, averaged)</p></td>
+<td><p>+3.8%</p></td>
+<td><p>0.44</p></td>
+<td><p>+4.5%</p></td>
+<td><p>0.53</p></td>
+</tr>
+<tr class="row-odd"><td><p>across-industry (top 8 − bottom 8)</p></td>
+<td><p>+5.0%</p></td>
+<td><p>0.32</p></td>
+<td><p>+8.4%</p></td>
+<td><p>0.53</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Equal-weighted, neutralising the industry bet makes momentum better: 0.75
+against 0.53.</strong> Value-weighted it does not: 0.42 against 0.47. Both weightings
+are standard, and the answer to “within or across?” flips between them — which is
+this lecture’s own theme landing at the worst possible moment, and should be said
+rather than smoothed over.</p>
+<p><strong>The ladder, equal-weighted:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>alpha</p></th>
+<th class="head"><p>t</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>within-neutral on across</p></td>
+<td><p><strong>+5.4%/yr</strong></p></td>
+<td><p><strong>2.31</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>across on within-neutral</p></td>
+<td><p>+1.2%/yr</p></td>
+<td><p>0.40</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>plain on within-neutral</strong></p></td>
+<td><p><strong>−2.5%/yr</strong></p></td>
+<td><p>−0.85</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Same asymmetry as §5a, now at the stock level — and one step further: <strong>plain
+momentum has no alpha against the industry-neutral version.</strong> Once you own
+within-industry momentum, ordinary momentum adds nothing. The practical
+conclusion is that momentum should probably be run industry-neutral.</p>
+<p><strong>Caveats to state:</strong> 950 large stocks only, where momentum is weak to begin
+with; and the conclusion is weighting-dependent. We cannot verify it on the full
+universe because we cannot label the full universe.</p>
+</section>
 </section>
 <hr class="docutils" />
 <section id="crashes">
@@ -927,7 +1017,10 @@ so students see it happen, then uses the cache for the grid.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-claim">§1 · The claim</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-and-check-it">§2 · Build it, and check it</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decision-tree-measured">§3 · The decision tree — measured</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-or-industries">§4 · Stocks or industries?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-or-industries">§4 · Stocks or industries?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-within-industries-solved-2026-08-28">§5b · Within industries — solved 2026-08-28</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#crashes">§5 · Crashes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moment">The prompt-it moment</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-answer-key">Challenge answer key</a></li>
