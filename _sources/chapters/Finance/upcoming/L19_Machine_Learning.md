@@ -6,7 +6,7 @@ This lecture is planned but not built. The page exists so the shape of the term
 is visible while the book renders. It will be replaced by a notebook.
 ```
 
-**When:** Mtg 25 · Wed Dec 2
+**When:** Mtg 24 · Mon Nov 30
 
 ## What it covers
 
@@ -14,7 +14,7 @@ Many signals at once. Regularization as a response to the estimation problem fro
 
 ## Feeds
 
-—
+A8 — Thu Dec 3
 
 ## Source material
 

@@ -13,8 +13,8 @@ through and dated rather than deleted, so the reasoning survives.
       before the final report. Keep it and let students drop it, or cut it and
       run seven? *Postponed — nothing dropped for now.*
 - [ ] **Assignments 4–8 do not exist yet.** A1, A2 and A3 are built and tested.
-      **A4 can now be written** — L8 exists and L9 is next. A5–A8 still wait on
-      their lectures.
+      **A4 can now be written** — L8 and L9 both exist. A5–A8 wait on their
+      lectures, and A5's due date needs the fix noted below.
 
 ---
 
@@ -184,7 +184,7 @@ labelling it that way is what stops it working. The rest are mine; the grep in
 
 **Reordered 2026-08-28** — see `chapters/Finance/BACK_HALF_PLAN.md`.
 
-L9 *Why should this work?* (mtg 9, designed not built) · L10 momentum (13) ·
+L10 momentum (13) ·
 **L11 transaction costs (14)** · **L12 leverage and shorting (15)** · L13–L14
 capital allocation (16–17) · **L15–L16 conditional strategies (19–20)** ·
 **L17 BARRA (22)** · L18 PCA (23) · L19 ML (24).
@@ -210,6 +210,10 @@ Three things the reorder surfaced:
 ---
 
 ## Done
+
+- ✅ **2026-08-28** — **L9 built** (`L9_WhyShouldThisWork_AI.ipynb`, 39 cells,
+      2,339 lectured words = 1.65 sessions). Back-half reorder applied to the
+      syllabus, `_toc.yml`, the eleven stubs and L2's two forward references.
 
 - ✅ **2026-08-26** — Shipped the course data (nothing ran before: every notebook
       404'd); fixed L5's `glob`-on-a-URL; renumbered 13 stale lecture references;

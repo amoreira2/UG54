@@ -189,14 +189,20 @@ hold. Which is the §3 test, applied.
 
 **And here is what holding it actually felt like:**
 
-| | return/yr | vol |
-|---|---|---|
-| 1980–1997 | **+15.7%** | 16.2% |
-| 1998 | +13.1% | 22.5% |
-| **1999** | **−81.6%** | 37.6% |
-| 2000 | +74.3% | 70.6% |
+**Corrected 2026-08-28.** The first pass annualised a single calendar year by
+multiplying its monthly mean by 12, which is not what you would have lost.
+Everything below is compounded, consistently.
 
-Worst twelve months: **−98%, ending February 2000.** Maximum drawdown **−75%**.
+| | compounded return | vol |
+|---|---|---|
+| 1980–1997 | **+15.4%/yr** (+1,200% total) | 16.2% |
+| 1998 | +11.5% | 22.5% |
+| **1999** | **−60.4%** | 37.6% |
+| 2000 | +63.0% | 70.6% |
+
+$1 in Feb 1980 becomes **\$16.68 by September 1998**, falls to **\$4.19 by
+February 2000**, and ends the sample at \$9.35 — **it never recovers the peak.**
+Maximum drawdown **−74.9%**, market beta **−0.70**, alpha **+20.1%/yr** (t = 4.21).
 
 Read that against §3. The strategy is short lottery stocks. In a bubble, lottery
 stocks are exactly what runs. So the drawdown is not the strategy failing — **it
@@ -297,15 +303,23 @@ dividing by. Five defensible answers, all verified:
 
 | definition | answer | trough |
 |---|---|---|
-| compounded, funded 1-for-1 with equity | **−75%** | 2000-02 |
-| cumulative sum of returns, no capital base assumed | **−121%** | 2000-02 |
-| compounded at 2× leverage | **−96%** | 2000-02 |
-| compounded at 3× leverage | **−100%** — wiped out | 2000-06 |
-| worst rolling 12 months | **−98%** | 2000-02 |
+| compounded, funded 1-for-1 with equity | **−74.9%** | 2000-02 |
+| cumulative sum of returns, no capital base assumed | **−120.9%** | 2000-02 |
+| compounded at 2× leverage | **−96.4%** | 2000-02 |
+| compounded at 3× leverage | **−100.0%** — wiped out | 2000-06 |
+| worst rolling 12 months, compounded | **−67.6%** | 2000-02 |
 
-A terse prompt — *"how did it do in 1999?"* — returns **−82%**, the calendar
-year, and misses that the worst twelve months run **March 1999 to February
-2000**, straddling the year end and 16 points worse.
+**And the trap nests.** "Worst rolling 12 months" is itself ambiguous: −67.6%
+compounded, **−97.6%** if you sum the monthly returns instead. So is "1999" —
+−60.4% compounded, **−81.6%** if you annualise the year's monthly mean by
+multiplying by 12, which is a thing people do and it is wrong. A terse prompt
+picks one of these silently and never says which. It also returns the *calendar*
+year and misses that the worst twelve months run **March 1999 to February 2000**,
+straddling the year end.
+
+*(My own first pass through this made both mistakes — it reported −81.6% for 1999
+and −97.6% for the worst twelve months without saying they were an annualised
+mean and a sum. That is exactly the failure the moment is for.)*
 
 Two things make this the right moment rather than a puzzle:
 

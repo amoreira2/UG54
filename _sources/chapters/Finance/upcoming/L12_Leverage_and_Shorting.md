@@ -1,4 +1,4 @@
-# L12 · Conditional Strategies II — Factor Timing
+# L12 · Leverage, Shorting, and the Capital Base
 
 ```{admonition} Not yet written
 :class: warning
@@ -10,15 +10,15 @@ is visible while the book renders. It will be replaced by a notebook.
 
 ## What it covers
 
-Volatility timing and factor timing. When conditioning helps, and the much larger set of cases where it is overfitting with extra steps.
+What the shorting constraint costs, margin, and the limits to arbitrage that keep obvious mispricings alive.
 
 ## Feeds
 
-—
+A6 — Thu Nov 5
 
 ## Source material
 
-Draws on `Volatilitytiming_c.ipynb`.
+Draws on `LeverageandShorting.ipynb`.
 
 ---
 
