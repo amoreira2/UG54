@@ -130,6 +130,25 @@ Dropped from A2; it belongs in A7, the transaction-cost assignment.
 
 ---
 
+### ▸ ~~Don't label your own conclusion~~ — **rule added and cleared 2026-08-28**
+
+New rule in `PLAN.md` §1: no sentences or headings that announce what the reader
+was supposed to extract — *"The asymmetry is the answer"*, *"the two ends of the
+grid are the story"*, *"that is the point of the whole lecture"*. Same
+unfalsifiable padding as the importance rule, one level up: it spends the moment
+the student was about to have. A heading carries the claim, not the news that a
+claim is coming.
+
+Five hits found and fixed the same day, all from the L8–L10 build week — one in
+L8, three in L9, one in L10. The grep in `PLAN.md` needs eyeballing rather than
+being empty: definitions ("a factor model is the answer written down"), forward
+pointers, and questions put to the student ("be precise about which of those two
+facts is the finding") are all fine and all still match.
+
+One soft hit left, not worth a rebuild on its own: `L5_Factor_Zoo_AI` c302 opens
+*"That is the answer to the question."* before giving the answer. Trim it in the
+next editing pass.
+
 ### ▸ Strip the "this is important" framing — 7 hits
 
 New style rule in `PLAN.md` §1: don't tell students how important a passage is.

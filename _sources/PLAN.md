@@ -115,6 +115,44 @@ Output should be empty. **It is not empty today** — there are seven hits acros
 L1, L2, L3 and A1, logged in `TODO.md`. Fix them in the next editing pass, not
 piecemeal.
 
+### Don't label your own conclusion
+
+The sibling of the rule above, and the one I keep slipping into. Sentences and
+headings that announce *what the reader was supposed to extract*, instead of
+just saying it:
+
+| ❌ Don't write | ✅ Write instead |
+|---------------|------------------|
+| "### The asymmetry is the answer" | "### Stock momentum survives industry momentum. It does not work the other way." |
+| "The two ends of the grid are the story." | "Concentrating on the single best in-sample performer is the worst thing you can do with 29 candidates." |
+| "The drawdown is not a footnote — it is the story." | "The strategy is short lottery stocks, and in a bubble lottery stocks are exactly what runs." |
+| "The last two rows are the argument we came for:" | "At 2× you lose 96%. At 3× you are wiped out." |
+| "That is the point of the whole lecture." | *(delete)* |
+
+It is the same unfalsifiable padding as the importance rule, one level up. The
+student has the table in front of them; announcing that it contains the answer
+adds nothing and spends the moment they were about to have. **A heading should
+carry the claim, not the news that a claim is coming.**
+
+The test: delete the sentence. If nothing is lost, it was a label. A heading that
+survives deletion of every noun like *answer*, *lesson*, *point*, *story*,
+*finding*, *punchline* is doing its job.
+
+Two things this rule does **not** forbid. Asking the student to identify the
+finding is the opposite failure mode and is encouraged — *"be precise about which
+of those two facts is the finding"* is fine. And a forward pointer that tells
+them where something gets resolved — *"hold that question, the next section is
+the answer"* — is navigation, not labelling.
+
+```bash
+grep -nE '(is|are) the (answer|lesson|point|punchline|finding|story|argument|takeaway)\b' \
+  chapters/Finance/L*_AI.ipynb chapters/Assignments/A[0-9]_*.ipynb
+```
+
+Not every hit is a violation — this one needs eyeballing, unlike the grep above.
+Definitions ("a factor model is the answer written down") and questions put to
+the student are fine.
+
 ### Belt-and-suspenders data loading
 
 Every notebook that fetches from the web gets an appendix documenting three
