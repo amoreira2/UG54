@@ -1,8 +1,11 @@
 # L13 + L14 · Capital Allocation — joint design note
 
 **Slots:** Meetings 16 and 17 (Mon Nov 2, Wed Nov 4). **Feeds:** A6.
-**Status:** planned, not built. Written as one design because the split only
-makes sense jointly.
+**Status:** **L13 built 2026-08-28** — `L13_CapitalAllocationI_AI.ipynb`, 39 cells,
+2,084 lectured words = 1.47 sessions, 9 lecture cells clean in 1 s. Built but not
+published (see `PLAN.md` §6b). **L14 planned, not built.**
+
+Written as one design because the split only makes sense jointly.
 
 ---
 
@@ -254,6 +257,41 @@ estimable) and shrink hard toward simple priors on inputs you do not (means,
 which are not).
 
 ---
+
+## L13 as built — verified numbers
+
+| | |
+|---|---|
+| market 1980–2000 | 9.2%/yr, 15.6% vol, Sharpe 0.59 |
+| γ = 1 / 2 / 5 / 10 → portfolio vol | 58.7% / 29.3% / 11.7% / 5.9% |
+| `vol_alloc == appraisal ratio` | exact to 2.2e-16 |
+| best appraisal ratio | 1.36 (DivSeason, on a 4.0% residual vol) |
+| alpha-bet combo | Sharpe 1.65, alpha +9.0%/yr, beta −0.15 |
+| market ⊕ hedged combo | 0.59 and 2.26 → **2.33**, and √(0.59²+2.26²) = 2.33 |
+| pooling N = 1/4/9/16/29 | 0.34 / 1.00 / 1.26 / **1.16** / 1.38 |
+| √N × mean, same N | 0.34 / 1.20 / 1.34 / 1.55 / 2.13 |
+| mean pairwise correlation | 0.049 |
+
+Two things the data gave that the plan did not anticipate, both kept:
+
+**The optimizer's favourite is its most fragile.** `DivSeason` takes 21% of gross
+weight, not because its alpha is large (5.4%/yr, mid-pack) but because its
+residual volatility is 4% and the formula divides by the square. The notebook says
+so and hands the consequence to L14.
+
+**Pooling is not monotonic** — 9 strategies pool to 1.26 and 16 pool to 1.16.
+Adding bets 10–16 made it worse. Shown rather than smoothed, because it is the
+honest version of "breadth helps".
+
+**Challenge answer key:** `book_sharpe` **2.26**, `diversification_shortfall`
+**0.588** (the book captures 59% of the √Σ AR² ideal of 3.84),
+`book_without_divseason` **2.01**. The memo's anchor: an uncorrelated strategy
+with Sharpe 0.35 adds √(2.26²+0.35²) − 2.26 = **+0.03** — almost nothing — but the
+59% shortfall is exactly why a *genuinely* orthogonal idea is worth more at the
+margin than the formula suggests.
+
+**The Fundamental Law is one box in §5**, stated and connected to the two results
+students just derived, with no IC computed anywhere — as agreed.
 
 ## The prompt-it moments — one per meeting
 

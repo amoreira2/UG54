@@ -263,6 +263,11 @@ Three things the reorder surfaced:
 
 ## Done
 
+- ✅ **2026-08-28** — **L13 built, not published** (`L13_CapitalAllocationI_AI.ipynb`,
+      39 cells, 1.47 lectured sessions). Two decisions → one asset → many assets →
+      alpha bets where the inverse disappears → √(SR²+SR²) → pod shops. Joint plan
+      with L14 in `L13_L14_DESIGN.md`; **L14 is next**.
+
 - ✅ **2026-08-28** — **L11 built but not published** (`L11_TransactionCosts_AI.ipynb`,
       40 cells, 1.86 lectured sessions). Turnover defined drift-aware; momentum is
       a **$13.4bn strategy** once the cost model is calibrated to Frazzini–Israel–
