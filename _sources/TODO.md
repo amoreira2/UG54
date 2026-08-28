@@ -152,8 +152,10 @@ labelling it that way is what stops it working. The rest are mine; the grep in
 - [ ] Content gaps M8–M11 from `L1_L7_AUDIT.md` §1c — log vs simple returns,
       empirical VaR, the S&P-500 construction assignment. All Appendix or
       assignment material, none urgent.
-- [ ] Build the conceptual/theory lecture (Tier 5e) seeded by
-      `InterpretingFactorModels.ipynb`. L5 now points forward to it.
+- [x] ~~Build the conceptual/theory lecture (Tier 5e)~~ — **split 2026-08-27.**
+      Foundations move to L9; the scaling half (crowding, equilibrium net of
+      costs, multifactor) stays late and needs L16/L17/L18. See `L9_DESIGN.md`
+      and `MISSING_CONTENT.md` Tier 5e.
 
 ---
 
@@ -180,9 +182,30 @@ labelling it that way is what stops it working. The rest are mine; the grep in
 
 ## Lectures not yet built
 
-L8 onward. L8 backtesting protocol, L9 anomalies, L10 momentum, L11–L12
-conditional, L13–L14 capital allocation, L15 BARRA, L16 costs, L17 leverage,
-L18 PCA, L19 ML. Calendar in `PLAN.md` §3.
+**Reordered 2026-08-28** — see `chapters/Finance/BACK_HALF_PLAN.md`.
+
+L9 *Why should this work?* (mtg 9, designed not built) · L10 momentum (13) ·
+**L11 transaction costs (14)** · **L12 leverage and shorting (15)** · L13–L14
+capital allocation (16–17) · **L15–L16 conditional strategies (19–20)** ·
+**L17 BARRA (22)** · L18 PCA (23) · L19 ML (24).
+
+Three things the reorder surfaced:
+
+- [ ] **BARRA has no source notebook.** `PLAN.md` §11 claims 780KB for the
+      untaught block; that holds for costs and leverage but "BARRA" appears only
+      *inside* other notebooks and a one-page stub. It is the only from-scratch
+      build left. Decide whether it is a lecture or an appendix.
+- [ ] **PCA is 3.15 sessions and ML is 2.33.** `StatisticalFactors_AI` is
+      described as built and smoke-tested; it is built, and it is three lectures.
+      Both need the cut L1–L7 needed.
+- [ ] **Buy a buffer.** Ten lectures in ten slots. Merging the two timing
+      lectures (1.83 sessions combined) frees meeting 20 for a project clinic.
+      Read `MarketTiming_c` and `Volatilitytiming_c` before committing.
+- [ ] **A5 is due the day after the lecture it depends on** (Thu Oct 22, mtg 13
+      is Wed Oct 21). Make A5 the backtest-protocol assignment on L8/L9 material
+      and move the momentum comparison into A6.
+- [ ] `PLAN.md` §11 Blocks C–E still use pre-L7 numbering — that is how the
+      missing BARRA source went unnoticed. Needs a pass.
 
 ---
 

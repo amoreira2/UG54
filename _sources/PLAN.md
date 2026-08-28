@@ -176,20 +176,20 @@ differs — it has Nov 25–29 off. The UG bulletin governs).
 | — | Mon Oct 12 | *Fall Break — no class* | |
 | 11 | Wed Oct 14 | **Review** *(Legislative Day)* | |
 | 12 | Mon Oct 19 | **MIDTERM** | |
-| 13 | Wed Oct 21 | **L10** Momentum and trend following `(5A)` | |
-| 14 | Mon Oct 26 | **L11** Conditional strategies I `(5B)` | *A5 was due Thu Oct 22* |
-| 15 | Wed Oct 28 | **L12** Conditional strategies II — factor timing | |
+| 13 | Wed Oct 21 | **L10** Momentum and trend following | |
+| 14 | Mon Oct 26 | **L11** Transaction costs | *A5 was due Thu Oct 22* |
+| 15 | Wed Oct 28 | **L12** Leverage, shorting, and the capital base | |
 | 16 | Mon Nov 2 | **L13** Capital allocation I | *A6 due Thu Nov 5* |
-| 17 | Wed Nov 4 | **L14** Capital allocation II — fragility | |
-| 18 | Mon Nov 9 | **Guest 1** | |
-| 19 | Wed Nov 11 | **L15** BARRA / fundamental risk models `(7A)` | |
-| 20 | Mon Nov 16 | **L16** Transaction costs `(7B)` | *A7 due Thu Nov 19* |
+| 17 | Wed Nov 4 | **L14** Capital allocation II — estimation error | |
+| 18 | Mon Nov 9 | **Guest** | |
+| 19 | Wed Nov 11 | **L15** Conditional strategies I — volatility timing | |
+| 20 | Mon Nov 16 | **L16** Conditional strategies II — factor timing | *A7 due Thu Nov 19* |
 | 21 | Wed Nov 18 | **Project pitches II** — 5 min × 10 | |
-| 22 | Mon Nov 23 | **L17** Leverage and shorting | |
-| 23 | Wed Nov 25 | **L18** PCA / statistical factors `(6)` | |
+| 22 | Mon Nov 23 | **L17** Fundamental risk models (BARRA) | |
+| 23 | Wed Nov 25 | **L18** PCA / statistical factors | |
 | 24 | Mon Nov 30 | **L19** Machine learning | *A8 due Thu Dec 3* |
 | — | Wed Dec 2 | *No class* | |
-| 25 | Mon Dec 7 | **Presentations I** — 15 min per group | report + code **Fri Dec 4** |
+| 25 | Mon Dec 7 | **Presentations I** — 15 min per group | report + code **Sun Dec 6** |
 | 26 | Wed Dec 9 | **Presentations II** | slides AM of your slot |
 | 27 | **Fri Dec 11** | **Presentations III** | |
 | 28 | Mon Dec 14 | **Review** (cumulative) | |
@@ -200,6 +200,21 @@ differs — it has Nov 25–29 off. The UG bulletin governs).
 > Nov 30; Wed Dec 2 is off; a third presentation day is added on **Friday
 > Dec 11**, which is not a normal M/W slot and needs a room.
 
+### The back-half reorder (2026-08-28)
+
+Costs and leverage moved from meetings 20 and 22 to **14 and 15**; conditional
+strategies moved from 14–15 to **19–20**; BARRA from 19 to **22**. Reasoning in
+`chapters/Finance/BACK_HALF_PLAN.md`. Short version: the two most
+project-essential lectures in the back half were eighth and ninth of ten, in a
+term with **zero buffer**, and every group's strategy is long-short with no
+capital base defined until meeting 22.
+
+Momentum, both capital-allocation lectures, PCA and ML keep both their slot and
+their L-number. Five lectures renumber in a 5-cycle — L16→L11, L17→L12, L11→L15,
+L12→L16, L15→L17. Only two in-notebook references broke (L2 c21 and c34, "Lecture
+16" → "Lecture 11"); both are fixed. L2's "Lecture 13" and L5's two "L18"
+references were already correct and are untouched.
+
 ### Calendar reasoning
 
 - **Midterm Mon Oct 19, review Wed Oct 14.** Fall Break creates a 6-day gap
@@ -207,8 +222,9 @@ differs — it has Nov 25–29 off. The UG bulletin governs).
   The *review* goes on the Legislative Day, not the exam: students get confused
   about whether class meets on a Monday-schedule Wednesday, and that must not
   happen on an exam day.
-- **Wed Nov 25 (day before Thanksgiving)** gets L17, the most self-contained
-  session in the back half and the cheapest to miss.
+- **Wed Nov 25 (day before Thanksgiving)** gets L18 (PCA), the most
+  self-contained session in the back half and the cheapest to miss. Unchanged by
+  the reorder.
 - **A1–A3 land pre-midterm.** A4 ("is your signal just momentum?") now follows
   L10 and is due Mtg 14. December stays clear for the project.
 
