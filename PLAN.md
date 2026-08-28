@@ -495,6 +495,31 @@ submission cell.
 
 ---
 
+## 6b. Publishing: built ≠ visible
+
+**Rule (AM, 2026-08-28): lectures after L10 stay as stubs in the online book even
+once the notebook is finished.** The book shows the placeholder in
+`chapters/Finance/upcoming/`; the real notebook sits in `chapters/Finance/` and is
+listed in `exclude_patterns` in `_config.yml` so Sphinx never renders it.
+
+Why: students should see the shape of the term without reading ahead into
+material that is still moving.
+
+**To build a lecture without publishing it** — the default from L11 on:
+
+1. Build `chapters/Finance/L##_Name_AI.ipynb` as usual.
+2. Leave `_toc.yml` pointing at `chapters/Finance/upcoming/L##_Name`.
+3. Add the notebook's path to `exclude_patterns` in `_config.yml`.
+
+**To publish it** — do this in the week you teach it:
+
+1. Remove its path from `exclude_patterns`.
+2. Swap the `_toc.yml` entry from the stub to the notebook, and drop the ` ◦`.
+3. `git rm` the stub.
+
+Stub admonitions say *"Not yet posted"*, not *"not yet written"* — the second is a
+lie once the notebook exists.
+
 ## 7. File conventions
 
 | Type | Pattern | Example |
