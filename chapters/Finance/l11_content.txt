@@ -1,0 +1,596 @@
+# Transaction Costs: What Is Left After You Trade
+
+## 🎯 Learning Objectives
+
+By the end of today you will be able to:
+
+1. **Define and measure turnover** — and say why returns do part of the trading for you
+2. **Price a single trade** with the square-root law, and derive its exponent from units alone
+3. **Measure absorption capacity** — what fraction of a stock's volume your strategy would consume
+4. **Find the fund size at which a strategy stops working**
+5. **Build an implementation portfolio** and read what deviating from your target actually costs
+6. **Say whether a signal can be traded slowly**, and why that decides its capacity
+@@CELL@@markdown@@
+## 📋 Today's Plan
+
+1. [Turnover](#turn)
+2. [What one trade costs](#cost)
+3. [Absorption capacity](#absorb)
+4. [🔄 What is left](#net)
+5. [Making it cheaper](#cheaper) — *🎯 prompt it*
+6. [Trade slower — and how slow](#slow)
+7. [🛠️ Hands-On: your strategy's capacity](#ho1)
+8. [🎯 Challenge](#challenge) — *homework*
+9. [Key takeaways](#takeaways)
+@@CELL@@markdown@@
+---
+
+## 🛠️ Setup
+@@CELL@@code@@
+#@title Setup — run this first
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+%matplotlib inline
+plt.style.use('seaborn-v0_8-whitegrid')
+plt.rcParams['figure.figsize'] = [11, 4]
+import warnings; warnings.filterwarnings('ignore')
+
+BASE = "https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data"
+
+D   = pd.read_parquet(f"{BASE}/l11_costs.parquet")        # returns, costs, turnover
+UV  = pd.read_parquet(f"{BASE}/l11_usedvolume.parquet")   # trade / volume, pooled
+DEC = pd.read_parquet(f"{BASE}/l11_decay.parquet")        # what a delay costs
+
+sharpe = lambda x: x.mean() / x.std() * np.sqrt(12)
+print(f"{len(D)} months, {D.index.min():%Y-%m} to {D.index.max():%Y-%m}")
+@@CELL@@markdown@@
+---
+
+## 1 · Turnover <a id="turn"></a>
+
+Last lecture ended with a momentum strategy earning about 20% a year. Every
+number in it assumed you could buy at the closing price, in any size, for free.
+
+Nobody can do that, and the first thing to establish is how much trading the
+strategy actually asks for.
+
+**Turnover is not how much you hold — it is how much you replace.** And there is
+a subtlety that decides the answer. Between rebalances, returns move your weights
+for you: a stock that doubles becomes a bigger share of the portfolio without
+your buying a thing. You only trade the gap between the new target and where the
+drift left you.
+
+$$w^{\text{drift}}_{i,t+1} = \frac{w^*_{i,t}\,(1+r_{i,t+1})}{1+r^p_{t+1}}
+\qquad\qquad
+\text{turnover}_t = \tfrac{1}{2}\sum_i \bigl| w^*_{i,t+1} - w^{\text{drift}}_{i,t+1}\bigr|$$
+
+The one-half is a convention: buying 30% of the portfolio and selling 30% is
+"30% turnover", not 60%. State which one you mean — the industry uses both.
+@@CELL@@markdown@@
+### 🎯 Prompt it — how much does this strategy trade? <a id="prompt1"></a>
+
+Every cost number in this lecture is turnover multiplied by a rate, so this has
+to be right before anything else can be.
+
+> **🤔 The question.** *"How much does my strategy trade each month?"*
+>
+> Write the prompt. Four things are undecided in that sentence, and one of them
+> is the drift above. Before you run the check, predict: does ignoring drift
+> matter more for momentum, or for value?
+@@CELL@@code@@
+# === YOUR TURN ===
+MY_PROMPT = """
+                                    ← write your prompt here
+"""
+
+# ---- paste the AI's code below ----
+
+@@CELL@@code@@
+#@title 🔒 Check — with and without the drift correction
+print(f"{'':14s}{'drift-aware':>13s}{'naive':>9s}{'per year':>11s}{'overstated by':>15s}")
+for lab, a, b in [('momentum', 'turn_mom', 'turn_mom_naive'),
+                  ('value (BM)', 'turn_bm', 'turn_bm_naive')]:
+    print(f"  {lab:12s}{D[a].mean():>13.1%}{D[b].mean():>9.1%}"
+          f"{D[a].mean()*12:>11.0%}{D[b].mean()/D[a].mean()-1:>15.0%}")
+@@CELL@@markdown@@
+### 819% a year
+
+Momentum replaces **68% of the portfolio every month**. Over a year it turns over
+more than eight times. Value turns over 12% a month.
+
+That is the whole reason this lecture follows momentum rather than preceding it.
+
+Now the drift. A terse prompt gets you `weights.diff().abs().sum()`, which
+compares this month's target to last month's target and forgets that returns
+already moved you part of the way. **For momentum that is a 4% error. For value
+it is 36%.**
+
+> **📌 The size of a bug is a property of the data, not the code.**
+>
+> The same wrong line is nearly harmless on a high-turnover strategy and badly
+> wrong on a low-turnover one. Checking it once on one strategy tells you
+> nothing about the next.
+
+Why the difference? Momentum's trading is dominated by stocks leaving the decile
+entirely — real trades that drift cannot account for. Value holds the same names
+for years, so most of what looks like a weight change *is* drift.
+@@CELL@@markdown@@
+---
+
+## 2 · What one trade costs <a id="cost"></a>
+
+Three components, and the convention is to keep them separate:
+
+$$\text{cost} = \underbrace{\text{spread}}_{\text{crossing the bid-ask}}
++ \underbrace{\text{temporary impact}}_{\text{your own pressure, which decays}}
++ \underbrace{\text{permanent impact}}_{\text{what your trade revealed}}$$
+
+For an institutional order **temporary impact dominates**, and it is the only one
+we model. You are pushing the price against yourself while you execute, and the
+more of the available liquidity you demand, the harder you push.
+
+The standard model is the **square-root law**:
+
+$$c \;\approx\; \kappa\,\sigma\,\sqrt{Q/V}$$
+
+where $Q$ is what you trade, $V$ is what everyone trades in the same window,
+$\sigma$ is the stock's volatility, and $\kappa$ is a constant near one. $Q/V$ is
+the **participation rate**.
+
+### Where the square root comes from
+
+You can get the exponent without any finance at all — from units.
+
+The cost $c$ is a fraction, so it is **dimensionless**. Three things can matter:
+$Q$ and $V$, both in dollars, and $\sigma$, which is a volatility and therefore
+carries units of $1/\sqrt{\text{time}}$. Write the cost as a product of powers:
+
+$$[\,\text{dimensionless}\,] = [\text{currency}]^{a}\,[\text{currency}]^{b}\,
+\left[\tfrac{1}{\sqrt{\text{time}}}\right]^{c}$$
+
+Currency must cancel, so $a + b = 0$. Time must cancel, and $\sigma$ is the only
+term carrying it, so $c$ pairs with the currency exponent: $-a - c/2 = 0$. Set
+$a = -\tfrac12$ and everything follows — $b = \tfrac12$, $c = 1$:
+
+$$c \;\propto\; V^{-1/2}\,Q^{1/2}\,\sigma \;=\; \sigma\sqrt{Q/V}$$
+
+**The exponent is one half because volatility scales with the square root of
+time.** No data, no regression, no model of the order book.
+
+> **📌 Cost per dollar rises with the square root of size. Total cost rises with
+> the three-halves power.**
+>
+> Double the fund and each dollar costs 1.41× as much, so the bill is 2.83× as
+> large. That convexity is the whole of the next two sections.
+@@CELL@@markdown@@
+---
+
+## 3 · Absorption capacity <a id="absorb"></a>
+
+The practical diagnostic, and it is one division:
+
+$$\text{UsedVolume}_{i,t} = \frac{\text{what you must trade in stock } i}{\text{what the whole market trades in stock } i}$$
+
+Below a few percent you transact near the posted price. As it approaches one you
+are the market, and the price goes where you push it.
+
+Here is that number for momentum, every stock, every month, for a fund running
+**$250 million** on the long side.
+@@CELL@@code@@
+#@title 🔒 How much of the market would you be?
+u = UV['used_volume']
+for q in [0.50, 0.75, 0.95, 0.99, 0.999]:
+    print(f"  {q:>6.1%} of trades   {u.quantile(q):>9.1%} of the stock's monthly volume")
+print(f"\n  worst single trade: {u.max():,.0%}")
+print(f"  trades needing MORE than the entire month's volume: {(u > 1).mean():.2%}")
+@@CELL@@markdown@@
+### The median is fine. The tail is not.
+
+Half of all trades use less than **0.4%** of a stock's monthly volume — invisible.
+The 95th percentile is 21%, which is large but executable over a few days.
+
+Then it falls apart. **1.13% of the trades this strategy wants to make would
+require more than the stock's entire monthly volume**, and the worst wants six
+thousand times it. Those trades do not get executed at a bad price. They do not
+get executed.
+
+> **⚠️ Capacity is set by the weakest link, not the average.**
+>
+> A portfolio is only as tradeable as its hardest position. Reporting the median
+> participation rate of a strategy is like reporting the average depth of a river
+> you are about to walk across.
+
+That 1.13% is small enough to look ignorable and is exactly where the money goes,
+which is the subject of §5.
+@@CELL@@markdown@@
+---
+
+## 🔄 4 · What is left <a id="net"></a>
+
+Now put the two halves together. We know how much the strategy trades and what a
+trade costs, so we can run the backtest again with the bill included.
+
+> **🤔 Predict first.** Momentum's gross Sharpe ratio is 1.00. Write down the
+> fund size at which you think it goes to zero.
+@@CELL@@code@@
+#@title 🔒 The same strategy, at seven fund sizes
+AUMS = [10, 50, 100, 250, 500, 1000, 5000]
+rows = {}
+for A in AUMS:
+    net = D.mom_gross - D[f'cost_{A}'].fillna(0)
+    rows[f"${A:,}m"] = {'cost/yr': D[f'cost_{A}'].mean()*12,
+                        'net/yr': net.mean()*12, 'net Sharpe': sharpe(net)}
+t = pd.DataFrame(rows).T
+print(f"  gross:  {D.mom_gross.mean()*12:+.1%}/yr   Sharpe {sharpe(D.mom_gross):.2f}\n")
+print(t.to_string(formatters={'cost/yr':'{:.1%}'.format, 'net/yr':'{:+.1%}'.format,
+                              'net Sharpe':'{:+.2f}'.format}))
+c100 = D.cost_100.mean()*12
+print(f"\n  break-even fund size: ${100*(D.mom_gross.mean()*12/c100)**2:,.0f}m")
+@@CELL@@code@@
+#@title 🔒 Sharpe ratio against fund size
+grid = [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]
+have = [a for a in grid if f'cost_{a}' in D.columns]
+srs  = [sharpe(D.mom_gross - D[f'cost_{a}'].fillna(0)) for a in have]
+
+fig, ax = plt.subplots()
+ax.axhline(sharpe(D.mom_gross), color='#888888', ls='--', lw=1)
+ax.axhline(0, color='#333333', lw=0.8)
+ax.plot(have, srs, 'o-', color='#b03030', lw=1.5, ms=5)
+ax.set_xscale('log'); ax.set_xlabel('fund size, $ millions (log scale)')
+ax.set_ylabel('net Sharpe ratio')
+ax.set_title('Momentum, net of trading costs', loc='left', fontsize=11)
+ax.annotate('gross', xy=(11, sharpe(D.mom_gross)), xytext=(0, 5),
+            textcoords='offset points', fontsize=9, color='#888888')
+plt.tight_layout(); plt.show()
+@@CELL@@markdown@@
+### Momentum is a $236 million strategy
+
+Not a good strategy or a bad one — **a $236 million one.** At $50m it earns 10.6%
+a year net and a Sharpe of 0.54. At $1bn it loses 20% a year.
+
+Nothing about the signal changed. The alpha is identical in every row of that
+table. What changed is how much of it you tried to collect.
+
+> **📌 "Does this strategy work?" is not a well-posed question.**
+>
+> The answer is a function, not a number, and its argument is your size. Every
+> backtest in this course so far has silently evaluated that function at zero.
+
+This is Lecture 9's scaling argument arriving with arithmetic attached. There we
+said that a premium which is other people's risk becomes yours as you scale. Here
+is the mechanism: **the market charges you for the privilege of taking the
+position, and the charge grows faster than the position.**
+
+> **⚠️ One dial to be honest about.** We set $\kappa = 1$, the aggressive end of
+> the published range, on 1980–2000 volumes that are far below today's. Move
+> $\kappa$ and the break-even moves with its square — $\kappa = 0.5$ gives four
+> times the capacity. The order of magnitude is the finding; the third digit is
+> not. The Hands-On makes you turn the dial.
+@@CELL@@markdown@@
+---
+
+## 5 · Making it cheaper <a id="cheaper"></a>
+
+You have two portfolios now, and it is worth naming them:
+
+- the **wish portfolio** — what you would hold if trading were free
+- the **implementation portfolio** — what you actually hold
+
+**Implementation shortfall** is the gap between their returns, and it has two
+parts that pull against each other. **Execution cost** is what you pay to move
+toward the wish portfolio. **Opportunity cost** is what you give up by not
+getting there. Trade fast and you pay the first; trade slow and you pay the
+second. There is no policy that avoids both.
+
+So: how do you build an implementation portfolio? The obvious idea is to weight
+by *volume* rather than market cap, so that every position uses the same fraction
+of available liquidity.
+@@CELL@@code@@
+#@title 🔒 Does volume-weighting help?
+for lab, g, c, tn in [('wish: value-weighted', 'mom_gross', 'cost_250', 'turn_mom'),
+                      ('volume-weighted',      'vw_gross',  'vwcost_250', 'turn_vw')]:
+    print(f"  {lab:24s} gross {D[g].mean()*12:+6.1%}   turnover {D[tn].mean():5.1%}/mo   "
+          f"cost@$250m {D[c].mean()*12:5.1%}")
+@@CELL@@markdown@@
+### It does not — and the reason is worth having
+
+Volume-weighting does fix the tail: the worst position drops from 1,406% of
+monthly volume to 100%. But **turnover jumps from 68% to 82% a month**, because
+volume is noisier than market cap and the weights chase it. Total cost goes *up*,
+from 20.1% to 26.2%.
+
+You solved the problem you were looking at and made the bill larger.
+
+The alternative is blunter and works: **do not hold the stocks you cannot trade.**
+Drop the least liquid 40% of the universe before sorting, and accept whatever
+that does to the signal.
+@@CELL@@code@@
+#@title 🔒 The liquidity screen, judged the right way
+j = pd.concat([D.mom_gross.rename('wish'), D.scr_gross.rename('screened')], axis=1).dropna()
+r = sm.OLS(j.screened, sm.add_constant(j.wish)).fit()
+print(f"  alpha      {r.params.iloc[0]*12:+.1%}/yr   (t = {r.tvalues.iloc[0]:+.2f})")
+print(f"  beta       {r.params.iloc[1]:.2f}")
+print(f"  resid vol  {r.resid.std()*np.sqrt(12):.1%}/yr        R-squared {r.rsquared:.2f}\n")
+for A in [50, 100, 250, 1000]:
+    nw = D.mom_gross - D[f'cost_{A}'].fillna(0)
+    ns = D.scr_gross - D[f'scrcost_{A}'].fillna(0)
+    win = 'screen' if ns.mean() > nw.mean() else 'wish'
+    print(f"  ${A:>5,}m   wish {nw.mean()*12:+6.1%}   screened {ns.mean()*12:+6.1%}   -> {win}")
+@@CELL@@markdown@@
+### Three numbers, and only one of them is the cost
+
+Regress the implementation portfolio on the wish portfolio and read it off:
+
+- **β = 1.04.** Nearly free to fix — scale the position by 1/β and you are done.
+- **σ(ε) = 3.6% a year.** Tracking noise. R² is 0.97, so the screened portfolio
+  really is following the same strategy.
+- **α = −2.1% a year, t = −2.46.** *This* is what the screen costs. It is the
+  return you gave up by refusing to hold the illiquid names, and it is the only
+  one of the three you cannot engineer away.
+
+> **📌 The industry quotes one number — the volatility of the difference — and it
+> conflates all three.** It mixes a β you could fix in one line with noise you
+> could diversify and a genuine expected loss. Separate them before you decide.
+
+And the decision depends on size. **Below about $100m the screen is not worth
+it** — you are paying 2.1% of alpha to solve a problem you do not have. Above it,
+the cost saving grows with $\sqrt{\text{AUM}}$ while the alpha loss stays fixed,
+and by $1bn the screen is worth 4 points a year.
+
+**The right portfolio is a function of how much money you run.** Same signal,
+same data, different correct answer.
+@@CELL@@markdown@@
+---
+
+## 6 · Trade slower — and how slow <a id="slow"></a>
+
+Everything so far has assumed you rebalance fully, every month. You do not have
+to. Costs are convex, so splitting a trade across two months costs less than
+doing it at once — and the limiting version of that idea is a rule practitioners
+actually use:
+
+> Set a tracking-error band around the wish portfolio. **Inside the band, do
+> nothing.** When you drift outside it, trade back to the edge — not to the
+> target.
+
+With no signal at all, the optimal policy is to bleed a position out
+exponentially, $x_t = e^{-\Gamma t}x_0$: faster when volatility and risk aversion
+are high, slower when trading is expensive. You never jump.
+
+But this only works if the signal waits for you. So the question that decides
+everything is: **how fast does your alpha decay?**
+@@CELL@@code@@
+#@title 🔒 What does a delay cost? Sharpe ratio when you implement k months late
+print(f"  {'':11s}" + "".join(f"{f'lag {L}m':>9s}" for L in [0, 1, 2, 3, 6, 12]))
+for fam in ['momentum', 'value']:
+    print(f"  {fam:9s}  " + "".join(f"{sharpe(DEC[f'{fam}_lag{L}']):>9.2f}" for L in [0, 1, 2, 3, 6, 12]))
+@@CELL@@markdown@@
+### Value can be patient. Momentum cannot.
+
+Delay value by six months and you keep essentially all of it — 0.45 against 0.44.
+Delay momentum by six months and a Sharpe of 1.12 becomes 0.26. By twelve months
+it is **negative**, which is §4 of last lecture: hold a momentum signal long
+enough and you are trading long-term reversal.
+
+That is the second reason momentum's capacity is small, and it is independent of
+the first. Momentum is expensive because it turns over eight times a year **and**
+because it cannot use the one tool that makes turnover cheap. A value manager
+facing high costs simply trades more slowly. A momentum manager who trades slowly
+has no strategy left.
+
+> **📌 A signal's capacity is set by its decay rate as much as by its costs.**
+>
+> Two strategies with identical turnover and identical impact can have capacities
+> that differ by an order of magnitude, because one of them is allowed to wait.
+@@CELL@@markdown@@
+---
+
+## 🛠️ Hands-On: Your Strategy's Capacity <a id="ho1"></a>
+
+Your group has a signal and a gross Sharpe ratio. Now put a dollar figure on it.
+
+> **🤔 Predict first.** Is your signal closer to momentum or to value in
+> turnover? Write down a guess before you compute it.
+@@CELL@@code@@
+# === EDIT + YOUR TURN ===
+MY_SIGNAL = "GP"      # ← your group's signal
+
+# 1. Turnover. Use the drift-aware definition from §1 — not weights.diff().
+my_turnover = ____
+
+# 2. Capacity. Cost scales as sqrt(AUM), so if you know the cost at one size you
+#    know it everywhere:  cost(A) = cost(A0) * sqrt(A/A0)
+#    Solve for the A where annual cost equals your gross annual return.
+my_gross    = ____        # your strategy's gross annual return
+my_capacity = ____        # break-even fund size, $ millions
+
+print(f"{MY_SIGNAL}: turnover {my_turnover:.1%}/mo, gross {my_gross:+.1%}/yr, "
+      f"capacity ${my_capacity:,.0f}m")
+
+# 3. Turn the dial. Redo the capacity with kappa = 0.5 and kappa = 2.
+@@CELL@@markdown@@
+### Compare with the room
+
+- **Where did you land?** Under $100m and your strategy is a personal account,
+  not a business. Over $5bn and you should suspect your turnover calculation.
+- **How much did κ move it?** It enters squared, so halving κ quadruples the
+  capacity. If your answer changes by more than that, something else is wrong.
+- **Would the liquidity screen help you?** Only if your capacity is binding.
+  Answer for your own number, not for momentum's.
+@@CELL@@markdown@@
+---
+
+## 🎯 Challenge: The Cost of Being Impatient <a id="challenge"></a>
+
+*Homework — due before the next class.*
+
+§6 showed that momentum decays fast and value does not. Put a price on that
+difference, using the cached series.
+
+### Q1 — Value's capacity
+
+Value (BM) turns over 12.2% a month against momentum's 68.2%, and `bm_gross` is
+in `D`. Assume the cost per unit of turnover is the same for both strategies, so
+that value's cost at any fund size is momentum's cost scaled by the ratio of
+turnovers.
+
+Report **value's break-even fund size** in $ millions.
+
+> **📌 Required variable names:**
+> ```python
+> value_capacity = ____   # break-even fund size for value, $ millions
+> ```
+@@CELL@@code@@
+# Your work here
+
+
+value_capacity = ____
+
+print(f"value break-even: ${value_capacity:,.0f}m")
+@@CELL@@markdown@@
+### Q2 — What patience is worth
+
+A momentum manager at $1bn could trade half as often — rebalancing every two
+months instead of every month. That halves turnover and therefore halves cost,
+but it means implementing with an average delay of about one month.
+
+Using the `DEC` table for the return cost of a one-month lag and `cost_1000` for
+the saving, report the **net annual return** of the patient momentum strategy at
+$1bn, as a decimal.
+
+> **📌 Required variable names:**
+> ```python
+> patient_net = ____   # net annual return, decimal (-0.05 means -5%)
+> ```
+@@CELL@@code@@
+# Your work here
+
+
+patient_net = ____
+
+print(f"patient momentum at $1bn: {patient_net:+.1%}/yr")
+@@CELL@@markdown@@
+### Q3 — The screen at your size
+
+Find the fund size at which the liquidity-screened portfolio's **net Sharpe
+ratio** first exceeds the wish portfolio's. Search over
+`[50, 100, 250, 500, 1000, 2500, 5000]`.
+
+> **📌 Required variable names:**
+> ```python
+> screen_wins_at = ____   # smallest AUM in the list where the screen wins, $ millions
+> ```
+@@CELL@@code@@
+# Your work here
+
+
+screen_wins_at = ____
+
+print(f"the screen starts winning at ${screen_wins_at:,}m")
+@@CELL@@markdown@@
+### Q4 — The memo
+
+> **📝 Your task — maximum eight sentences.**
+>
+> You are pitching momentum to an allocator who wants to put **$2 billion** into
+> it. Tell them what happens.
+>
+> Give the net return and Sharpe ratio at that size, and say what you would have
+> to change about the strategy to make $2bn workable — and what that change
+> costs. Then answer the harder question: **your backtest and their backtest are
+> identical, and yet the strategy is a good idea for you and a bad one for them.
+> Explain how both can be true**, and what number you would put in a pitch deck
+> if you had to put one.
+@@CELL@@code@@
+MEMO = """
+Write your memo here. Don't delete the surrounding triple quotes.
+"""
+print(MEMO)
+@@CELL@@markdown@@
+---
+
+## 📤 Submission <a id="submit"></a>
+@@CELL@@code@@
+# === 📤 SUBMISSION CELL — Run this last ===
+import json, base64, hashlib, datetime as dt
+
+required = ["value_capacity", "patient_net", "screen_wins_at", "MEMO"]
+missing = [v for v in required if v not in globals()]
+if missing:
+    raise NameError(f"\n❌ Missing before submission: {missing}")
+
+payload = {
+    "assignment": "L11_TransactionCosts_AI",
+    "ts": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+    "answers": {k: float(eval(k)) for k in required if k != "MEMO"},
+    "memo": MEMO.strip(),
+}
+blob = json.dumps(payload, sort_keys=True)
+checksum = hashlib.sha256(blob.encode()).hexdigest()[:8]
+token = f"UG54::{checksum}::{base64.b64encode(blob.encode()).decode()}"
+
+print("=" * 72)
+print("📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM")
+print("=" * 72)
+print(token)
+print("=" * 72)
+print("Submission form: https://forms.gle/yazZ8bbatL87jdJi7")
+@@CELL@@markdown@@
+---
+
+## 🧠 Key Takeaways <a id="takeaways"></a>
+
+1. **Turnover is what you replace, not what you hold** — and returns do part of
+   the trading for you. Ignoring drift costs 4% on momentum and 36% on value.
+
+2. **Momentum turns over 819% a year.** Value turns over 146%.
+
+3. **Cost per dollar goes as √size, so the bill goes as size^(3/2).** The
+   exponent comes from units alone: volatility carries 1/√time and nothing else
+   can cancel it.
+
+4. **Capacity is set by the weakest link.** Half of momentum's trades are
+   invisible; 1.13% of them need more than the stock's entire monthly volume.
+
+5. **Momentum is a $236 million strategy** — 10.6% a year net at $50m, −20% at
+   $1bn. Same alpha in every row.
+
+6. **"Does this work?" is a function, not a number**, and its argument is your
+   size. Every backtest before today evaluated it at zero.
+
+7. **Volume-weighting fixes the tail and raises the bill** — turnover 68% → 82%.
+   The blunt screen is better.
+
+8. **β is free, σ(ε) is noise, α is the cost.** One tracking-error number hides
+   all three.
+
+9. **A signal that decays fast cannot be traded slowly**, so it cannot use the
+   one tool that makes turnover affordable. That is a second, independent reason
+   momentum's capacity is small.
+
+---
+
+### Next class
+
+You now know what your strategy costs to run and how large it can get. Next: what
+it means to run it at all — the capital behind a long-short portfolio, what
+shorting actually requires, and why leverage is the thing that turns a bad year
+into a forced exit.
+@@CELL@@markdown@@
+---
+
+## 📎 Appendix <a id="appendix"></a>
+@@CELL@@code@@
+# ═══════════════════════════════════════════════════════════════════════
+# 📎 APPENDIX — every series in the cache
+# ═══════════════════════════════════════════════════════════════════════
+print("returns and turnover")
+for c in ['mom_gross', 'scr_gross', 'vw_gross', 'bm_gross']:
+    print(f"  {c:12s} mean {D[c].mean()*12:+7.1%}/yr   Sharpe {sharpe(D[c]):+.2f}")
+for c in ['turn_mom', 'turn_vw', 'turn_bm']:
+    print(f"  {c:12s} {D[c].mean():.1%}/mo   {D[c].mean()*12:.0%}/yr")
+print("\ncost of the wish portfolio, annualised")
+for c in sorted([c for c in D.columns if c.startswith('cost_')], key=lambda x: int(x.split('_')[1])):
+    print(f"  ${int(c.split('_')[1]):>6,}m   {D[c].mean()*12:7.2%}")
