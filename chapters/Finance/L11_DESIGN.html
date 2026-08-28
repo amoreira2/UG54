@@ -484,7 +484,12 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#built-what-changed-from-this-plan">Built — what changed from this plan</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-question-for-am">Open question for AM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recalibrated-2026-08-28-after-am">Recalibrated 2026-08-28 after AM</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checking-against-fim-caught-a-real-error">Checking against FIM caught a real error</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-numbers-became">What the numbers became</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-question-for-am-resolved">Open question for AM — resolved</a></li>
 </ul>
             </nav>
         </div>
@@ -719,14 +724,90 @@ content lives in <code class="docutils literal notranslate"><span class="pre">l1
 <code class="docutils literal notranslate"><span class="pre">build_l11_transaction_costs.py</span></code> — the split avoids the quote-escaping problems
 that bit the L10 build.</p>
 </section>
-<section id="open-question-for-am">
-<h2>Open question for AM<a class="headerlink" href="#open-question-for-am" title="Link to this heading">#</a></h2>
-<p>The break-even uses <strong>κ = 1</strong>, which is the aggressive end of the published
-range, and 1980–2000 volumes are far below today’s. The qualitative result — a
-few hundred million, not tens of billions — is robust, but the point estimate is
-soft. Two options: present κ as a dial students can turn, or calibrate it to a
-published estimate and cite. <strong>Recommend the dial</strong>, since it makes the
-sensitivity visible and it is one more argument to <code class="docutils literal notranslate"><span class="pre">momentum()</span></code>-style code.</p>
+<section id="recalibrated-2026-08-28-after-am">
+<h2>Recalibrated 2026-08-28 after AM<a class="headerlink" href="#recalibrated-2026-08-28-after-am" title="Link to this heading">#</a></h2>
+<p>AM: <em>“I don’t like this theory mumbo jumbo for the square root law… motivate
+instead that it is natural that the participation rate matters… and that
+volatility will matter due for example to adverse selection, and then discuss how
+this empirically kind of fits the data — which is the most important thing. Cite
+the Moskowitz et al. paper.”</em></p>
+<p><strong>The dimensional-analysis derivation is out.</strong> §2 now motivates the two
+arguments directly — participation because liquidity is a finite resource that
+refills, volatility because the counterparty bears inventory risk <em>and</em> cannot
+tell whether you are informed, which is L9’s adverse selection in its original
+habitat — and then asks whether the shape fits.</p>
+<p>It does. <code class="docutils literal notranslate"><span class="pre">assets/plots/marketimpact.jpg</span></code> was already in the repo: it is
+<strong>Frazzini, Israel and Moskowitz, “Trading Costs of Asset Pricing Anomalies”</strong>,
+realised impact on ~$1.7tn of live AQR trades. Fitting the 2004–07 curve gives
+<strong>9bp + 144bp·√(participation)</strong>, tracking the data across the whole range, with
+costs falling by 2010–13 and roughly doubling in 2008–09.
+<code class="docutils literal notranslate"><span class="pre">marketimpact2.jpg</span></code> — the anatomy of one order, 11bp average impact split 2.5bp
+temporary and 8.5bp permanent — opens the section.</p>
+<section id="checking-against-fim-caught-a-real-error">
+<h3>Checking against FIM caught a real error<a class="headerlink" href="#checking-against-fim-caught-a-real-error" title="Link to this heading">#</a></h3>
+<p>Calibrating to that figure exposed a <strong>units bug in the cost model</strong>. Almgren’s σ
+is the volatility over the <em>execution horizon</em>; spreading a month’s trade across
+the month makes that <strong>daily</strong> volatility, and the first build used monthly. That
+overcharged by √21 ≈ 4.6, and κ = 1 against FIM’s implied 0.55 added the rest:
+<strong>costs were 8.4× too high, capacity 70× too low.</strong></p>
+<p>Corrected model, now in <code class="docutils literal notranslate"><span class="pre">build_l11_cost_cache.py</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[c_i = \tfrac12\text{spread} + \kappa\,\sigma_i^{\text{daily}}\sqrt{Q_i/V_i},
+\qquad \kappa = 0.55,\ \text{spread}/2 = 20\text{bp}\]</div>
+</section>
+<section id="what-the-numbers-became">
+<h3>What the numbers became<a class="headerlink" href="#what-the-numbers-became" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>before</p></th>
+<th class="head"><p>after</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>break-even</p></td>
+<td><p>$236m</p></td>
+<td><p><strong>$13.4bn</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>cost at $1bn</p></td>
+<td><p>40.1%</p></td>
+<td><p>6.7%</p></td>
+</tr>
+<tr class="row-even"><td><p>net Sharpe at $1bn</p></td>
+<td><p>−0.98</p></td>
+<td><p><strong>+0.65</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>screen starts winning</p></td>
+<td><p>$100m</p></td>
+<td><p>~<span class="math notranslate nohighlight">\(5bn (net return), \)</span>10bn (Sharpe)</p></td>
+</tr>
+<tr class="row-even"><td><p>value capacity</p></td>
+<td><p>$859m</p></td>
+<td><p><strong>$53.8bn</strong></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The lesson survives intact and is now <em>more</em> honest: momentum is a real business
+at <span class="math notranslate nohighlight">\(1bn (12.8%/yr net, Sharpe 0.65) and dead by \)</span>25bn. It also agrees with FIM’s
+own headline — proxy-based academic estimates overstated costs by roughly an
+order of magnitude, and anomaly capacity is far larger than the pessimistic
+literature claimed.</p>
+<p>Two caveats are now in the notebook rather than in this file: κ comes from
+post-2004 large-cap institutional flow while our sample is 1980–2000 when spreads
+were quoted in eighths, so <strong>every cost is an underestimate for the period</strong>; and
+the units trap is written up as a warning box, because the formula does not carry
+its units with it.</p>
+<p><strong>Lectured length rose to 1.84 sessions</strong> from 1.55 — §2 is longer as prose than
+it was as a derivation.</p>
+</section>
+</section>
+<section id="open-question-for-am-resolved">
+<h2>Open question for AM — resolved<a class="headerlink" href="#open-question-for-am-resolved" title="Link to this heading">#</a></h2>
+<p>Both, in the end. κ is <strong>calibrated to FIM’s figure</strong> (0.55) rather than
+asserted, and it is still a dial the Hands-On makes students turn. The earlier
+worry that “a few hundred million” was the robust answer turned out to be wrong
+in the other direction — it was an artefact of the units bug.</p>
 </section>
 </section>
 
@@ -795,7 +876,12 @@ sensitivity visible and it is one more argument to <code class="docutils literal
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#built-what-changed-from-this-plan">Built — what changed from this plan</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-question-for-am">Open question for AM</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recalibrated-2026-08-28-after-am">Recalibrated 2026-08-28 after AM</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checking-against-fim-caught-a-real-error">Checking against FIM caught a real error</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-numbers-became">What the numbers became</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-question-for-am-resolved">Open question for AM — resolved</a></li>
 </ul>
   </nav></div>
 

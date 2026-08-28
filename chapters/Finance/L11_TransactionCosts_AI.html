@@ -505,7 +505,8 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-one-trade-costs">13.5. 2 · What one trade costs <a id="cost"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-square-root-comes-from">13.5.1. Where the square root comes from</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#does-it-fit">13.5.1. Does it fit?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-we-will-use">13.5.2. The model we will use</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#absorption-capacity">13.6. 3 · Absorption capacity <a id="absorb"></a></a><ul class="nav section-nav flex-column">
@@ -513,7 +514,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-left">13.7. 🔄 4 · What is left <a id="net"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum-is-a-236-million-strategy">13.7.1. Momentum is a $236 million strategy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum-is-a-13-billion-strategy">13.7.1. Momentum is a $13 billion strategy</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#making-it-cheaper">13.8. 5 · Making it cheaper <a id="cheaper"></a></a><ul class="nav section-nav flex-column">
@@ -690,40 +691,74 @@ for years, so most of what looks like a weight change <em>is</em> drift.</p>
 \[\text{cost} = \underbrace{\text{spread}}_{\text{crossing the bid-ask}}
 + \underbrace{\text{temporary impact}}_{\text{your own pressure, which decays}}
 + \underbrace{\text{permanent impact}}_{\text{what your trade revealed}}\]</div>
-<p>For an institutional order <strong>temporary impact dominates</strong>, and it is the only one
-we model. You are pushing the price against yourself while you execute, and the
-more of the available liquidity you demand, the harder you push.</p>
-<p>The standard model is the <strong>square-root law</strong>:</p>
+<p>Here is what that looks like for one real order. The price drifts up while you
+buy, peaks when you finish, then falls part of the way back — the part that comes
+back was temporary, the part that stays is permanent.</p>
+<p><img alt="Anatomy of a trade" src="https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/plots/marketimpact2.jpg" /></p>
+<p>Two things should drive the size of that move, and neither needs a model.</p>
+<p><strong>Participation rate.</strong> Liquidity is a finite resource that refills over time. If
+you buy 1% of a day’s volume you are noise inside everyone else’s trading. If you
+buy 50% of it, you <em>are</em> the market that day — the natural sellers ran out and
+you are paying progressively worse prices to induce reluctant ones. The relevant
+quantity is not how many dollars you trade, it is <strong>how many relative to how many
+are already trading</strong>: <span class="math notranslate nohighlight">\(Q/V\)</span>.</p>
+<p><strong>Volatility.</strong> Whoever takes the other side has to hold your position until they
+can offload it, and in a volatile stock that inventory is more dangerous, so they
+charge more for holding it. There is a second reason, and it is Lecture 9’s
+adverse selection in its original habitat: <strong>the counterparty does not know
+whether you know something.</strong> The more the price could move, the more that
+possibility costs them, and the wider they quote. Volatile stocks are expensive
+to trade for both reasons at once.</p>
+<p>So cost should rise in <span class="math notranslate nohighlight">\(Q/V\)</span> and in <span class="math notranslate nohighlight">\(\sigma\)</span>. That is as far as reasoning gets
+you. The shape is an empirical question.</p>
+<section id="does-it-fit">
+<h3><span class="section-number">13.5.1. </span>Does it fit?<a class="headerlink" href="#does-it-fit" title="Link to this heading">#</a></h3>
+<p>This is the part that matters. The figure below is from <strong>Frazzini, Israel and
+Moskowitz, “Trading Costs of Asset Pricing Anomalies”</strong> — realised market impact
+on roughly <strong>$1.7 trillion of live trades</strong> executed by AQR, plotted against the
+fraction of daily volume the order represented.</p>
+<p><img alt="Market impact" src="https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/plots/marketimpact.jpg" /></p>
+<p>Read three things off it.</p>
+<p><strong>It is concave, and close to a square root.</strong> Fitting
+<span class="math notranslate nohighlight">\(c \approx a + b\sqrt{Q/V}\)</span> to the middle curve gives about
+<strong>9bp + 144bp × √(participation)</strong>, which tracks the data across the whole range.
+Doubling your participation does not double your cost — it multiplies it by
+about 1.4.</p>
+<p><strong>The level is low.</strong> At 10% of daily volume the impact is around <strong>50 basis
+points</strong>. That is far below what the academic literature assumed for years, and
+it is the paper’s main point: studies that priced anomalies using quoted spreads
+from public data overstated real execution costs by roughly an order of
+magnitude. Whether a strategy survives costs is an empirical question, and the
+answer came out friendlier than the theory suggested.</p>
+<p><strong>It moves.</strong> Costs fell between 2004–07 and 2010–13 as markets got more liquid,
+and roughly doubled in 2008–09. Liquidity is not a constant of nature; it is
+scarcest exactly when you most want to trade.</p>
+</section>
+<section id="the-model-we-will-use">
+<h3><span class="section-number">13.5.2. </span>The model we will use<a class="headerlink" href="#the-model-we-will-use" title="Link to this heading">#</a></h3>
 <div class="math notranslate nohighlight">
-\[c \;\approx\; \kappa\,\sigma\,\sqrt{Q/V}\]</div>
-<p>where <span class="math notranslate nohighlight">\(Q\)</span> is what you trade, <span class="math notranslate nohighlight">\(V\)</span> is what everyone trades in the same window,
-<span class="math notranslate nohighlight">\(\sigma\)</span> is the stock’s volatility, and <span class="math notranslate nohighlight">\(\kappa\)</span> is a constant near one. <span class="math notranslate nohighlight">\(Q/V\)</span> is
-the <strong>participation rate</strong>.</p>
-<section id="where-the-square-root-comes-from">
-<h3><span class="section-number">13.5.1. </span>Where the square root comes from<a class="headerlink" href="#where-the-square-root-comes-from" title="Link to this heading">#</a></h3>
-<p>You can get the exponent without any finance at all — from units.</p>
-<p>The cost <span class="math notranslate nohighlight">\(c\)</span> is a fraction, so it is <strong>dimensionless</strong>. Three things can matter:
-<span class="math notranslate nohighlight">\(Q\)</span> and <span class="math notranslate nohighlight">\(V\)</span>, both in dollars, and <span class="math notranslate nohighlight">\(\sigma\)</span>, which is a volatility and therefore
-carries units of <span class="math notranslate nohighlight">\(1/\sqrt{\text{time}}\)</span>. Write the cost as a product of powers:</p>
-<div class="math notranslate nohighlight">
-\[[\,\text{dimensionless}\,] = [\text{currency}]^{a}\,[\text{currency}]^{b}\,
-\left[\tfrac{1}{\sqrt{\text{time}}}\right]^{c}\]</div>
-<p>Currency must cancel, so <span class="math notranslate nohighlight">\(a + b = 0\)</span>. Time must cancel, and <span class="math notranslate nohighlight">\(\sigma\)</span> is the only
-term carrying it, so <span class="math notranslate nohighlight">\(c\)</span> pairs with the currency exponent: <span class="math notranslate nohighlight">\(-a - c/2 = 0\)</span>. Set
-<span class="math notranslate nohighlight">\(a = -\tfrac12\)</span> and everything follows — <span class="math notranslate nohighlight">\(b = \tfrac12\)</span>, <span class="math notranslate nohighlight">\(c = 1\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[c \;\propto\; V^{-1/2}\,Q^{1/2}\,\sigma \;=\; \sigma\sqrt{Q/V}\]</div>
-<p><strong>The exponent is one half because volatility scales with the square root of
-time.</strong> No data, no regression, no model of the order book.</p>
+\[c_i \;=\; \underbrace{\tfrac{1}{2}\,\text{spread}}_{20\text{bp}}
+\;+\; \kappa\,\sigma_i^{\text{daily}}\sqrt{Q_i/V_i},
+\qquad \kappa = 0.55\]</div>
+<p>κ is set so the second term reproduces the slope of that figure at typical
+volatility. Two warnings, both of which matter:</p>
 <blockquote>
-<div><p><strong>📌 Cost per dollar rises with the square root of size. Total cost rises with
-the three-halves power.</strong></p>
-<p>Double the fund and each dollar costs 1.41× as much, so the bill is 2.83× as
-large. That convexity is the whole of the next two sections.</p>
+<div><p><strong>⚠️ σ must be measured over the horizon you execute over.</strong> Spread a month’s
+trade over the month and each day you are trading a day’s worth against a day’s
+volume, so the relevant volatility is <em>daily</em> — monthly volatility is √21 ≈ 4.6
+times too big. <strong>My first version of this notebook made exactly that mistake
+and overcharged by a factor of eight.</strong> It is an easy error because the formula
+does not carry its units with it.</p>
+</div></blockquote>
+<blockquote>
+<div><p><strong>⚠️ This is calibrated on 2004–2013 large-cap institutional flow, and our
+sample is 1980–2000.</strong> Spreads then were quoted in eighths, and the small stocks
+in our universe were far worse than AQR’s. Every cost below is an
+<strong>underestimate</strong> for the period. Treat the shape as reliable and the level as
+optimistic.</p>
 </div></blockquote>
 </section>
 </section>
-<hr class="docutils" />
 <section id="absorption-capacity">
 <h2><span class="section-number">13.6. </span>3 · Absorption capacity <a id="absorb"></a><a class="headerlink" href="#absorption-capacity" title="Link to this heading">#</a></h2>
 <p>The practical diagnostic, and it is one division:</p>
@@ -732,35 +767,36 @@ large. That convexity is the whole of the next two sections.</p>
 <p>Below a few percent you transact near the posted price. As it approaches one you
 are the market, and the price goes where you push it.</p>
 <p>Here is that number for momentum, every stock, every month, for a fund running
-<strong>$250 million</strong> on the long side.</p>
+<strong>$10 billion</strong> on the long side — roughly the size §4 will show it can bear.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 How much of the market would you be?</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 How much of the market would you be, at $10bn?</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">UV</span><span class="p">[</span><span class="s1">'used_volume'</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.50</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">]:</span>
+<span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.50</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">q</span><span class="si">:</span><span class="s2">&gt;6.1%</span><span class="si">}</span><span class="s2"> of trades   </span><span class="si">{</span><span class="n">u</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;9.1%</span><span class="si">}</span><span class="s2"> of the stock's monthly volume"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  worst single trade: </span><span class="si">{</span><span class="n">u</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">,.0%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  trades needing MORE than the entire month's volume: </span><span class="si">{</span><span class="p">(</span><span class="n">u</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  trades needing MORE than the entire month's volume: </span><span class="si">{</span><span class="p">(</span><span class="n">u</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ... and at $1bn instead:  </span><span class="si">{</span><span class="p">(</span><span class="n">u</span><span class="o">/</span><span class="mi">10</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <section id="the-median-is-fine-the-tail-is-not">
 <h3><span class="section-number">13.6.1. </span>The median is fine. The tail is not.<a class="headerlink" href="#the-median-is-fine-the-tail-is-not" title="Link to this heading">#</a></h3>
-<p>Half of all trades use less than <strong>0.4%</strong> of a stock’s monthly volume — invisible.
-The 95th percentile is 21%, which is large but executable over a few days.</p>
-<p>Then it falls apart. <strong>1.13% of the trades this strategy wants to make would
-require more than the stock’s entire monthly volume</strong>, and the worst wants six
-thousand times it. Those trades do not get executed at a bad price. They do not
-get executed.</p>
+<p>At $10bn the median trade takes <strong>16%</strong> of a stock’s monthly volume — large, but
+executable if you spread it out. The 95th percentile is <strong>846%</strong>: eight months of
+the stock’s entire trading, for one position.</p>
+<p><strong>Almost a quarter of the trades this strategy wants to make would need more than
+the whole month’s volume.</strong> Those do not execute at a bad price — they do not
+execute. Drop to $1bn and it falls to 4%, which is the same fact from the other
+side: capacity is exactly the size at which the tail stops being ignorable.</p>
 <blockquote>
 <div><p><strong>⚠️ Capacity is set by the weakest link, not the average.</strong></p>
 <p>A portfolio is only as tradeable as its hardest position. Reporting the median
 participation rate of a strategy is like reporting the average depth of a river
 you are about to walk across.</p>
 </div></blockquote>
-<p>That 1.13% is small enough to look ignorable and is exactly where the money goes,
-which is the subject of §5.</p>
+<p>The average cost is set by the whole distribution, but whether the strategy is
+<em>runnable</em> is set by its tail — which is the subject of §5.</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -770,12 +806,12 @@ which is the subject of §5.</p>
 trade costs, so we can run the backtest again with the bill included.</p>
 <blockquote>
 <div><p><strong>🤔 Predict first.</strong> Momentum’s gross Sharpe ratio is 1.00. Write down the
-fund size at which you think it goes to zero.</p>
+fund size at which you think it goes to zero. Most people guess low.</p>
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 The same strategy, at seven fund sizes</span>
-<span class="n">AUMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">]</span>
+<span class="n">AUMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">25000</span><span class="p">,</span> <span class="mi">50000</span><span class="p">,</span> <span class="mi">100000</span><span class="p">]</span>
 <span class="n">rows</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">A</span> <span class="ow">in</span> <span class="n">AUMS</span><span class="p">:</span>
     <span class="n">net</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">mom_gross</span> <span class="o">-</span> <span class="n">D</span><span class="p">[</span><span class="sa">f</span><span class="s1">'cost_</span><span class="si">{</span><span class="n">A</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -785,8 +821,10 @@ fund size at which you think it goes to zero.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  gross:  </span><span class="si">{</span><span class="n">D</span><span class="o">.</span><span class="n">mom_gross</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">mom_gross</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">formatters</span><span class="o">=</span><span class="p">{</span><span class="s1">'cost/yr'</span><span class="p">:</span><span class="s1">'</span><span class="si">{:.1%}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="s1">'net/yr'</span><span class="p">:</span><span class="s1">'</span><span class="si">{:+.1%}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
                               <span class="s1">'net Sharpe'</span><span class="p">:</span><span class="s1">'</span><span class="si">{:+.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">}))</span>
-<span class="n">c100</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">cost_100</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  break-even fund size: $</span><span class="si">{</span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">mom_gross</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="n">c100</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">m"</span><span class="p">)</span>
+<span class="n">au</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'_'</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">D</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'cost_'</span><span class="p">))</span>
+<span class="n">cy</span> <span class="o">=</span> <span class="p">[</span><span class="n">D</span><span class="p">[</span><span class="sa">f</span><span class="s1">'cost_</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">au</span><span class="p">]</span>
+<span class="n">be</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">mom_gross</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="n">cy</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">au</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  break-even fund size: $</span><span class="si">{</span><span class="n">be</span><span class="o">/</span><span class="mi">1000</span><span class="si">:</span><span class="s2">,.1f</span><span class="si">}</span><span class="s2">bn"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -794,8 +832,7 @@ fund size at which you think it goes to zero.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Sharpe ratio against fund size</span>
-<span class="n">grid</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">2500</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">]</span>
-<span class="n">have</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">grid</span> <span class="k">if</span> <span class="sa">f</span><span class="s1">'cost_</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s1">'</span> <span class="ow">in</span> <span class="n">D</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<span class="n">have</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'_'</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">D</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'cost_'</span><span class="p">))</span>
 <span class="n">srs</span>  <span class="o">=</span> <span class="p">[</span><span class="n">sharpe</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">mom_gross</span> <span class="o">-</span> <span class="n">D</span><span class="p">[</span><span class="sa">f</span><span class="s1">'cost_</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">have</span><span class="p">]</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
@@ -812,10 +849,11 @@ fund size at which you think it goes to zero.</p>
 </div>
 </div>
 </div>
-<section id="momentum-is-a-236-million-strategy">
-<h3><span class="section-number">13.7.1. </span>Momentum is a $236 million strategy<a class="headerlink" href="#momentum-is-a-236-million-strategy" title="Link to this heading">#</a></h3>
-<p>Not a good strategy or a bad one — **a <span class="math notranslate nohighlight">\(236 million one.** At \)</span>50m it earns 10.6%
-a year net and a Sharpe of 0.54. At $1bn it loses 20% a year.</p>
+<section id="momentum-is-a-13-billion-strategy">
+<h3><span class="section-number">13.7.1. </span>Momentum is a $13 billion strategy<a class="headerlink" href="#momentum-is-a-13-billion-strategy" title="Link to this heading">#</a></h3>
+<p>Not a good strategy or a bad one — **a <span class="math notranslate nohighlight">\(13 billion one.** At \)</span>1bn it earns 12.8%
+a year net with a Sharpe of 0.65, which is a real business. At $25bn it loses
+money.</p>
 <p>Nothing about the signal changed. The alpha is identical in every row of that
 table. What changed is how much of it you tried to collect.</p>
 <blockquote>
@@ -828,11 +866,11 @@ said that a premium which is other people’s risk becomes yours as you scale. H
 is the mechanism: <strong>the market charges you for the privilege of taking the
 position, and the charge grows faster than the position.</strong></p>
 <blockquote>
-<div><p><strong>⚠️ One dial to be honest about.</strong> We set <span class="math notranslate nohighlight">\(\kappa = 1\)</span>, the aggressive end of
-the published range, on 1980–2000 volumes that are far below today’s. Move
-<span class="math notranslate nohighlight">\(\kappa\)</span> and the break-even moves with its square — <span class="math notranslate nohighlight">\(\kappa = 0.5\)</span> gives four
-times the capacity. The order of magnitude is the finding; the third digit is
-not. The Hands-On makes you turn the dial.</p>
+<div><p><strong>⚠️ The dial.</strong> Capacity moves with <span class="math notranslate nohighlight">\(1/\kappa^2\)</span>, so halving κ quadruples it.
+Our κ comes from AQR’s post-2004 large-cap flow and our sample is 1980–2000,
+when spreads were quoted in eighths — so <strong>$13bn is generous for this period</strong>
+and the honest claim is “ten billion, not one and not a hundred”. The Hands-On
+makes you turn the dial and see how much it matters.</p>
 </div></blockquote>
 </section>
 </section>
@@ -855,20 +893,20 @@ of available liquidity.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Does volume-weighting help?</span>
-<span class="k">for</span> <span class="n">lab</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">tn</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">'wish: value-weighted'</span><span class="p">,</span> <span class="s1">'mom_gross'</span><span class="p">,</span> <span class="s1">'cost_250'</span><span class="p">,</span> <span class="s1">'turn_mom'</span><span class="p">),</span>
-                      <span class="p">(</span><span class="s1">'volume-weighted'</span><span class="p">,</span>      <span class="s1">'vw_gross'</span><span class="p">,</span>  <span class="s1">'vwcost_250'</span><span class="p">,</span> <span class="s1">'turn_vw'</span><span class="p">)]:</span>
+<span class="k">for</span> <span class="n">lab</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">tn</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">'wish: value-weighted'</span><span class="p">,</span> <span class="s1">'mom_gross'</span><span class="p">,</span> <span class="s1">'cost_1000'</span><span class="p">,</span> <span class="s1">'turn_mom'</span><span class="p">),</span>
+                      <span class="p">(</span><span class="s1">'volume-weighted'</span><span class="p">,</span>      <span class="s1">'vw_gross'</span><span class="p">,</span>  <span class="s1">'vwcost_1000'</span><span class="p">,</span> <span class="s1">'turn_vw'</span><span class="p">)]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">lab</span><span class="si">:</span><span class="s2">24s</span><span class="si">}</span><span class="s2"> gross </span><span class="si">{</span><span class="n">D</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+6.1%</span><span class="si">}</span><span class="s2">   turnover </span><span class="si">{</span><span class="n">D</span><span class="p">[</span><span class="n">tn</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">5.1%</span><span class="si">}</span><span class="s2">/mo   "</span>
-          <span class="sa">f</span><span class="s2">"cost@$250m </span><span class="si">{</span><span class="n">D</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">5.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+          <span class="sa">f</span><span class="s2">"cost@$1bn </span><span class="si">{</span><span class="n">D</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">5.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <section id="it-does-not-and-the-reason-is-worth-having">
 <h3><span class="section-number">13.8.1. </span>It does not — and the reason is worth having<a class="headerlink" href="#it-does-not-and-the-reason-is-worth-having" title="Link to this heading">#</a></h3>
-<p>Volume-weighting does fix the tail: the worst position drops from 1,406% of
-monthly volume to 100%. But <strong>turnover jumps from 68% to 82% a month</strong>, because
-volume is noisier than market cap and the weights chase it. Total cost goes <em>up</em>,
-from 20.1% to 26.2%.</p>
+<p>Volume-weighting does fix the tail — it spreads the trade across names in
+proportion to what each can absorb. But <strong>turnover jumps from 68% to 82% a
+month</strong>, because volume is noisier than market cap and the weights chase it.
+Total cost goes <em>up</em>, from 6.7% to 9.0% at $1bn.</p>
 <p>You solved the problem you were looking at and made the bill larger.</p>
 <p>The alternative is blunter and works: <strong>do not hold the stocks you cannot trade.</strong>
 Drop the least liquid 40% of the universe before sorting, and accept whatever
@@ -881,7 +919,7 @@ that does to the signal.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  alpha      </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr   (t = </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">tvalues</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  beta       </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  resid vol  </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">/yr        R-squared </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">A</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]:</span>
+<span class="k">for</span> <span class="n">A</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">25000</span><span class="p">]:</span>
     <span class="n">nw</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">mom_gross</span> <span class="o">-</span> <span class="n">D</span><span class="p">[</span><span class="sa">f</span><span class="s1">'cost_</span><span class="si">{</span><span class="n">A</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">scr_gross</span> <span class="o">-</span> <span class="n">D</span><span class="p">[</span><span class="sa">f</span><span class="s1">'scrcost_</span><span class="si">{</span><span class="n">A</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">win</span> <span class="o">=</span> <span class="s1">'screen'</span> <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">nw</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">else</span> <span class="s1">'wish'</span>
@@ -907,10 +945,11 @@ one of the three you cannot engineer away.</p></li>
 conflates all three.</strong> It mixes a β you could fix in one line with noise you
 could diversify and a genuine expected loss. Separate them before you decide.</p>
 </div></blockquote>
-<p>And the decision depends on size. **Below about <span class="math notranslate nohighlight">\(100m the screen is not worth
-it** — you are paying 2.1% of alpha to solve a problem you do not have. Above it,
-the cost saving grows with \)</span>\sqrt{\text{AUM}}<span class="math notranslate nohighlight">\( while the alpha loss stays fixed,
-and by \)</span>1bn the screen is worth 4 points a year.</p>
+<p>And the decision depends on size. **At <span class="math notranslate nohighlight">\(1bn the screen is not worth it** — you
+pay 2.1% of alpha to solve a problem you do not yet have. It breaks even around
+\)</span>5bn, and above that the cost saving keeps growing while the alpha loss stays
+fixed: by $25bn the screen is worth about 2 points a year, and the difference
+between a Sharpe of −0.32 and −0.21.</p>
 <p><strong>The right portfolio is a function of how much money you run.</strong> Same signal,
 same data, different correct answer.</p>
 </section>
@@ -993,8 +1032,9 @@ turnover? Write down a guess before you compute it.</p>
 <section id="compare-with-the-room">
 <h3><span class="section-number">13.10.1. </span>Compare with the room<a class="headerlink" href="#compare-with-the-room" title="Link to this heading">#</a></h3>
 <ul class="simple">
-<li><p><strong>Where did you land?</strong> Under <span class="math notranslate nohighlight">\(100m and your strategy is a personal account,
-not a business. Over \)</span>5bn and you should suspect your turnover calculation.</p></li>
+<li><p><strong>Where did you land?</strong> Under <span class="math notranslate nohighlight">\(1bn and your signal is niche — fine for a small
+fund, not for an allocator. Over \)</span>100bn and you should suspect your turnover
+calculation.</p></li>
 <li><p><strong>How much did κ move it?</strong> It enters squared, so halving κ quadruples the
 capacity. If your answer changes by more than that, something else is wrong.</p></li>
 <li><p><strong>Would the liquidity screen help you?</strong> Only if your capacity is binding.
@@ -1036,12 +1076,12 @@ turnovers.</p>
 </section>
 <section id="q2-what-patience-is-worth">
 <h3><span class="section-number">13.11.2. </span>Q2 — What patience is worth<a class="headerlink" href="#q2-what-patience-is-worth" title="Link to this heading">#</a></h3>
-<p>A momentum manager at $1bn could trade half as often — rebalancing every two
+<p>A momentum manager at $10bn could trade half as often — rebalancing every two
 months instead of every month. That halves turnover and therefore halves cost,
 but it means implementing with an average delay of about one month.</p>
-<p>Using the <code class="docutils literal notranslate"><span class="pre">DEC</span></code> table for the return cost of a one-month lag and <code class="docutils literal notranslate"><span class="pre">cost_1000</span></code> for
+<p>Using the <code class="docutils literal notranslate"><span class="pre">DEC</span></code> table for the return cost of a one-month lag and <code class="docutils literal notranslate"><span class="pre">cost_10000</span></code> for
 the saving, report the <strong>net annual return</strong> of the patient momentum strategy at
-$1bn, as a decimal.</p>
+$10bn, as a decimal.</p>
 <blockquote>
 <div><p><strong>📌 Required variable names:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">patient_net</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># net annual return, decimal (-0.05 means -5%)</span>
@@ -1055,7 +1095,7 @@ $1bn, as a decimal.</p>
 
 <span class="n">patient_net</span> <span class="o">=</span> <span class="n">____</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"patient momentum at $1bn: </span><span class="si">{</span><span class="n">patient_net</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"patient momentum at $10bn: </span><span class="si">{</span><span class="n">patient_net</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1065,7 +1105,7 @@ $1bn, as a decimal.</p>
 <h3><span class="section-number">13.11.3. </span>Q3 — The screen at your size<a class="headerlink" href="#q3-the-screen-at-your-size" title="Link to this heading">#</a></h3>
 <p>Find the fund size at which the liquidity-screened portfolio’s <strong>net Sharpe
 ratio</strong> first exceeds the wish portfolio’s. Search over
-<code class="docutils literal notranslate"><span class="pre">[50,</span> <span class="pre">100,</span> <span class="pre">250,</span> <span class="pre">500,</span> <span class="pre">1000,</span> <span class="pre">2500,</span> <span class="pre">5000]</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">[100,</span> <span class="pre">500,</span> <span class="pre">1000,</span> <span class="pre">5000,</span> <span class="pre">10000,</span> <span class="pre">25000]</span></code>.</p>
 <blockquote>
 <div><p><strong>📌 Required variable names:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">screen_wins_at</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># smallest AUM in the list where the screen wins, $ millions</span>
@@ -1089,7 +1129,7 @@ ratio</strong> first exceeds the wish portfolio’s. Search over
 <h3><span class="section-number">13.11.4. </span>Q4 — The memo<a class="headerlink" href="#q4-the-memo" title="Link to this heading">#</a></h3>
 <blockquote>
 <div><p><strong>📝 Your task — maximum eight sentences.</strong></p>
-<p>You are pitching momentum to an allocator who wants to put <strong>$2 billion</strong> into
+<p>You are pitching momentum to an allocator who wants to put <strong>$40 billion</strong> into
 it. Tell them what happens.</p>
 <p>Give the net return and Sharpe ratio at that size, and say what you would have
 to change about the strategy to make $2bn workable — and what that change
@@ -1151,22 +1191,26 @@ if you had to put one.</p>
 <li><p><strong>Turnover is what you replace, not what you hold</strong> — and returns do part of
 the trading for you. Ignoring drift costs 4% on momentum and 36% on value.</p></li>
 <li><p><strong>Momentum turns over 819% a year.</strong> Value turns over 146%.</p></li>
-<li><p><strong>Cost per dollar goes as √size, so the bill goes as size^(3/2).</strong> The
-exponent comes from units alone: volatility carries 1/√time and nothing else
-can cancel it.</p></li>
-<li><p><strong>Capacity is set by the weakest link.</strong> Half of momentum’s trades are
-invisible; 1.13% of them need more than the stock’s entire monthly volume.</p></li>
-<li><p>**Momentum is a <span class="math notranslate nohighlight">\(236 million strategy** — 10.6% a year net at \)</span>50m, −20% at
-$1bn. Same alpha in every row.</p></li>
+<li><p><strong>Cost rises with participation and with volatility</strong> — the first because
+liquidity is finite, the second because whoever takes the other side bears
+inventory risk and cannot tell whether you know something.</p></li>
+<li><p><strong>The shape is a square root, and that is an empirical fact, not a theorem.</strong>
+$1.7 trillion of live AQR trades: about 9bp + 144bp·√(participation), and the
+level is roughly a tenth of what proxy-based academic estimates assumed.</p></li>
+<li><p>**Momentum is a <span class="math notranslate nohighlight">\(13 billion strategy** — 12.8% a year net at \)</span>1bn, negative by
+$25bn. Same alpha in every row.</p></li>
 <li><p><strong>“Does this work?” is a function, not a number</strong>, and its argument is your
 size. Every backtest before today evaluated it at zero.</p></li>
 <li><p><strong>Volume-weighting fixes the tail and raises the bill</strong> — turnover 68% → 82%.
-The blunt screen is better.</p></li>
+The blunt screen is better, and only above $10bn.</p></li>
 <li><p><strong>β is free, σ(ε) is noise, α is the cost.</strong> One tracking-error number hides
 all three.</p></li>
 <li><p><strong>A signal that decays fast cannot be traded slowly</strong>, so it cannot use the
-one tool that makes turnover affordable. That is a second, independent reason
-momentum’s capacity is small.</p></li>
+one tool that makes turnover affordable. Value’s capacity is four times
+momentum’s on a third of the gross return.</p></li>
+<li><p><strong>Volatility has to be measured over the horizon you execute over.</strong> Using
+monthly volatility for a trade spread across a month overstates the cost by
+√21 — a units error the formula will not catch for you.</p></li>
 </ol>
 <hr class="docutils" />
 <section id="next-class">
@@ -1273,7 +1317,8 @@ into a forced exit.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-one-trade-costs">13.5. 2 · What one trade costs <a id="cost"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-square-root-comes-from">13.5.1. Where the square root comes from</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#does-it-fit">13.5.1. Does it fit?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-we-will-use">13.5.2. The model we will use</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#absorption-capacity">13.6. 3 · Absorption capacity <a id="absorb"></a></a><ul class="nav section-nav flex-column">
@@ -1281,7 +1326,7 @@ into a forced exit.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-left">13.7. 🔄 4 · What is left <a id="net"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum-is-a-236-million-strategy">13.7.1. Momentum is a $236 million strategy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum-is-a-13-billion-strategy">13.7.1. Momentum is a $13 billion strategy</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#making-it-cheaper">13.8. 5 · Making it cheaper <a id="cheaper"></a></a><ul class="nav section-nav flex-column">
