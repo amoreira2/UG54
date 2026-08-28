@@ -24,14 +24,13 @@ md("""
 
 1. [Where signals come from](#where)
 2. [The claim](#claim)
-3. [🔄 Build it from raw returns](#build)
-4. [🎯 Prompt it: compute 12-month momentum](#prompt)
-5. [The decision tree, priced](#tree)
-6. [Stocks or industries?](#ind)
-7. [Crashes](#crash)
-8. [🛠️ Hands-On: your signal's decision tree](#ho1)
-9. [🎯 Challenge: the other end of the horizon](#challenge) — *homework*
-10. [Key takeaways](#takeaways)
+3. [🔄 Build it from the paper](#build) — *🎯 prompt it*
+4. [The decision tree, priced](#tree)
+5. [Within industries, or across them?](#ind) — *🎯 prompt it*
+6. [Crashes](#crash)
+7. [🛠️ Hands-On: your signal's decision tree](#ho1)
+8. [🎯 Challenge: the other end of the horizon](#challenge) — *homework*
+9. [Key takeaways](#takeaways)
 """)
 
 md("""
@@ -120,17 +119,6 @@ risen.
 **Same kind of bet, different windows, opposite directions.** Which window is
 right is an empirical question, and by the end of today you will have the answer
 for every window between one month and five years.
-
-Here is the construction everybody quotes, from Daniel and Moskowitz:
-
-> *"To form the momentum portfolios, we first rank stocks based on their
-> cumulative returns from 12 months before to one month before the formation date
-> (i.e., the t−12 to t−2 month returns). We use a one month gap between the end
-> of the ranking period and the start of the holding period to avoid the
-> short-term reversals documented by Jegadeesh (1990) and Lehmann (1990)."*
-
-Every clause in that sentence is a decision. We are going to take them one at a
-time and find out what each is worth.
 """)
 
 # ── §3 build from the paper
@@ -140,7 +128,7 @@ md("""
 ## 🔄 3 · Build it from the paper <a id="build"></a>
 
 Zero to one hundred, and we start where you would actually start: with what the
-authors wrote. Here is Daniel and Moskowitz describing their construction.
+authors wrote. Here is Daniel and Moskowitz on how they build it.
 
 > *"To form the momentum portfolios, we first rank stocks based on their
 > cumulative returns from 12 months before to one month before the formation
@@ -153,15 +141,15 @@ authors wrote. Here is Daniel and Moskowitz describing their construction.
 That paragraph is the entire specification. Build it.
 
 <details>
-<summary><b>Stuck? The recipe in words</b> — but try the prompt first</summary>
+<summary><b>Stuck? The questions you have to answer</b> — but try the prompt first</summary>
 
 <br>
 
-1. Keep common shares on the three main exchanges — `shrcd` in (10, 11), `exchcd` in (1, 2, 3).
-2. For each stock, compound its returns over a window of months.
-3. Step the window back so the most recent completed month is not in it.
-4. Each month, rank stocks on that signal and cut into ten groups on NYSE breakpoints.
-5. Value-weight inside each group, then take the top group minus the bottom group.
+1. Which securities should we keep?
+2. How should I compound the returns?
+3. Should I lag it?
+4. How do I use the signals to form the portfolios?
+5. How do I weight the stocks in each portfolio?
 
 `panel` has `permno`, `date`, `ret`, `me`, `exchcd`, `shrcd`, and `ret_fwd` — the
 return earned in the month *after* `date`, so tradability is already handled for
@@ -182,6 +170,37 @@ MY_PROMPT = """
 md('''
 > **🤔 Before you run the check.** Write down the Sharpe ratio you expect. The
 > shipped `Mom12m` long-short earns about 20% a year, so you have an anchor.
+
+<details>
+<summary><b>Stuck? Here is the code</b></summary>
+
+```python
+p = panel[panel.shrcd.isin([10, 11]) & panel.exchcd.isin([1, 2, 3])].copy()
+p = p.sort_values(['permno', 'date'])
+p['1+ret'] = p['ret'] + 1
+
+# --- 1 --- compound each stock's returns over 11 months: (1+r)(1+r)...(1+r)
+p['cumret'] = (p.groupby('permno')['1+ret']
+                 .rolling(11, min_periods=11).apply(np.prod, raw=True)
+                 .reset_index(level=0, drop=True))
+
+# --- 2 --- step it back one month: why?
+p['signal'] = p.groupby('permno')['cumret'].shift(1)
+
+# --- 3 --- each month, cut into deciles on NYSE breakpoints (Lecture 3)
+d = p.dropna(subset=['signal', 'ret_fwd', 'me'])
+def deciles(x):
+    edges = np.unique(np.quantile(x.loc[x.exchcd == 1, 'signal'], np.linspace(0, 1, 11)))
+    edges[0], edges[-1] = -np.inf, np.inf
+    return pd.cut(x['signal'], edges, labels=False, duplicates='drop')
+d = d.assign(group=d.groupby('date', group_keys=False).apply(deciles))
+
+# --- 4 --- value-weight inside each decile, then top minus bottom
+dec  = d.groupby(['date', 'group']).apply(lambda x: np.average(x.ret_fwd, weights=x.me)).unstack()
+mine = (dec[9] - dec[0]).dropna()
+mine.index = mine.index + pd.offsets.MonthEnd(1)     # date it by the month EARNED
+```
+</details>
 ''')
 
 co('''
@@ -195,7 +214,7 @@ p['cumret'] = (p.groupby('permno')['1+ret']
                  .rolling(11, min_periods=11).apply(np.prod, raw=True)
                  .reset_index(level=0, drop=True))
 
-# --- 2 --- step it back one month: the clause everyone drops (see below)
+# --- 2 --- step it back one month: why?
 p['signal'] = p.groupby('permno')['cumret'].shift(1)
 
 # --- 3 --- each month, cut into deciles on NYSE breakpoints (Lecture 3)
