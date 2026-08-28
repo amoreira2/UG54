@@ -476,6 +476,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moment">The prompt-it moment</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-answer-key">Challenge answer key</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-shape-revised-2026-08-28-after-am">Code shape — revised 2026-08-28 after AM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
 </ul>
             </nav>
@@ -781,7 +782,7 @@ built by <code class="docutils literal notranslate"><span class="pre">build_indu
 <p>(Union-find over the whole sample collapses to two components, because stocks
 change industry across 20 years. The per-date label is what is wanted anyway.)</p>
 <p><strong>First, the price of the smaller universe.</strong> Same dates, same construction:
-Sharpe <strong>1.09</strong> on all 5,427 stocks against <strong>0.47</strong> on the largest 950.
+Sharpe <strong>0.99</strong> on all 5,427 stocks against <strong>0.42</strong> on the largest 950.
 <em>Momentum is largely a small- and mid-cap phenomenon</em>, which is a finding in its
 own right and the reason every number below is modest. It also sets up L11: the
 place momentum works best is the place it costs most to trade.</p>
@@ -797,16 +798,16 @@ place momentum works best is the place it costs most to trade.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>plain</p></td>
-<td><p>+11.6%</p></td>
-<td><p>0.47</p></td>
-<td><p>+12.1%</p></td>
-<td><p>0.53</p></td>
+<td><p>+8.8%</p></td>
+<td><p>0.42</p></td>
+<td><p>+11.7%</p></td>
+<td><p>0.60</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>industry-neutral</strong> (demean the signal by industry)</p></td>
-<td><p>+6.5%</p></td>
-<td><p>0.42</p></td>
-<td><p>+9.5%</p></td>
-<td><p><strong>0.75</strong></p></td>
+<td><p>+5.6%</p></td>
+<td><p>0.41</p></td>
+<td><p>+9.1%</p></td>
+<td><p><strong>0.83</strong></p></td>
 </tr>
 <tr class="row-even"><td><p>pure within-industry (T3 − T1, averaged)</p></td>
 <td><p>+3.8%</p></td>
@@ -823,8 +824,8 @@ place momentum works best is the place it costs most to trade.</p>
 </tbody>
 </table>
 </div>
-<p><strong>Equal-weighted, neutralising the industry bet makes momentum better: 0.75
-against 0.53.</strong> Value-weighted it does not: 0.42 against 0.47. Both weightings
+<p><strong>Equal-weighted, neutralising the industry bet makes momentum better: 0.83
+against 0.60.</strong> Value-weighted the gain vanishes: 0.41 against 0.42. Both weightings
 are standard, and the answer to “within or across?” flips between them — which is
 this lecture’s own theme landing at the worst possible moment, and should be said
 rather than smoothed over.</p>
@@ -838,16 +839,16 @@ rather than smoothed over.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>within-neutral on across</p></td>
-<td><p><strong>+5.4%/yr</strong></p></td>
-<td><p><strong>2.31</strong></p></td>
+<td><p><strong>+6.1%/yr</strong></p></td>
+<td><p><strong>2.77</strong></p></td>
 </tr>
 <tr class="row-odd"><td><p>across on within-neutral</p></td>
-<td><p>+1.2%/yr</p></td>
-<td><p>0.40</p></td>
+<td><p>+1.5%/yr</p></td>
+<td><p>0.48</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>plain on within-neutral</strong></p></td>
-<td><p><strong>−2.5%/yr</strong></p></td>
-<td><p>−0.85</p></td>
+<td><p><strong>−1.2%/yr</strong></p></td>
+<td><p>−0.41</p></td>
 </tr>
 </tbody>
 </table>
@@ -957,12 +958,40 @@ against −0.39 at one year.</p>
 <p>Target <strong>1,700 lectured words</strong>. §3 and §4 are the lecture; §0 is a table and two
 sentences, §5 is short and mostly a plot.</p>
 </section>
+<section id="code-shape-revised-2026-08-28-after-am">
+<h2>Code shape — revised 2026-08-28 after AM<a class="headerlink" href="#code-shape-revised-2026-08-28-after-am" title="Link to this heading">#</a></h2>
+<p>The first build computed momentum as
+<code class="docutils literal notranslate"><span class="pre">np.expm1(groupby.transform(lambda</span> <span class="pre">s:</span> <span class="pre">s.rolling(11).sum().shift(1)))</span></code> on log
+returns, and read §4’s grid from a cached parquet. <strong>Both were wrong choices</strong>,
+and the old <code class="docutils literal notranslate"><span class="pre">Momentum.ipynb</span></code> had it right:</p>
+<ul class="simple">
+<li><p><strong>Rolling product of <code class="docutils literal notranslate"><span class="pre">(1+r)</span></code>, not a sum of logs.</strong> The product <em>is</em> the formula
+in the markdown. The log detour is a numerical trick students must decode
+first, and it forces a <code class="docutils literal notranslate"><span class="pre">.clip(lower=-0.9999)</span></code> guard that exists only because
+<code class="docutils literal notranslate"><span class="pre">log(0)</span></code> blows up on the 15 delisting months. A product handles them correctly
+with no guard.</p></li>
+<li><p><strong>Named intermediate columns</strong>, one idea per line — <code class="docutils literal notranslate"><span class="pre">cumret</span></code>, then <code class="docutils literal notranslate"><span class="pre">signal</span></code> —
+instead of four operations nested in one expression.</p></li>
+<li><p><strong>The skip as its own visible step</strong>: <code class="docutils literal notranslate"><span class="pre">groupby('permno')['cumret'].shift(skip)</span></code>.</p></li>
+<li><p><strong>Two functions, and the signature is the decision tree.</strong>
+<code class="docutils literal notranslate"><span class="pre">sort_portfolios(df,</span> <span class="pre">signal,</span> <span class="pre">ngroups,</span> <span class="pre">weights,</span> <span class="pre">breakpoints)</span></code> is Lecture 3’s
+recipe and works on any signal — including the student’s own in the Hands-On.
+<code class="docutils literal notranslate"><span class="pre">momentum(df,</span> <span class="pre">lookback,</span> <span class="pre">skip,</span> <span class="pre">**kwargs)</span></code> builds the signal and calls it.</p></li>
+</ul>
+<p>§4 is now <strong>live</strong>, not cached: every number comes from calling <code class="docutils literal notranslate"><span class="pre">momentum()</span></code> in a
+loop. 1.7 s per call, so the lookback sweep is ~16 s, the skip sweep ~8 s, and the
+variant table ~12 s. Worth the wait, because changing an argument <em>is</em> the
+experiment. <code class="docutils literal notranslate"><span class="pre">momentum_grid.parquet</span></code> and its build script are deleted.</p>
+<p>Parameter semantics, documented in the docstring: <code class="docutils literal notranslate"><span class="pre">lookback=11,</span> <span class="pre">skip=1</span></code> spans
+t−12 to t−2 counting from the month whose return you earn. Verified to correlate
+<strong>1.000000</strong> with the previous log-based construction.</p>
+</section>
 <section id="data">
 <h2>Data<a class="headerlink" href="#data" title="Link to this heading">#</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">assets/data/momentum_grid.parquet</span></code> — 22 series, 25 KB: the ten lookbacks, the
-five skips, the seven construction variants, and industry momentum. Built by
-<code class="docutils literal notranslate"><span class="pre">build_momentum_grid.py</span></code>. The notebook rebuilds momentum once from the raw panel
-so students see it happen, then uses the cache for the grid.</p>
+<p><code class="docutils literal notranslate"><span class="pre">assets/data/industry_labels.parquet</span></code> (48 industries × ~950 stocks/month) and
+<code class="docutils literal notranslate"><span class="pre">assets/data/momentum_industry.parquet</span></code> (the four §5b treatments, both
+weightings, built with the same rolling-product construction the notebook
+teaches). Built by <code class="docutils literal notranslate"><span class="pre">build_industry_labels.py</span></code> and <code class="docutils literal notranslate"><span class="pre">build_momentum_industry.py</span></code>.</p>
 </section>
 </section>
 
@@ -1025,6 +1054,7 @@ so students see it happen, then uses the cache for the grid.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prompt-it-moment">The prompt-it moment</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-answer-key">Challenge answer key</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#length-budget">Length budget</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-shape-revised-2026-08-28-after-am">Code shape — revised 2026-08-28 after AM</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data">Data</a></li>
 </ul>
   </nav></div>
