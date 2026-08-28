@@ -171,7 +171,7 @@ differs — it has Nov 25–29 off. The UG bulletin governs).
 | 6 | Wed Sep 23 | **L6** Factor models III — multi-factor, Fama-MacBeth `(3B)` | |
 | 7 | Mon Sep 28 | **L7** Portfolio decomposition — top-down / bottom-up / characteristic | *A3 was due Thu Sep 24* |
 | 8 | Wed Sep 30 | **L8** Backtesting protocol `(4A)` | |
-| 9 | Mon Oct 5 | **L9** Anomalies `(4B)` | *A4 due Thu Oct 8* |
+| 9 | Mon Oct 5 | **L9** Why should this work? — interpreting the evidence | *A4 due Thu Oct 8* |
 | 10 | Wed Oct 7 | **Project pitches I** — 5 min × 10 groups | pitch deck |
 | — | Mon Oct 12 | *Fall Break — no class* | |
 | 11 | Wed Oct 14 | **Review** *(Legislative Day)* | |
@@ -529,7 +529,7 @@ substring of `C_noise = ____`).
 | L6 | Factor models III — multi-factor, FM | `L6_MultiFactor_AI` | ✅ **built, tested** |
 | L7 | Portfolio decomposition | `L7_Portfolio_Decomposition_AI` | ✅ **built, tested** |
 | L8 | Backtesting protocol | `L8_Backtesting_AI` | ✅ **built, tested 2026-08-27** |
-| L9 | **Anomalies** | *(no pre-AI notebook — see below)* | 🔴 **design decision open**, `L9_DESIGN.md` |
+| L9 | **Why should this work?** | `InterpretingFactorModels` + our own data | 🟡 **sketched**, `L9_DESIGN.md` |
 | L10 | Momentum and trend | `Momentum.ipynb` | 🟡 strong bones |
 | L11 | Conditional strategies I | `MarketTiming_c` · `Timing_AI` | 🟡 strong bones |
 | L12 | Conditional strategies II | `Volatilitytiming_c` · `Timing_AI` | 🟡 **generalize to factor timing** |
@@ -588,12 +588,11 @@ condensing, and two genuinely new pieces.
 
 - [x] ~~**L8** rebuild~~ — **done 2026-08-27.** Repackaged around signal
       selection exactly as planned; the MVE overfitting demo moves to L14.
-- [ ] **L9 design decision — still open.** The existing anomaly material is a
-      tour and it's boring. Options: (a) a deeper dive on 2–3 anomalies with the
-      original papers, (b) a replication exercise against Open Source Asset
-      Pricing, (c) organize around *why* they might work rather than a catalogue.
-      **Decide before building.** `L9_DESIGN.md` works out (b) in full and
-      verifies its numbers; it does not settle the choice.
+- [x] ~~**L9 design decision**~~ — **resolved 2026-08-27.** Not a tour, a deep
+      dive, or a replication exercise: *Why Should This Work?* Risk is a property
+      of an asset **for a given investor**; a high expected return is a low price
+      and you must say why; and low-volatility carries the whole argument on our
+      own data. See `L9_DESIGN.md`.
 
 ### Block C — L10–L13, the core
 
@@ -641,10 +640,14 @@ condensing, and two genuinely new pieces.
 
 ## 12. Open questions
 
-- **L9 anomalies** — tour, deep dive, or replication exercise? **Still open.**
-  A worked-out version of option (b) is in `chapters/Finance/L9_DESIGN.md`,
-  with the numbers verified; (a) and (c) have not been costed. Decide before
-  building.
+- ~~**L9 anomalies** — tour, deep dive, or replication exercise?~~ **Resolved
+  2026-08-27, and the question was wrong.** L9 is now *Why Should This Work?* —
+  the equilibrium argument, plus the two parts of the anomalies critique that
+  survive (three indistinguishable explanations; 300 papers are not 300 tests),
+  unified as **how to interpret evidence**. Sketch in `L9_DESIGN.md`.
+- **Does the late-term conceptual lecture still exist?** L9 pulls the Tier 5e
+  equilibrium material forward. Either drop the late slot or keep a shorter
+  synthesis there once costs, leverage and PCA are done.
 - **Group formation logistics** — groups by meeting 2, strategy by meeting 3.
   How are groups formed, and how do you avoid ten momentum strategies?
 - **Strategy changes** — groups may switch. Should a switch after Pitches I be
