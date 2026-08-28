@@ -1,0 +1,1468 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>12. Momentum: One Signal, All the Way Down &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/L10_Momentum_AI';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/L10_Momentum_AI.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="13. L11 · Transaction Costs" href="upcoming/L11_Transaction_Costs.html" />
+    <link rel="prev" title="11. Why Should This Work?" href="L9_WhyShouldThisWork_AI.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-quant-investing.html">1. What is Data-Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.1. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.2. Computational Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="L1_Welcome_Returns_AI.html">3. L1 · The Workflow, and What a Return Is</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L2_Panel_Portfolios_AI.html">4. L2 · The Panel and Portfolio Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L3_Sorts_AI.html">5. L3 · Sorts, Breakpoints, and Long-Short Portfolios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L4_PerfEval_Factors_AI.html">6. L4 · Performance Evaluation, and Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L5_Factor_Zoo_AI.html">7. L5 · Where Factors Come From, and the Factor Zoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L6_MultiFactor_AI.html">8. L6 · Multi-Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L7_Portfolio_Decomposition_AI.html">9. L7 · Decomposing a Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L8_Backtesting_AI.html">10. L8 · Backtesting: Estimate, Tune, Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L9_WhyShouldThisWork_AI.html">11. L9 · Why Should This Work?</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">12. L10 · Momentum: One Signal, All the Way Down</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Transaction_Costs.html">13. L11 · Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Leverage_and_Shorting.html">14. L12 · Leverage, Shorting, and the Capital Base  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_I.html">15. L13 · Capital Allocation I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Capital_Allocation_II.html">16. L14 · Capital Allocation II — Estimation Error  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L15_Conditional_Strategies_I.html">17. L15 · Conditional Strategies I — Volatility Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L16_Conditional_Strategies_II.html">18. L16 · Conditional Strategies II — Factor Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L17_Fundamental_Risk_Models_BARRA.html">19. L17 · Fundamental Risk Models (BARRA)  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L18_PCA_and_Statistical_Factors.html">20. L18 · PCA and Statistical Factors  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L19_Machine_Learning.html">21. L19 · Machine Learning  ◦</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">22. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_AI.html">22.1. Assignment 1 — Python, pandas, and Data That Fights Back</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">22.5. Assignment 2 — Diversification, and Your First Sort</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A3_Beta_and_Alpha_AI.html">22.8. Assignment 3 — Beta, Alpha, and Whether You Have Either</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/SignalHygiene_AI.html">23. Appendix · Signal Hygiene</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">24. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">24.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">24.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">24.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">24.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">24.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">24.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">24.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">24.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">24.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">24.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">24.4.9. Cleaning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">24.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">24.5. Flow Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">24.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">24.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../scientific/linear_algebra1_c.html">25. Linear Algebra Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">26. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intro.html">27. Archive · Pre-AI Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="IntrotoReturns_c.html">27.1. Introduction to Asset Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">27.2. Choice of Frequency and Annualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">27.3. Data APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PortfolioMath_c.html">27.4. Portfolio Mathematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FactorModels_c.html">27.5. Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiFactorModels_c.html">27.6. Multi-Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">27.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="FactorModelEstimation_c.html">27.11. Factor Model Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crosssectionalequitystrategies.html">27.12. Cross-Sectional Equity Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">27.13. Momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">27.14. An Overview of Factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Timing_c.html">27.15. Timing Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">27.16. Expected-Return Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">27.17. Volatility Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationI_cc.html">27.18. Capital Allocation I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationII.html">27.19. Capital Allocation II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Performance_evaluation_c.html">27.20. Performance Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RiskManagement.html">27.21. Risk Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TradingCosts.html">27.22. Liquidity and Trading Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LeverageandShorting.html">27.23. Leverage, Shorting, Limits to Arbitrage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearning_cc.html">27.24. Machine Learning in Finance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LLMs.html">27.25. Gen AI and LLMs in Finance</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Finance/L10_Momentum_AI.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/L10_Momentum_AI.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/L10_Momentum_AI.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Momentum: One Signal, All the Way Down</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">12.1. 🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-plan">12.2. 📋 Today’s Plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">12.3. 🛠️ Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-signals-come-from">12.4. 1 · Where signals come from <a id="where"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-claim">12.5. 2 · The claim <a id="claim"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-from-raw-returns">12.6. 🔄 3 · Build it from raw returns <a id="build"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#same-mean-same-sharpe-ratio-correlation-0-11">12.6.1. Same mean, same Sharpe ratio, correlation 0.11</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-it-compute-12-month-momentum">12.6.2. 🎯 Prompt it — compute 12-month momentum <a id="prompt"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-sharpe-ratio-of-6-58-is-not-a-discovery">12.6.3. A Sharpe ratio of 6.58 is not a discovery</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decision-tree-priced">12.7. 4 · The decision tree, priced <a id="tree"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#same-signal-same-data-sharpe-ratio-from-0-45-to-1-13">12.7.1. Same signal. Same data. Sharpe ratio from 0.45 to 1.13.</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-or-industries">12.8. 5 · Stocks or industries? <a id="ind"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-asymmetry-is-the-answer">12.8.1. The asymmetry is the answer</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#crashes">12.9. 6 · Crashes <a id="crash"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-your-signal-s-decision-tree">12.10. 🛠️ Hands-On: Your Signal’s Decision Tree <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-with-the-room">12.10.1. Compare with the room</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-the-other-end-of-the-horizon">12.11. 🎯 Challenge: The Other End of the Horizon <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-does-the-long-horizon-reverse">12.11.1. Q1 — Does the long horizon reverse?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-is-it-just-momentum-with-a-minus-sign">12.11.2. Q2 — Is it just momentum with a minus sign?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-skip-again">12.11.3. Q3 — The skip, again</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-the-memo">12.11.4. Q4 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">12.12. 📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">12.13. 🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">12.13.1. Next class</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">12.14. 📎 Appendix <a id="appendix"></a></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="momentum-one-signal-all-the-way-down">
+<h1><span class="section-number">12. </span>Momentum: One Signal, All the Way Down<a class="headerlink" href="#momentum-one-signal-all-the-way-down" title="Link to this heading">#</a></h1>
+<section id="learning-objectives">
+<h2><span class="section-number">12.1. </span>🎯 Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading">#</a></h2>
+<p>By the end of today you will be able to:</p>
+<ol class="arabic simple">
+<li><p><strong>Say where a trading signal comes from</strong> — the data, the source, the choices — for the main families</p></li>
+<li><p><strong>Build a momentum signal from raw returns</strong>, and check it against a reference</p></li>
+<li><p><strong>Price the construction choices</strong> — lookback, skip, weighting, breakpoints, bucket count</p></li>
+<li><p><strong>Test whether an effect lives at the stock or the industry level</strong></p></li>
+<li><p><strong>Explain why momentum crashes</strong>, and when its market beta turns negative</p></li>
+<li><p><strong>Specify a signal precisely enough</strong> that a one-character error cannot hide</p></li>
+</ol>
+</section>
+<section id="today-s-plan">
+<h2><span class="section-number">12.2. </span>📋 Today’s Plan<a class="headerlink" href="#today-s-plan" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#where"><span class="xref myst">Where signals come from</span></a></p></li>
+<li><p><a class="reference internal" href="#claim"><span class="xref myst">The claim</span></a></p></li>
+<li><p><a class="reference internal" href="#build"><span class="xref myst">🔄 Build it from raw returns</span></a></p></li>
+<li><p><a class="reference internal" href="#prompt"><span class="xref myst">🎯 Prompt it: compute 12-month momentum</span></a></p></li>
+<li><p><a class="reference internal" href="#tree"><span class="xref myst">The decision tree, priced</span></a></p></li>
+<li><p><a class="reference internal" href="#ind"><span class="xref myst">Stocks or industries?</span></a></p></li>
+<li><p><a class="reference internal" href="#crash"><span class="xref myst">Crashes</span></a></p></li>
+<li><p><a class="reference internal" href="#ho1"><span class="xref myst">🛠️ Hands-On: your signal’s decision tree</span></a></p></li>
+<li><p><a class="reference internal" href="#challenge"><span class="xref myst">🎯 Challenge: the other end of the horizon</span></a> — <em>homework</em></p></li>
+<li><p><a class="reference internal" href="#takeaways"><span class="xref myst">Key takeaways</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="setup">
+<h2><span class="section-number">12.3. </span>🛠️ Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Setup — run this first</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">'seaborn-v0_8-whitegrid'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span><span class="p">;</span> <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
+
+<span class="n">BASE</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data"</span>
+
+<span class="n">panel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/panel_backbone_1980_2000.parquet"</span><span class="p">)</span>   <span class="c1"># raw CRSP</span>
+<span class="n">grid</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/momentum_grid.parquet"</span><span class="p">)</span>              <span class="c1"># today's variants, cached</span>
+<span class="n">ind49</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/industry49_monthly.csv"</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ff</span>    <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/ff_monthly.csv"</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">L</span>     <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/longshort_29.parquet"</span><span class="p">)</span>
+
+<span class="n">sharpe</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"panel  </span><span class="si">{</span><span class="n">panel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> stock-months, </span><span class="si">{</span><span class="n">panel</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">panel</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"UMD    </span><span class="si">{</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">  (runs past the panel — we need that later)"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="where-signals-come-from">
+<h2><span class="section-number">12.4. </span>1 · Where signals come from <a id="where"></a><a class="headerlink" href="#where-signals-come-from" title="Link to this heading">#</a></h2>
+<p>For nine lectures you have used signals somebody else built. Today you build one.
+First, briefly, the landscape — because your project needs a signal and you
+should know what building each family actually costs.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Family</p></th>
+<th class="head"><p>Example signal</p></th>
+<th class="head"><p>What data</p></th>
+<th class="head"><p>Where</p></th>
+<th class="head"><p>The choices that bite</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Value</strong></p></td>
+<td><p>book/market, E/P, EV/EBITDA</p></td>
+<td><p>annual accounting + price</p></td>
+<td><p>Compustat + CRSP</p></td>
+<td><p>which fundamental; <strong>when the filing became knowable</strong>; annual or monthly rebalance</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Profitability</strong></p></td>
+<td><p>gross profit / assets</p></td>
+<td><p>income statement</p></td>
+<td><p>Compustat</p></td>
+<td><p>which profit line; which denominator</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Investment</strong></p></td>
+<td><p>asset growth</p></td>
+<td><p>balance sheet</p></td>
+<td><p>Compustat</p></td>
+<td><p>over what horizon; scaled by what</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Issuance</strong></p></td>
+<td><p>change in shares outstanding</p></td>
+<td><p>share count</p></td>
+<td><p>CRSP or Compustat</p></td>
+<td><p>split adjustment — last lecture’s leakage trap</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Return-based</strong></p></td>
+<td><p>momentum, reversal, volatility</p></td>
+<td><p><strong>prices only</strong></p></td>
+<td><p>CRSP</p></td>
+<td><p>today</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Two things are true of all of them.</p>
+<p><strong>Signal construction is art, not science.</strong> The recipe <em>after</em> the signal —
+rank, bucket, weight, go long the top and short the bottom — is the same for
+everything, and you learned it in Lecture 3. The signal itself is where any edge
+lives, and there is no procedure for it.</p>
+<p><strong>Value’s structure is the general one.</strong> A value signal is
+<code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">∝</span> <span class="pre">F/P</span></code> — a fundamental over a price. Buy cheap, sell expensive. Every family
+above is an argument about which <code class="docutils literal notranslate"><span class="pre">F</span></code> you believe: book value, earnings, gross
+profit, invested capital.</p>
+<p>Momentum is the odd one out, and that is exactly why we use it today: <strong>it needs
+only prices.</strong> No accounting, no filing dates, no restatements. Which means every
+choice we make is a choice about <em>construction</em>, not about data — and that is the
+subject.</p>
+</section>
+<hr class="docutils" />
+<section id="the-claim">
+<h2><span class="section-number">12.5. </span>2 · The claim <a id="claim"></a><a class="headerlink" href="#the-claim" title="Link to this heading">#</a></h2>
+<p>Momentum is the fact that stocks that have performed <strong>relatively</strong> well in the
+past continue to perform <strong>relatively</strong> well, and stocks that have performed
+<strong>relatively</strong> poorly continue to perform poorly. Jegadeesh and Titman (1993)
+found that ranking on the past 6 to 12 months and holding the top decile against
+the bottom earned about 12% a year.</p>
+<p>Note the contrast with value, because they are closer than they look. A price
+already contains the entire history of returns — that is what a price <em>is</em>. So a
+valuation ratio is a signal about the <em>whole</em> past, and it says buy what has
+fallen. Momentum looks at only the last twelve months, and says buy what has
+risen.</p>
+<p><strong>Same kind of bet, different windows, opposite directions.</strong> Which window is
+right is an empirical question, and by the end of today you will have the answer
+for every window between one month and five years.</p>
+<p>Here is the construction everybody quotes, from Daniel and Moskowitz:</p>
+<blockquote>
+<div><p><em>“To form the momentum portfolios, we first rank stocks based on their
+cumulative returns from 12 months before to one month before the formation date
+(i.e., the t−12 to t−2 month returns). We use a one month gap between the end
+of the ranking period and the start of the holding period to avoid the
+short-term reversals documented by Jegadeesh (1990) and Lehmann (1990).”</em></p>
+</div></blockquote>
+<p>Every clause in that sentence is a decision. We are going to take them one at a
+time and find out what each is worth.</p>
+</section>
+<hr class="docutils" />
+<section id="build-it-from-raw-returns">
+<h2><span class="section-number">12.6. </span>🔄 3 · Build it from raw returns <a id="build"></a><a class="headerlink" href="#build-it-from-raw-returns" title="Link to this heading">#</a></h2>
+<p>Zero to one hundred. We start from the CRSP panel — <code class="docutils literal notranslate"><span class="pre">permno</span></code>, <code class="docutils literal notranslate"><span class="pre">date</span></code>, <code class="docutils literal notranslate"><span class="pre">ret</span></code>,
+<code class="docutils literal notranslate"><span class="pre">me</span></code> — and finish with a monthly track record.</p>
+<blockquote>
+<div><p><strong>🤔 Predict first.</strong> Our shipped <code class="docutils literal notranslate"><span class="pre">Mom12m</span></code> long-short earns about 20% a year.
+When we rebuild it from scratch, how close do you expect to get?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Raw panel to long-short, in one pass</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">shrcd</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">panel</span><span class="o">.</span><span class="n">exchcd</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">'permno'</span><span class="p">,</span> <span class="s1">'date'</span><span class="p">])</span>
+
+<span class="c1"># 1. log returns compound by adding</span>
+<span class="n">p</span><span class="p">[</span><span class="s1">'lr'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=-</span><span class="mf">0.9999</span><span class="p">))</span>
+
+<span class="c1"># 2. cumulative return t-12 to t-2: 11 months, then step back one more</span>
+<span class="n">p</span><span class="p">[</span><span class="s1">'mom'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'lr'</span><span class="p">]</span>
+                     <span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+
+<span class="c1"># 3. rank into deciles each month, on NYSE breakpoints (Lecture 3)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'mom'</span><span class="p">,</span> <span class="s1">'ret_fwd'</span><span class="p">,</span> <span class="s1">'me'</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deciles</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'mom'</span><span class="p">]</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)))</span>
+    <span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">'mom'</span><span class="p">],</span> <span class="n">edges</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">'drop'</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="n">group_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">deciles</span><span class="p">))</span>
+
+<span class="c1"># 4. value-weight inside each decile, then D10 - D1</span>
+<span class="n">dec</span>  <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'q'</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ret_fwd</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">me</span><span class="p">))</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+<span class="n">mine</span> <span class="o">=</span> <span class="p">(</span><span class="n">dec</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">dec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ours      mean </span><span class="si">{</span><span class="n">mine</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">mine</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  shipped   mean </span><span class="si">{</span><span class="n">L</span><span class="p">[</span><span class="s1">'Mom12m'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="s1">'Mom12m'</span><span class="p">])</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  correlation with the shipped series: "</span>
+      <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mine</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">[</span><span class="s1">'Mom12m'</span><span class="p">]],</span><span class="w"> </span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="same-mean-same-sharpe-ratio-correlation-0-11">
+<h3><span class="section-number">12.6.1. </span>Same mean, same Sharpe ratio, correlation 0.11<a class="headerlink" href="#same-mean-same-sharpe-ratio-correlation-0-11" title="Link to this heading">#</a></h3>
+<p>Stop on that. The two series agree on every summary statistic and disagree
+month by month. If you had built this and seen 0.11, you would reasonably
+conclude you had built a <em>different</em> strategy.</p>
+<p>You have not. You have built the same strategy with a different date on it.</p>
+<p>Our <code class="docutils literal notranslate"><span class="pre">mine</span></code> is indexed by the month the portfolio was <strong>formed</strong>. The shipped
+series is indexed by the month the return was <strong>earned</strong> — one month later,
+because <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> at date <em>t</em> is the return you collect during <em>t+1</em>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Move the index one month and look again</span>
+<span class="n">mine</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">mine</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>          <span class="c1"># date it by the month EARNED</span>
+<span class="n">j</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">mine</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'ours'</span><span class="p">),</span> <span class="n">L</span><span class="p">[</span><span class="s1">'Mom12m'</span><span class="p">]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'shipped'</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  correlation after aligning: </span><span class="si">{</span><span class="n">j</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">   (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="si">}</span><span class="s2"> months)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<blockquote>
+<div><p><strong>📌 Two series can match on every statistic and still be misaligned.</strong></p>
+<p>A correlation is the only summary that notices. Whenever you build something
+that should replicate a reference, correlate it — do not compare means. This is
+the <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> question from Lecture 2, arriving as a bug rather than a warning.</p>
+</div></blockquote>
+</section>
+<section id="prompt-it-compute-12-month-momentum">
+<h3><span class="section-number">12.6.2. </span>🎯 Prompt it — compute 12-month momentum <a id="prompt"></a><a class="headerlink" href="#prompt-it-compute-12-month-momentum" title="Link to this heading">#</a></h3>
+<p>Everything below depends on this one signal being right, so it is worth being
+slow about.</p>
+<blockquote>
+<div><p><strong>🤔 The question.</strong> <em>“Compute 12-month momentum for each stock.”</em></p>
+<p>Write the prompt. There are at least four decisions buried in that sentence,
+and one of them is a one-character error that will not raise, warn, or look
+wrong.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">                                    ← write your prompt here</span>
+<span class="s2">"""</span>
+
+<span class="c1"># ---- paste the AI's code below ----</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check — five readings, all of them valid code</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="n">sig_series</span><span class="p">):</span>
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">sig_series</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'s'</span><span class="p">,</span> <span class="s1">'ret_fwd'</span><span class="p">,</span> <span class="s1">'me'</span><span class="p">])</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cut</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'s'</span><span class="p">]</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)));</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">'s'</span><span class="p">],</span> <span class="n">e</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">'drop'</span><span class="p">)</span>
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">dd</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="n">group_keys</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">cut</span><span class="p">))</span>
+    <span class="n">r</span>  <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'q'</span><span class="p">])</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ret_fwd</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">me</span><span class="p">))</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="n">g</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)</span>
+<span class="n">readings</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s2">"t-12 to t-2  (11 months, skip 1)"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">'lr'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">))),</span>
+ <span class="s2">"t-12 to t-1  (12 months, no skip)"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">'lr'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">))),</span>
+ <span class="s2">"t-11 to t     (includes this month)"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">'lr'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())),</span>
+ <span class="s2">"sums simple returns, not compounded"</span><span class="p">:</span> <span class="n">g</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span>
+ <span class="s2">"shift(-1) instead of shift(1)"</span><span class="p">:</span>      <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">'lr'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))),</span>
+<span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"«Compute 12-month momentum for each stock»</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">lab</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">readings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">lab</span><span class="si">:</span><span class="s2">38s</span><span class="si">}</span><span class="s2"> mean </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+8.1%</span><span class="si">}</span><span class="s2">   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="a-sharpe-ratio-of-6-58-is-not-a-discovery">
+<h3><span class="section-number">12.6.3. </span>A Sharpe ratio of 6.58 is not a discovery<a class="headerlink" href="#a-sharpe-ratio-of-6-58-is-not-a-discovery" title="Link to this heading">#</a></h3>
+<p>The last row is <code class="docutils literal notranslate"><span class="pre">shift(-1)</span></code> where the standard is <code class="docutils literal notranslate"><span class="pre">shift(1)</span></code>. One character. It
+ranks stocks on a window that runs one month into the future, so the “signal”
+partly contains the return it is predicting.</p>
+<p>It does not raise. It does not warn. It returns a clean DataFrame and a track
+record of <strong>+144% a year</strong>.</p>
+<p>The other three are not errors at all — they are defensible readings of the same
+English sentence, and they span a Sharpe ratio from 0.70 to 1.03. Including the
+current month costs you a third of the strategy, which is the short-term reversal
+Daniel and Moskowitz skip the month to avoid.</p>
+<blockquote>
+<div><p><strong>⚠️ The only defence against <code class="docutils literal notranslate"><span class="pre">shift(-1)</span></code> is knowing roughly what the answer
+should be before you compute it.</strong> No test catches it. No error message
+mentions it. You catch it because 6.58 is not a number this strategy produces,
+and you knew that in advance.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-decision-tree-priced">
+<h2><span class="section-number">12.7. </span>4 · The decision tree, priced <a id="tree"></a><a class="headerlink" href="#the-decision-tree-priced" title="Link to this heading">#</a></h2>
+<p>Now the choices. Each one is defensible, each has a literature behind it, and we
+can put a number on all of them. These are precomputed — the code is the same
+<code class="docutils literal notranslate"><span class="pre">build()</span></code> you just ran, in a loop.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 How far back? Sharpe against the lookback window</span>
+<span class="n">J</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">59</span><span class="p">]</span>
+<span class="n">sh</span> <span class="o">=</span> <span class="p">[</span><span class="n">sharpe</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="sa">f</span><span class="s1">'J</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s1">_s1'</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">())</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">J</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">sh</span><span class="p">,</span> <span class="s1">'o-'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#333333'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#b03030'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">'the standard</span><span class="se">\n</span><span class="s1">(11 months)'</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">sh</span><span class="p">)),</span> <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">34</span><span class="p">),</span>
+            <span class="n">textcoords</span><span class="o">=</span><span class="s1">'offset points'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#b03030'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'lookback window, months'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Sharpe ratio'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Same recipe, different window'</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">'left'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">();</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">sh</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  J = </span><span class="si">{</span><span class="n">j</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> months   Sharpe </span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The peak is at eleven months, exactly where Jegadeesh and Titman put it, and it
+falls off hard on both sides. Six months gets you 0.71; seventeen months gets you
+0.51. <strong>Half the effect lives in the choice of window.</strong></p>
+<p>Now the part worth arguing about. The textbook picture of this chart is a <em>wave</em>:
+reversal at short horizons, continuation in the middle, and reversal again at
+three to five years — DeBondt and Thaler (1985), winners eventually lose.</p>
+<p><strong>We do not see that.</strong> At 35, 47 and 59 months our Sharpe ratios are +0.37,
++0.47 and +0.48 — weaker than the peak, but still <em>positive</em>, still buying past
+winners. Nothing turns over.</p>
+<p>Three possibilities, and it is Lecture 9’s list arriving on a chart you built
+yourself: the long-horizon reversal was never there; it was there and has decayed
+since DeBondt and Thaler’s 1926–1982 sample; or our construction differs from
+theirs in a way that matters. <strong>The homework makes you take a position.</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 What is the skip month worth?</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]:</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="sa">f</span><span class="s1">'J11_s</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="n">star</span> <span class="o">=</span> <span class="s2">"   &lt;- the standard"</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">""</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  skip </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> month(s)   mean </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.1%</span><span class="si">}</span><span class="s2">   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}{</span><span class="n">star</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Not skipping costs 38% of the Sharpe ratio</strong> — 0.64 against 1.03. That is one
+<code class="docutils literal notranslate"><span class="pre">.shift()</span></code>, and it is the single most valuable line in the construction.</p>
+<p>Skipping <em>more</em> than one month costs you too, and for the opposite reason: by
+month six you have thrown away the signal along with the noise.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Weighting, breakpoints, and how many buckets</span>
+<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'VW, NYSE bp, deciles'</span><span class="p">,</span> <span class="s1">'EW, NYSE bp, deciles'</span><span class="p">,</span>
+        <span class="s1">'VW, ALL-stock bp, deciles'</span><span class="p">,</span> <span class="s1">'EW, ALL-stock bp, deciles'</span><span class="p">,</span>
+        <span class="s1">'VW, NYSE bp, terciles'</span><span class="p">,</span> <span class="s1">'VW, NYSE bp, quintiles'</span><span class="p">,</span> <span class="s1">'VW, NYSE bp, 20 groups'</span><span class="p">]</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">c</span><span class="p">:</span> <span class="p">{</span><span class="s1">'mean/yr'</span><span class="p">:</span> <span class="n">grid</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span> <span class="s1">'vol'</span><span class="p">:</span> <span class="n">grid</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span>
+                      <span class="s1">'Sharpe'</span><span class="p">:</span> <span class="n">sharpe</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">c</span><span class="p">])}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">formatters</span><span class="o">=</span><span class="p">{</span><span class="s1">'mean/yr'</span><span class="p">:</span> <span class="s1">'</span><span class="si">{:+.1%}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="s1">'vol'</span><span class="p">:</span> <span class="s1">'</span><span class="si">{:.1%}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+                              <span class="s1">'Sharpe'</span><span class="p">:</span> <span class="s1">'</span><span class="si">{:+.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  best </span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">Sharpe</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   worst </span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">Sharpe</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   "</span>
+      <span class="sa">f</span><span class="s2">"range </span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">Sharpe</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">t</span><span class="o">.</span><span class="n">Sharpe</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="same-signal-same-data-sharpe-ratio-from-0-45-to-1-13">
+<h3><span class="section-number">12.7.1. </span>Same signal. Same data. Sharpe ratio from 0.45 to 1.13.<a class="headerlink" href="#same-signal-same-data-sharpe-ratio-from-0-45-to-1-13" title="Link to this heading">#</a></h3>
+<p>Nothing in that table is a mistake. Every row appears in published work.</p>
+<p>Two of them are worth naming:</p>
+<ul class="simple">
+<li><p><strong>All-stock breakpoints beat NYSE breakpoints</strong> — 1.13 against 1.03 — and the
+volatility goes from 19.5% to 25.1%. Cutting deciles on every listed stock puts
+the microcaps in the extreme buckets, which is Lecture 3’s warning with a price
+on it. You are being paid for illiquidity, not momentum.</p></li>
+<li><p><strong>Terciles 0.45, deciles 1.03, twenty groups 1.09.</strong> Finer buckets mean a purer
+signal and fewer stocks to diversify across. The gain flattens after deciles,
+which is why deciles are the convention.</p></li>
+</ul>
+<blockquote>
+<div><p><strong>📌 The construction is not a detail, it is most of the result.</strong></p>
+<p>And now count: seven constructions, all defensible, all tried. Lecture 8’s
+Bonferroni bar was for the number of things you <em>tried</em>, not the number you
+report. If you search this grid and report the best cell, you have run seven
+tests and must say so.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="stocks-or-industries">
+<h2><span class="section-number">12.8. </span>5 · Stocks or industries? <a id="ind"></a><a class="headerlink" href="#stocks-or-industries" title="Link to this heading">#</a></h2>
+<p>A real question about what momentum <em>is</em>. When the winner decile beats the loser
+decile, is that a hundred individual stocks with individual momentum — or is it
+mostly that some <em>industries</em> went up and their stocks came along?</p>
+<p>The question matters for trading. If it is industries, you can run it with 49
+liquid industry portfolios instead of a thousand single stocks, at a fraction of
+the cost.</p>
+<p>Moskowitz and Grinblatt (1999) asked exactly this. Let us build it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Industry momentum — same rule, 49 portfolios instead of 3,000 stocks</span>
+<span class="n">lr49</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">ind49</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=-</span><span class="mf">0.9999</span><span class="p">))</span>
+<span class="n">sig49</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="n">lr49</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>       <span class="c1"># identical t-12..t-2 rule</span>
+<span class="n">rank</span>  <span class="o">=</span> <span class="n">sig49</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">IM</span> <span class="o">=</span> <span class="p">(</span><span class="n">ind49</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rank</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span>             <span class="c1"># top 5 industries</span>
+      <span class="n">ind49</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rank</span> <span class="o">&gt;=</span> <span class="mi">45</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>    <span class="c1"># short bottom 5</span>
+
+<span class="n">SM</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="s1">'J11_s1'</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">j</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">SM</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'stock'</span><span class="p">),</span> <span class="n">IM</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'industry'</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  stock momentum      Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">stock</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   mean </span><span class="si">{</span><span class="n">j</span><span class="o">.</span><span class="n">stock</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  industry momentum   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">industry</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   mean </span><span class="si">{</span><span class="n">j</span><span class="o">.</span><span class="n">industry</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  correlation         </span><span class="si">{</span><span class="n">j</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Both work, and they are <strong>0.73 correlated</strong>. So they are largely the same trade,
+and the interesting question is which one is the passenger.</p>
+<p>That is the factor ladder from Lecture 4, and it runs in both directions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Run the ladder both ways</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">stock</span><span class="p">,</span>    <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">industry</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">industry</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">stock</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">j</span><span class="o">.</span><span class="n">industry</span><span class="p">,</span> <span class="n">ff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">,</span> <span class="s1">'SMB'</span><span class="p">,</span> <span class="s1">'HML'</span><span class="p">]]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">stock</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'stock on industry'</span><span class="si">:</span><span class="s2">32s</span><span class="si">}</span><span class="s2"> alpha </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.1%</span><span class="si">}</span><span class="s2">/yr   t </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">tvalues</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'industry on stock'</span><span class="si">:</span><span class="s2">32s</span><span class="si">}</span><span class="s2"> alpha </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.1%</span><span class="si">}</span><span class="s2">/yr   t </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">tvalues</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'stock on industry + FF3'</span><span class="si">:</span><span class="s2">32s</span><span class="si">}</span><span class="s2"> alpha </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.1%</span><span class="si">}</span><span class="s2">/yr   t </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">tvalues</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="the-asymmetry-is-the-answer">
+<h3><span class="section-number">12.8.1. </span>The asymmetry is the answer<a class="headerlink" href="#the-asymmetry-is-the-answer" title="Link to this heading">#</a></h3>
+<p>Stock momentum survives controlling for industry momentum: <strong>+11.5% a year,
+t = 3.76</strong>, and it holds up with the Fama-French three-factor model on top
+(+14.4%, t = 4.47).</p>
+<p>Industry momentum does <strong>not</strong> survive controlling for stock momentum: −2.7% a
+year, t = −0.88. Once you own individual momentum, industry momentum adds
+nothing.</p>
+<blockquote>
+<div><p><strong>📌 Momentum is a stock effect that shows up at the industry level — not an
+industry effect that shows up in stocks.</strong></p>
+</div></blockquote>
+<p><strong>And we just got the opposite of the published paper.</strong> Moskowitz and Grinblatt
+concluded that industry momentum <em>subsumes</em> individual momentum. We find the
+reverse, with the same test.</p>
+<p>Do not paper over that. Last lecture had three explanations for a gap like this
+and no way to choose between them, and this one has some candidates we can
+actually name: our sample is 1980–2000 and theirs was 1963–1995; we use 49
+industries and they used 20; and they industry-adjust returns at the stock level
+while we compare two portfolios. Any of the three could do it.</p>
+<p>Which means the honest statement is that we do not know — and that finding out
+would be a real piece of work, not a rerun.</p>
+<blockquote>
+<div><p><strong>⚠️ What we cannot do with this data.</strong> <em>Industry-neutral</em> momentum — ranking
+each stock against its own industry peers rather than against everything —
+needs a stock-level industry code, and our panel does not carry one. That is a
+data limitation, not a result. If your project wants it, you need SIC codes.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="crashes">
+<h2><span class="section-number">12.9. </span>6 · Crashes <a id="crash"></a><a class="headerlink" href="#crashes" title="Link to this heading">#</a></h2>
+<p>Our panel stops in 2000, which is a problem, because the thing you most need to
+know about momentum happened in 2009. The Fama-French momentum factor runs to
+2026, so we use that.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 The 2009 crash</span>
+<span class="n">umd</span><span class="p">,</span> <span class="n">mkt</span> <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">'UMD'</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="n">ff</span><span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]</span>
+<span class="n">cum</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">umd</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">();</span> <span class="n">dd</span> <span class="o">=</span> <span class="n">cum</span> <span class="o">/</span> <span class="n">cum</span><span class="o">.</span><span class="n">cummax</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  UMD </span><span class="si">{</span><span class="n">umd</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">umd</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">:  "</span>
+      <span class="sa">f</span><span class="s2">"mean </span><span class="si">{</span><span class="n">umd</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">umd</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   maxDD </span><span class="si">{</span><span class="n">dd</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'2001'</span><span class="p">,</span> <span class="s1">'2009'</span><span class="p">,</span> <span class="s1">'2023'</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">:  momentum </span><span class="si">{</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">umd</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span><span class="p">])</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="si">:</span><span class="s2">+7.1%</span><span class="si">}</span><span class="s2">    "</span>
+          <span class="sa">f</span><span class="s2">"market </span><span class="si">{</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">mkt</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y</span><span class="p">])</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="si">:</span><span class="s2">+7.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  worst single month: </span><span class="si">{</span><span class="n">umd</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">umd</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>2009: momentum lost 52.9% while the market gained 28.3%.</strong> And it happened
+again in 2023, smaller and the same shape.</p>
+<p>Here is the mechanism, and it is not bad luck. After a market crash, the losers —
+the short leg — are beaten-down high-beta stocks. When the market turns, those
+are exactly the stocks that scream. So a strategy that is market-neutral <em>on
+average</em> turns out to be <strong>short the market</strong> at the one moment being short the
+market is fatal.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Momentum's beta depends on the state you are in</span>
+<span class="n">bear</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">mkt</span><span class="p">)</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">lab</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">'after a 24-month BEAR market'</span><span class="p">,</span> <span class="n">bear</span><span class="p">),</span> <span class="p">(</span><span class="s1">'after a 24-month BULL market'</span><span class="p">,</span> <span class="o">~</span><span class="n">bear</span><span class="p">)]:</span>
+    <span class="n">m_</span><span class="p">,</span> <span class="n">k_</span> <span class="o">=</span> <span class="n">umd</span><span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="kc">False</span><span class="p">)],</span> <span class="n">mkt</span><span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="kc">False</span><span class="p">)]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">m_</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">k_</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">lab</span><span class="si">:</span><span class="s2">30s</span><span class="si">}</span><span class="s2"> n=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">m_</span><span class="p">)</span><span class="si">:</span><span class="s2">4d</span><span class="si">}</span><span class="s2">   beta </span><span class="si">{</span><span class="n">beta</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">   Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">m_</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">vs</span> <span class="o">=</span> <span class="p">(</span><span class="n">umd</span> <span class="o">/</span> <span class="n">umd</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">umd</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>   <span class="c1"># scale by trailing vol</span>
+<span class="n">c2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">vs</span><span class="p">)</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">  plain momentum        Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">umd</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   maxDD </span><span class="si">{</span><span class="n">dd</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  scaled by trailing vol Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   maxDD </span><span class="si">{</span><span class="p">(</span><span class="n">c2</span><span class="o">/</span><span class="n">c2</span><span class="o">.</span><span class="n">cummax</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>−0.75 after a bear market, +0.06 after a bull market.</strong> The average beta of
+roughly zero is an average of two very different regimes, and reporting it hides
+the only thing that matters.</p>
+<p>That is Lecture 9 in return space. Momentum pays you for holding something that
+loses badly in exactly the state where losses hurt — and the premium is the
+payment for that, not a free lunch with an occasional bad year.</p>
+<p>Dividing the position by its own trailing volatility takes the Sharpe ratio from
+0.43 to 0.73 and cuts the drawdown by twenty points. One line, and it is the
+crude version of what we will do properly at meeting 19.</p>
+</section>
+<hr class="docutils" />
+<section id="hands-on-your-signal-s-decision-tree">
+<h2><span class="section-number">12.10. </span>🛠️ Hands-On: Your Signal’s Decision Tree <a id="ho1"></a><a class="headerlink" href="#hands-on-your-signal-s-decision-tree" title="Link to this heading">#</a></h2>
+<p>Your group’s signal came pre-built. Somebody made every choice in §4 on your
+behalf and did not tell you.</p>
+<blockquote>
+<div><p><strong>🤔 Predict first.</strong> If you re-cut your signal on all-stock breakpoints instead
+of NYSE breakpoints, does the Sharpe ratio go up or down? Why?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === EDIT + YOUR TURN ===</span>
+<span class="n">MY_SIGNAL</span> <span class="o">=</span> <span class="s2">"GP"</span>      <span class="c1"># ← your group's signal</span>
+
+<span class="n">sig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">sig</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Merge your signal onto the panel, then rebuild the long-short two ways:</span>
+<span class="c1"># NYSE breakpoints and all-stock breakpoints. Reuse build() from earlier.</span>
+<span class="n">mine_nyse</span> <span class="o">=</span> <span class="n">____</span>      <span class="c1"># hint: adapt build(), which already uses NYSE breakpoints</span>
+<span class="n">mine_all</span>  <span class="o">=</span> <span class="n">____</span>      <span class="c1"># hint: cut on x['s'] instead of x.loc[x.exchcd==1,'s']</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  NYSE breakpoints      Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">mine_nyse</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  all-stock breakpoints Sharpe </span><span class="si">{</span><span class="n">sharpe</span><span class="p">(</span><span class="n">mine_all</span><span class="p">)</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="compare-with-the-room">
+<h3><span class="section-number">12.10.1. </span>Compare with the room<a class="headerlink" href="#compare-with-the-room" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Which way did it move, and how far?</strong> For momentum the gap was 1.03 to 1.13,
+and the volatility went up 6 points. If yours moves more, your signal is more
+concentrated in small stocks than momentum is.</p></li>
+<li><p><strong>How many constructions have you now tried?</strong> Count honestly. That number goes
+in your project report, and it moves the bar your result has to clear.</p></li>
+<li><p><strong>Which one will you report?</strong> Decide the rule before you look, which is the
+whole of Lecture 8.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="challenge-the-other-end-of-the-horizon">
+<h2><span class="section-number">12.11. </span>🎯 Challenge: The Other End of the Horizon <a id="challenge"></a><a class="headerlink" href="#challenge-the-other-end-of-the-horizon" title="Link to this heading">#</a></h2>
+<p><em>Homework — due before the next class.</em></p>
+<p>In class the lookback chart stayed positive all the way out to five years, which
+is not what the literature says should happen. Settle it properly.</p>
+<p><strong>Long-term reversal</strong> (DeBondt and Thaler, 1985): rank stocks on their
+cumulative return from <strong>t−60 to t−13</strong> — five years back, ending one year ago,
+so the momentum window is excluded entirely — and go long the losers, short the
+winners. Note the sign is flipped relative to momentum: <strong>D1 minus D10</strong>.</p>
+<p>If the textbook holds in our sample, this should make money.</p>
+<p>Use the cached <code class="docutils literal notranslate"><span class="pre">grid</span></code> where you can; build what you cannot. Everything is
+value-weighted on NYSE breakpoints unless stated.</p>
+<section id="q1-does-the-long-horizon-reverse">
+<h3><span class="section-number">12.11.1. </span>Q1 — Does the long horizon reverse?<a class="headerlink" href="#q1-does-the-long-horizon-reverse" title="Link to this heading">#</a></h3>
+<p>Build the t−60 to t−13 signal from the panel — a 48-month window, skipped by 12 —
+and report the <strong>Sharpe ratio of the D1 − D10 long-short</strong> (losers minus winners).</p>
+<p>Report what you get, including if it is negative or near zero. A null is a result
+here, and it is the one the memo has to deal with.</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ltr_sharpe</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># Sharpe ratio of the D1 - D10 long-term reversal strategy</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">ltr_sharpe</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"long-term reversal Sharpe: </span><span class="si">{</span><span class="n">ltr_sharpe</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q2-is-it-just-momentum-with-a-minus-sign">
+<h3><span class="section-number">12.11.2. </span>Q2 — Is it just momentum with a minus sign?<a class="headerlink" href="#q2-is-it-just-momentum-with-a-minus-sign" title="Link to this heading">#</a></h3>
+<p>Regress your long-term reversal series on <strong>momentum</strong> (<code class="docutils literal notranslate"><span class="pre">grid['J11_s1']</span></code>) and
+report the <strong>alpha, annualised, as a decimal</strong> (0.05 means +5%/yr).</p>
+<p>If reversal is simply the opposite of momentum, the alpha should be near zero
+once you control for it. Find out.</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ltr_alpha</span> <span class="o">=</span> <span class="n">____</span>    <span class="c1"># annualised alpha vs momentum, decimal</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">ltr_alpha</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"alpha vs momentum: </span><span class="si">{</span><span class="n">ltr_alpha</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q3-the-skip-again">
+<h3><span class="section-number">12.11.3. </span>Q3 — The skip, again<a class="headerlink" href="#q3-the-skip-again" title="Link to this heading">#</a></h3>
+<p>Rebuild the same 48-month window with <strong>no skip at all</strong> — t−48 to t−1 — and
+report its Sharpe ratio, still D1 − D10.</p>
+<p>For momentum the skip was worth 0.39 of Sharpe ratio. Predict before you run it
+whether a skip matters <em>more</em> or <em>less</em> at a four-year horizon — you are dropping
+12 months out of 48 rather than 1 out of 12, so the discarded fraction is much
+larger, but so is what remains. The reason for what you find is worth more than
+the number.</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ltr_noskip</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># Sharpe of the no-skip version, D1 - D10</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">ltr_noskip</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no-skip long-term reversal Sharpe: </span><span class="si">{</span><span class="n">ltr_noskip</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q4-the-memo">
+<h3><span class="section-number">12.11.4. </span>Q4 — The memo<a class="headerlink" href="#q4-the-memo" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Your task — maximum eight sentences.</strong></p>
+<p>Your PM has read that “momentum and reversal are the same trade at different
+horizons” and wants to know whether to run both.</p>
+<p>Say what you found at the five-year horizon and whether it survives controlling
+for momentum. Say what the skip did here compared with what it did at twelve
+months, and give the reason, not just the number. Then take a position on the
+disagreement: <strong>the published result says long-horizon losers beat winners, and
+our sample does not show it — is that decay, a construction difference, or was
+it never there?</strong> Say which you favour and what evidence would change your mind.
+Finish with the practical question: you have now built this strategy at ten
+horizons, two skip settings and two sets of breakpoints. What t-statistic would
+you need before believing any single one of them?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MEMO</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">Write your memo here. Don't delete the surrounding triple quotes.</span>
+<span class="s2">"""</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">MEMO</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="submission">
+<h2><span class="section-number">12.12. </span>📤 Submission <a id="submit"></a><a class="headerlink" href="#submission" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ltr_sharpe"</span><span class="p">,</span> <span class="s2">"ltr_alpha"</span><span class="p">,</span> <span class="s2">"ltr_noskip"</span><span class="p">,</span> <span class="s2">"MEMO"</span><span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()]</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">❌ Missing before submission: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"assignment"</span><span class="p">:</span> <span class="s2">"L10_Momentum_AI"</span><span class="p">,</span>
+    <span class="s2">"ts"</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">"seconds"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"+00:00"</span><span class="p">,</span> <span class="s2">"Z"</span><span class="p">),</span>
+    <span class="s2">"answers"</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"MEMO"</span><span class="p">},</span>
+    <span class="s2">"memo"</span><span class="p">:</span> <span class="n">MEMO</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"UG54::</span><span class="si">{</span><span class="n">checksum</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Submission form: https://forms.gle/yazZ8bbatL87jdJi7"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2><span class="section-number">12.13. </span>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>The recipe is the same for every signal</strong> — rank, bucket, weight, long the
+top, short the bottom. The signal is where the edge is, and there is no
+procedure for finding one.</p></li>
+<li><p><strong>Momentum needs only prices</strong>, which is why it has a hundred variants: no
+accounting data means nothing to blame but your construction.</p></li>
+<li><p><strong>Momentum and value are the same bet on different windows.</strong> A price contains
+the whole return history; momentum looks at twelve months.</p></li>
+<li><p><strong>Same signal, same data, Sharpe 0.45 to 1.13.</strong> Lookback, skip, weighting,
+breakpoints, bucket count. None of them is a mistake.</p></li>
+<li><p><strong>The skip month is worth 0.39 of Sharpe ratio</strong> — one <code class="docutils literal notranslate"><span class="pre">.shift()</span></code>, and the
+line an AI will not write unless asked.</p></li>
+<li><p><strong>A Sharpe of 6.58 is a bug, not a discovery.</strong> <code class="docutils literal notranslate"><span class="pre">shift(-1)</span></code> for <code class="docutils literal notranslate"><span class="pre">shift(1)</span></code>
+does not raise. You catch it by knowing the answer’s rough size in advance.</p></li>
+<li><p><strong>Momentum is a stock effect that appears at the industry level</strong>, not the
+reverse — alpha +11.5%/yr against industry momentum, while industry momentum
+has none against it. Which is the opposite of the published paper, and we
+cannot say why.</p></li>
+<li><p><strong>Momentum’s beta is −0.75 after a bear market and +0.06 after a bull one.</strong>
+The average of zero describes neither. 2009: −52.9% while the market made
++28.3%.</p></li>
+<li><p><strong>The lookback chart does not reverse at long horizons in our sample</strong> —
++0.48 at five years where the textbook says negative. Decay, construction, or
+never there: the same three explanations, and the same inability to choose.</p></li>
+<li><p><strong>Two series can agree on every statistic and be misaligned.</strong> Correlate, do
+not compare means.</p></li>
+</ol>
+<hr class="docutils" />
+<section id="next-class">
+<h3><span class="section-number">12.13.1. </span>Next class<a class="headerlink" href="#next-class" title="Link to this heading">#</a></h3>
+<p>You have priced the construction choices. Next we price the <em>trading</em> — what it
+costs to actually hold a portfolio that turns over this fast, and what is left of
+a 20% return once you pay for it.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="appendix">
+<h2><span class="section-number">12.14. </span>📎 Appendix <a id="appendix"></a><a class="headerlink" href="#appendix" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
+<span class="c1"># 📎 APPENDIX — every variant in one table</span>
+<span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
+<span class="n">tab</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">c</span><span class="p">:</span> <span class="p">{</span><span class="s1">'mean/yr'</span><span class="p">:</span> <span class="n">grid</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="p">,</span>
+                        <span class="s1">'vol'</span><span class="p">:</span> <span class="n">grid</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span>
+                        <span class="s1">'Sharpe'</span><span class="p">:</span> <span class="n">sharpe</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">())}</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">columns</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">formatters</span><span class="o">=</span><span class="p">{</span><span class="s1">'mean/yr'</span><span class="p">:</span> <span class="s1">'</span><span class="si">{:+.1%}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="s1">'vol'</span><span class="p">:</span> <span class="s1">'</span><span class="si">{:.1%}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+                                <span class="s1">'Sharpe'</span><span class="p">:</span> <span class="s1">'</span><span class="si">{:+.2f}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">}))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="L9_WhyShouldThisWork_AI.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">11. </span>Why Should This Work?</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="upcoming/L11_Transaction_Costs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">13. </span>L11 · Transaction Costs</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">12.1. 🎯 Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#today-s-plan">12.2. 📋 Today’s Plan</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">12.3. 🛠️ Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-signals-come-from">12.4. 1 · Where signals come from <a id="where"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-claim">12.5. 2 · The claim <a id="claim"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-it-from-raw-returns">12.6. 🔄 3 · Build it from raw returns <a id="build"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#same-mean-same-sharpe-ratio-correlation-0-11">12.6.1. Same mean, same Sharpe ratio, correlation 0.11</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-it-compute-12-month-momentum">12.6.2. 🎯 Prompt it — compute 12-month momentum <a id="prompt"></a></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-sharpe-ratio-of-6-58-is-not-a-discovery">12.6.3. A Sharpe ratio of 6.58 is not a discovery</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-decision-tree-priced">12.7. 4 · The decision tree, priced <a id="tree"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#same-signal-same-data-sharpe-ratio-from-0-45-to-1-13">12.7.1. Same signal. Same data. Sharpe ratio from 0.45 to 1.13.</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stocks-or-industries">12.8. 5 · Stocks or industries? <a id="ind"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-asymmetry-is-the-answer">12.8.1. The asymmetry is the answer</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#crashes">12.9. 6 · Crashes <a id="crash"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-your-signal-s-decision-tree">12.10. 🛠️ Hands-On: Your Signal’s Decision Tree <a id="ho1"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-with-the-room">12.10.1. Compare with the room</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-the-other-end-of-the-horizon">12.11. 🎯 Challenge: The Other End of the Horizon <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-does-the-long-horizon-reverse">12.11.1. Q1 — Does the long horizon reverse?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-is-it-just-momentum-with-a-minus-sign">12.11.2. Q2 — Is it just momentum with a minus sign?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-skip-again">12.11.3. Q3 — The skip, again</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-the-memo">12.11.4. Q4 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">12.12. 📤 Submission <a id="submit"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">12.13. 🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">12.13.1. Next class</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix">12.14. 📎 Appendix <a id="appendix"></a></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
