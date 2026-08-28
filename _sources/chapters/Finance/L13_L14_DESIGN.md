@@ -30,21 +30,17 @@ theorem is the intellectual job of L13.
 
 ---
 
-## First: dropping L12 frees a meeting
+## A note on meeting 15 — nothing decided
 
-AM is skipping leverage and shorting. That empties **meeting 15, Wed Oct 28**,
-which sits directly before this block. Three options:
+L12 (leverage and shorting) is **skipped for now**, not cut: AM is thinking about
+moving it later and may or may not kill it. **The calendar is unchanged and this
+plan assumes nothing about it.** L13 and L14 are designed for meetings 16 and 17
+exactly as scheduled.
 
-1. **Momentum part 2 takes it.** L10 is 2.80 lectured sessions and already needs
-   a second meeting; the content exists and the break at §4/§5 is clean.
-2. **Capital allocation takes three meetings** (15–17).
-3. Shift everything a meeting earlier and bank the slack.
-
-**Recommend (1).** Splitting L10 is free — the material is built and over-length,
-so this costs nothing but the slot. Capital allocation at two well-designed
-meetings is enough, and three meetings of `Σ⁻¹` is more than an undergraduate
-elective should spend on the hardest mathematics in the course. Option (3) is
-worth keeping in reserve for when something slips, which it will.
+Recorded only so it is not forgotten: *if* L12 eventually moves or goes, meeting
+15 opens up, and the strongest claim on it is momentum part 2 — L10 is 2.80
+lectured sessions and already built, so a split would cost nothing but the slot.
+That is a decision for later, not an input to this design.
 
 ---
 
@@ -290,14 +286,47 @@ building so the expanding-window loop does not run in class.
 
 ## Open questions for AM
 
-1. **Meeting 15** — momentum part 2, as recommended, or a third capital-allocation
-   meeting?
-2. **Does the Fundamental Law earn its place?** $IR = IC\sqrt{nT}$ is the best
-   organising idea available and it is one more formula in the most formula-dense
-   lecture of the term. My view: keep it in L13 §5 as *interpretation only* —
-   state it, connect it to the two results they have just derived, and never
-   compute an IC.
-3. **A6 currently says "scale your strategy by volatility, combine with the
-   market, find the max-Sharpe weight."** That is L13 material and lands Thu Nov 5,
-   the day after L14. Worth rewriting so it spans both meetings — the natural
-   assignment is *"size your own strategy three ways and defend one."*
+### 1 · How much of the Fundamental Law to teach
+
+The law says **IR = IC × √(breadth)**: your risk-adjusted performance is your
+*skill per bet* multiplied by the square root of *how many bets you make*.
+
+- **IC**, the information coefficient, is the cross-sectional correlation between
+  the alphas you predicted and the returns that happened. It is a skill score, and
+  real values are tiny — a good equity manager runs 0.02 to 0.05.
+- **Breadth** is the number of genuinely independent bets per year: roughly the
+  number of names times the number of times a year you re-forecast.
+
+So a manager with IC = 0.03 across 1,000 independent bets a year has
+IR ≈ 0.03 × √1000 ≈ 0.95. Skill can be nearly undetectable per bet and still make
+a business, provided there are enough bets.
+
+**The question is how far into L13 it goes**, because it is a third formula in
+the most formula-dense meeting of the term, and computing an IC properly needs a
+cross-sectional regression setup students do not have.
+
+**My recommendation — state it, never compute it.** One box in §5 saying the two
+results they *just derived themselves* (√(SR_A²+SR_B²), and √N for the pods) are
+special cases of it. No IC estimation, no exercise, nothing in the assignment.
+It costs about eighty words and it names the pattern they have already seen twice.
+
+The alternative is to drop it entirely and let the two derived results stand
+alone. That is defensible; it just leaves the pattern unnamed.
+
+### 2 · A6 is currently specified for the wrong half of the block
+
+The working spec for Assignment 6 is *"scale your strategy by volatility, combine
+it with the market, and find the weight that maximises the Sharpe ratio."*
+
+**All of that is L13.** But A6 is due **Thu Nov 5**, which is the day after L14 —
+so students would sit through a lecture whose entire point is *the optimizer does
+not survive out of sample*, and then go home and run the optimizer. The
+assignment would contradict the meeting they just left.
+
+**Suggested rewrite: "size your own strategy three ways and defend one."** They
+apply mean-variance, 1/N and risk parity to their own signal combined with the
+market, compare the three, and argue for one in the memo. That uses L13's formula
+*and* L14's scepticism, and it is the actual decision a portfolio manager makes.
+
+Not urgent — A6 does not exist yet — but it should be settled before L13 is built,
+because it changes what the Hands-On has to set up.
