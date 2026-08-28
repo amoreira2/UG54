@@ -323,8 +323,8 @@ md("""
 Eighteen years of 15% a year, and then 1999 takes 60% of it back in twelve
 months.
 
-The drawdown is not a footnote — **it is the story.** The strategy is short
-lottery stocks, and in a bubble lottery stocks are exactly what runs. So 1999 is
+The strategy is short lottery stocks, and in a bubble lottery stocks are exactly
+what runs. So 1999 is
 not the strategy breaking. It is the risk the economic story predicted, arriving
 in the state of the world where the story says it should.
 
@@ -398,7 +398,7 @@ entirely because of an assumption nobody wrote down. A terse prompt returns
 `(1 + r).cumprod()`, which silently assumes 1-for-1 equity funding and never
 says so.
 
-The last two rows are the argument we came for:
+Now the last two rows:
 
 > **⚠️ At 2× you lose 96%. At 3× you are wiped out — in June 2000, three months
 > after the bottom, before any of the recovery.**
@@ -460,9 +460,8 @@ Five questions. Take them to the pitch on Wednesday.
    while it is still cheap to name.
 5. **If the answer to (1) is "I don't know," you are the counterparty.**
 
-None of these are statistical. That is the point of the whole lecture: once the
-backtest is honest — and Lecture 8 was about making it honest — everything left
-that matters is economics.
+None of these are statistical. Once the backtest is honest — and Lecture 8 was
+about making it honest — everything left that matters is economics.
 """)
 
 # ─────────────────────────────────────────────── Hands-On

@@ -443,7 +443,7 @@ print(f"  {'stock on industry + FF3':32s} alpha {c.params.iloc[0]*12:+7.1%}/yr  
 """)
 
 md("""
-### The asymmetry is the answer
+### Stock momentum survives industry momentum. It does not work the other way.
 
 Stock momentum survives controlling for industry momentum: **+11.5% a year,
 t = 3.76**, and it holds up with the Fama-French three-factor model on top
