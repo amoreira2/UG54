@@ -168,7 +168,50 @@ defensible constructions is seven tests, and the Bonferroni bar moves.
 
 ---
 
-## §4 · Stocks or industries?
+## §5 · The many momenta — added 2026-08-28
+
+AM: *"a discussion of the many versions of momentum, with links... referencing the
+many papers and variations people have done is illustrative of how much details
+matter."* Placed **before** industries so that industry momentum reads as one
+instance of a family rather than a one-off.
+
+Fifteen published variations in a linked table — Jegadeesh–Titman, Carhart,
+Chan–Jegadeesh–Lakonishok, Moskowitz–Grinblatt, Hong–Lim–Stein,
+Lee–Swaminathan, Grundy–Martin, George–Hwang, Blitz–Huij–Martens, Novy-Marx,
+Moskowitz–Ooi–Pedersen, Asness–Moskowitz–Pedersen, Da–Gurun–Warachka,
+Barroso–Santa-Clara, Daniel–Moskowitz. Links are Google Scholar searches rather
+than DOIs: they always resolve, they are not paywalled, and they land students on
+a page with the PDF.
+
+**Two of them we can settle live**, because `momentum()` already takes the dial as
+an argument.
+
+**Novy-Marx (2012), the echo — and it replicates.**
+
+| | Sharpe |
+|---|---|
+| standard, months 2–12 | 1.03 |
+| recent, months 2–6 | 0.62 |
+| **echo, months 7–12** | **0.85** |
+
+Correlation between recent and echo is only **0.38**. The ladder: echo on recent
+**+10.7%/yr, t = 2.88**; recent on echo +6.3%/yr, t = 1.56. The older window
+survives the recent one and not the reverse — the part of momentum that works is
+the part you would have assumed was stale.
+
+**This is a deliberate contrast with §6.** Moskowitz–Grinblatt does *not*
+replicate here; Novy-Marx does. Set against L9's six-of-27, the lesson is that
+replication is variable rather than hopeless, and the only way to know which case
+you are in is to run it.
+
+**Four variants we already hold.** Mom12m, Mom6m, ResidualMomentum,
+AnnouncementReturn — correlations 0.24 to 0.79. Mom12m/Mom6m at 0.79 are one
+trade; residual momentum at 0.53 and earnings momentum at 0.24 are not, and
+earnings momentum has the highest Sharpe of the four (1.17). The takeaway for the
+project: a signal correlating 0.8 with momentum is not new whatever it is called,
+and one correlating 0.2 is — and now owes an explanation.
+
+## §6 · Stocks or industries?
 
 The question AM asked for. Industry momentum (Moskowitz–Grinblatt 1999) built
 from the 49 Fama–French industry portfolios, same t−12 to t−2 rule, long the top
@@ -199,7 +242,7 @@ their 1963–1995), 49 industries rather than 20, and they industry-adjust at th
 stock level while we compare two portfolios. Any of those could do it. The honest
 statement is that we cannot tell which, which is exactly L9 §1.
 
-### §5b · Within industries — solved 2026-08-28
+### §6b · Within industries — solved 2026-08-28
 
 The first pass called within-industry momentum impossible for want of SIC codes.
 **It is recoverable.** The KNS-style characteristics files carry `indmom`, the

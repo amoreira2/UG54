@@ -21,12 +21,30 @@ through and dated rather than deleted, so the reasoning survives.
       conclusion cannot be checked on small caps — where momentum is strongest
       (Sharpe 1.09 vs 0.47). A WRDS `crsp.msenames.siccd` pull mapped to FF49
       would cover everything.
-- [ ] **L10 is 2.23 lectured sessions** — genuinely two lectures. §3 (0.58) and
-      §5b are each half a session on their own. Options, cheapest first: move §6
-      (crashes, vol-scaling, 0.15) into L15 volatility timing where it is the
-      natural motivating example; cut §1's signal survey (0.19) to a handout;
-      or split the lecture and give momentum two meetings, which the reorder
-      does not currently have room for.
+- [ ] **L10 is 2.80 lectured sessions — decide how to split it.** It is now two
+      lectures with change, and trimming will not fix that. Per-section cost:
+
+      | | sessions |
+      |---|---|
+      | §1 where signals come from | 0.19 |
+      | §2 the claim | 0.11 |
+      | §3 build it from the paper | 0.69 |
+      | §4 the decision tree, priced | 0.26 |
+      | §5 the many momenta | 0.52 |
+      | §6 within vs across industries | 0.67 |
+      | §7 crashes | 0.15 |
+
+      **Recommended split: §1–§4 as meeting 13** (1.25 sessions — construction,
+      the skip, and what the choices are worth) **and §5–§7 as a second meeting**
+      (1.34 — the literature, industries, crashes). The break is clean: everything
+      before it builds one strategy, everything after compares variants.
+
+      That needs a slot the back-half reorder does not have. Cheapest source is
+      moving §7 (crashes, vol-scaling) into L15 volatility timing where it is the
+      natural motivating example, which gets part 2 to 1.19 but still needs the
+      meeting. Otherwise cut §5 to the linked table alone, dropping the live
+      Novy-Marx test — which would be a real loss, since it is the one published
+      momentum result that replicates in our sample.
 - [ ] **Assignments 4–8 do not exist yet.** A1, A2 and A3 are built and tested.
       **A4 can now be written** — L8 and L9 both exist. A5–A8 wait on their
       lectures, and A5's due date needs the fix noted below.
