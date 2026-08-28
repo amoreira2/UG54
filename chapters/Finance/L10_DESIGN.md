@@ -169,7 +169,7 @@ built by `build_industry_labels.py`.
 change industry across 20 years. The per-date label is what is wanted anyway.)
 
 **First, the price of the smaller universe.** Same dates, same construction:
-Sharpe **1.09** on all 5,427 stocks against **0.47** on the largest 950.
+Sharpe **0.99** on all 5,427 stocks against **0.42** on the largest 950.
 *Momentum is largely a small- and mid-cap phenomenon*, which is a finding in its
 own right and the reason every number below is modest. It also sets up L11: the
 place momentum works best is the place it costs most to trade.
@@ -178,13 +178,13 @@ place momentum works best is the place it costs most to trade.
 
 | | VW mean | VW Sharpe | EW mean | EW Sharpe |
 |---|---|---|---|---|
-| plain | +11.6% | 0.47 | +12.1% | 0.53 |
-| **industry-neutral** (demean the signal by industry) | +6.5% | 0.42 | +9.5% | **0.75** |
+| plain | +8.8% | 0.42 | +11.7% | 0.60 |
+| **industry-neutral** (demean the signal by industry) | +5.6% | 0.41 | +9.1% | **0.83** |
 | pure within-industry (T3 − T1, averaged) | +3.8% | 0.44 | +4.5% | 0.53 |
 | across-industry (top 8 − bottom 8) | +5.0% | 0.32 | +8.4% | 0.53 |
 
-**Equal-weighted, neutralising the industry bet makes momentum better: 0.75
-against 0.53.** Value-weighted it does not: 0.42 against 0.47. Both weightings
+**Equal-weighted, neutralising the industry bet makes momentum better: 0.83
+against 0.60.** Value-weighted the gain vanishes: 0.41 against 0.42. Both weightings
 are standard, and the answer to "within or across?" flips between them — which is
 this lecture's own theme landing at the worst possible moment, and should be said
 rather than smoothed over.
@@ -193,9 +193,9 @@ rather than smoothed over.
 
 | | alpha | t |
 |---|---|---|
-| within-neutral on across | **+5.4%/yr** | **2.31** |
-| across on within-neutral | +1.2%/yr | 0.40 |
-| **plain on within-neutral** | **−2.5%/yr** | −0.85 |
+| within-neutral on across | **+6.1%/yr** | **2.77** |
+| across on within-neutral | +1.5%/yr | 0.48 |
+| **plain on within-neutral** | **−1.2%/yr** | −0.41 |
 
 Same asymmetry as §5a, now at the stock level — and one step further: **plain
 momentum has no alpha against the industry-neutral version.** Once you own
@@ -272,9 +272,38 @@ against −0.39 at one year.
 Target **1,700 lectured words**. §3 and §4 are the lecture; §0 is a table and two
 sentences, §5 is short and mostly a plot.
 
+## Code shape — revised 2026-08-28 after AM
+
+The first build computed momentum as
+`np.expm1(groupby.transform(lambda s: s.rolling(11).sum().shift(1)))` on log
+returns, and read §4's grid from a cached parquet. **Both were wrong choices**,
+and the old `Momentum.ipynb` had it right:
+
+- **Rolling product of `(1+r)`, not a sum of logs.** The product *is* the formula
+  in the markdown. The log detour is a numerical trick students must decode
+  first, and it forces a `.clip(lower=-0.9999)` guard that exists only because
+  `log(0)` blows up on the 15 delisting months. A product handles them correctly
+  with no guard.
+- **Named intermediate columns**, one idea per line — `cumret`, then `signal` —
+  instead of four operations nested in one expression.
+- **The skip as its own visible step**: `groupby('permno')['cumret'].shift(skip)`.
+- **Two functions, and the signature is the decision tree.**
+  `sort_portfolios(df, signal, ngroups, weights, breakpoints)` is Lecture 3's
+  recipe and works on any signal — including the student's own in the Hands-On.
+  `momentum(df, lookback, skip, **kwargs)` builds the signal and calls it.
+
+§4 is now **live**, not cached: every number comes from calling `momentum()` in a
+loop. 1.7 s per call, so the lookback sweep is ~16 s, the skip sweep ~8 s, and the
+variant table ~12 s. Worth the wait, because changing an argument *is* the
+experiment. `momentum_grid.parquet` and its build script are deleted.
+
+Parameter semantics, documented in the docstring: `lookback=11, skip=1` spans
+t−12 to t−2 counting from the month whose return you earn. Verified to correlate
+**1.000000** with the previous log-based construction.
+
 ## Data
 
-`assets/data/momentum_grid.parquet` — 22 series, 25 KB: the ten lookbacks, the
-five skips, the seven construction variants, and industry momentum. Built by
-`build_momentum_grid.py`. The notebook rebuilds momentum once from the raw panel
-so students see it happen, then uses the cache for the grid.
+`assets/data/industry_labels.parquet` (48 industries × ~950 stocks/month) and
+`assets/data/momentum_industry.parquet` (the four §5b treatments, both
+weightings, built with the same rolling-product construction the notebook
+teaches). Built by `build_industry_labels.py` and `build_momentum_industry.py`.

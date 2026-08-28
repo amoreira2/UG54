@@ -54,7 +54,6 @@ import warnings; warnings.filterwarnings('ignore')
 BASE = "https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data"
 
 panel = pd.read_parquet(f"{BASE}/panel_backbone_1980_2000.parquet")   # raw CRSP
-grid  = pd.read_parquet(f"{BASE}/momentum_grid.parquet")              # today's variants, cached
 ind49 = pd.read_csv(f"{BASE}/industry49_monthly.csv", index_col=0, parse_dates=True)
 ff    = pd.read_csv(f"{BASE}/ff_monthly.csv", index_col=0, parse_dates=True)
 L     = pd.read_parquet(f"{BASE}/longshort_29.parquet")
@@ -148,28 +147,30 @@ Zero to one hundred. We start from the CRSP panel — `permno`, `date`, `ret`,
 """)
 
 co("""
-#@title 🔒 Raw panel to long-short, in one pass
+#@title 🔒 Raw panel to long-short, one step at a time
 p = panel[panel.shrcd.isin([10, 11]) & panel.exchcd.isin([1, 2, 3])].copy()
 p = p.sort_values(['permno', 'date'])
+p['1+ret'] = p['ret'] + 1
 
-# 1. log returns compound by adding
-p['lr'] = np.log1p(p['ret'].clip(lower=-0.9999))
+# ── step 1 ── cumulative return over the last `lookback` months, stock by stock
+#    (1+r_{t-10})(1+r_{t-9})...(1+r_t)   —  a rolling PRODUCT, exactly the formula
+p['cumret'] = (p.groupby('permno')['1+ret']
+                 .rolling(11, min_periods=11).apply(np.prod, raw=True)
+                 .reset_index(level=0, drop=True))
 
-# 2. cumulative return t-12 to t-2: 11 months, then step back one more
-p['mom'] = np.expm1(p.groupby('permno')['lr']
-                     .transform(lambda s: s.rolling(11).sum().shift(1)))
+# ── step 2 ── step it back so the month before formation is not in the signal
+p['signal'] = p.groupby('permno')['cumret'].shift(1)
 
-# 3. rank into deciles each month, on NYSE breakpoints (Lecture 3)
-d = p.dropna(subset=['mom', 'ret_fwd', 'me'])
+# ── step 3 ── each month, cut into deciles on NYSE breakpoints (Lecture 3)
+d = p.dropna(subset=['signal', 'ret_fwd', 'me'])
 def deciles(x):
-    ref = x.loc[x.exchcd == 1, 'mom']
-    edges = np.unique(np.quantile(ref, np.linspace(0, 1, 11)))
+    edges = np.unique(np.quantile(x.loc[x.exchcd == 1, 'signal'], np.linspace(0, 1, 11)))
     edges[0], edges[-1] = -np.inf, np.inf
-    return pd.cut(x['mom'], edges, labels=False, duplicates='drop')
-d = d.assign(q=d.groupby('date', group_keys=False).apply(deciles))
+    return pd.cut(x['signal'], edges, labels=False, duplicates='drop')
+d = d.assign(group=d.groupby('date', group_keys=False).apply(deciles))
 
-# 4. value-weight inside each decile, then D10 - D1
-dec  = d.groupby(['date', 'q']).apply(lambda x: np.average(x.ret_fwd, weights=x.me)).unstack()
+# ── step 4 ── value-weight inside each decile, then top minus bottom
+dec  = d.groupby(['date', 'group']).apply(lambda x: np.average(x.ret_fwd, weights=x.me)).unstack()
 mine = (dec[9] - dec[0]).dropna()
 
 print(f"  ours      mean {mine.mean()*12:+.1%}/yr   Sharpe {sharpe(mine):.2f}")
@@ -198,6 +199,52 @@ mine.index = mine.index + pd.offsets.MonthEnd(1)          # date it by the month
 j = pd.concat([mine.rename('ours'), L['Mom12m'].rename('shipped')], axis=1).dropna()
 print(f"  correlation after aligning: {j.corr().iloc[0,1]:.3f}   ({len(j)} months)")
 print(j.head(3).to_string())
+""")
+
+md("""
+### Wrap it, so the decisions become arguments
+
+Those four steps are the whole recipe, and every choice we are about to argue
+about is one of them. So put them in a function and let the choices be
+**arguments** — then changing your mind is one keystroke, not one edit.
+
+Two functions, because step 3 and 4 are not about momentum at all. Sorting a
+signal into weighted portfolios is what we did to book-to-market in Lecture 3 and
+what you will do to your own signal in a moment.
+""")
+
+co("""
+#@title 🔒 The two functions we use for the rest of the lecture
+def sort_portfolios(df, signal='signal', ngroups=10, weights='value', breakpoints='nyse'):
+    \"\"\"Rank a signal into ngroups each month, weight inside each, return top minus bottom.
+    Works on ANY signal column — this is Lecture 3's recipe, wrapped.\"\"\"
+    d = df.dropna(subset=[signal, 'ret_fwd', 'me']).copy()
+    def bucket(x):
+        ref = x.loc[x.exchcd == 1, signal] if breakpoints == 'nyse' else x[signal]
+        e = np.unique(np.quantile(ref, np.linspace(0, 1, ngroups + 1)))
+        e[0], e[-1] = -np.inf, np.inf
+        return pd.cut(x[signal], e, labels=False, duplicates='drop')
+    d['group'] = d.groupby('date', group_keys=False).apply(bucket)
+    w = (lambda x: np.average(x.ret_fwd, weights=x.me)) if weights == 'value' else \\
+        (lambda x: x.ret_fwd.mean())
+    dec = d.groupby(['date', 'group']).apply(w).unstack()
+    ls = (dec[ngroups - 1] - dec[0]).dropna()
+    ls.index = ls.index + pd.offsets.MonthEnd(1)      # date it by the month EARNED
+    return ls
+
+def momentum(df, lookback=11, skip=1, **kwargs):
+    \"\"\"Cumulative return over `lookback` months, ending `skip` months before formation.
+    lookback=11, skip=1 is the standard: the signal spans t-12 to t-2 counting from
+    the month whose return you earn.\"\"\"
+    d = df.copy()
+    d['cumret'] = (d.groupby('permno')['1+ret']
+                     .rolling(lookback, min_periods=lookback).apply(np.prod, raw=True)
+                     .reset_index(level=0, drop=True))
+    d['signal'] = d.groupby('permno')['cumret'].shift(skip)
+    return sort_portfolios(d, **kwargs)
+
+std = momentum(p)                      # the standard construction, ~2 seconds
+print(f"momentum(lookback=11, skip=1)   mean {std.mean()*12:+.1%}/yr   Sharpe {sharpe(std):.2f}")
 """)
 
 md("""
@@ -234,28 +281,23 @@ MY_PROMPT = \"\"\"
 
 co("""
 #@title 🔒 Check — five readings, all of them valid code
-def build(sig_series):
-    dd = p.assign(s=sig_series).dropna(subset=['s', 'ret_fwd', 'me'])
-    def cut(x):
-        ref = x.loc[x.exchcd == 1, 's']
-        e = np.unique(np.quantile(ref, np.linspace(0, 1, 11))); e[0], e[-1] = -np.inf, np.inf
-        return pd.cut(x['s'], e, labels=False, duplicates='drop')
-    dd = dd.assign(q=dd.groupby('date', group_keys=False).apply(cut))
-    r  = dd.groupby(['date', 'q']).apply(lambda x: np.average(x.ret_fwd, weights=x.me)).unstack()
-    return (r[9] - r[0]).dropna()
+def variant(lookback, skip, label):
+    r = momentum(p, lookback=lookback, skip=skip)
+    print(f"  {label:38s} mean {r.mean()*12:+8.1%}   Sharpe {sharpe(r):+.2f}")
 
-g = p.groupby('permno')
-readings = {
- "t-12 to t-2  (11 months, skip 1)": np.expm1(g['lr'].transform(lambda s: s.rolling(11).sum().shift(1))),
- "t-12 to t-1  (12 months, no skip)": np.expm1(g['lr'].transform(lambda s: s.rolling(12).sum().shift(1))),
- "t-11 to t     (includes this month)": np.expm1(g['lr'].transform(lambda s: s.rolling(12).sum())),
- "sums simple returns, not compounded": g['ret'].transform(lambda s: s.rolling(11).sum().shift(1)),
- "shift(-1) instead of shift(1)":      np.expm1(g['lr'].transform(lambda s: s.rolling(11).sum().shift(-1))),
-}
 print("«Compute 12-month momentum for each stock»\\n")
-for lab, s in readings.items():
-    r = build(s)
-    print(f"  {lab:38s} mean {r.mean()*12:+8.1%}   Sharpe {sharpe(r):+.2f}")
+variant(11,  1, "t-12 to t-2  (11 months, skip 1)")
+variant(12,  1, "t-12 to t-1  (12 months, skip 1)")
+variant(12,  0, "t-11 to t     (includes this month)")
+variant(11, -1, "shift(-1) instead of shift(1)")
+
+# and one that is not a shift at all: summing returns instead of compounding them
+q = p.copy()
+q['cumret'] = (q.groupby('permno')['ret'].rolling(11, min_periods=11).sum()
+                .reset_index(level=0, drop=True))
+q['signal'] = q.groupby('permno')['cumret'].shift(1)
+r = sort_portfolios(q)
+print(f"  {'sums returns instead of compounding':38s} mean {r.mean()*12:+8.1%}   Sharpe {sharpe(r):+.2f}")
 """)
 
 md("""
@@ -285,15 +327,15 @@ md("""
 
 ## 4 · The decision tree, priced <a id="tree"></a>
 
-Now the choices. Each one is defensible, each has a literature behind it, and we
-can put a number on all of them. These are precomputed — the code is the same
-`build()` you just ran, in a loop.
+Now the choices. Each is defensible, each has a literature behind it, and each is
+one argument to `momentum()`. Nothing below is precomputed — every number comes
+from the function you just read, called in a loop.
 """)
 
 co("""
-#@title 🔒 How far back? Sharpe against the lookback window
-J = [1, 3, 6, 9, 11, 17, 23, 35, 47, 59]
-sh = [sharpe(grid[f'J{j}_s1'].dropna()) for j in J]
+#@title 🔒 How far back? Sharpe against the lookback window  (~20 seconds)
+J  = [1, 3, 6, 9, 11, 17, 23, 35, 47, 59]
+sh = [sharpe(momentum(p, lookback=j, skip=1)) for j in J]
 
 fig, ax = plt.subplots()
 ax.plot(J, sh, 'o-', color='#333333', lw=1.4, ms=5)
@@ -304,7 +346,7 @@ ax.set_xlabel('lookback window, months'); ax.set_ylabel('Sharpe ratio')
 ax.set_title('Same recipe, different window', loc='left', fontsize=11)
 plt.tight_layout(); plt.show()
 
-for j, s in zip(J, sh): print(f"  J = {j:2d} months   Sharpe {s:+.2f}")
+for j, v in zip(J, sh): print(f"  lookback = {j:2d} months   Sharpe {v:+.2f}")
 """)
 
 md("""
@@ -329,9 +371,9 @@ theirs in a way that matters. **The homework makes you take a position.**
 co("""
 #@title 🔒 What is the skip month worth?
 for k in [0, 1, 2, 3, 6]:
-    s = grid[f'J11_s{k}'].dropna()
+    r = momentum(p, lookback=11, skip=k)
     star = "   <- the standard" if k == 1 else ""
-    print(f"  skip {k} month(s)   mean {s.mean()*12:+7.1%}   Sharpe {sharpe(s):+.2f}{star}")
+    print(f"  skip {k} month(s)   mean {r.mean()*12:+7.1%}   Sharpe {sharpe(r):+.2f}{star}")
 """)
 
 md("""
@@ -343,12 +385,21 @@ month six you have thrown away the signal along with the noise.
 """)
 
 co("""
-#@title 🔒 Weighting, breakpoints, and how many buckets
-cols = ['VW, NYSE bp, deciles', 'EW, NYSE bp, deciles',
-        'VW, ALL-stock bp, deciles', 'EW, ALL-stock bp, deciles',
-        'VW, NYSE bp, terciles', 'VW, NYSE bp, quintiles', 'VW, NYSE bp, 20 groups']
-t = pd.DataFrame({c: {'mean/yr': grid[c].mean()*12, 'vol': grid[c].std()*np.sqrt(12),
-                      'Sharpe': sharpe(grid[c])} for c in cols}).T
+#@title 🔒 Weighting, breakpoints, and how many buckets  (~15 seconds)
+variants = {
+ 'VW, NYSE bp, deciles'      : dict(),
+ 'EW, NYSE bp, deciles'      : dict(weights='equal'),
+ 'VW, ALL-stock bp, deciles' : dict(breakpoints='all'),
+ 'EW, ALL-stock bp, deciles' : dict(weights='equal', breakpoints='all'),
+ 'VW, NYSE bp, terciles'     : dict(ngroups=3),
+ 'VW, NYSE bp, quintiles'    : dict(ngroups=5),
+ 'VW, NYSE bp, 20 groups'    : dict(ngroups=20),
+}
+rows = {}
+for lab, kw in variants.items():
+    r = momentum(p, **kw)
+    rows[lab] = {'mean/yr': r.mean()*12, 'vol': r.std()*np.sqrt(12), 'Sharpe': sharpe(r)}
+t = pd.DataFrame(rows).T
 print(t.to_string(formatters={'mean/yr': '{:+.1%}'.format, 'vol': '{:.1%}'.format,
                               'Sharpe': '{:+.2f}'.format}))
 print(f"\\n  best {t.Sharpe.max():.2f}   worst {t.Sharpe.min():.2f}   "
@@ -415,7 +466,7 @@ rank  = sig49.rank(axis=1, ascending=False)
 IM = (ind49.where(rank <= 5).mean(axis=1) -             # top 5 industries
       ind49.where(rank >= 45).mean(axis=1)).dropna()    # short bottom 5
 
-SM = grid['J11_s1'].dropna()
+SM = std.dropna()                                       # from the function above
 j  = pd.concat([SM.rename('stock'), IM.rename('industry')], axis=1).dropna()
 
 print(f"  stock momentum      Sharpe {sharpe(j.stock):.2f}   mean {j.stock.mean()*12:+.1%}/yr")
@@ -487,27 +538,24 @@ Check it before interpreting anything.
 co("""
 #@title 🔒 First: what does restricting the universe cost?
 lab = pd.read_parquet(f"{BASE}/industry_labels.parquet")
-m = p.merge(lab, on=['permno', 'date'], how='inner').dropna(subset=['mom', 'ret_fwd', 'me'])
 
-def ls(df, col, vw=True, nq=10):
-    d = df.dropna(subset=[col]).copy()
-    def cut(x):
-        e = np.unique(np.quantile(x[col], np.linspace(0, 1, nq+1))); e[0], e[-1] = -np.inf, np.inf
-        return pd.cut(x[col], e, labels=False, duplicates='drop')
-    d['q'] = d.groupby('date', group_keys=False).apply(cut)
-    f = (lambda x: np.average(x.ret_fwd, weights=x.me)) if vw else (lambda x: x.ret_fwd.mean())
-    r = d.groupby(['date', 'q']).apply(f).unstack()
-    s = (r[nq-1] - r[0]).dropna(); s.index = s.index + pd.offsets.MonthEnd(1); return s
+# give the panel a plain momentum column, same rule as everywhere else
+p['cumret'] = (p.groupby('permno')['1+ret']
+                 .rolling(11, min_periods=11).apply(np.prod, raw=True)
+                 .reset_index(level=0, drop=True))
+p['mom'] = p.groupby('permno')['cumret'].shift(1)
 
-same = p[p.date.isin(m.date.unique())].dropna(subset=['mom', 'ret_fwd', 'me'])
+m    = p.merge(lab, on=['permno','date'], how='inner').dropna(subset=['mom','ret_fwd','me'])
+same = p[p.date.isin(m.date.unique())].dropna(subset=['mom','ret_fwd','me'])
+
 print(f"  all stocks         {same.groupby('date').permno.nunique().median():.0f}/month   "
-      f"Sharpe {sharpe(ls(same,'mom')):.2f}")
+      f"Sharpe {sharpe(sort_portfolios(same, signal='mom')):.2f}")
 print(f"  labelled universe  {m.groupby('date').permno.nunique().median():.0f}/month   "
-      f"Sharpe {sharpe(ls(m,'mom')):.2f}")
+      f"Sharpe {sharpe(sort_portfolios(m, signal='mom')):.2f}")
 """)
 
 md("""
-**1.09 against 0.47.** Same dates, same construction, same everything — the only
+**0.99 against 0.42.** Same dates, same construction, same everything — the only
 difference is that one runs on 5,400 stocks and the other on the largest 950.
 
 **Momentum is largely a small- and mid-cap phenomenon.** That is a finding in its
@@ -557,17 +605,17 @@ for line in ["  plain    rank all stocks on raw momentum",
 """)
 
 md("""
-### Industry-neutral momentum is the best of the four — if you equal-weight
+### Equal-weighted, taking the industry bet out makes momentum better
 
-**Equal-weighted: 0.75 for industry-neutral against 0.53 for plain.** Taking the
-industry bet *out* makes the strategy better. You are not giving up a source of
-return by neutralising; you are removing noise.
+**0.83 for industry-neutral against 0.60 for plain.** You are not giving up a
+source of return by neutralising — you are removing noise.
 
-**Value-weighted: 0.42 against 0.47.** It goes the other way.
+**Value-weighted, the gain vanishes: 0.41 against 0.42.**
 
-That is the lecture's theme arriving at the worst possible moment — the answer to
-"is momentum within or across industries?" depends on a weighting choice that has
-nothing to do with industries. Both weightings are standard. Neither is wrong.
+So the answer to "is momentum within or across industries?" depends on a
+weighting choice that has nothing to do with industries. Both weightings are
+standard, neither is wrong, and this is the same problem as §4 turning up inside
+a question you might have thought was about economics.
 
 Run the ladder on the equal-weighted versions, where the effect is strong enough
 to test.
@@ -584,12 +632,12 @@ print(f"\\n  correlation(neutral, across) = {D[['neutral_EW','across_EW']].corr(
 md("""
 ### The same asymmetry, and one more step
 
-Within-industry momentum survives across-industry momentum: **+5.4%/yr, t = 2.31**.
-Across-industry momentum does not survive within: +1.2%/yr, t = 0.40. Same
+Within-industry momentum survives across-industry momentum: **+6.1%/yr, t = 2.77**.
+Across-industry momentum does not survive within: +1.5%/yr, t = 0.48. Same
 direction as §5a, now measured at the stock level.
 
-And the third line is the one to sit on. **Plain momentum has no alpha against
-industry-neutral momentum** — −2.5%/yr, t = −0.85. Once you own the
+The third line goes further. **Plain momentum has no alpha against
+industry-neutral momentum** — −1.2%/yr, t = −0.41. Once you own the
 within-industry version, the ordinary version adds nothing.
 
 > **📌 Momentum is stocks beating their peers. The industry bet that comes along
@@ -601,7 +649,7 @@ you stop making a sector bet you never intended to make.
 
 > **⚠️ Two caveats, and they are real.** The whole of §5b runs on 950 large
 > stocks, where momentum is weak to begin with — none of these Sharpe ratios is
-> the 1.03 from earlier. And the conclusion flips if you value-weight. What we
+> the 1.03 from earlier. And the gain disappears if you value-weight. What we
 > can say is that within and across are genuinely different strategies and the
 > within one is not the passenger. What we cannot say is that this holds on the
 > full universe, because we cannot label the full universe.
@@ -687,12 +735,12 @@ co("""
 MY_SIGNAL = "GP"      # ← your group's signal
 
 sig = pd.read_parquet(f"{BASE}/signals/{MY_SIGNAL}.parquet")
-print(sig.columns.tolist(), sig.shape)
+mysig = p.merge(sig, on=['permno', 'date'], how='inner').rename(columns={MY_SIGNAL: 'signal'})
+print(f"{MY_SIGNAL}: {len(mysig):,} stock-months")
 
-# Merge your signal onto the panel, then rebuild the long-short two ways:
-# NYSE breakpoints and all-stock breakpoints. Reuse build() from earlier.
-mine_nyse = ____      # hint: adapt build(), which already uses NYSE breakpoints
-mine_all  = ____      # hint: cut on x['s'] instead of x.loc[x.exchcd==1,'s']
+# sort_portfolios takes ANY signal column — yours included.
+mine_nyse = ____      # hint: sort_portfolios(mysig)
+mine_all  = ____      # hint: same, with breakpoints='all'
 
 print(f"  NYSE breakpoints      Sharpe {sharpe(mine_nyse):+.2f}")
 print(f"  all-stock breakpoints Sharpe {sharpe(mine_all):+.2f}")
@@ -917,9 +965,15 @@ co("""
 # ═══════════════════════════════════════════════════════════════════════
 # 📎 APPENDIX — every variant in one table
 # ═══════════════════════════════════════════════════════════════════════
-tab = pd.DataFrame({c: {'mean/yr': grid[c].mean()*12,
-                        'vol': grid[c].std()*np.sqrt(12),
-                        'Sharpe': sharpe(grid[c].dropna())} for c in grid.columns}).T
+rows = {}
+for j_ in [1, 3, 6, 9, 11, 17, 23, 35, 47, 59]:
+    rows[f'lookback {j_:2d}'] = momentum(p, lookback=j_, skip=1)
+for k_ in [0, 2, 3, 6]:
+    rows[f'skip {k_}']       = momentum(p, lookback=11, skip=k_)
+for lab, kw in variants.items():
+    rows[lab]                = momentum(p, **kw)
+tab = pd.DataFrame({k: {'mean/yr': v.mean()*12, 'vol': v.std()*np.sqrt(12),
+                        'Sharpe': sharpe(v)} for k, v in rows.items()}).T
 print(tab.to_string(formatters={'mean/yr': '{:+.1%}'.format, 'vol': '{:.1%}'.format,
                                 'Sharpe': '{:+.2f}'.format}))
 """)
