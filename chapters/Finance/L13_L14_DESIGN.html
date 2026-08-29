@@ -482,7 +482,11 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pod-shops">§6 · Pod shops</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-capital-allocation-ii-the-formula-breaks">L14 · Capital Allocation II — the formula breaks</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-as-built-the-plan-was-wrong-and-the-data-said-so">L14 as built — the plan was wrong and the data said so</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#consequence-for-l13-applied">Consequence for L13, applied</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-capital-allocation-ii-as-originally-planned">L14 · Capital Allocation II — as originally planned</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-in-sample-illusion">§1 · The in-sample illusion</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-it-breaks">§2 · Why it breaks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bet-sizing-menu">§3 · The bet-sizing menu</a></li>
@@ -516,7 +520,9 @@ document.write(`
 <p><strong>Slots:</strong> Meetings 16 and 17 (Mon Nov 2, Wed Nov 4). <strong>Feeds:</strong> A6.
 <strong>Status:</strong> <strong>L13 built 2026-08-28</strong> — <code class="docutils literal notranslate"><span class="pre">L13_CapitalAllocationI_AI.ipynb</span></code>, 39 cells,
 2,084 lectured words = 1.47 sessions, 9 lecture cells clean in 1 s. Built but not
-published (see <code class="docutils literal notranslate"><span class="pre">PLAN.md</span></code> §6b). <strong>L14 planned, not built.</strong></p>
+published (see <code class="docutils literal notranslate"><span class="pre">PLAN.md</span></code> §6b). <strong>L14 built 2026-08-28</strong> —
+<code class="docutils literal notranslate"><span class="pre">L14_CapitalAllocationII_AI.ipynb</span></code>, 45 cells, 1,956 lectured words = 1.38
+sessions, 12 lecture cells clean in 3 s. Also built but not published.</p>
 <p>Written as one design because the split only makes sense jointly.</p>
 <hr class="docutils" />
 <section id="the-spine-across-both-meetings">
@@ -714,8 +720,86 @@ sets up L14.</p>
 </section>
 </section>
 <hr class="docutils" />
-<section id="l14-capital-allocation-ii-the-formula-breaks">
-<h2>L14 · Capital Allocation II — the formula breaks<a class="headerlink" href="#l14-capital-allocation-ii-the-formula-breaks" title="Link to this heading">#</a></h2>
+<section id="l14-as-built-the-plan-was-wrong-and-the-data-said-so">
+<h2>L14 as built — the plan was wrong and the data said so<a class="headerlink" href="#l14-as-built-the-plan-was-wrong-and-the-data-said-so" title="Link to this heading">#</a></h2>
+<p>A 13-agent adversarial verification workflow ran every empirical claim the
+planned L14 rested on, and <strong>two of the three headline results did not survive</strong>.
+Every number below was then re-run independently before use; where the agents and
+I disagreed, my numbers are the ones in the notebook.</p>
+<p><strong>What died.</strong> The plan’s emotional centre was <em>“1/N beats mean-variance out of
+sample, 0.92 to 0.83”</em>. It is real on the full sample but it is <strong>a twentieth-
+century result</strong>: the gap is <strong>+0.282 before 2000 and +0.014 after</strong>, and the
+full-sample gap of 0.089 has a bootstrap CI containing zero. Presenting it as
+<em>the</em> finding would have been exactly the error L8 and L9 warn about. Two agent
+figures were also discarded outright — a claimed 86% long-window win rate (I get
+54%) and a claimed post-2000 sign reversal (I get the gap merely vanishing).</p>
+<p><strong>What replaced it, and it is better.</strong> Run a control on L13’s own alpha book:
+throw the alphas away and weight by <span class="math notranslate nohighlight">\(1/\sigma^2_\epsilon\)</span> alone.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>in sample</p></th>
+<th class="head"><p>out of sample</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>alpha book <span class="math notranslate nohighlight">\(\alpha/\sigma^2_\epsilon\)</span></p></td>
+<td><p>2.2585</p></td>
+<td><p>1.8470</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>no alpha, <span class="math notranslate nohighlight">\(1/\sigma^2_\epsilon\)</span></strong></p></td>
+<td><p><strong>2.2924</strong></p></td>
+<td><p><strong>2.0735</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>risk parity <span class="math notranslate nohighlight">\(1/\sigma_\epsilon\)</span></p></td>
+<td><p>2.0958</p></td>
+<td><p>1.8784</p></td>
+</tr>
+<tr class="row-odd"><td><p>equal</p></td>
+<td><p>2.0011</p></td>
+<td><p>1.7762</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>The zero-information rule beats the optimal one in the sample the optimal one
+was fitted on.</strong> It should be impossible, and the reason it is not is that the
+diagonal shortcut is not <span class="math notranslate nohighlight">\(\Sigma_\epsilon^{-1}\alpha\)</span> when the residuals are
+correlated — which they are (mean |corr| 0.198, <code class="docutils literal notranslate"><span class="pre">MaxRet</span></code>/<code class="docutils literal notranslate"><span class="pre">RealizedVol</span></code> at 0.952).
+Read as a decomposition: risk information is worth about <strong>+0.3</strong>, return
+information about <strong>−0.2</strong>.</p>
+<p><strong>The placebo, which is the prompt moment.</strong> The obvious way to measure
+estimation error — fit on one window, score on the next against that window’s own
+optimum — says the cost is <strong>46%</strong>. Score a <em>clairvoyant</em> portfolio built from the
+entire sample by the same metric and it “loses” <strong>19%</strong>. The benchmark is an
+in-sample maximum, so everything loses to it, including something that cannot be
+wrong. The honest cost, from a Monte Carlo where the truth is known: you keep
+<strong>76% / 85% / 92% / 96%</strong> of the achievable Sharpe with 5 / 10 / 20 / 40 years.
+<strong>More data genuinely helps</strong> — the fashionable nihilism is wrong.</p>
+<p><strong>Shrinkage, with the shape argument.</strong> Covariance toward the scaled identity:
+0.828 → <strong>0.908</strong>, interior optimum at a ≈ 0.6. Means toward their common average:
+0.828 → 0.810 → <strong>0.768</strong>, monotonically destructive. The prior has to have the
+right shape; “all expected returns are equal” throws away the only signal there
+was.</p>
+<p><strong>Challenge answer key.</strong> <code class="docutils literal notranslate"><span class="pre">alpha_cost</span></code> <strong>+0.2265</strong>, <code class="docutils literal notranslate"><span class="pre">best_a</span></code> <strong>0.6</strong>,
+<code class="docutils literal notranslate"><span class="pre">live_shrinkage_sr</span></code> <strong>0.7882</strong> — and that last number is the best thing in the
+lecture: choosing the shrinkage intensity honestly from trailing performance
+lands <em>below plain mean-variance at 0.828</em>, giving back <strong>150%</strong> of the gain. The
+hindsight-optimal <code class="docutils literal notranslate"><span class="pre">a</span></code> is itself an estimated parameter and estimating it costs
+more than it buys. L8’s lesson, one level up.</p>
+<section id="consequence-for-l13-applied">
+<h3>Consequence for L13, applied<a class="headerlink" href="#consequence-for-l13-applied" title="Link to this heading">#</a></h3>
+<p>L13 §4 derived <span class="math notranslate nohighlight">\(w_i\sigma_{\epsilon,i} = AR_i\)</span> under a stated diagonality
+assumption but never tested it, and §6’s “mean pairwise correlation 0.049”
+actively invited students to believe it. <strong>Patched</strong>: §4 now ends with a
+diagonality test showing mean signed correlation +0.03 against mean <em>absolute</em>
+correlation 0.20 and a worst pair of 0.95, and a box saying the formula is the
+right answer to a question about a world we are not in. L13 goes from 1.47 to
+1.60 lectured sessions.</p>
+</section>
+</section>
+<section id="l14-capital-allocation-ii-as-originally-planned">
+<h2>L14 · Capital Allocation II — as originally planned<a class="headerlink" href="#l14-capital-allocation-ii-as-originally-planned" title="Link to this heading">#</a></h2>
 <section id="the-in-sample-illusion">
 <h3>§1 · The in-sample illusion<a class="headerlink" href="#the-in-sample-illusion" title="Link to this heading">#</a></h3>
 <p>On the six Fama–French factors, 1980–2026:</p>
@@ -1025,7 +1109,11 @@ because it changes what the Hands-On has to set up.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pod-shops">§6 · Pod shops</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-capital-allocation-ii-the-formula-breaks">L14 · Capital Allocation II — the formula breaks</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-as-built-the-plan-was-wrong-and-the-data-said-so">L14 as built — the plan was wrong and the data said so</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#consequence-for-l13-applied">Consequence for L13, applied</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-capital-allocation-ii-as-originally-planned">L14 · Capital Allocation II — as originally planned</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-in-sample-illusion">§1 · The in-sample illusion</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-it-breaks">§2 · Why it breaks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bet-sizing-menu">§3 · The bet-sizing menu</a></li>

@@ -3,7 +3,9 @@
 **Slots:** Meetings 16 and 17 (Mon Nov 2, Wed Nov 4). **Feeds:** A6.
 **Status:** **L13 built 2026-08-28** — `L13_CapitalAllocationI_AI.ipynb`, 39 cells,
 2,084 lectured words = 1.47 sessions, 9 lecture cells clean in 1 s. Built but not
-published (see `PLAN.md` §6b). **L14 planned, not built.**
+published (see `PLAN.md` §6b). **L14 built 2026-08-28** —
+`L14_CapitalAllocationII_AI.ipynb`, 45 cells, 1,956 lectured words = 1.38
+sessions, 12 lecture cells clean in 3 s. Also built but not published.
 
 Written as one design because the split only makes sense jointly.
 
@@ -180,7 +182,71 @@ sets up L14.
 
 ---
 
-## L14 · Capital Allocation II — the formula breaks
+## L14 as built — the plan was wrong and the data said so
+
+A 13-agent adversarial verification workflow ran every empirical claim the
+planned L14 rested on, and **two of the three headline results did not survive**.
+Every number below was then re-run independently before use; where the agents and
+I disagreed, my numbers are the ones in the notebook.
+
+**What died.** The plan's emotional centre was *"1/N beats mean-variance out of
+sample, 0.92 to 0.83"*. It is real on the full sample but it is **a twentieth-
+century result**: the gap is **+0.282 before 2000 and +0.014 after**, and the
+full-sample gap of 0.089 has a bootstrap CI containing zero. Presenting it as
+*the* finding would have been exactly the error L8 and L9 warn about. Two agent
+figures were also discarded outright — a claimed 86% long-window win rate (I get
+54%) and a claimed post-2000 sign reversal (I get the gap merely vanishing).
+
+**What replaced it, and it is better.** Run a control on L13's own alpha book:
+throw the alphas away and weight by $1/\sigma^2_\epsilon$ alone.
+
+| | in sample | out of sample |
+|---|---|---|
+| alpha book $\alpha/\sigma^2_\epsilon$ | 2.2585 | 1.8470 |
+| **no alpha, $1/\sigma^2_\epsilon$** | **2.2924** | **2.0735** |
+| risk parity $1/\sigma_\epsilon$ | 2.0958 | 1.8784 |
+| equal | 2.0011 | 1.7762 |
+
+**The zero-information rule beats the optimal one in the sample the optimal one
+was fitted on.** It should be impossible, and the reason it is not is that the
+diagonal shortcut is not $\Sigma_\epsilon^{-1}\alpha$ when the residuals are
+correlated — which they are (mean |corr| 0.198, `MaxRet`/`RealizedVol` at 0.952).
+Read as a decomposition: risk information is worth about **+0.3**, return
+information about **−0.2**.
+
+**The placebo, which is the prompt moment.** The obvious way to measure
+estimation error — fit on one window, score on the next against that window's own
+optimum — says the cost is **46%**. Score a *clairvoyant* portfolio built from the
+entire sample by the same metric and it "loses" **19%**. The benchmark is an
+in-sample maximum, so everything loses to it, including something that cannot be
+wrong. The honest cost, from a Monte Carlo where the truth is known: you keep
+**76% / 85% / 92% / 96%** of the achievable Sharpe with 5 / 10 / 20 / 40 years.
+**More data genuinely helps** — the fashionable nihilism is wrong.
+
+**Shrinkage, with the shape argument.** Covariance toward the scaled identity:
+0.828 → **0.908**, interior optimum at a ≈ 0.6. Means toward their common average:
+0.828 → 0.810 → **0.768**, monotonically destructive. The prior has to have the
+right shape; "all expected returns are equal" throws away the only signal there
+was.
+
+**Challenge answer key.** `alpha_cost` **+0.2265**, `best_a` **0.6**,
+`live_shrinkage_sr` **0.7882** — and that last number is the best thing in the
+lecture: choosing the shrinkage intensity honestly from trailing performance
+lands *below plain mean-variance at 0.828*, giving back **150%** of the gain. The
+hindsight-optimal `a` is itself an estimated parameter and estimating it costs
+more than it buys. L8's lesson, one level up.
+
+### Consequence for L13, applied
+
+L13 §4 derived $w_i\sigma_{\epsilon,i} = AR_i$ under a stated diagonality
+assumption but never tested it, and §6's "mean pairwise correlation 0.049"
+actively invited students to believe it. **Patched**: §4 now ends with a
+diagonality test showing mean signed correlation +0.03 against mean *absolute*
+correlation 0.20 and a worst pair of 0.95, and a box saying the formula is the
+right answer to a question about a world we are not in. L13 goes from 1.47 to
+1.60 lectured sessions.
+
+## L14 · Capital Allocation II — as originally planned
 
 ### §1 · The in-sample illusion
 
