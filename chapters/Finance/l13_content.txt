@@ -213,7 +213,8 @@ mandate says zero factor exposure, so you trade the hedged versions. Then the
 covariance matrix is $\Sigma_\epsilon$.
 
 **If the residuals are uncorrelated with each other**, $\Sigma_\epsilon$ is
-diagonal — and inverting a diagonal matrix means dividing by its entries:
+diagonal — and inverting a diagonal matrix means dividing by its entries. Hold on
+to that "if"; we test it at the end of the section.
 
 $$W^\star \;\propto\; \Sigma_\epsilon^{-1}\alpha
 \qquad\Longrightarrow\qquad
@@ -246,6 +247,22 @@ print(A.sort_values('appraisal', ascending=False).head(6)
                               'w':'{:.1f}'.format, 'vol_alloc':'{:.2f}'.format}))
 print(f"\n  vol_alloc equals appraisal ratio?  max difference {np.abs(A.vol_alloc-A.appraisal).max():.1e}")
 @@CELL@@markdown@@
+### The average is zero. The matrix is not diagonal.
+
+The mean residual correlation is **+0.03**, which invites you to call it zero.
+The mean *absolute* correlation is **0.20**, and the worst pair —
+`MaxRet` and `RealizedVol` — is **0.95**. They are two names for the same trade,
+which Lecture 9 §2 already told us.
+
+The signed average hides this because positive and negative pairs cancel. But
+$\Sigma_\epsilon^{-1}$ does not average anything: it sees the whole matrix, and a
+0.95 pair is exactly the configuration that makes an inverse explode.
+
+> **⚠️ So the formula below is the right answer to a question about a world we
+> are not in.** Keep it — the logic is correct and the intuition transfers — but
+> do not yet believe the weights. Next lecture measures what the false assumption
+> costs, and the answer is not what you would guess.
+
 ### The identity holds to machine precision
 
 Which it must — it is algebra, not a finding. But look at the weights column
@@ -258,8 +275,21 @@ The optimizer piles into whatever looks quiet.
 
 That is the correct answer to the question we asked. Whether it is the right
 position is a different question, and it is the whole of next lecture.
+
+### Now test the "if"
+
+The formula needed the residuals to be uncorrelated. They are not.
 @@CELL@@code@@
-#@title 🔒 The combined alpha portfolio
+#@title 🔒 Is the residual covariance really diagonal?
+Hd = pd.DataFrame({c: sm.OLS(L[c], sm.add_constant(mkt)).fit().resid for c in L.columns})
+C  = Hd.corr().values
+off = C[np.triu_indices(len(C), 1)]
+print(f"  mean correlation           {off.mean():+.3f}   <- looks like zero")
+print(f"  mean ABSOLUTE correlation  {np.abs(off).mean():.3f}   <- it is not zero\n")
+iu = np.triu_indices(len(C), 1)
+for z in np.argsort(-np.abs(off))[:4]:
+    print(f"    {Hd.columns[iu[0][z]]:14s} {Hd.columns[iu[1][z]]:14s} {off[z]:+.3f}")
+
 w = A.w / np.abs(A.w).sum()
 combo = (L * w).sum(axis=1)
 r = sm.OLS(combo, sm.add_constant(mkt)).fit()
@@ -410,6 +440,8 @@ print(f"  vol allocation {my_vol_alloc:.1%}   combined Sharpe {my_combo_sr:.2f}"
   volatility without adding return.
 - **How much did combining with the market buy you?** If your appraisal ratio is
   well above 0.59, almost nothing. Squaring is unkind to the smaller number.
+- **Check your neighbours.** Correlate your hedged strategy with the two most
+  similar-sounding ones in the 29. Above 0.9 and you are not holding two bets.
 - **Now the question that matters for the project.** Take the signal of the group
   sitting next to you. Would adding it to yours help? You cannot answer from the
   two Sharpe ratios. You need the correlation.
