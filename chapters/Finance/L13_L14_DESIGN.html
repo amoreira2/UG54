@@ -483,6 +483,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-as-built-the-plan-was-wrong-and-the-data-said-so">L14 as built — the plan was wrong and the data said so</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added-2026-08-28-after-am-the-bet-sizing-menu-and-differential-exposure">Added 2026-08-28 after AM: the bet-sizing menu and differential exposure</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#consequence-for-l13-applied">Consequence for L13, applied</a></li>
 </ul>
 </li>
@@ -787,6 +788,110 @@ lecture: choosing the shrinkage intensity honestly from trailing performance
 lands <em>below plain mean-variance at 0.828</em>, giving back <strong>150%</strong> of the gain. The
 hindsight-optimal <code class="docutils literal notranslate"><span class="pre">a</span></code> is itself an estimated parameter and estimating it costs
 more than it buys. L8’s lesson, one level up.</p>
+<section id="added-2026-08-28-after-am-the-bet-sizing-menu-and-differential-exposure">
+<h3>Added 2026-08-28 after AM: the bet-sizing menu and differential exposure<a class="headerlink" href="#added-2026-08-28-after-am-the-bet-sizing-menu-and-differential-exposure" title="Link to this heading">#</a></h3>
+<p>AM: <em>“are we showing the sensitivity to estimation uncertainty of the different
+pieces? not simply the out-of-sample things but the standard error construction
+or bootstrap simulation to show clearly how different bet-sizing approaches
+expose themselves to different estimation uncertainty. Also important to
+highlight the different bet-sizing approaches and their motivation.”</em></p>
+<p>Both were genuinely missing — L14 had four rules appearing inside code cells with
+no menu and no motivation, and its only uncertainty evidence was one sign-flip
+perturbation plus an out-of-sample race. Two new sections, +0.47 sessions.</p>
+<p><strong>§3, the menu.</strong> Five rules, each presented as <em>an assumption about what you
+know</em> rather than a level of sophistication, with an explicit column for <strong>which
+inputs it estimates</strong>. Minimum-variance is “you cannot forecast returns”; risk
+parity is “you cannot distinguish appraisal ratios” — which is L13 §4 with the
+appraisal ratios set equal, not a rejection of alpha.</p>
+<p><strong>§4, exposure — bootstrap then simulation.</strong> Resample the months 1,000 times and
+refit:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>rule</p></th>
+<th class="head"><p>inputs estimated</p></th>
+<th class="head"><p>avg weight sd</p></th>
+<th class="head"><p>worst sign flip</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mean-variance</p></td>
+<td><p>μ <strong>and</strong> Σ</p></td>
+<td><p><strong>0.061</strong></p></td>
+<td><p><strong>41%</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>minimum-variance</p></td>
+<td><p>Σ</p></td>
+<td><p>0.020</p></td>
+<td><p>22%</p></td>
+</tr>
+<tr class="row-even"><td><p>risk parity</p></td>
+<td><p>diag(Σ)</p></td>
+<td><p>0.007</p></td>
+<td><p>0%</p></td>
+</tr>
+<tr class="row-odd"><td><p>equal 1/N</p></td>
+<td><p>none</p></td>
+<td><p>0.000</p></td>
+<td><p>0%</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>The ordering is exactly the input list</strong>, and the min-variance → mean-variance
+step isolates the price of μ: same covariance matrix, one extra input, and the
+weight uncertainty triples. This <em>measures</em> the “means are harder than variances”
+claim that the first draft asserted, so the old §3 half-section is deleted and
+§5 now opens by pointing at the bootstrap.</p>
+<p>Then the known-world simulation, scored against the truth:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>rule</p></th>
+<th class="head"><p>5y</p></th>
+<th class="head"><p>10y</p></th>
+<th class="head"><p>20y</p></th>
+<th class="head"><p>40y</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mean-variance</p></td>
+<td><p>74%</p></td>
+<td><p>86%</p></td>
+<td><p>92%</p></td>
+<td><p><strong>96%</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>minimum-variance</p></td>
+<td><p>85%</p></td>
+<td><p>86%</p></td>
+<td><p>87%</p></td>
+<td><p>87%</p></td>
+</tr>
+<tr class="row-even"><td><p>risk parity</p></td>
+<td><p>80%</p></td>
+<td><p>80%</p></td>
+<td><p>80%</p></td>
+<td><p>80%</p></td>
+</tr>
+<tr class="row-odd"><td><p>equal 1/N</p></td>
+<td><p><strong>88%</strong></p></td>
+<td><p>88%</p></td>
+<td><p>88%</p></td>
+<td><p>88%</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>A crossover, not a winner.</strong> 1/N never learns and never errs — flat at 88%
+forever. Mean-variance is beaten badly at five years and wins at twenty. The
+crossover sits at ten to twenty years of monthly data, which is what everyone
+has, <strong>which is why this argument never ends.</strong> That reframes the whole lecture:
+choosing a bet-sizing rule is a bet on how much data you have, not on which
+formula is cleverer.</p>
+<p>One honest wrinkle kept in the notebook: in this simulation the true covariance
+<em>is</em> the sample covariance, so shrinkage can only add bias — which is why §7 finds
+it helping on real data anyway. The contrast is the point.</p>
+<p>§6’s separate Monte Carlo was deleted as a duplicate; it now reads the
+mean-variance row of §4’s table.</p>
+</section>
 <section id="consequence-for-l13-applied">
 <h3>Consequence for L13, applied<a class="headerlink" href="#consequence-for-l13-applied" title="Link to this heading">#</a></h3>
 <p>L13 §4 derived <span class="math notranslate nohighlight">\(w_i\sigma_{\epsilon,i} = AR_i\)</span> under a stated diagonality
@@ -1110,6 +1215,7 @@ because it changes what the Hands-On has to set up.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l14-as-built-the-plan-was-wrong-and-the-data-said-so">L14 as built — the plan was wrong and the data said so</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added-2026-08-28-after-am-the-bet-sizing-menu-and-differential-exposure">Added 2026-08-28 after AM: the bet-sizing menu and differential exposure</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#consequence-for-l13-applied">Consequence for L13, applied</a></li>
 </ul>
 </li>
