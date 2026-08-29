@@ -236,6 +236,63 @@ lands *below plain mean-variance at 0.828*, giving back **150%** of the gain. Th
 hindsight-optimal `a` is itself an estimated parameter and estimating it costs
 more than it buys. L8's lesson, one level up.
 
+### Added 2026-08-28 after AM: the bet-sizing menu and differential exposure
+
+AM: *"are we showing the sensitivity to estimation uncertainty of the different
+pieces? not simply the out-of-sample things but the standard error construction
+or bootstrap simulation to show clearly how different bet-sizing approaches
+expose themselves to different estimation uncertainty. Also important to
+highlight the different bet-sizing approaches and their motivation."*
+
+Both were genuinely missing — L14 had four rules appearing inside code cells with
+no menu and no motivation, and its only uncertainty evidence was one sign-flip
+perturbation plus an out-of-sample race. Two new sections, +0.47 sessions.
+
+**§3, the menu.** Five rules, each presented as *an assumption about what you
+know* rather than a level of sophistication, with an explicit column for **which
+inputs it estimates**. Minimum-variance is "you cannot forecast returns"; risk
+parity is "you cannot distinguish appraisal ratios" — which is L13 §4 with the
+appraisal ratios set equal, not a rejection of alpha.
+
+**§4, exposure — bootstrap then simulation.** Resample the months 1,000 times and
+refit:
+
+| rule | inputs estimated | avg weight sd | worst sign flip |
+|---|---|---|---|
+| mean-variance | μ **and** Σ | **0.061** | **41%** |
+| minimum-variance | Σ | 0.020 | 22% |
+| risk parity | diag(Σ) | 0.007 | 0% |
+| equal 1/N | none | 0.000 | 0% |
+
+**The ordering is exactly the input list**, and the min-variance → mean-variance
+step isolates the price of μ: same covariance matrix, one extra input, and the
+weight uncertainty triples. This *measures* the "means are harder than variances"
+claim that the first draft asserted, so the old §3 half-section is deleted and
+§5 now opens by pointing at the bootstrap.
+
+Then the known-world simulation, scored against the truth:
+
+| rule | 5y | 10y | 20y | 40y |
+|---|---|---|---|---|
+| mean-variance | 74% | 86% | 92% | **96%** |
+| minimum-variance | 85% | 86% | 87% | 87% |
+| risk parity | 80% | 80% | 80% | 80% |
+| equal 1/N | **88%** | 88% | 88% | 88% |
+
+**A crossover, not a winner.** 1/N never learns and never errs — flat at 88%
+forever. Mean-variance is beaten badly at five years and wins at twenty. The
+crossover sits at ten to twenty years of monthly data, which is what everyone
+has, **which is why this argument never ends.** That reframes the whole lecture:
+choosing a bet-sizing rule is a bet on how much data you have, not on which
+formula is cleverer.
+
+One honest wrinkle kept in the notebook: in this simulation the true covariance
+*is* the sample covariance, so shrinkage can only add bias — which is why §7 finds
+it helping on real data anyway. The contrast is the point.
+
+§6's separate Monte Carlo was deleted as a duplicate; it now reads the
+mean-variance row of §4's table.
+
 ### Consequence for L13, applied
 
 L13 §4 derived $w_i\sigma_{\epsilon,i} = AR_i$ under a stated diagonality
