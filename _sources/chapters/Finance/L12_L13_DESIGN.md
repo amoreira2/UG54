@@ -1,11 +1,11 @@
-# L13 + L14 · Capital Allocation — joint design note
+# L12 + L13 · Capital Allocation — joint design note
 
-**Slots:** Meetings 16 and 17 (Mon Nov 2, Wed Nov 4). **Feeds:** A6.
-**Status:** **L13 built 2026-08-28** — `L13_CapitalAllocationI_AI.ipynb`, 39 cells,
+**Slots:** Meetings 15 and 16 (Wed Oct 28, Mon Nov 2). **Feeds:** A6.
+**Status:** **L12 built 2026-08-28** — `L12_CapitalAllocationI_AI.ipynb`, 39 cells,
 2,084 lectured words = 1.47 sessions, 9 lecture cells clean in 1 s. Built but not
-published (see `PLAN.md` §6b). **L14 built 2026-08-28** —
-`L14_CapitalAllocationII_AI.ipynb`, 45 cells, 1,956 lectured words = 1.38
-sessions, 12 lecture cells clean in 3 s. Also built but not published.
+published (see `PLAN.md` §6b). **L13 built 2026-08-28** —
+`L13_CapitalAllocationII_AI.ipynb`, 50 cells, 1.85 lectured
+sessions, 13 lecture cells clean in 3 s. Also built but not published.
 
 Written as one design because the split only makes sense jointly.
 
@@ -17,35 +17,35 @@ Written as one design because the split only makes sense jointly.
 > beautiful, it is three lines of linear algebra, and it stops working the
 > moment you have to estimate its inputs.**
 
-**L13 builds the formula and shows what it buys you.** **L14 breaks it and
-rebuilds something you would actually run.** Neither half works alone: L13 on its
-own is a maths lecture students will never use, and L14 on its own is a list of
+**L12 builds the formula and shows what it buys you.** **L13 breaks it and
+rebuilds something you would actually run.** Neither half works alone: L12 on its
+own is a maths lecture students will never use, and L13 on its own is a list of
 heuristics with no reason behind them.
 
 The unifying result, which appears three times in three costumes:
 
 | where | form |
 |---|---|
-| L13 §5, two uncorrelated bets | $SR = \sqrt{SR_A^2 + SR_B^2}$ |
-| L13 §6, pod shops | $SR_{\text{pool}} = \sqrt{N}\,SR_{\text{pod}}$ |
+| L12 §5, two uncorrelated bets | $SR = \sqrt{SR_A^2 + SR_B^2}$ |
+| L12 §6, pod shops | $SR_{\text{pool}} = \sqrt{N}\,SR_{\text{pod}}$ |
 | EQI §8.5, the Fundamental Law | $IR = IC\sqrt{nT}$ |
 
 All three say: **skill times breadth.** Getting students to see that these are one
-theorem is the intellectual job of L13.
+theorem is the intellectual job of L12.
 
 ---
 
-## A note on meeting 15 — nothing decided
+## A note on leverage and shorting — resolved
 
-L12 (leverage and shorting) is **skipped for now**, not cut: AM is thinking about
-moving it later and may or may not kill it. **The calendar is unchanged and this
-plan assumes nothing about it.** L13 and L14 are designed for meetings 16 and 17
-exactly as scheduled.
+Leverage and shorting is **no longer skipped, it moved**: AM's 31 Aug reorder puts
+it at meeting 20 (Mon Nov 16) as L16, after the conditional-strategies pair and
+before the risk models. Everything between transaction costs and leverage pulled
+up one slot, which is why capital allocation is now meetings 15 and 16 rather
+than 16 and 17.
 
-Recorded only so it is not forgotten: *if* L12 eventually moves or goes, meeting
-15 opens up, and the strongest claim on it is momentum part 2 — L10 is 2.80
-lectured sessions and already built, so a split would cost nothing but the slot.
-That is a decision for later, not an input to this design.
+The consequence for this plan is small and good: the two capital-allocation
+meetings are now **Wed Oct 28 and Mon Nov 2**, so A6 (Thu Nov 5) lands three days
+after the second one instead of one. See the A6 note at the end.
 
 ---
 
@@ -70,7 +70,7 @@ The best of the four CA-I variants. Take almost all of it:
   needed at all: $w_i \propto \alpha_i/\sigma^2_{\epsilon,i}$, so that
   $w_i\sigma_{\epsilon,i} = \alpha_i/\sigma_{\epsilon,i}$ — **the volatility you
   allocate to a strategy is its appraisal ratio.** That single line is the payoff
-  of L4 and L7 and it belongs at the centre of L13.
+  of L4 and L7 and it belongs at the centre of L12.
 - $SR = \sqrt{SR_A^2+SR_B^2}$, and *"the appraisal ratio is the Sharpe ratio
   cousin that actually matters."*
 
@@ -89,7 +89,7 @@ a no-risk-free-asset detour we do not want).
   present it.
 - **The pod-shop calculation.** $SR_{\text{pool}} = \sqrt{N}SR_{\text{pod}}$,
   and *"finding a new uncorrelated idea is super valuable."* This is the best
-  single passage in either notebook and it is the natural climax of L13, not L14.
+  single passage in either notebook and it is the natural climax of L12, not L13.
 
 **Skip:** Black–Litterman (needs a Bayesian detour we cannot afford).
 
@@ -114,7 +114,7 @@ genuinely additive:
   ratio.**
 - **§9.2.2, constraints worsen performance if your inputs are right and can
   improve it if they are estimated.** This is the theoretical licence for
-  everything in L14 §4 — 1/N and long-only stop being embarrassing hacks and
+  everything in L13 §4 — 1/N and long-only stop being embarrassing hacks and
   become regularisation.
 
 **Skip:** all of §8.7 (convex duality, local analysis) and §9.5 (operator-norm
@@ -124,7 +124,7 @@ and re-opening it here would blur both.
 
 ---
 
-## L13 · Capital Allocation I — the formula
+## L12 · Capital Allocation I — the formula
 
 ### §1 · Who decides how much risk?
 
@@ -155,7 +155,7 @@ $w_i \propto \alpha_i/\sigma^2_{\epsilon,i}$, i.e.
 $$\underbrace{w_i\sigma_{\epsilon,i}}_{\text{vol you allocate}} \;=\; \underbrace{\frac{\alpha_i}{\sigma_{\epsilon,i}}}_{\text{appraisal ratio}}$$
 
 **No matrix inversion, and the answer is a quantity they already know.** State the
-diagonality assumption as an assumption — L14 attacks it.
+diagonality assumption as an assumption — L13 attacks it.
 
 ### §5 · Combining bets
 
@@ -178,14 +178,14 @@ the reality check on our own data:
 
 Pooling turns 0.40 into 1.38 — a 3.4× gain from breadth alone. It does not reach
 2.13, and **the gap is entirely the correlation.** That single table earns §5 and
-sets up L14.
+sets up L13.
 
 ---
 
-## L14 as built — the plan was wrong and the data said so
+## L13 as built — the plan was wrong and the data said so
 
 A 13-agent adversarial verification workflow ran every empirical claim the
-planned L14 rested on, and **two of the three headline results did not survive**.
+planned L13 rested on, and **two of the three headline results did not survive**.
 Every number below was then re-run independently before use; where the agents and
 I disagreed, my numbers are the ones in the notebook.
 
@@ -197,7 +197,7 @@ full-sample gap of 0.089 has a bootstrap CI containing zero. Presenting it as
 figures were also discarded outright — a claimed 86% long-window win rate (I get
 54%) and a claimed post-2000 sign reversal (I get the gap merely vanishing).
 
-**What replaced it, and it is better.** Run a control on L13's own alpha book:
+**What replaced it, and it is better.** Run a control on L12's own alpha book:
 throw the alphas away and weight by $1/\sigma^2_\epsilon$ alone.
 
 | | in sample | out of sample |
@@ -244,14 +244,14 @@ or bootstrap simulation to show clearly how different bet-sizing approaches
 expose themselves to different estimation uncertainty. Also important to
 highlight the different bet-sizing approaches and their motivation."*
 
-Both were genuinely missing — L14 had four rules appearing inside code cells with
+Both were genuinely missing — L13 had four rules appearing inside code cells with
 no menu and no motivation, and its only uncertainty evidence was one sign-flip
 perturbation plus an out-of-sample race. Two new sections, +0.47 sessions.
 
 **§3, the menu.** Five rules, each presented as *an assumption about what you
 know* rather than a level of sophistication, with an explicit column for **which
 inputs it estimates**. Minimum-variance is "you cannot forecast returns"; risk
-parity is "you cannot distinguish appraisal ratios" — which is L13 §4 with the
+parity is "you cannot distinguish appraisal ratios" — which is L12 §4 with the
 appraisal ratios set equal, not a rejection of alpha.
 
 **§4, exposure — bootstrap then simulation.** Resample the months 1,000 times and
@@ -293,17 +293,17 @@ it helping on real data anyway. The contrast is the point.
 §6's separate Monte Carlo was deleted as a duplicate; it now reads the
 mean-variance row of §4's table.
 
-### Consequence for L13, applied
+### Consequence for L12, applied
 
-L13 §4 derived $w_i\sigma_{\epsilon,i} = AR_i$ under a stated diagonality
+L12 §4 derived $w_i\sigma_{\epsilon,i} = AR_i$ under a stated diagonality
 assumption but never tested it, and §6's "mean pairwise correlation 0.049"
 actively invited students to believe it. **Patched**: §4 now ends with a
 diagonality test showing mean signed correlation +0.03 against mean *absolute*
 correlation 0.20 and a worst pair of 0.95, and a box saying the formula is the
-right answer to a question about a world we are not in. L13 goes from 1.47 to
+right answer to a question about a world we are not in. L12 goes from 1.47 to
 1.60 lectured sessions.
 
-## L14 · Capital Allocation II — as originally planned
+## L13 · Capital Allocation II — as originally planned
 
 ### §1 · The in-sample illusion
 
@@ -361,7 +361,7 @@ Expanding-window, 120-month burn-in, out of sample:
 
 **Equal weighting beats the optimizer.** This is DeMiguel, Garlappi and Uppal
 (2009) reproduced on our data, and it is the emotional centre of the lecture: the
-formula they spent all of L13 deriving loses to dividing by six.
+formula they spent all of L12 deriving loses to dividing by six.
 
 ### §5 · Why constraints help
 
@@ -381,7 +381,7 @@ which are not).
 
 ---
 
-## L13 as built — verified numbers
+## L12 as built — verified numbers
 
 | | |
 |---|---|
@@ -400,7 +400,7 @@ Two things the data gave that the plan did not anticipate, both kept:
 **The optimizer's favourite is its most fragile.** `DivSeason` takes 21% of gross
 weight, not because its alpha is large (5.4%/yr, mid-pack) but because its
 residual volatility is 4% and the formula divides by the square. The notebook says
-so and hands the consequence to L14.
+so and hands the consequence to L13.
 
 **Pooling is not monotonic** — 9 strategies pool to 1.26 and 16 pool to 1.16.
 Adding bets 10–16 made it worse. Shown rather than smoothed, because it is the
@@ -418,14 +418,14 @@ students just derived, with no IC computed anywhere — as agreed.
 
 ## The prompt-it moments — one per meeting
 
-**L13: "Find me the optimal portfolio weights."** Load-bearing, and
+**L12: "Find me the optimal portfolio weights."** Load-bearing, and
 underspecified in three ways that change the answer: maximum-Sharpe (scale-free)
 or a volatility target; full $\Sigma^{-1}$ or the diagonal idiosyncratic version;
 and with or without the risk-free asset. A terse prompt returns
 `np.linalg.inv(cov) @ mu` with no scaling and no statement of which problem it
 solved.
 
-**L14: "Is this out of sample?"** The horse race is only meaningful if every
+**L13: "Is this out of sample?"** The horse race is only meaningful if every
 rule is estimated on data strictly before the return it earns. The trap is the
 expanding window: it is easy to write a loop that refits on `F.iloc[:t+1]` and
 then earns `F.iloc[t]`. One index, and 1/N stops beating mean-variance.
@@ -434,7 +434,7 @@ then earns `F.iloc[t]`. One index, and 1/N stops beating mean-variance.
 
 ## Length budget
 
-**1,500 lectured words each.** L13 is derivation-heavy and will *feel* longer
+**1,500 lectured words each.** L12 is derivation-heavy and will *feel* longer
 than it reads, so the word count understates it — budget accordingly and move the
 frontier plot to the appendix if it runs.
 
@@ -462,7 +462,7 @@ So a manager with IC = 0.03 across 1,000 independent bets a year has
 IR ≈ 0.03 × √1000 ≈ 0.95. Skill can be nearly undetectable per bet and still make
 a business, provided there are enough bets.
 
-**The question is how far into L13 it goes**, because it is a third formula in
+**The question is how far into L12 it goes**, because it is a third formula in
 the most formula-dense meeting of the term, and computing an IC properly needs a
 cross-sectional regression setup students do not have.
 
@@ -479,15 +479,15 @@ alone. That is defensible; it just leaves the pattern unnamed.
 The working spec for Assignment 6 is *"scale your strategy by volatility, combine
 it with the market, and find the weight that maximises the Sharpe ratio."*
 
-**All of that is L13.** But A6 is due **Thu Nov 5**, which is the day after L14 —
+**All of that is L12.** But A6 is due **Thu Nov 5**, three days after L13 —
 so students would sit through a lecture whose entire point is *the optimizer does
 not survive out of sample*, and then go home and run the optimizer. The
 assignment would contradict the meeting they just left.
 
 **Suggested rewrite: "size your own strategy three ways and defend one."** They
 apply mean-variance, 1/N and risk parity to their own signal combined with the
-market, compare the three, and argue for one in the memo. That uses L13's formula
-*and* L14's scepticism, and it is the actual decision a portfolio manager makes.
+market, compare the three, and argue for one in the memo. That uses L12's formula
+*and* L13's scepticism, and it is the actual decision a portfolio manager makes.
 
-Not urgent — A6 does not exist yet — but it should be settled before L13 is built,
+Not urgent — A6 does not exist yet — but it should be settled before L12 is built,
 because it changes what the Hands-On has to set up.

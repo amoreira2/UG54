@@ -1,4 +1,4 @@
-# L12 · Leverage, Shorting, and the Capital Base
+# Conditional Strategies I — Volatility Timing
 
 ```{admonition} Not yet posted
 :class: warning
@@ -6,19 +6,19 @@ This page marks the slot so the shape of the term is visible. The notebook goes
 up here before we meet.
 ```
 
-**When:** Mtg 15 · Wed Oct 28
+**When:** Mtg 17 · Wed Nov 4
 
 ## What it covers
 
-What the shorting constraint costs, margin, and the limits to arbitrage that keep obvious mispricings alive.
+Signals whose strength changes over time, and what it means to scale a position by a conditioning variable rather than hold it fixed.
 
 ## Feeds
 
-A6 — Thu Nov 5
+A7 — Thu Nov 19
 
 ## Source material
 
-Draws on `LeverageandShorting.ipynb`.
+Draws on `MarketTiming_c.ipynb`, `Timing_c.ipynb`.
 
 ---
 

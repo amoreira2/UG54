@@ -1,4 +1,4 @@
-# L17 · Fundamental Risk Models (BARRA)
+# Fundamental Risk Models (BARRA)
 
 ```{admonition} Not yet posted
 :class: warning

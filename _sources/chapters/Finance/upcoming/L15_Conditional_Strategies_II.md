@@ -1,4 +1,4 @@
-# L15 · Conditional Strategies I — Volatility Timing
+# Conditional Strategies II — Factor Timing
 
 ```{admonition} Not yet posted
 :class: warning
@@ -6,11 +6,11 @@ This page marks the slot so the shape of the term is visible. The notebook goes
 up here before we meet.
 ```
 
-**When:** Mtg 19 · Wed Nov 11
+**When:** Mtg 18 · Mon Nov 9
 
 ## What it covers
 
-Signals whose strength changes over time, and what it means to scale a position by a conditioning variable rather than hold it fixed.
+Volatility timing and factor timing. When conditioning helps, and the much larger set of cases where it is overfitting with extra steps.
 
 ## Feeds
 
@@ -18,7 +18,7 @@ A7 — Thu Nov 19
 
 ## Source material
 
-Draws on `MarketTiming_c.ipynb`, `Timing_c.ipynb`.
+Draws on `Volatilitytiming_c.ipynb`.
 
 ---
 

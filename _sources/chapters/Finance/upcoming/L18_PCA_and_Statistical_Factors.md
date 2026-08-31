@@ -1,4 +1,4 @@
-# L18 · PCA and Statistical Factors
+# PCA and Statistical Factors
 
 ```{admonition} Not yet posted
 :class: warning

@@ -153,6 +153,20 @@ Not every hit is a violation — this one needs eyeballing, unlike the grep abov
 Definitions ("a factor model is the answer written down") and questions put to
 the student are fine.
 
+### L-numbers are a filing device, not a title
+
+`L12_CapitalAllocationI_AI.ipynb` sorts the folder. That is the whole job. The
+number never appears in a notebook H1, a `_toc.yml` title, a stub heading, or the
+syllabus calendar — those all use the descriptive name alone.
+
+**Why:** the L-number is the least stable fact about a lecture. Two reorders in
+four days renumbered eight lectures between them. If the number lives only in
+filenames, a reorder is `git mv`; if it also lives in every student-facing
+string, a reorder is an edit in four places that will be half-done.
+
+Set 2026-08-31, after the second reorder. Applies to `_toc.yml`,
+`chapters/Finance/upcoming/*.md`, and the calendar in `build_syllabus.js`.
+
 ### Belt-and-suspenders data loading
 
 Every notebook that fetches from the web gets an appendix documenting three
@@ -173,10 +187,10 @@ know which half of `Σ⁻¹μ` they are working on.
 | 2 | **Expected Returns I — Factor Models** (μ) | Is this return skill or exposure? | L4–L6 |
 | 2b | **Portfolio Decomposition** | What is this portfolio actually exposed to? | L7 |
 | 3 | **Expected Returns II — Evidence** (μ) | What has worked, and how would you know? | L8–L9 |
-| 4 | **Expected Returns III — Momentum & Conditional** (μ) | Signals that change over time | L10–L12 |
-| 5 | **Optimization** | Sizing, and what estimation error does to it | L13–L14 |
-| 6 | **Risk Models** (Σ) | You cannot measure risk as well as you think | L15, L18 |
-| 7 | **Implementation** | What the backtest didn't tell you | L16–L17 |
+| 4 | **Expected Returns III — Momentum & Conditional** (μ) | Signals that change over time | L10, L14–L15 |
+| 5 | **Optimization** | Sizing, and what estimation error does to it | L12–L13 |
+| 6 | **Risk Models** (Σ) | You cannot measure risk as well as you think | L17–L18 |
+| 7 | **Implementation** | What the backtest didn't tell you | L11, L16 |
 | 8 | **Machine Learning** (μ) | Many signals at once | L19 |
 
 Columbia session numbers are noted in the calendar as `(2A)`, `(4B)` etc. for
@@ -212,21 +226,21 @@ differs — it has Nov 25–29 off. The UG bulletin governs).
 | 9 | Mon Oct 5 | **L9** Why should this work? — interpreting the evidence | *A4 due Thu Oct 8* |
 | 10 | Wed Oct 7 | **Project pitches I** — 5 min × 10 groups | pitch deck |
 | — | Mon Oct 12 | *Fall Break — no class* | |
-| 11 | Wed Oct 14 | **Review** *(Legislative Day)* | |
+| 11 | Wed Oct 14 | **Review** | |
 | 12 | Mon Oct 19 | **MIDTERM** | |
 | 13 | Wed Oct 21 | **L10** Momentum and trend following | |
 | 14 | Mon Oct 26 | **L11** Transaction costs | *A5 was due Thu Oct 22* |
-| 15 | Wed Oct 28 | **L12** Leverage, shorting, and the capital base | |
-| 16 | Mon Nov 2 | **L13** Capital allocation I | *A6 due Thu Nov 5* |
-| 17 | Wed Nov 4 | **L14** Capital allocation II — estimation error | |
-| 18 | Mon Nov 9 | **Guest** | |
-| 19 | Wed Nov 11 | **L15** Conditional strategies I — volatility timing | |
-| 20 | Mon Nov 16 | **L16** Conditional strategies II — factor timing | *A7 due Thu Nov 19* |
+| 15 | Wed Oct 28 | **L12** Capital allocation I | |
+| 16 | Mon Nov 2 | **L13** Capital allocation II — estimation error | *A6 due Thu Nov 5* |
+| 17 | Wed Nov 4 | **L14** Conditional strategies I — volatility timing | |
+| 18 | Mon Nov 9 | **L15** Conditional strategies II — factor timing | |
+| 19 | Wed Nov 11 | **Guest** | |
+| 20 | Mon Nov 16 | **L16** Leverage, shorting, and the capital base | *A7 due Thu Nov 19* |
 | 21 | Wed Nov 18 | **Project pitches II** — 5 min × 10 | |
 | 22 | Mon Nov 23 | **L17** Fundamental risk models (BARRA) | |
 | 23 | Wed Nov 25 | **L18** PCA / statistical factors | |
 | 24 | Mon Nov 30 | **L19** Machine learning | *A8 due Thu Dec 3* |
-| — | Wed Dec 2 | *No class* | |
+| — | Wed Dec 2 | *Drop in — project questions* | |
 | 25 | Mon Dec 7 | **Presentations I** — 15 min per group | report + code **Sun Dec 6** |
 | 26 | Wed Dec 9 | **Presentations II** | slides AM of your slot |
 | 27 | **Fri Dec 11** | **Presentations III** | |
@@ -253,6 +267,24 @@ L12→L16, L15→L17. Only two in-notebook references broke (L2 c21 and c34, "Le
 16" → "Lecture 11"); both are fixed. L2's "Lecture 13" and L5's two "L18"
 references were already correct and are untouched.
 
+### The second reorder (2026-08-31, AM on the syllabus)
+
+Leverage and shorting moved **out of meeting 15 and into meeting 20**, and the
+guest slid from 18 to 19. Everything between transaction costs and leverage
+pulled up one slot: capital allocation from 16–17 to **15–16**, conditional
+strategies from 19–20 to **17–18**.
+
+Renumbering: **L13→L12, L14→L13, L15→L14, L16→L15, L12→L16.** L10, L11 and
+L17–L19 keep both slot and number. Files, `_toc.yml`, the stubs, the design
+notes and `_config.yml` were renamed to match on 2026-08-31; no in-notebook
+cross-reference broke, because the two built lectures in the moved range
+(capital allocation) refer to each other by name, not by number.
+
+Consequences: leverage no longer sits between transaction costs and the
+optimizer, so the implementation thread is split across meetings 14 and 20;
+and A6 (Thu Nov 5) now lands **three days** after capital allocation II
+rather than one.
+
 ### Calendar reasoning
 
 - **Midterm Mon Oct 19, review Wed Oct 14.** Fall Break creates a 6-day gap
@@ -277,7 +309,7 @@ consequences, both resolved above:
    report deadline moves from Tue Dec 1 to Fri Dec 4.
 2. **Momentum moved past the midterm**, so **A4 moved from Mtg 11 to Mtg 14** —
    it cannot be due before the lecture it depends on. Guest 2 moved to Nov 30 so
-   that A7 (the shorting constraint) still follows L17.
+   that A7 still follows the lecture it needs.
    **Wed Nov 25 keeps the most self-contained session** — now L18, PCA — for the
    same reason as before: it is the day before Thanksgiving and the cheapest
    to miss.
@@ -351,8 +383,8 @@ The lecture block fixes the **skill**; the group's own strategy supplies the
 | **A4** | **Thu Oct 8** | L9 (Mon Oct 5) | Split your sample. IS vs OOS Sharpe, how many variants you tried, a multiple-testing haircut. |
 | **A5** | **Thu Oct 22** | L10 (Wed Oct 21) | Build the (12,1) benchmark. Your signal's correlation with it, and its alpha controlling for momentum. **Is your signal just momentum?** |
 | **A6** | **Thu Nov 5** | L13 (Mon Nov 2) | Vol-scale your strategy; MVE combination with the market; optimal weight. |
-| **A7** | **Thu Nov 19** | L16 (Mon Nov 16) | Bootstrap your Sharpe SE; apply a cost model; net-of-cost Sharpe. Turnover is defined here. |
-| **A8** | **Thu Dec 3** | L17 (Mon Nov 23) | Long-only vs long-short. What does the shorting constraint cost you? |
+| **A7** | **Thu Nov 19** | L11 (Mon Oct 26) | Bootstrap your Sharpe SE; apply a cost model; net-of-cost Sharpe. Turnover is defined here. |
+| **A8** | **Thu Dec 3** | L16 (Mon Nov 16) | Long-only vs long-short. What does the shorting constraint cost you? |
 
 **Eight assignments, due Thursday at midnight, drop two — six count.** One
 weekday all term, so nobody has to look it up. Gaps run 1–3 days after the last
@@ -366,7 +398,7 @@ distrust what comes out. Built from the pre-AI Assignments 1 and 2, keeping only
 what AI will not do for you.
 
 **A8 is the exception on timing.** Its Thursday is Nov 26 — Thanksgiving — so it
-slips a week to **Dec 3, the day before the final report**. Ten days after L17
+slips a week to **Dec 3, the day before the final report**. Seventeen days after L16
 rather than three, and it lands in the project crunch. Since students drop one
 of eight, **A8 is the natural drop** for anyone squeezed; that should be said out
 loud rather than discovered. Whether to cut it outright is **still open**.

@@ -1,4 +1,4 @@
-# L11 · Transaction Costs
+# Transaction Costs
 
 ```{admonition} Not yet posted
 :class: warning
