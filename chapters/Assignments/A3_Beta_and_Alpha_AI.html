@@ -815,12 +815,30 @@ you specifically? Say why in one sentence.</p>
 <p>A point estimate on its own is not a result. For each rung of the ladder,
 report the <strong>standard error</strong> of the annualized alpha and its <strong>95% confidence
 interval</strong>, <span class="math notranslate nohighlight">\(\hat\alpha \pm 1.96 \times SE(\hat\alpha)\)</span>.</p>
+<blockquote>
+<div><p><strong>If you have not met a confidence interval.</strong> Your regression hands back one
+number for alpha, <span class="math notranslate nohighlight">\(\hat\alpha\)</span>. Run the same strategy over a different 250
+months and you would get a different number — <span class="math notranslate nohighlight">\(\hat\alpha\)</span> is estimated from a
+finite sample of noisy returns, so it is itself uncertain.</p>
+<p>The <strong>standard error</strong> is roughly how much <span class="math notranslate nohighlight">\(\hat\alpha\)</span> would move if you could
+redraw the sample. <code class="docutils literal notranslate"><span class="pre">statsmodels</span></code> prints it as <code class="docutils literal notranslate"><span class="pre">std</span> <span class="pre">err</span></code> next to every
+coefficient, and it is available as <code class="docutils literal notranslate"><span class="pre">res.bse</span></code>. The t-statistic you have been
+reading all term is just <span class="math notranslate nohighlight">\(\hat\alpha / SE(\hat\alpha)\)</span> — which is why a
+|t| above 2 and an interval that clears zero are all but the same statement.</p>
+<p>The <strong>95% confidence interval</strong>, <span class="math notranslate nohighlight">\(\hat\alpha \pm 1.96 \times SE\)</span>, turns that
+into a range: loosely, the true alphas your data cannot rule out.
+<code class="docutils literal notranslate"><span class="pre">res.conf_int()</span></code> gives it directly. If the interval contains zero, your data
+cannot tell your strategy apart from one with no alpha at all — which is not
+the same claim as “the alpha is zero.”</p>
+<p>Both <code class="docutils literal notranslate"><span class="pre">bse</span></code> and <code class="docutils literal notranslate"><span class="pre">conf_int()</span></code> come back in monthly units. Annualize them the
+same way you annualized alpha, by ×12.</p>
+</div></blockquote>
 <p>Then say, for each model, whether that interval contains zero.</p>
 <blockquote>
-<div><p><strong>📌</strong> This is the same calculation as the standard error of a mean —
-<span class="math notranslate nohighlight">\(\sigma/\sqrt{T}\)</span> — and it is why the t-statistic keeps appearing. With
-~250 months, an annualized alpha needs to be roughly 4% or more before the
-interval clears zero. Most published anomalies are not far above that line.</p>
+<div><p><strong>📌</strong> It is the same calculation as the standard error of a mean,
+<span class="math notranslate nohighlight">\(\sigma/\sqrt{T}\)</span>. With ~250 months, an annualized alpha needs to be roughly
+4% or more before the interval clears zero. Most published anomalies are not
+far above that line.</p>
 </div></blockquote>
 <blockquote>
 <div><p><strong>(a)</strong> At which rungs does your interval exclude zero?</p>
