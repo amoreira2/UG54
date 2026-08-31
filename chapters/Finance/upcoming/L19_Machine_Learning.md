@@ -1,4 +1,4 @@
-# L19 · Machine Learning
+# Machine Learning
 
 ```{admonition} Not yet posted
 :class: warning

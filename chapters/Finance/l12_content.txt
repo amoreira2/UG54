@@ -1,0 +1,612 @@
+# Capital Allocation: How Much, and On What
+
+## 🎯 Learning Objectives
+
+By the end of today you will be able to:
+
+1. **Separate the two decisions** — how much risk to take, and how to spread it
+2. **Size a single position** from its Sharpe ratio and your risk aversion
+3. **Derive the mean-variance weights** and explain why everyone holds the same risky portfolio
+4. **Size a set of hedged strategies** without inverting anything
+5. **Say what combining uncorrelated bets is worth**, exactly
+6. **Explain why pod shops exist**
+@@CELL@@markdown@@
+## 📋 Today's Plan
+
+1. [Who decides how much risk?](#who)
+2. [One asset](#one)
+3. [Many assets](#many) — *🎯 prompt it*
+4. [Alpha bets, where the inverse disappears](#alpha)
+5. [What combining is worth](#combine)
+6. [🔄 Pod shops](#pods)
+7. [🛠️ Hands-On: size your own strategy](#ho1)
+8. [🎯 Challenge](#challenge) — *homework*
+9. [Key takeaways](#takeaways)
+@@CELL@@markdown@@
+---
+
+## 🛠️ Setup
+@@CELL@@code@@
+#@title Setup — run this first
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+%matplotlib inline
+plt.style.use('seaborn-v0_8-whitegrid')
+plt.rcParams['figure.figsize'] = [11, 4]
+import warnings; warnings.filterwarnings('ignore')
+
+BASE = "https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data"
+
+ff = pd.read_csv(f"{BASE}/ff_monthly.csv", index_col=0, parse_dates=True)
+L  = pd.read_parquet(f"{BASE}/longshort_29.parquet")     # our 29 long-shorts
+mkt = ff.loc[L.index, 'Mkt-RF']
+
+sharpe = lambda x: x.mean() / x.std() * np.sqrt(12)
+ann    = lambda x: x.mean() * 12
+vol    = lambda x: x.std() * np.sqrt(12)
+print(f"{L.shape[1]} strategies, {len(L)} months, {L.index[0]:%Y-%m} to {L.index[-1]:%Y-%m}")
+@@CELL@@markdown@@
+---
+
+## 1 · Who decides how much risk? <a id="who"></a>
+
+Every course before this one hands you a portfolio and asks how it did. Today you
+choose the portfolio, and the first question is not *which assets* — it is **how
+much risk**, and that question has no answer until you say whose money it is.
+
+**If you are the principal**, investing your own money, the answer depends on
+things no formula contains: how much you mind losing, how long until you need it,
+what you are saving for, and what else you already own. That last one is Lecture
+9's background risk. If your salary already moves with the market, your portfolio
+should not.
+
+**If you are a delegate** — running money for someone else — you have a mandate
+instead of preferences. A volatility target, a tracking-error budget, a limit on
+factor exposure. The mandate replaces the utility function, and most of this
+lecture is about what to do once someone has handed you one.
+
+Either way the problem splits in two, and the split is the reason any of this is
+tractable:
+
+> **1. How much total risk?** — depends on you.
+> **2. How do you spread it?** — does not.
+
+The rest of today is mostly question 2, and the surprise is that its answer is the
+same for everybody.
+@@CELL@@markdown@@
+---
+
+## 2 · One asset <a id="one"></a>
+
+Start with one risky asset and a risk-free rate. You put a fraction $x$ into the
+risky thing. Your portfolio's excess return is $x r$, so you want
+
+$$\max_x\ \; x\,\mu \;-\; \frac{\gamma}{2}\,x^2\sigma^2$$
+
+You like return and dislike variance, and $\gamma$ says how much you dislike it.
+Differentiate, set to zero:
+
+$$\mu - \gamma x \sigma^2 = 0 \qquad\Longrightarrow\qquad \boxed{\;x^\star = \frac{1}{\gamma}\frac{\mu}{\sigma^2}\;}$$
+
+Now multiply both sides by $\sigma$ to get the *volatility* you end up running:
+
+$$x^\star \sigma = \frac{1}{\gamma}\frac{\mu}{\sigma} = \frac{1}{\gamma}\times SR$$
+
+> **📌 The volatility you should run is your Sharpe ratio divided by your risk
+> aversion.**
+>
+> Not the return. Not the weight. The volatility. Everything else today is this
+> line with more subscripts.
+@@CELL@@code@@
+#@title 🔒 The market, 1980-2000, for four investors
+m = mkt.loc['1980':'2000']
+print(f"  market:  mean {ann(m):.1%}/yr   vol {vol(m):.1%}   Sharpe {sharpe(m):.2f}\n")
+print(f"  {'risk aversion':>14s}{'x*':>8s}{'portfolio vol':>16s}{'= SR/gamma':>13s}")
+for g in [1, 2, 5, 10]:
+    x = ann(m) / (g * vol(m)**2)
+    print(f"  {g:>14d}{x:>8.2f}{x*vol(m):>15.1%}{sharpe(m)/g:>13.2f}")
+@@CELL@@markdown@@
+### Read the last two columns
+
+They are identical, which is the boxed result. And the first row is a useful
+absurdity: **γ = 1 tells you to run 60% annual volatility**, roughly four times
+levered. Nobody does this. Textbook estimates of γ for real households run
+somewhere between 2 and 10, and γ = 5 — a 12% volatility portfolio, about
+three-quarters in stocks — is a recognisable human being.
+
+The formula does not know that. It will happily recommend four times leverage if
+you hand it a small γ, which is the first hint of a theme that takes over
+completely next lecture: **these formulas answer exactly the question you asked,
+including when you asked the wrong one.**
+@@CELL@@markdown@@
+---
+
+## 3 · Many assets <a id="many"></a>
+
+Same problem, more assets. Now $W$ is a vector, $\mu$ is a vector of expected
+excess returns, and $\Sigma$ is the covariance matrix:
+
+$$\max_W\ \; W'\mu - \frac{\gamma}{2}W'\Sigma W
+\qquad\Longrightarrow\qquad
+\mu - \gamma \Sigma W = 0
+\qquad\Longrightarrow\qquad
+\boxed{\;W^\star = \frac{1}{\gamma}\Sigma^{-1}\mu\;}$$
+
+It is the same three steps — differentiate, set to zero, solve — with a matrix
+inverse where the division used to be. This is the **mean-variance efficient**
+portfolio, and it is the central formula in quantitative investing.
+
+Note what $\gamma$ does and does not do. It multiplies every weight by the same
+number, so it changes **how big** your portfolio is and not **what is in it**.
+Strip it out and $\Sigma^{-1}\mu$ is a single portfolio that everybody holds, in
+different quantities.
+
+> **📌 Two-fund separation.** Every investor, whatever their risk aversion, holds
+> some mix of the risk-free asset and *the same* risky portfolio. A cautious
+> investor does not own safer assets — they own less of the identical thing.
+@@CELL@@markdown@@
+### 🎯 Prompt it — find me the optimal portfolio weights <a id="prompt"></a>
+
+We need these weights for the rest of the lecture, so it is worth being slow.
+
+> **🤔 The question.** *"I have monthly excess returns for six factors. Find me
+> the optimal portfolio weights."*
+>
+> Write the prompt. Three things are undecided, and two of them change the answer
+> rather than just its scale.
+@@CELL@@code@@
+# === YOUR TURN ===
+MY_PROMPT = """
+                                    ← write your prompt here
+"""
+
+# ---- paste the AI's code below ----
+
+@@CELL@@code@@
+#@title 🔒 Check — three readings of "optimal"
+F = ff[['Mkt-RF','SMB','HML','RMW','CMA','UMD']].dropna()
+mu, S = F.mean().values*12, F.cov().values*12
+
+raw    = np.linalg.solve(S, mu)                 # the formula, gamma = 1
+scaled = raw / np.abs(raw).sum()                # normalised to 1 gross
+target = raw * 0.10 / np.sqrt(raw @ S @ raw)    # scaled to 10% annual vol
+
+out = pd.DataFrame({'gamma=1 (raw)': raw, 'gross-normalised': scaled,
+                    '10% vol target': target}, index=F.columns)
+print(out.round(3).to_string())
+for lab, w in out.items():
+    r = (F.values @ w.values)
+    print(f"  {lab:20s} vol {r.std()*np.sqrt(12):6.1%}   Sharpe {r.mean()/r.std()*np.sqrt(12):.2f}")
+@@CELL@@markdown@@
+### Same portfolio, three answers, one Sharpe ratio
+
+All three columns are the same *portfolio* — the numbers differ by a scalar, and
+the Sharpe ratio is identical down the row. That is two-fund separation in a
+table.
+
+So the first ambiguity is harmless: if the AI hands you unnormalised weights, you
+have lost nothing. **But it never says which one it gave you**, and "the optimal
+weight on momentum is 0.13" means nothing until you know the scale. Ask for a
+volatility target and you get a portfolio you can actually size.
+
+The two that *do* change the answer are the ones a terse prompt will not raise:
+
+- **Are these excess returns?** $\Sigma^{-1}\mu$ assumes $\mu$ is *excess* of the
+  risk-free rate. Feed it total returns and every weight is wrong. Our six
+  factors are already excess returns; your own signal may not be.
+- **Full covariance, or just the diagonal?** Coming up in §4 — and for hedged
+  strategies the diagonal version is not an approximation, it is the point.
+@@CELL@@markdown@@
+---
+
+## 4 · Alpha bets, where the inverse disappears <a id="alpha"></a>
+
+Here is the case you actually have. You do not hold six factors — you hold a pile
+of **market-hedged long-short strategies**, each with an alpha and a residual
+volatility from Lecture 4.
+
+Write each strategy as $r_i = \alpha_i + \beta_i f + \epsilon_i$ and suppose your
+mandate says zero factor exposure, so you trade the hedged versions. Then the
+"assets" are the residuals, their expected returns are the alphas, and their
+covariance matrix is $\Sigma_\epsilon$.
+
+**If the residuals are uncorrelated with each other**, $\Sigma_\epsilon$ is
+diagonal — and inverting a diagonal matrix means dividing by its entries. Hold on
+to that "if"; we test it at the end of the section.
+
+$$W^\star \;\propto\; \Sigma_\epsilon^{-1}\alpha
+\qquad\Longrightarrow\qquad
+w_i \;\propto\; \frac{\alpha_i}{\sigma^2_{\epsilon,i}}$$
+
+No linear algebra at all. And now multiply by $\sigma_{\epsilon,i}$ to get the
+volatility you allocate to strategy $i$:
+
+$$\underbrace{w_i\,\sigma_{\epsilon,i}}_{\text{vol you put on it}}
+\;=\;\underbrace{\frac{\alpha_i}{\sigma_{\epsilon,i}}}_{\text{its appraisal ratio}}$$
+
+> **📌 Allocate volatility to each strategy in proportion to its appraisal
+> ratio.** The number you have been computing since Lecture 4 turns out to be a
+> position size.
+@@CELL@@code@@
+#@title 🔒 The 29 strategies, hedged, sized
+rows = {}
+for c in L.columns:
+    r = sm.OLS(L[c], sm.add_constant(mkt)).fit()
+    rows[c] = {'alpha': r.params.iloc[0]*12, 'beta': r.params.iloc[1],
+               'sd_eps': r.resid.std()*np.sqrt(12)}
+A = pd.DataFrame(rows).T
+A['appraisal'] = A.alpha / A.sd_eps
+A['w']         = A.alpha / A.sd_eps**2
+A['vol_alloc'] = A.w * A.sd_eps
+
+print(A.sort_values('appraisal', ascending=False).head(6)
+       .to_string(formatters={'alpha':'{:+.1%}'.format, 'beta':'{:+.2f}'.format,
+                              'sd_eps':'{:.1%}'.format, 'appraisal':'{:.2f}'.format,
+                              'w':'{:.1f}'.format, 'vol_alloc':'{:.2f}'.format}))
+print(f"\n  vol_alloc equals appraisal ratio?  max difference {np.abs(A.vol_alloc-A.appraisal).max():.1e}")
+@@CELL@@markdown@@
+### The average is zero. The matrix is not diagonal.
+
+The mean residual correlation is **+0.03**, which invites you to call it zero.
+The mean *absolute* correlation is **0.20**, and the worst pair —
+`MaxRet` and `RealizedVol` — is **0.95**. They are two names for the same trade,
+which Lecture 9 §2 already told us.
+
+The signed average hides this because positive and negative pairs cancel. But
+$\Sigma_\epsilon^{-1}$ does not average anything: it sees the whole matrix, and a
+0.95 pair is exactly the configuration that makes an inverse explode.
+
+> **⚠️ So the formula below is the right answer to a question about a world we
+> are not in.** Keep it — the logic is correct and the intuition transfers — but
+> do not yet believe the weights. Next lecture measures what the false assumption
+> costs, and the answer is not what you would guess.
+
+### The identity holds to machine precision
+
+Which it must — it is algebra, not a finding. But look at the weights column
+before you trust it.
+
+**`DivSeason` gets a raw weight of 34**, six times the next strategy. Not because
+its alpha is large — at 5.4% a year it is one of the smaller ones — but because
+its residual volatility is 4%, and the formula divides by the *square* of that.
+The optimizer piles into whatever looks quiet.
+
+That is the correct answer to the question we asked. Whether it is the right
+position is a different question, and it is the whole of next lecture.
+
+### Now test the "if"
+
+The formula needed the residuals to be uncorrelated. They are not.
+@@CELL@@code@@
+#@title 🔒 Is the residual covariance really diagonal?
+Hd = pd.DataFrame({c: sm.OLS(L[c], sm.add_constant(mkt)).fit().resid for c in L.columns})
+C  = Hd.corr().values
+off = C[np.triu_indices(len(C), 1)]
+print(f"  mean correlation           {off.mean():+.3f}   <- looks like zero")
+print(f"  mean ABSOLUTE correlation  {np.abs(off).mean():.3f}   <- it is not zero\n")
+iu = np.triu_indices(len(C), 1)
+for z in np.argsort(-np.abs(off))[:4]:
+    print(f"    {Hd.columns[iu[0][z]]:14s} {Hd.columns[iu[1][z]]:14s} {off[z]:+.3f}")
+
+w = A.w / np.abs(A.w).sum()
+combo = (L * w).sum(axis=1)
+r = sm.OLS(combo, sm.add_constant(mkt)).fit()
+print(f"  combo:  Sharpe {sharpe(combo):.2f}   alpha {r.params.iloc[0]*12:+.1%}/yr   beta {r.params.iloc[1]:+.2f}")
+print(f"  best single strategy's appraisal ratio: {A.appraisal.max():.2f}  ({A.appraisal.idxmax()})")
+@@CELL@@markdown@@
+---
+
+## 5 · What combining is worth <a id="combine"></a>
+
+The combo's Sharpe ratio is **1.65**, against **1.36** for the best single
+strategy in it. Where did that come from, and how much was available?
+
+For two strategies with **zero correlation**, the answer is exact:
+
+$$SR_{\text{combined}} = \sqrt{SR_A^2 + SR_B^2}$$
+
+Squared Sharpe ratios add. That is the single most useful fact in portfolio
+construction, and it has a sharp consequence: **a strategy with a mediocre Sharpe
+ratio that is uncorrelated with what you own is worth more than a good strategy
+that duplicates it.**
+
+Our hedged combo is orthogonal to the market by construction — we removed the
+beta. So we can test the formula on exactly the case it was built for.
+@@CELL@@code@@
+#@title 🔒 Market plus hedged combo — does the formula hold?
+hedged = combo - r.params.iloc[1]*mkt
+j = pd.concat([mkt.rename('market'), hedged.rename('hedged')], axis=1).dropna()
+print(f"  market Sharpe   {sharpe(j.market):.2f}")
+print(f"  hedged Sharpe   {sharpe(j.hedged):.2f}")
+print(f"  correlation     {j.corr().iloc[0,1]:+.3f}\n")
+print(f"  sqrt(SR_m^2 + SR_h^2)  = {np.sqrt(sharpe(j.market)**2 + sharpe(j.hedged)**2):.2f}")
+S2 = j.cov().values*12; mu2 = j.mean().values*12
+w2 = np.linalg.solve(S2, mu2)
+print(f"  optimal combination    = {sharpe((j*w2).sum(axis=1)):.2f}   <- the formula was exact")
+@@CELL@@markdown@@
+### 0.59 and 2.26 make 2.33
+
+The market on its own earns a Sharpe ratio of 0.59. The hedged alpha combo earns
+2.26. Put them together optimally and you get **2.33** — precisely
+$\sqrt{0.59^2 + 2.26^2}$, because the correlation is zero to three decimals.
+
+Two things follow, and the second is the one to keep.
+
+**Adding the market barely helped.** 2.26 to 2.33. When one Sharpe ratio is much
+larger, squaring buries the smaller one — which is why an alpha shop does not
+much care about its market view.
+
+**You should evaluate a strategy by its appraisal ratio, not its Sharpe ratio.**
+The Sharpe ratio of a strategy in isolation is the wrong number. What you want to
+know is what it adds to what you already hold, and once you have hedged out the
+overlap, that is exactly the appraisal ratio.
+
+> **💡 The Fundamental Law of Active Management**
+>
+> Both results are instances of one, due to Grinold (1989):
+> $IR = IC\times\sqrt{\text{breadth}}$. Your risk-adjusted performance is your
+> *skill per bet* times the square root of *how many independent bets you make*.
+> A manager whose forecasts correlate just 0.03 with realised returns — barely
+> detectable — running a thousand independent bets a year gets an information
+> ratio near 1. **Skill can be almost invisible and still be a business, if there
+> is enough breadth.** We will not compute an IC; just notice that it names the
+> pattern you have now derived twice.
+@@CELL@@markdown@@
+---
+
+## 🔄 6 · Pod shops <a id="pods"></a>
+
+Hedge funds used to be built around one famous investor — Soros, Robertson,
+Tudor Jones. The largest firms today are not. Citadel and Millennium run dozens
+of small independent teams, each with a few people, each on its own capital
+budget, each hedged.
+
+Squared Sharpe ratios explain why. If you have $N$ uncorrelated pods, each with
+Sharpe ratio $s$, the pool's Sharpe ratio is $\sqrt{N}\,s$ — that is the previous
+formula with $N$ terms instead of two.
+
+**A pod with a Sharpe ratio of 0.5 is not a fund.** Nobody will allocate to it.
+Thirty such pods, uncorrelated, make 2.7 — which is one of the best track records
+in the industry. The pods are worth far more together than apart, and that gap is
+the firm's reason to exist.
+
+Our 29 strategies are exactly that experiment.
+@@CELL@@code@@
+#@title 🔒 Pooling our 29, N at a time
+srs = L.apply(sharpe)
+print(f"  {'N':>4s}{'pooled Sharpe':>16s}{'sqrt(N) x mean':>17s}")
+for N in [1, 4, 9, 16, 29]:
+    sub = (L.iloc[:, :N] / L.iloc[:, :N].std()).mean(axis=1)
+    print(f"  {N:>4d}{sharpe(sub):>16.2f}{np.sqrt(N)*srs[:N].mean():>17.2f}")
+print(f"\n  mean individual Sharpe {srs.mean():.2f}   best single {srs.max():.2f}")
+print(f"  mean pairwise correlation {L.corr().values[np.triu_indices(29,1)].mean():.3f}")
+@@CELL@@markdown@@
+### 0.40 apart, 1.38 together
+
+The average strategy here has a Sharpe ratio of **0.40** — individually
+unfundable. Equal-volatility weighted, all 29 together earn **1.38**. Breadth
+turned a collection of mediocre ideas into a good fund, and no idea got better.
+
+But it did not reach the **2.13** that $\sqrt{29}\times 0.40$ promises, and the
+whole of the shortfall is in the last line: the average pairwise correlation is
+**0.049**, not zero. Small correlations, compounded across hundreds of pairs, eat
+a third of the benefit.
+
+Notice also that the progression is not monotonic — going from 9 strategies to 16
+made it *worse*. Adding a bet only helps if it is genuinely new, and some of these
+are not.
+
+> **📌 The scarce thing is not a good strategy. It is an uncorrelated one.**
+>
+> This is why a pod shop will hire a team whose Sharpe ratio would never raise
+> outside capital, and why the first question about any new signal is not "how
+> good is it" but "what does it correlate with".
+@@CELL@@markdown@@
+---
+
+## 🛠️ Hands-On: Size Your Own Strategy <a id="ho1"></a>
+
+You have a signal. Until now you have reported what it earned. Now decide how
+much of it to hold.
+
+> **🤔 Predict first.** Your strategy's Sharpe ratio is a number you know. Guess
+> its appraisal ratio against the market — higher or lower, and why?
+@@CELL@@code@@
+# === EDIT + YOUR TURN ===
+MY_SIGNAL = "GP"      # ← your group's signal
+
+# 1. Hedge it and get the two numbers that matter.
+reg = sm.OLS(L[MY_SIGNAL], sm.add_constant(mkt)).fit()
+my_alpha  = reg.params.iloc[0]*12
+my_sd_eps = reg.resid.std()*np.sqrt(12)
+print(f"{MY_SIGNAL}: alpha {my_alpha:+.1%}/yr, residual vol {my_sd_eps:.1%}, "
+      f"appraisal {my_alpha/my_sd_eps:.2f}")
+
+# 2. How much volatility should you allocate to it, for a mandate of 10% total?
+#    Hint: vol allocation is proportional to the appraisal ratio.
+my_vol_alloc = ____
+
+# 3. What is the Sharpe ratio of your strategy combined optimally with the market?
+my_combo_sr  = ____
+
+print(f"  vol allocation {my_vol_alloc:.1%}   combined Sharpe {my_combo_sr:.2f}")
+@@CELL@@markdown@@
+### Compare with the room
+
+- **Is your appraisal ratio above or below your Sharpe ratio?** Above means
+  hedging the market *helped* — your strategy was carrying beta that added
+  volatility without adding return.
+- **How much did combining with the market buy you?** If your appraisal ratio is
+  well above 0.59, almost nothing. Squaring is unkind to the smaller number.
+- **Check your neighbours.** Correlate your hedged strategy with the two most
+  similar-sounding ones in the 29. Above 0.9 and you are not holding two bets.
+- **Now the question that matters for the project.** Take the signal of the group
+  sitting next to you. Would adding it to yours help? You cannot answer from the
+  two Sharpe ratios. You need the correlation.
+@@CELL@@markdown@@
+---
+
+## 🎯 Challenge: Build the Book <a id="challenge"></a>
+
+*Homework — due before the next class.*
+
+You are running the alpha book. You have the 29 hedged strategies, a mandate of
+**zero market exposure** and **10% annual volatility**, and the formulas from
+today.
+
+### Q1 — The optimal book
+
+Size all 29 hedged strategies by $w_i\propto\alpha_i/\sigma^2_{\epsilon,i}$, scale
+the whole book to 10% annual volatility, and report its **Sharpe ratio**.
+
+> **📌 Required variable names:**
+> ```python
+> book_sharpe = ____   # Sharpe ratio of the vol-targeted alpha book
+> ```
+@@CELL@@code@@
+# Your work here
+
+
+book_sharpe = ____
+
+print(f"alpha book Sharpe: {book_sharpe:.2f}")
+@@CELL@@markdown@@
+### Q2 — What the correlations cost you
+
+If the 29 residuals were uncorrelated, the book's Sharpe ratio would be
+$\sqrt{\sum_i AR_i^2}$. Compute that number and compare it with Q1.
+
+Report the **ratio** of what you achieved to what independence would have given —
+a number between 0 and 1.
+
+> **📌 Required variable names:**
+> ```python
+> diversification_shortfall = ____   # achieved / theoretical, a decimal
+> ```
+@@CELL@@code@@
+# Your work here
+
+
+diversification_shortfall = ____
+
+print(f"you captured {diversification_shortfall:.0%} of the independent-bet ideal")
+@@CELL@@markdown@@
+### Q3 — The marginal strategy
+
+Drop `DivSeason` — the one the optimizer loved — and rebuild the book from the
+remaining 28. Report the **new Sharpe ratio**.
+
+Then ask yourself whether the change is what you expected from its weight.
+
+> **📌 Required variable names:**
+> ```python
+> book_without_divseason = ____   # Sharpe of the 28-strategy book
+> ```
+@@CELL@@code@@
+# Your work here
+
+
+book_without_divseason = ____
+
+print(f"without DivSeason: {book_without_divseason:.2f}")
+@@CELL@@markdown@@
+### Q4 — The memo
+
+> **📝 Your task — maximum eight sentences.**
+>
+> You run the book. A portfolio manager pitches you a new strategy with a Sharpe
+> ratio of **0.35** — worse than all but a handful of what you already hold. They
+> want a capital allocation.
+>
+> Say what you would need to know before answering, and be specific: name the
+> statistic, not the concept. Then work out roughly what the strategy would be
+> worth to the book in the best case and in the worst case, using today's
+> formulas. Finish with the harder question: **your own book achieved less than
+> the independence ideal in Q2 — given that, are you more or less interested in
+> this manager than you would have been if the shortfall had been zero?**
+@@CELL@@code@@
+MEMO = """
+Write your memo here. Don't delete the surrounding triple quotes.
+"""
+print(MEMO)
+@@CELL@@markdown@@
+---
+
+## 📤 Submission <a id="submit"></a>
+@@CELL@@code@@
+# === 📤 SUBMISSION CELL — Run this last ===
+import json, base64, hashlib, datetime as dt
+
+required = ["book_sharpe", "diversification_shortfall", "book_without_divseason", "MEMO"]
+missing = [v for v in required if v not in globals()]
+if missing:
+    raise NameError(f"\n❌ Missing before submission: {missing}")
+
+payload = {
+    "assignment": "L12_CapitalAllocationI_AI",
+    "ts": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+    "answers": {k: float(eval(k)) for k in required if k != "MEMO"},
+    "memo": MEMO.strip(),
+}
+blob = json.dumps(payload, sort_keys=True)
+checksum = hashlib.sha256(blob.encode()).hexdigest()[:8]
+token = f"UG54::{checksum}::{base64.b64encode(blob.encode()).decode()}"
+
+print("=" * 72)
+print("📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM")
+print("=" * 72)
+print(token)
+print("=" * 72)
+print("Submission form: https://forms.gle/yazZ8bbatL87jdJi7")
+@@CELL@@markdown@@
+---
+
+## 🧠 Key Takeaways <a id="takeaways"></a>
+
+1. **Two decisions, and only one is about you.** How much risk depends on your
+   preferences or your mandate. How to spread it does not.
+
+2. **The volatility you run is your Sharpe ratio over your risk aversion.**
+   Everything else today is that line with subscripts.
+
+3. **$W^\star = \frac{1}{\gamma}\Sigma^{-1}\mu$**, and γ only sets the size.
+   Everyone holds the same risky portfolio in different amounts.
+
+4. **For hedged strategies with uncorrelated residuals there is no matrix to
+   invert** — allocate volatility in proportion to the appraisal ratio.
+
+5. **Squared Sharpe ratios add.** 0.59 and 2.26 make 2.33, exactly.
+
+6. **Judge a strategy by its appraisal ratio, not its Sharpe ratio** — by what it
+   adds to what you hold, not by what it does alone.
+
+7. **N uncorrelated pods with Sharpe s make a fund with √N·s.** Ours: 0.40 each,
+   1.38 together.
+
+8. **The shortfall is correlation.** 1.38 against a theoretical 2.13, and the
+   average pairwise correlation is only 0.049. Small correlations across many
+   pairs are expensive.
+
+9. **The scarce thing is an uncorrelated strategy, not a good one.**
+
+---
+
+### Next class
+
+Every number today assumed you know μ and Σ. You do not — you have estimates from
+a finite sample, and the optimizer treats them as gospel. Next: what that costs,
+and why the most sophisticated formula in this course loses to dividing by six.
+@@CELL@@markdown@@
+---
+
+## 📎 Appendix <a id="appendix"></a>
+@@CELL@@code@@
+# ═══════════════════════════════════════════════════════════════════════
+# 📎 APPENDIX — all 29, hedged and sized
+# ═══════════════════════════════════════════════════════════════════════
+print(A.sort_values('appraisal', ascending=False)
+       .to_string(formatters={'alpha':'{:+.1%}'.format, 'beta':'{:+.2f}'.format,
+                              'sd_eps':'{:.1%}'.format, 'appraisal':'{:.2f}'.format,
+                              'w':'{:.1f}'.format, 'vol_alloc':'{:.2f}'.format}))

@@ -263,15 +263,26 @@ Three things the reorder surfaced:
 
 ## Done
 
-- ✅ **2026-08-28** — **L13 built, not published** (`L13_CapitalAllocationI_AI.ipynb`,
+- ✅ **2026-08-31** — **Second back-half reorder applied everywhere.** AM moved
+      leverage/shorting from meeting 15 to 20 on the syllabus; everything between
+      pulled up one slot. **L13→L12, L14→L13, L15→L14, L16→L15, L12→L16.**
+      Renamed the two built notebooks, their builders, their content files and the
+      joint design note; rewrote the `upcoming/` stubs (numbers, meeting slots,
+      A6/A7 feeds); reordered `_toc.yml`; repointed `_config.yml`
+      `exclude_patterns`; updated `PLAN.md` §2, §3 and the A1–A8 table; and
+      regenerated the syllabus from `build_syllabus.js`, which had drifted a full
+      reorder behind the docx.
+
+- ✅ **2026-08-28** — **L12 built, not published** (`L12_CapitalAllocationI_AI.ipynb`,
       39 cells, 1.47 lectured sessions). Two decisions → one asset → many assets →
       alpha bets where the inverse disappears → √(SR²+SR²) → pod shops. Joint plan
-      with L14 in `L13_L14_DESIGN.md`.
-- ✅ **2026-08-28** — **L14 built, not published** (`L14_CapitalAllocationII_AI.ipynb`,
-      45 cells, 1.38 lectured sessions). Adversarial verification killed the
+      with L13 in `L12_L13_DESIGN.md`. *(Was L13 until the 31 Aug reorder.)*
+- ✅ **2026-08-31** — **L13 built, not published** (`L13_CapitalAllocationII_AI.ipynb`,
+      50 cells, 1.85 lectured sessions, after the bet-sizing menu and the
+      bootstrap/Monte-Carlo exposure sections were added). Adversarial verification killed the
       planned headline (1/N beats MV is a pre-2000 result) and replaced it with a
-      stronger one: discarding the alphas *improves* L13's book, in sample and
-      out. L13 patched with the diagonality test it was missing.
+      stronger one: discarding the alphas *improves* L12's book, in sample and
+      out. L12 patched with the diagonality test it was missing.
 
 - ✅ **2026-08-28** — **L11 built but not published** (`L11_TransactionCosts_AI.ipynb`,
       40 cells, 1.86 lectured sessions). Turnover defined drift-aware; momentum is

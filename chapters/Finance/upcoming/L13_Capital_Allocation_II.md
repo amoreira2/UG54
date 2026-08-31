@@ -1,4 +1,4 @@
-# L14 · Capital Allocation II — Estimation Error
+# Capital Allocation II — Estimation Error
 
 ```{admonition} Not yet posted
 :class: warning
@@ -6,7 +6,7 @@ This page marks the slot so the shape of the term is visible. The notebook goes
 up here before we meet.
 ```
 
-**When:** Mtg 17 · Wed Nov 4
+**When:** Mtg 16 · Mon Nov 2
 
 ## What it covers
 

@@ -1,25 +1,27 @@
-# Capital Allocation: How Much, and On What
+# Capital Allocation II: What Estimation Error Costs
 
 ## 🎯 Learning Objectives
 
 By the end of today you will be able to:
 
-1. **Separate the two decisions** — how much risk to take, and how to spread it
-2. **Size a single position** from its Sharpe ratio and your risk aversion
-3. **Derive the mean-variance weights** and explain why everyone holds the same risky portfolio
-4. **Size a set of hedged strategies** without inverting anything
-5. **Say what combining uncorrelated bets is worth**, exactly
-6. **Explain why pod shops exist**
+1. **Explain why an optimizer always wins in sample** — and why that is not evidence
+2. **Decompose where a portfolio's Sharpe ratio actually comes from**
+3. **Compare bet-sizing rules by the inputs they estimate**, and say which is exposed to what
+4. **Measure estimation error with a test that has power** — and recognise one that does not
+5. **Shrink the right input**, and say why shrinking the other one is destructive
+6. **Tell a finding from a period**
 @@CELL@@markdown@@
 ## 📋 Today's Plan
 
-1. [Who decides how much risk?](#who)
-2. [One asset](#one)
-3. [Many assets](#many) — *🎯 prompt it*
-4. [Alpha bets, where the inverse disappears](#alpha)
-5. [What combining is worth](#combine)
-6. [🔄 Pod shops](#pods)
-7. [🛠️ Hands-On: size your own strategy](#ho1)
+1. [The in-sample illusion](#illusion)
+2. [🔄 Where the Sharpe actually comes from](#where)
+3. [The bet-sizing menu](#menu)
+4. [How each rule is exposed](#exposed)
+5. [Why the optimizer amplifies it](#why)
+6. [What does the error cost?](#cost) — *🎯 prompt it*
+7. [Give it a prior with the right shape](#prior)
+8. [Finding, or period?](#period)
+7. [🛠️ Hands-On](#ho1)
 8. [🎯 Challenge](#challenge) — *homework*
 9. [Key takeaways](#takeaways)
 @@CELL@@markdown@@
@@ -40,122 +42,319 @@ import warnings; warnings.filterwarnings('ignore')
 BASE = "https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data"
 
 ff = pd.read_csv(f"{BASE}/ff_monthly.csv", index_col=0, parse_dates=True)
-L  = pd.read_parquet(f"{BASE}/longshort_29.parquet")     # our 29 long-shorts
+L  = pd.read_parquet(f"{BASE}/longshort_29.parquet")
+F  = ff[['Mkt-RF','SMB','HML','RMW','CMA','UMD']].dropna()     # six factors
 mkt = ff.loc[L.index, 'Mkt-RF']
 
 sharpe = lambda x: x.mean() / x.std() * np.sqrt(12)
-ann    = lambda x: x.mean() * 12
-vol    = lambda x: x.std() * np.sqrt(12)
-print(f"{L.shape[1]} strategies, {len(L)} months, {L.index[0]:%Y-%m} to {L.index[-1]:%Y-%m}")
+def W(m, S):                       # mean-variance weights, gross-normalised
+    w = np.linalg.solve(S, m); return w / np.abs(w).sum()
+
+# the hedged strategies from last lecture
+H = pd.DataFrame({c: (lambda r: r.resid + r.params.iloc[0])(
+        sm.OLS(L[c], sm.add_constant(mkt)).fit()) for c in L.columns})
+print(f"{len(F)} months of six factors; {H.shape[1]} hedged strategies over {len(H)} months")
 @@CELL@@markdown@@
 ---
 
-## 1 · Who decides how much risk? <a id="who"></a>
+## 1 · The in-sample illusion <a id="illusion"></a>
 
-Every course before this one hands you a portfolio and asks how it did. Today you
-choose the portfolio, and the first question is not *which assets* — it is **how
-much risk**, and that question has no answer until you say whose money it is.
+Last lecture ended with a formula: $W^\star \propto \Sigma^{-1}\mu$. Every number
+in it was estimated from the same data we then evaluated it on.
 
-**If you are the principal**, investing your own money, the answer depends on
-things no formula contains: how much you mind losing, how long until you need it,
-what you are saving for, and what else you already own. That last one is Lecture
-9's background risk. If your salary already moves with the market, your portfolio
-should not.
-
-**If you are a delegate** — running money for someone else — you have a mandate
-instead of preferences. A volatility target, a tracking-error budget, a limit on
-factor exposure. The mandate replaces the utility function, and most of this
-lecture is about what to do once someone has handed you one.
-
-Either way the problem splits in two, and the split is the reason any of this is
-tractable:
-
-> **1. How much total risk?** — depends on you.
-> **2. How do you spread it?** — does not.
-
-The rest of today is mostly question 2, and the surprise is that its answer is the
-same for everybody.
-@@CELL@@markdown@@
----
-
-## 2 · One asset <a id="one"></a>
-
-Start with one risky asset and a risk-free rate. You put a fraction $x$ into the
-risky thing. Your portfolio's excess return is $x r$, so you want
-
-$$\max_x\ \; x\,\mu \;-\; \frac{\gamma}{2}\,x^2\sigma^2$$
-
-You like return and dislike variance, and $\gamma$ says how much you dislike it.
-Differentiate, set to zero:
-
-$$\mu - \gamma x \sigma^2 = 0 \qquad\Longrightarrow\qquad \boxed{\;x^\star = \frac{1}{\gamma}\frac{\mu}{\sigma^2}\;}$$
-
-Now multiply both sides by $\sigma$ to get the *volatility* you end up running:
-
-$$x^\star \sigma = \frac{1}{\gamma}\frac{\mu}{\sigma} = \frac{1}{\gamma}\times SR$$
-
-> **📌 The volatility you should run is your Sharpe ratio divided by your risk
-> aversion.**
->
-> Not the return. Not the weight. The volatility. Everything else today is this
-> line with more subscripts.
+Here is what that buys, on the six Fama–French factors.
 @@CELL@@code@@
-#@title 🔒 The market, 1980-2000, for four investors
-m = mkt.loc['1980':'2000']
-print(f"  market:  mean {ann(m):.1%}/yr   vol {vol(m):.1%}   Sharpe {sharpe(m):.2f}\n")
-print(f"  {'risk aversion':>14s}{'x*':>8s}{'portfolio vol':>16s}{'= SR/gamma':>13s}")
-for g in [1, 2, 5, 10]:
-    x = ann(m) / (g * vol(m)**2)
-    print(f"  {g:>14d}{x:>8.2f}{x*vol(m):>15.1%}{sharpe(m)/g:>13.2f}")
+#@title 🔒 Three portfolios, scored on the sample that built them
+mu, S = F.mean().values, F.cov().values
+print(f"  mean-variance    {sharpe(pd.Series(F.values @ W(mu, S))):.2f}")
+print(f"  equal-weighted   {sharpe(F.mean(axis=1)):.2f}")
+print(f"  best single      {max(sharpe(F[c]) for c in F):.2f}")
 @@CELL@@markdown@@
-### Read the last two columns
+### It had to win
 
-They are identical, which is the boxed result. And the first row is a useful
-absurdity: **γ = 1 tells you to run 60% annual volatility**, roughly four times
-levered. Nobody does this. Textbook estimates of γ for real households run
-somewhere between 2 and 10, and γ = 5 — a 12% volatility portfolio, about
-three-quarters in stocks — is a recognisable human being.
+1.17 against 1.03. The optimizer beat equal weighting, and it was never in doubt:
+$\Sigma^{-1}\mu$ **is** the portfolio with the highest Sharpe ratio in that
+sample. It is the algebraic maximum. Reporting it as evidence that optimization
+works is like reporting that the tallest person in the room is tall.
 
-The formula does not know that. It will happily recommend four times leverage if
-you hand it a small γ, which is the first hint of a theme that takes over
-completely next lecture: **these formulas answer exactly the question you asked,
-including when you asked the wrong one.**
+> **📌 Optimization is a form of in-sample regression.**
+>
+> It is fitting, and everything Lecture 8 said about fitting applies. The weights
+> are chosen to make the past look good, and the more freedom you give them the
+> better the past looks and the less it means.
+
+Notice also how *small* the win is. Six factors, full freedom, forty-six years —
+and the optimizer bought 0.14 of Sharpe ratio over dividing by six. Hold that
+thought.
 @@CELL@@markdown@@
 ---
 
-## 3 · Many assets <a id="many"></a>
+## 🔄 2 · Where the Sharpe actually comes from <a id="where"></a>
 
-Same problem, more assets. Now $W$ is a vector, $\mu$ is a vector of expected
-excess returns, and $\Sigma$ is the covariance matrix:
+Forget the six factors. Take the thing you built last lecture: the alpha book
+over 29 hedged strategies, weighted $w_i \propto \alpha_i/\sigma^2_{\epsilon,i}$,
+in-sample Sharpe 2.26.
 
-$$\max_W\ \; W'\mu - \frac{\gamma}{2}W'\Sigma W
-\qquad\Longrightarrow\qquad
-\mu - \gamma \Sigma W = 0
-\qquad\Longrightarrow\qquad
-\boxed{\;W^\star = \frac{1}{\gamma}\Sigma^{-1}\mu\;}$$
+That formula uses two pieces of information — the alphas, and the residual
+volatilities. So run a control that a scientist would insist on: **throw the
+alphas away.** Weight by $1/\sigma^2_{\epsilon,i}$ alone, which knows nothing
+whatsoever about which strategies are good.
 
-It is the same three steps — differentiate, set to zero, solve — with a matrix
-inverse where the division used to be. This is the **mean-variance efficient**
-portfolio, and it is the central formula in quantitative investing.
-
-Note what $\gamma$ does and does not do. It multiplies every weight by the same
-number, so it changes **how big** your portfolio is and not **what is in it**.
-Strip it out and $\Sigma^{-1}\mu$ is a single portfolio that everybody holds, in
-different quantities.
-
-> **📌 Two-fund separation.** Every investor, whatever their risk aversion, holds
-> some mix of the risk-free asset and *the same* risky portfolio. A cautious
-> investor does not own safer assets — they own less of the identical thing.
+> **🤔 Predict first.** How much worse should the no-information version be?
+@@CELL@@code@@
+#@title 🔒 Four weightings, in sample
+al, sd = H.mean()*12, H.std()*np.sqrt(12)
+rules = {'alpha book   a/sd^2': al/sd**2, 'NO ALPHA     1/sd^2': 1/sd**2,
+         'risk parity  1/sd': 1/sd,       'equal        1/N': pd.Series(1., index=H.columns)}
+for lab, w in rules.items():
+    print(f"  {lab:24s} {sharpe((H*w).sum(axis=1)):.4f}")
 @@CELL@@markdown@@
-### 🎯 Prompt it — find me the optimal portfolio weights <a id="prompt"></a>
+### The version that knows nothing wins
 
-We need these weights for the rest of the lecture, so it is worth being slow.
+**2.2924 against 2.2585.** Discarding the alphas — the entire point of the
+exercise, the thing we spent all of Lecture 13 estimating — *improved* the
+portfolio, in the sample the weights were fitted on.
 
-> **🤔 The question.** *"I have monthly excess returns for six factors. Find me
-> the optimal portfolio weights."*
+That should be impossible. $\Sigma_\epsilon^{-1}\alpha$ is supposed to be the
+in-sample maximum. It is not the maximum here because **the formula we used was
+not $\Sigma_\epsilon^{-1}\alpha$** — it was the diagonal shortcut, which is only
+the optimum if the residuals are uncorrelated. We showed last lecture that they
+are not.
+
+Now out of sample: estimate the weights on an expanding history, earn the next
+month's return, never look forward.
+@@CELL@@code@@
+#@title 🔒 The same four, out of sample (expanding window, 120-month burn-in)
+oos = {k: [] for k in rules}
+for t in range(120, len(H)):
+    Ht = H.iloc[:t]; a, s = Ht.mean(), Ht.std(); nxt = H.iloc[t]
+    for k, w in [('alpha book   a/sd^2', a/s**2), ('NO ALPHA     1/sd^2', 1/s**2),
+                 ('risk parity  1/sd', 1/s), ('equal        1/N', pd.Series(1., index=H.columns))]:
+        oos[k].append((nxt*w).sum() / np.abs(w).sum())
+for k, v in oos.items():
+    print(f"  {k:24s} {sharpe(pd.Series(v, index=H.index[120:])):.4f}")
+@@CELL@@markdown@@
+### Same ordering, out of sample
+
+The no-alpha rule wins again — **2.07 against 1.85** — and equal weighting is
+last. So the ranking is not a fluke of the fitting sample; it holds when nothing
+is fitted.
+
+Read the four numbers as a decomposition. Going from equal weighting to
+$1/\sigma^2$ is worth about **+0.3**: that is the value of *risk information*,
+which is easy to estimate. Going from there to $\alpha/\sigma^2$ is worth
+**−0.2**: that is the value of *return information*, which is not.
+
+> **📌 The alphas were the expensive input and the negative contributor.**
 >
-> Write the prompt. Three things are undecided, and two of them change the answer
-> rather than just its scale.
+> Not because trailing alpha is uninformative — it does predict. Because the
+> optimizer converts a noisy estimate into a *dispersed* set of weights, and the
+> dispersion adds volatility faster than it adds return.
+
+Which raises the obvious question. Why is the return information the part that
+fails?
+@@CELL@@markdown@@
+---
+
+## 3 · The bet-sizing menu <a id="menu"></a>
+
+Before fixing mean-variance, look at what you would use instead. Practitioners
+have a standard menu, and **each entry is a different assumption about what you
+know** — not a different level of sophistication.
+
+| rule | weights | what it assumes | inputs it estimates |
+|---|---|---|---|
+| **mean-variance** | $\Sigma^{-1}\mu$ | you know both | μ **and** Σ |
+| **minimum-variance** | $\Sigma^{-1}\mathbf{1}$ | all expected returns are equal | Σ only |
+| **risk parity** | $1/\sigma_i$ | all *appraisal ratios* are equal | the diagonal of Σ |
+| **proportional** | $\mu_i$ | you know the ranking, not the risk | μ only |
+| **equal weight** | $1/N$ | you know the signs and nothing else | **nothing** |
+
+Read the last column downward. That is the real ordering, and it is the one that
+matters: **each rule is exposed to exactly the inputs it uses.** Minimum-variance
+is not "mean-variance for cowards" — it is mean-variance under the explicit prior
+that you cannot forecast returns, which for most assets over most samples is a
+defensible thing to believe.
+
+Risk parity deserves its own line. Setting $w_i \propto 1/\sigma_i$ means every
+strategy contributes the same volatility to the book, which is exactly what
+Lecture 13 §4 said to do **if all appraisal ratios were equal**. So risk parity
+is not ignoring alpha; it is assuming you cannot distinguish alphas — a much
+weaker claim than assuming they are zero.
+
+> **📌 There is no rule here that is simply better. There is a rule that matches
+> what you actually know.** The rest of this lecture is about finding out what
+> that is.
+
+@@CELL@@markdown@@
+---
+
+## 4 · How each rule is exposed <a id="exposed"></a>
+
+Out-of-sample horse races tell you which rule won on one path of history. They do
+not tell you *why*, and they cannot be run before you have the history. So do the
+thing that can: **hold the world fixed and vary the sample.**
+
+### First: how much do the weights move?
+
+Resample the months with replacement, refit each rule, and look at how far the
+weights travel. A rule that estimates more inputs should move more.
+@@CELL@@code@@
+#@title 🔒 Bootstrap the sample 1,000 times, refit every rule
+N = 6
+RULES = {
+ 'mean-variance'  : lambda m, C: np.linalg.solve(C, m),
+ 'minimum-variance': lambda m, C: np.linalg.solve(C, np.ones(N)),
+ 'risk parity'    : lambda m, C: 1/np.sqrt(np.diag(C)),
+ 'equal 1/N'      : lambda m, C: np.ones(N),
+}
+nz = lambda w: w/np.abs(w).sum()
+mu_a, S_a = F.mean().values*12, F.cov().values*12
+base = {k: nz(f(mu_a, S_a)) for k, f in RULES.items()}
+
+rng = np.random.default_rng(0); T = len(F); draws = {k: [] for k in RULES}
+for _ in range(1000):
+    X = F.values[rng.integers(0, T, T)]
+    m, C = X.mean(0)*12, np.cov(X.T)*12
+    for k, f in RULES.items(): draws[k].append(nz(f(m, C)))
+
+print(f"  {'rule':18s}{'inputs used':>14s}{'avg weight sd':>16s}{'worst sign flip':>18s}")
+for k, lab in [('mean-variance','mu and Sigma'), ('minimum-variance','Sigma'),
+               ('risk parity','diag(Sigma)'), ('equal 1/N','none')]:
+    D = np.array(draws[k])
+    flip = np.mean(np.sign(D) != np.sign(base[k]), axis=0).max()
+    print(f"  {k:18s}{lab:>14s}{D.std(0).mean():>16.3f}{flip:>18.0%}")
+@@CELL@@markdown@@
+### The ordering is exactly the input list
+
+Zero for equal weighting, which estimates nothing. **0.007** for risk parity,
+which estimates only volatilities. **0.020** for minimum-variance, which
+estimates the whole covariance matrix. **0.061** for mean-variance.
+
+That last step is the one to stop on. Minimum-variance and mean-variance use the
+*same* covariance matrix; the only difference between them is that mean-variance
+also uses $\mu$. **Adding expected returns triples the weight uncertainty** — from
+0.020 to 0.061 — and takes the worst sign-flip probability from 22% to **41%**.
+
+This is the "means are harder to estimate than variances" claim, measured. You do
+not have to take it on faith: the same bootstrap, the same data, one extra input.
+
+### Second: how much true performance survives?
+
+Weight instability is only bad if it costs you. So build a world where we know
+the answer — draw returns from the estimated moments, so the true maximum Sharpe
+ratio is a known number — then estimate weights from $T$ months of that world and
+score them **against the truth**.
+@@CELL@@code@@
+#@title 🔒 A known world, four rules, four sample lengths
+true_sr = np.sqrt(mu_a @ np.linalg.solve(S_a, mu_a))
+C0 = np.linalg.cholesky(S_a/12)
+print(f"  true maximum Sharpe ratio: {true_sr:.2f}   (what a perfect forecaster gets)\n")
+print(f"  {'rule':18s}" + "".join(f"{f'{t//12}y':>9s}" for t in [60, 120, 240, 480]))
+for k, f in RULES.items():
+    row = f"  {k:18s}"
+    for T_ in [60, 120, 240, 480]:
+        keep = []
+        for _ in range(400):
+            X = rng.standard_normal((T_, N)) @ C0.T + mu_a/12
+            w = f(X.mean(0)*12, np.cov(X.T)*12)
+            keep.append((w @ mu_a)/np.sqrt(w @ S_a @ w)/true_sr)
+        row += f"{np.median(keep):>9.0%}"
+    print(row)
+@@CELL@@markdown@@
+### A crossover, not a winner
+
+Read across the rows and the whole debate resolves.
+
+**Equal weighting is flat at 88%.** It never learns, so it never improves — and
+it never errs, so it never collapses. It is a floor and a ceiling at once.
+
+**Mean-variance goes 74% → 85% → 92% → 96%.** With five years of history it is
+badly beaten by dividing by six. With twenty years it wins. **The crossover sits
+somewhere between ten and twenty years of monthly data**, which is exactly the
+range most people have — which is why this argument never ends.
+
+**Risk parity is flat at 80%** and minimum-variance nearly flat at 84–87%: they
+estimate little, so they gain little from more data and lose little from less.
+
+> **📌 The choice of bet-sizing rule is a bet on how much data you have.**
+>
+> Not on which formula is cleverer. A rule that uses more inputs is buying a
+> better answer with a worse estimate, and which side of that trade you want
+> depends entirely on $T$.
+
+One honest wrinkle before we move on. In this simulation the true covariance
+matrix *is* the sample one — the world is stationary and correctly specified. Real
+markets are not, which is why §6 will find that shrinking the covariance helps on
+actual data even though this table says it should only add bias.
+
+@@CELL@@markdown@@
+---
+
+## 5 · Why the optimizer amplifies it <a id="why"></a>
+
+§4 showed that adding $\mu$ triples the weight uncertainty. Here is the mechanism
+that does the tripling, and it surprises people. Take two strategies with Sharpe ratios
+$s_1 > s_2 > 0$ and correlation $\rho$. The optimal volatility allocations are
+
+$$v_1 \propto s_1 - \rho s_2, \qquad v_2 \propto s_2 - \rho s_1$$
+
+so the second weight goes **negative** whenever $s_2/s_1 < \rho$ — the optimizer
+shorts an asset with a *positive* Sharpe ratio, using it as a hedge. That is not
+a bug; it is the right answer. But it means the weights depend on small
+differences between large, badly measured numbers.
+@@CELL@@code@@
+#@title 🔒 A real pair from our own 29
+a, b = 'IdioVol3F', 'MaxRet'
+p = H[[a, b]]; rho = p.corr().iloc[0,1]
+w = W(p.mean().values, p.cov().values)
+print(f"  {a}  Sharpe {sharpe(p[a]):.3f}")
+print(f"  {b}     Sharpe {sharpe(p[b]):.3f}      correlation {rho:.3f}")
+print(f"\n  s2/s1 = {sharpe(p[b])/sharpe(p[a]):.3f}  <  rho = {rho:.3f}   -> short the weaker one")
+print(f"  optimal weights:  {a} {w[0]:+.3f}   {b} {w[1]:+.3f}")
+print(f"  best single {max(sharpe(p[a]),sharpe(p[b])):.3f}  ->  optimal pair {sharpe((p*w).sum(axis=1)):.3f}")
+@@CELL@@markdown@@
+### It shorts a 0.81-Sharpe strategy
+
+`MaxRet` earns a Sharpe ratio of 0.81 on its own and the optimizer sells it,
+because it correlates 0.92 with `IdioVol3F` and is slightly worse. As a hedge it
+is more useful than it is as a holding.
+
+The logic is right. The problem is what it does to the weights: they are set by
+whether 0.860 is bigger or smaller than 0.922, and both of those are estimates.
+Nudge either one and the position flips sign.
+
+Which is exactly what §4's bootstrap measured.
+@@CELL@@code@@
+#@title 🔒 Perturb each expected return by one standard error
+mu, S = F.mean().values, F.cov().values
+base = np.sign(W(mu, S)); se = F.std().values/np.sqrt(len(F))
+rng = np.random.default_rng(0)
+flip = np.mean([np.sign(W(mu + rng.normal(0, se), S)) != base for _ in range(2000)], axis=0)
+print("  probability the weight changes SIGN:")
+for c, f in zip(F.columns, flip):
+    print(f"    {c:8s} {f:5.0%}   {'  <- a coin flip' if f > 0.3 else ''}")
+@@CELL@@markdown@@
+**HML flips 46% of the time.** The optimizer is not telling you to go long value.
+It is telling you, in the only language it has, that it cannot tell — and the
+language it has is a confident-looking number.
+@@CELL@@markdown@@
+---
+
+## 6 · What does the error cost? <a id="cost"></a>
+
+We need a number for the damage. The obvious experiment: fit the weights on one
+window, run them on the next, and compare against what was achievable in that
+next window.
+
+### 🎯 Prompt it — measure the cost of estimation error <a id="prompt"></a>
+
+> **🤔 The question.** *"How much Sharpe ratio does my optimizer lose to
+> estimation error?"*
+>
+> Write the prompt. The obvious experiment gives a large, confident, and
+> meaningless number — and the way to find that out is to run it on something
+> that has no estimation error at all.
 @@CELL@@code@@
 # === YOUR TURN ===
 MY_PROMPT = """
@@ -165,367 +364,269 @@ MY_PROMPT = """
 # ---- paste the AI's code below ----
 
 @@CELL@@code@@
-#@title 🔒 Check — three readings of "optimal"
-F = ff[['Mkt-RF','SMB','HML','RMW','CMA','UMD']].dropna()
-mu, S = F.mean().values*12, F.cov().values*12
-
-raw    = np.linalg.solve(S, mu)                 # the formula, gamma = 1
-scaled = raw / np.abs(raw).sum()                # normalised to 1 gross
-target = raw * 0.10 / np.sqrt(raw @ S @ raw)    # scaled to 10% annual vol
-
-out = pd.DataFrame({'gamma=1 (raw)': raw, 'gross-normalised': scaled,
-                    '10% vol target': target}, index=F.columns)
-print(out.round(3).to_string())
-for lab, w in out.items():
-    r = (F.values @ w.values)
-    print(f"  {lab:20s} vol {r.std()*np.sqrt(12):6.1%}   Sharpe {r.mean()/r.std()*np.sqrt(12):.2f}")
+#@title 🔒 Check — the obvious experiment, and a placebo
+Lw = 120; naive, placebo = [], []
+w_full = W(F.mean().values, F.cov().values)          # sees the ENTIRE sample, past and future
+for t in range(Lw, len(F)-Lw, 12):
+    est, ev = F.iloc[t-Lw:t], F.iloc[t:t+Lw]
+    best = sharpe(pd.Series(ev.values @ W(ev.mean().values, ev.cov().values)))
+    naive.append(1 - sharpe(pd.Series(ev.values @ W(est.mean().values, est.cov().values)))/best)
+    placebo.append(1 - sharpe(pd.Series(ev.values @ w_full))/best)
+print(f"  estimated weights appear to lose   {np.median(naive):.0%}")
+print(f"  CLAIRVOYANT weights appear to lose {np.median(placebo):.0%}   <- they have no error at all")
 @@CELL@@markdown@@
-### Same portfolio, three answers, one Sharpe ratio
+### The test has no power
 
-All three columns are the same *portfolio* — the numbers differ by a scalar, and
-the Sharpe ratio is identical down the row. That is two-fund separation in a
-table.
+The naive experiment says estimation error costs **46%** of the Sharpe ratio. Then
+we ran the same experiment on a portfolio built from the *entire* sample —
+weights that already know everything that will happen in the evaluation window —
+and it "loses" **19%**.
 
-So the first ambiguity is harmless: if the AI hands you unnormalised weights, you
-have lost nothing. **But it never says which one it gave you**, and "the optimal
-weight on momentum is 0.13" means nothing until you know the scale. Ask for a
-volatility target and you get a portfolio you can actually size.
+A forecaster with literally zero forecast error is charged nineteen points of
+forecast error. The measurement is broken, and it is broken for a reason worth
+knowing: **the benchmark is the evaluation window's own in-sample maximum**, so
+every portfolio ever constructed loses to it, including a perfect one.
 
-The two that *do* change the answer are the ones a terse prompt will not raise:
+> **⚠️ Whenever you benchmark against an in-sample optimum, run the placebo.**
+> Score something that cannot be wrong. If it still looks wrong, your metric is
+> measuring the benchmark, not the forecast.
 
-- **Are these excess returns?** $\Sigma^{-1}\mu$ assumes $\mu$ is *excess* of the
-  risk-free rate. Feed it total returns and every weight is wrong. Our six
-  factors are already excess returns; your own signal may not be.
-- **Full covariance, or just the diagonal?** Coming up in §4 — and for hedged
-  strategies the diagonal version is not an approximation, it is the point.
+So how much *does* it cost? **We already measured it in §4** — that is what the
+known-world simulation was for. Read the mean-variance row again:
+
+| history | 5 years | 10 years | 20 years | 40 years |
+|---|---|---|---|---|
+| **fraction of the achievable Sharpe you keep** | **74%** | 86% | 92% | 96% |
+
 @@CELL@@markdown@@
----
+### The honest number, and it is not catastrophic
 
-## 4 · Alpha bets, where the inverse disappears <a id="alpha"></a>
+**26% at five years, 8% at twenty** — against the broken experiment's 46%. The
+cost is real, it is large when your sample is short, and **it shrinks with data**,
+which is the opposite of the fashionable claim that optimization simply does not
+work.
 
-Here is the case you actually have. You do not hold six factors — you hold a pile
-of **market-hedged long-short strategies**, each with an alpha and a residual
-volatility from Lecture 4.
+Two things make this trustworthy where the first experiment was not. The
+benchmark is the *true* optimum rather than a peeked-at one, so a perfect
+forecaster scores 100% by construction. And the same simulation, asked a
+different question in §4, produced a sensible ordering across rules — a broken
+metric would not have.
 
-Write each strategy as $r_i = \alpha_i + \beta_i f + \epsilon_i$ and suppose your
-mandate says zero factor exposure, so you trade the hedged versions. Then the
-"assets" are the residuals, their expected returns are the alphas, and their
-covariance matrix is $\Sigma_\epsilon$.
-
-**If the residuals are uncorrelated with each other**, $\Sigma_\epsilon$ is
-diagonal — and inverting a diagonal matrix means dividing by its entries. Hold on
-to that "if"; we test it at the end of the section.
-
-$$W^\star \;\propto\; \Sigma_\epsilon^{-1}\alpha
-\qquad\Longrightarrow\qquad
-w_i \;\propto\; \frac{\alpha_i}{\sigma^2_{\epsilon,i}}$$
-
-No linear algebra at all. And now multiply by $\sigma_{\epsilon,i}$ to get the
-volatility you allocate to strategy $i$:
-
-$$\underbrace{w_i\,\sigma_{\epsilon,i}}_{\text{vol you put on it}}
-\;=\;\underbrace{\frac{\alpha_i}{\sigma_{\epsilon,i}}}_{\text{its appraisal ratio}}$$
-
-> **📌 Allocate volatility to each strategy in proportion to its appraisal
-> ratio.** The number you have been computing since Lecture 4 turns out to be a
-> position size.
-@@CELL@@code@@
-#@title 🔒 The 29 strategies, hedged, sized
-rows = {}
-for c in L.columns:
-    r = sm.OLS(L[c], sm.add_constant(mkt)).fit()
-    rows[c] = {'alpha': r.params.iloc[0]*12, 'beta': r.params.iloc[1],
-               'sd_eps': r.resid.std()*np.sqrt(12)}
-A = pd.DataFrame(rows).T
-A['appraisal'] = A.alpha / A.sd_eps
-A['w']         = A.alpha / A.sd_eps**2
-A['vol_alloc'] = A.w * A.sd_eps
-
-print(A.sort_values('appraisal', ascending=False).head(6)
-       .to_string(formatters={'alpha':'{:+.1%}'.format, 'beta':'{:+.2f}'.format,
-                              'sd_eps':'{:.1%}'.format, 'appraisal':'{:.2f}'.format,
-                              'w':'{:.1f}'.format, 'vol_alloc':'{:.2f}'.format}))
-print(f"\n  vol_alloc equals appraisal ratio?  max difference {np.abs(A.vol_alloc-A.appraisal).max():.1e}")
-@@CELL@@markdown@@
-### The average is zero. The matrix is not diagonal.
-
-The mean residual correlation is **+0.03**, which invites you to call it zero.
-The mean *absolute* correlation is **0.20**, and the worst pair —
-`MaxRet` and `RealizedVol` — is **0.95**. They are two names for the same trade,
-which Lecture 9 §2 already told us.
-
-The signed average hides this because positive and negative pairs cancel. But
-$\Sigma_\epsilon^{-1}$ does not average anything: it sees the whole matrix, and a
-0.95 pair is exactly the configuration that makes an inverse explode.
-
-> **⚠️ So the formula below is the right answer to a question about a world we
-> are not in.** Keep it — the logic is correct and the intuition transfers — but
-> do not yet believe the weights. Next lecture measures what the false assumption
-> costs, and the answer is not what you would guess.
-
-### The identity holds to machine precision
-
-Which it must — it is algebra, not a finding. But look at the weights column
-before you trust it.
-
-**`DivSeason` gets a raw weight of 34**, six times the next strategy. Not because
-its alpha is large — at 5.4% a year it is one of the smaller ones — but because
-its residual volatility is 4%, and the formula divides by the *square* of that.
-The optimizer piles into whatever looks quiet.
-
-That is the correct answer to the question we asked. Whether it is the right
-position is a different question, and it is the whole of next lecture.
-
-### Now test the "if"
-
-The formula needed the residuals to be uncorrelated. They are not.
-@@CELL@@code@@
-#@title 🔒 Is the residual covariance really diagonal?
-Hd = pd.DataFrame({c: sm.OLS(L[c], sm.add_constant(mkt)).fit().resid for c in L.columns})
-C  = Hd.corr().values
-off = C[np.triu_indices(len(C), 1)]
-print(f"  mean correlation           {off.mean():+.3f}   <- looks like zero")
-print(f"  mean ABSOLUTE correlation  {np.abs(off).mean():.3f}   <- it is not zero\n")
-iu = np.triu_indices(len(C), 1)
-for z in np.argsort(-np.abs(off))[:4]:
-    print(f"    {Hd.columns[iu[0][z]]:14s} {Hd.columns[iu[1][z]]:14s} {off[z]:+.3f}")
-
-w = A.w / np.abs(A.w).sum()
-combo = (L * w).sum(axis=1)
-r = sm.OLS(combo, sm.add_constant(mkt)).fit()
-print(f"  combo:  Sharpe {sharpe(combo):.2f}   alpha {r.params.iloc[0]*12:+.1%}/yr   beta {r.params.iloc[1]:+.2f}")
-print(f"  best single strategy's appraisal ratio: {A.appraisal.max():.2f}  ({A.appraisal.idxmax()})")
+The assumption doing the work is stationarity: returns drawn from one fixed
+distribution we specified correctly. Real markets are not that kind, so treat
+these as **lower bounds on the damage**.
 @@CELL@@markdown@@
 ---
 
-## 5 · What combining is worth <a id="combine"></a>
+## 7 · Give it a prior with the right shape <a id="prior"></a>
 
-The combo's Sharpe ratio is **1.65**, against **1.36** for the best single
-strategy in it. Where did that come from, and how much was available?
+If the problem is a noisy input, the fix is to pull that input toward something
+you believe before you have seen any data. That is **shrinkage**, and it is the
+same idea as a constraint: both restrict where the answer can land.
 
-For two strategies with **zero correlation**, the answer is exact:
+There is a theorem worth knowing here. **A constraint can only reduce your Sharpe
+ratio if your inputs are correct** — you are shrinking the feasible set, so the
+optimum cannot improve. But if your inputs are *estimated*, a constraint can
+raise it, because it stops the optimizer acting on noise. Long-only, position
+caps, and 1/N are not admissions of defeat; they are priors.
 
-$$SR_{\text{combined}} = \sqrt{SR_A^2 + SR_B^2}$$
-
-Squared Sharpe ratios add. That is the single most useful fact in portfolio
-construction, and it has a sharp consequence: **a strategy with a mediocre Sharpe
-ratio that is uncorrelated with what you own is worth more than a good strategy
-that duplicates it.**
-
-Our hedged combo is orthogonal to the market by construction — we removed the
-beta. So we can test the formula on exactly the case it was built for.
+The question is which input to shrink.
 @@CELL@@code@@
-#@title 🔒 Market plus hedged combo — does the formula hold?
-hedged = combo - r.params.iloc[1]*mkt
-j = pd.concat([mkt.rename('market'), hedged.rename('hedged')], axis=1).dropna()
-print(f"  market Sharpe   {sharpe(j.market):.2f}")
-print(f"  hedged Sharpe   {sharpe(j.hedged):.2f}")
-print(f"  correlation     {j.corr().iloc[0,1]:+.3f}\n")
-print(f"  sqrt(SR_m^2 + SR_h^2)  = {np.sqrt(sharpe(j.market)**2 + sharpe(j.hedged)**2):.2f}")
-S2 = j.cov().values*12; mu2 = j.mean().values*12
-w2 = np.linalg.solve(S2, mu2)
-print(f"  optimal combination    = {sharpe((j*w2).sum(axis=1)):.2f}   <- the formula was exact")
+#@title 🔒 Shrink the covariance, or shrink the means?
+def oos_rule(fn, burn=120):
+    r = [F.iloc[t].values @ fn(F.iloc[:t].mean().values, F.iloc[:t].cov().values)
+         for t in range(burn, len(F))]
+    return sharpe(pd.Series(r, index=F.index[burn:]))
+
+print(f"  plain mean-variance          {oos_rule(lambda m,S: W(m,S)):.4f}")
+print(f"  equal weighting              {oos_rule(lambda m,S: np.ones(6)/6):.4f}\n")
+for a in [0.2, 0.4, 0.6, 0.8]:
+    f = lambda m, S, a=a: W(m, (1-a)*S + a*np.trace(S)/6*np.eye(6))
+    print(f"  shrink COVARIANCE  a={a:.1f}     {oos_rule(f):.4f}")
+print()
+for d in [0.5, 1.0]:
+    f = lambda m, S, d=d: W((1-d)*m + d*m.mean(), S)
+    print(f"  shrink MEANS       d={d:.1f}     {oos_rule(f):.4f}")
 @@CELL@@markdown@@
-### 0.59 and 2.26 make 2.33
+### Shrink the covariance. Never shrink the means toward each other.
 
-The market on its own earns a Sharpe ratio of 0.59. The hedged alpha combo earns
-2.26. Put them together optimally and you get **2.33** — precisely
-$\sqrt{0.59^2 + 2.26^2}$, because the correlation is zero to three decimals.
+Pulling the covariance matrix toward a scaled identity takes mean-variance from
+**0.828 to 0.908**, and there is a genuine interior optimum around 60% — neither
+the raw estimate nor the pure prior, but a blend. That is the classic
+Ledoit–Wolf result, and an off-the-shelf implementation gets most of it with no
+tuning at all.
 
-Two things follow, and the second is the one to keep.
+Pulling the *means* toward their common average makes things monotonically
+**worse**: 0.828, then 0.810, then 0.768. At full shrinkage every asset has the
+same expected return and the portfolio is just minimum-variance.
 
-**Adding the market barely helped.** 2.26 to 2.33. When one Sharpe ratio is much
-larger, squaring buries the smaller one — which is why an alpha shop does not
-much care about its market view.
+That looks backwards — the means were the noisy input, so why does shrinking them
+hurt? Because shrinking to a *common* mean does not remove noise, it removes the
+only signal you had. The right prior for a covariance matrix is "everything is
+similar and uncorrelated", which is a sensible thing to believe. The right prior
+for expected returns is not "all equal"; it is "smaller than you think", which is
+a different operation.
 
-**You should evaluate a strategy by its appraisal ratio, not its Sharpe ratio.**
-The Sharpe ratio of a strategy in isolation is the wrong number. What you want to
-know is what it adds to what you already hold, and once you have hedged out the
-overlap, that is exactly the appraisal ratio.
+> **📌 Shrinkage helps when the prior has the right shape.** It is not a dial you
+> turn up until things improve.
 
-> **💡 The Fundamental Law of Active Management**
->
-> Both results are instances of one, due to Grinold (1989):
-> $IR = IC\times\sqrt{\text{breadth}}$. Your risk-adjusted performance is your
-> *skill per bet* times the square root of *how many independent bets you make*.
-> A manager whose forecasts correlate just 0.03 with realised returns — barely
-> detectable — running a thousand independent bets a year gets an information
-> ratio near 1. **Skill can be almost invisible and still be a business, if there
-> is enough breadth.** We will not compute an IC; just notice that it names the
-> pattern you have now derived twice.
+And the honest footnote: none of these reliably beats equal weighting, which
+scores 0.917. The best shrunk optimizer lands at 0.908 — close, and behind.
 @@CELL@@markdown@@
 ---
 
-## 🔄 6 · Pod shops <a id="pods"></a>
+## 8 · Finding, or period? <a id="period"></a>
 
-Hedge funds used to be built around one famous investor — Soros, Robertson,
-Tudor Jones. The largest firms today are not. Citadel and Millennium run dozens
-of small independent teams, each with a few people, each on its own capital
-budget, each hedged.
-
-Squared Sharpe ratios explain why. If you have $N$ uncorrelated pods, each with
-Sharpe ratio $s$, the pool's Sharpe ratio is $\sqrt{N}\,s$ — that is the previous
-formula with $N$ terms instead of two.
-
-**A pod with a Sharpe ratio of 0.5 is not a fund.** Nobody will allocate to it.
-Thirty such pods, uncorrelated, make 2.7 — which is one of the best track records
-in the industry. The pods are worth far more together than apart, and that gap is
-the firm's reason to exist.
-
-Our 29 strategies are exactly that experiment.
+That last sentence is the one people quote: *equal weighting beats the
+optimizer.* Before you believe it, ask the question this course keeps asking.
 @@CELL@@code@@
-#@title 🔒 Pooling our 29, N at a time
-srs = L.apply(sharpe)
-print(f"  {'N':>4s}{'pooled Sharpe':>16s}{'sqrt(N) x mean':>17s}")
-for N in [1, 4, 9, 16, 29]:
-    sub = (L.iloc[:, :N] / L.iloc[:, :N].std()).mean(axis=1)
-    print(f"  {N:>4d}{sharpe(sub):>16.2f}{np.sqrt(N)*srs[:N].mean():>17.2f}")
-print(f"\n  mean individual Sharpe {srs.mean():.2f}   best single {srs.max():.2f}")
-print(f"  mean pairwise correlation {L.corr().values[np.triu_indices(29,1)].mean():.3f}")
+#@title 🔒 Split the sample in two
+for lab, sl in [('1980-1999', slice('1980','1999')), ('2000-2026', slice('2000','2026'))]:
+    D = F.loc[sl]; mv, eq = [], []
+    for t in range(60, len(D)):
+        Ht = D.iloc[:t]
+        mv.append(D.iloc[t].values @ W(Ht.mean().values, Ht.cov().values))
+        eq.append(D.iloc[t].values @ (np.ones(6)/6))
+    print(f"  {lab}   mean-variance {sharpe(pd.Series(mv)):.3f}   "
+          f"equal {sharpe(pd.Series(eq)):.3f}   gap {sharpe(pd.Series(eq))-sharpe(pd.Series(mv)):+.3f}")
 @@CELL@@markdown@@
-### 0.40 apart, 1.38 together
+### The result is a period
 
-The average strategy here has a Sharpe ratio of **0.40** — individually
-unfundable. Equal-volatility weighted, all 29 together earn **1.38**. Breadth
-turned a collection of mediocre ideas into a good fund, and no idea got better.
+Equal weighting beat the optimizer by **+0.28** before 2000 and by **+0.01**
+after. The famous result is a twentieth-century result. Over the last
+twenty-six years the two are indistinguishable, and the full-sample gap of 0.089
+has a bootstrap confidence interval that comfortably contains zero.
 
-But it did not reach the **2.13** that $\sqrt{29}\times 0.40$ promises, and the
-whole of the shortfall is in the last line: the average pairwise correlation is
-**0.049**, not zero. Small correlations, compounded across hundreds of pairs, eat
-a third of the benefit.
+So the honest summary of this lecture is narrower and more useful than "the
+optimizer fails":
 
-Notice also that the progression is not monotonic — going from 9 strategies to 16
-made it *worse*. Adding a bet only helps if it is genuinely new, and some of these
-are not.
+> **📌 Mean-variance is fragile in exactly the way its inputs are fragile.** Feed
+> it well-estimated risk and it earns its keep. Feed it poorly-estimated returns
+> and it converts your uncertainty into confident-looking leverage. The fix is
+> not to abandon it but to be honest about which input is which.
 
-> **📌 The scarce thing is not a good strategy. It is an uncorrelated one.**
->
-> This is why a pod shop will hire a team whose Sharpe ratio would never raise
-> outside capital, and why the first question about any new signal is not "how
-> good is it" but "what does it correlate with".
+One thing this whole lecture ignored: **costs.** Every Sharpe ratio here is
+gross. Mean-variance rebalances constantly and equal weighting barely trades, so
+Lecture 11 says the gap moves further against the optimizer once you pay for it.
+Any conclusion that turns on 0.05 of Sharpe ratio is one cost assumption from
+reversing.
 @@CELL@@markdown@@
 ---
 
-## 🛠️ Hands-On: Size Your Own Strategy <a id="ho1"></a>
+## 🛠️ Hands-On: Your Own Book <a id="ho1"></a>
 
-You have a signal. Until now you have reported what it earned. Now decide how
-much of it to hold.
-
-> **🤔 Predict first.** Your strategy's Sharpe ratio is a number you know. Guess
-> its appraisal ratio against the market — higher or lower, and why?
+> **🤔 Predict first.** For your group's strategy combined with the market, will
+> the optimizer's weight or a 50/50 split do better out of sample?
 @@CELL@@code@@
 # === EDIT + YOUR TURN ===
 MY_SIGNAL = "GP"      # ← your group's signal
 
-# 1. Hedge it and get the two numbers that matter.
-reg = sm.OLS(L[MY_SIGNAL], sm.add_constant(mkt)).fit()
-my_alpha  = reg.params.iloc[0]*12
-my_sd_eps = reg.resid.std()*np.sqrt(12)
-print(f"{MY_SIGNAL}: alpha {my_alpha:+.1%}/yr, residual vol {my_sd_eps:.1%}, "
-      f"appraisal {my_alpha/my_sd_eps:.2f}")
+pair = pd.concat([H[MY_SIGNAL].rename('mine'), mkt.rename('market')], axis=1).dropna()
 
-# 2. How much volatility should you allocate to it, for a mandate of 10% total?
-#    Hint: vol allocation is proportional to the appraisal ratio.
-my_vol_alloc = ____
+# 1. In-sample optimal weights, and the Sharpe they produce.
+w_is       = ____
+sr_in      = ____
 
-# 3. What is the Sharpe ratio of your strategy combined optimally with the market?
-my_combo_sr  = ____
+# 2. Out of sample: expanding window, 120-month burn-in, refit every month.
+sr_oos     = ____
 
-print(f"  vol allocation {my_vol_alloc:.1%}   combined Sharpe {my_combo_sr:.2f}")
+# 3. And a 50/50 equal-volatility split over the same out-of-sample months.
+sr_equal   = ____
+
+print(f"{MY_SIGNAL}:  in-sample {sr_in:.2f}   OOS optimizer {sr_oos:.2f}   OOS 50/50 {sr_equal:.2f}")
 @@CELL@@markdown@@
 ### Compare with the room
 
-- **Is your appraisal ratio above or below your Sharpe ratio?** Above means
-  hedging the market *helped* — your strategy was carrying beta that added
-  volatility without adding return.
-- **How much did combining with the market buy you?** If your appraisal ratio is
-  well above 0.59, almost nothing. Squaring is unkind to the smaller number.
-- **Check your neighbours.** Correlate your hedged strategy with the two most
-  similar-sounding ones in the 29. Above 0.9 and you are not holding two bets.
-- **Now the question that matters for the project.** Take the signal of the group
-  sitting next to you. Would adding it to yours help? You cannot answer from the
-  two Sharpe ratios. You need the correlation.
+- **How much did you lose going from in-sample to out-of-sample?** Under 20% and
+  you have a lot of data or a very stable pair.
+- **Did the optimizer beat 50/50?** With two assets it usually does — the failure
+  mode needs many correlated assets, not two.
+- **Now the honest one.** You have run this once. What would you have to see to
+  believe the answer rather than the sample?
 @@CELL@@markdown@@
 ---
 
-## 🎯 Challenge: Build the Book <a id="challenge"></a>
+## 🎯 Challenge: Audit the Book <a id="challenge"></a>
 
 *Homework — due before the next class.*
 
-You are running the alpha book. You have the 29 hedged strategies, a mandate of
-**zero market exposure** and **10% annual volatility**, and the formulas from
-today.
+You inherit the 29-strategy alpha book from Lecture 13 and are asked to defend
+its construction.
 
-### Q1 — The optimal book
+### Q1 — The control
 
-Size all 29 hedged strategies by $w_i\propto\alpha_i/\sigma^2_{\epsilon,i}$, scale
-the whole book to 10% annual volatility, and report its **Sharpe ratio**.
+Out of sample, expanding window, 120-month burn-in, report the **Sharpe ratio of
+the no-alpha rule** $w_i \propto 1/\sigma^2_{\epsilon,i}$ minus the Sharpe ratio
+of the alpha book $w_i \propto \alpha_i/\sigma^2_{\epsilon,i}$.
+
+A positive number means the alphas cost you.
 
 > **📌 Required variable names:**
 > ```python
-> book_sharpe = ____   # Sharpe ratio of the vol-targeted alpha book
+> alpha_cost = ____   # SR(no-alpha) - SR(alpha book), out of sample
 > ```
 @@CELL@@code@@
 # Your work here
 
 
-book_sharpe = ____
+alpha_cost = ____
 
-print(f"alpha book Sharpe: {book_sharpe:.2f}")
+print(f"discarding the alphas is worth {alpha_cost:+.3f} of Sharpe ratio")
 @@CELL@@markdown@@
-### Q2 — What the correlations cost you
+### Q2 — The right amount of shrinkage
 
-If the 29 residuals were uncorrelated, the book's Sharpe ratio would be
-$\sqrt{\sum_i AR_i^2}$. Compute that number and compare it with Q1.
-
-Report the **ratio** of what you achieved to what independence would have given —
-a number between 0 and 1.
+On the **six factors**, expanding window, 120-month burn-in, shrink the
+covariance toward the scaled identity, $\;(1-a)\Sigma + a\,\frac{\mathrm{tr}\Sigma}{6}I$.
+Search $a$ over `[0, 0.1, 0.2, ..., 1.0]` and report the $a$ with the highest
+out-of-sample Sharpe ratio.
 
 > **📌 Required variable names:**
 > ```python
-> diversification_shortfall = ____   # achieved / theoretical, a decimal
+> best_a = ____   # the shrinkage intensity, a number in [0, 1]
 > ```
 @@CELL@@code@@
 # Your work here
 
 
-diversification_shortfall = ____
+best_a = ____
 
-print(f"you captured {diversification_shortfall:.0%} of the independent-bet ideal")
+print(f"best shrinkage intensity: {best_a:.1f}")
 @@CELL@@markdown@@
-### Q3 — The marginal strategy
+### Q3 — Does the shrinkage choice survive?
 
-Drop `DivSeason` — the one the optimizer loved — and rebuild the book from the
-remaining 28. Report the **new Sharpe ratio**.
+Now do what a real manager must: pick $a$ **without** seeing the future. Each
+month, choose the $a$ that would have performed best on the history so far, then
+use it for the next month.
 
-Then ask yourself whether the change is what you expected from its weight.
+Report the out-of-sample Sharpe ratio of that live procedure, and compare it with
+Q2's number and with plain mean-variance (0.828).
 
 > **📌 Required variable names:**
 > ```python
-> book_without_divseason = ____   # Sharpe of the 28-strategy book
+> live_shrinkage_sr = ____   # OOS Sharpe when a is chosen live from history
 > ```
 @@CELL@@code@@
 # Your work here
 
 
-book_without_divseason = ____
+live_shrinkage_sr = ____
 
-print(f"without DivSeason: {book_without_divseason:.2f}")
+print(f"choosing a live: {live_shrinkage_sr:.3f}")
 @@CELL@@markdown@@
 ### Q4 — The memo
 
 > **📝 Your task — maximum eight sentences.**
 >
-> You run the book. A portfolio manager pitches you a new strategy with a Sharpe
-> ratio of **0.35** — worse than all but a handful of what you already hold. They
-> want a capital allocation.
+> Your firm runs the 29-strategy book. The head of research proposes replacing
+> $\alpha/\sigma^2_\epsilon$ with plain $1/\sigma^2_\epsilon$ — throwing away the
+> alpha estimates entirely — on the evidence in Q1.
 >
-> Say what you would need to know before answering, and be specific: name the
-> statistic, not the concept. Then work out roughly what the strategy would be
-> worth to the book in the best case and in the worst case, using today's
-> formulas. Finish with the harder question: **your own book achieved less than
-> the independence ideal in Q2 — given that, are you more or less interested in
-> this manager than you would have been if the shortfall had been zero?**
+> Say whether you agree and why, and be precise about what Q1 does and does not
+> establish. Then use Q2 and Q3 together to answer the harder question: **you
+> found a shrinkage intensity that improves things, and then found that choosing
+> it honestly destroys the improvement. What, if anything, have you learned?**
+> Finish by naming the one piece of evidence that would most change your mind
+> about the alphas.
 @@CELL@@code@@
 MEMO = """
 Write your memo here. Don't delete the surrounding triple quotes.
@@ -539,13 +640,13 @@ print(MEMO)
 # === 📤 SUBMISSION CELL — Run this last ===
 import json, base64, hashlib, datetime as dt
 
-required = ["book_sharpe", "diversification_shortfall", "book_without_divseason", "MEMO"]
+required = ["alpha_cost", "best_a", "live_shrinkage_sr", "MEMO"]
 missing = [v for v in required if v not in globals()]
 if missing:
     raise NameError(f"\n❌ Missing before submission: {missing}")
 
 payload = {
-    "assignment": "L13_CapitalAllocationI_AI",
+    "assignment": "L13_CapitalAllocationII_AI",
     "ts": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
     "answers": {k: float(eval(k)) for k in required if k != "MEMO"},
     "memo": MEMO.strip(),
@@ -565,48 +666,63 @@ print("Submission form: https://forms.gle/yazZ8bbatL87jdJi7")
 
 ## 🧠 Key Takeaways <a id="takeaways"></a>
 
-1. **Two decisions, and only one is about you.** How much risk depends on your
-   preferences or your mandate. How to spread it does not.
+1. **An optimizer always wins in sample** — it is the algebraic maximum. That is
+   not evidence of anything.
 
-2. **The volatility you run is your Sharpe ratio over your risk aversion.**
-   Everything else today is that line with subscripts.
+2. **Optimization is a form of in-sample regression.** Every warning from Lecture
+   8 applies.
 
-3. **$W^\star = \frac{1}{\gamma}\Sigma^{-1}\mu$**, and γ only sets the size.
-   Everyone holds the same risky portfolio in different amounts.
+3. **Throwing the alphas away improved the book** — 2.29 against 2.26 in sample,
+   2.07 against 1.85 out of sample. The expensive input was the negative
+   contributor.
 
-4. **For hedged strategies with uncorrelated residuals there is no matrix to
-   invert** — allocate volatility in proportion to the appraisal ratio.
+4. **Each rule is exposed to exactly the inputs it estimates.** Bootstrap weight
+   dispersion: 1/N 0.000, risk parity 0.007, minimum-variance 0.020, mean-variance
+   0.061. That last step is the price of using μ, and it triples the uncertainty.
 
-5. **Squared Sharpe ratios add.** 0.59 and 2.26 make 2.33, exactly.
+5. **Choosing a rule is a bet on how much data you have.** Equal weighting is flat
+   at 88% of the achievable Sharpe forever; mean-variance goes 74% → 96% from five
+   years to forty. The crossover is at ten to twenty years — which is what everyone
+   has, which is why the argument never ends.
 
-6. **Judge a strategy by its appraisal ratio, not its Sharpe ratio** — by what it
-   adds to what you hold, not by what it does alone.
+5. **The optimizer shorts good assets** whenever $s_2/s_1 < \rho$. Correct, and it
+   makes the weights turn on differences between badly measured numbers — HML's
+   sign is a coin flip.
 
-7. **N uncorrelated pods with Sharpe s make a fund with √N·s.** Ours: 0.40 each,
-   1.38 together.
+6. **Always run the placebo.** A clairvoyant portfolio "loses" 19% by the obvious
+   metric. If something that cannot be wrong looks wrong, the metric is broken.
 
-8. **The shortfall is correlation.** 1.38 against a theoretical 2.13, and the
-   average pairwise correlation is only 0.049. Small correlations across many
-   pairs are expensive.
+7. **The honest cost of estimation is 25% at five years and 8% at twenty** — real,
+   and shrinking with data.
 
-9. **The scarce thing is an uncorrelated strategy, not a good one.**
+8. **Shrink the covariance, not the means.** 0.828 → 0.908 one way; 0.828 → 0.768
+   the other. A prior helps only if it has the right shape.
+
+9. **A constraint must hurt if your inputs are right and can help if they are
+   estimated.** That is what 1/N is.
+
+10. **"Equal weighting beats the optimizer" is a period, not a finding** — +0.28
+    before 2000, +0.01 after.
 
 ---
 
 ### Next class
 
-Every number today assumed you know μ and Σ. You do not — you have estimates from
-a finite sample, and the optimizer treats them as gospel. Next: what that costs,
-and why the most sophisticated formula in this course loses to dividing by six.
+We have been choosing weights across strategies you already own. Next: where the
+covariance matrix comes from in the first place, when you have three thousand
+assets and two hundred months of data — and why every serious shop estimates it
+with a factor model rather than a sample average.
 @@CELL@@markdown@@
 ---
 
 ## 📎 Appendix <a id="appendix"></a>
 @@CELL@@code@@
 # ═══════════════════════════════════════════════════════════════════════
-# 📎 APPENDIX — all 29, hedged and sized
+# 📎 APPENDIX — the full shrinkage surface
 # ═══════════════════════════════════════════════════════════════════════
-print(A.sort_values('appraisal', ascending=False)
-       .to_string(formatters={'alpha':'{:+.1%}'.format, 'beta':'{:+.2f}'.format,
-                              'sd_eps':'{:.1%}'.format, 'appraisal':'{:.2f}'.format,
-                              'w':'{:.1f}'.format, 'vol_alloc':'{:.2f}'.format}))
+print(f"  {'a':>5s}{'shrink covariance':>20s}{'shrink means':>16s}")
+for a in np.arange(0, 1.01, 0.1):
+    c = oos_rule(lambda m, S, a=a: W(m, (1-a)*S + a*np.trace(S)/6*np.eye(6)))
+    d = oos_rule(lambda m, S, a=a: W((1-a)*m + a*m.mean(), S))
+    print(f"  {a:5.1f}{c:>20.4f}{d:>16.4f}")
+print(f"\n  equal weighting: {oos_rule(lambda m,S: np.ones(6)/6):.4f}")
