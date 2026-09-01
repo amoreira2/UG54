@@ -192,4 +192,42 @@ fig.text(0.5, -0.16, "Source: S&P SPIVA scorecard.", ha="center",
          fontsize=8.6, color=MUTE)
 save(fig, "ddi_active_vs_index.png")
 
-print("\nall five figures written to assets/plots/")
+
+# ══════════════════════════════════════════════ F · the LDI paradox
+fig, axes = plt.subplots(1, 2, figsize=(10.6, 3.5))
+
+a = axes[0]
+a.bar(["start of that week", "peak, 28 Sept"], [4.0, 5.1],
+      color=[GREY, ORANGE], edgecolor=[EDGE, OEDGE], width=0.45, lw=1.1)
+for x_, v in zip([0, 1], [4.0, 5.1]):
+    a.text(x_, v + 0.13, f"{v}%", ha="center", fontsize=11.5, fontweight="bold", color=DARK)
+a.set_ylim(0, 6.2); a.set_ylabel("30-year gilt yield", fontsize=9)
+a.set_title("The hedge lost money\n30-year gilt yield, September 2022",
+            fontsize=10.2, fontweight="bold", color=DARK, pad=8)
+for sp in ("top", "right"): a.spines[sp].set_visible(False)
+a.spines["left"].set_color(EDGE); a.spines["bottom"].set_color(EDGE)
+a.tick_params(labelsize=8.6, length=0)
+
+b = axes[1]
+b.bar(["start of 2022", "end of 2022"], [103, 118],
+      color=[GREY, ORANGE], edgecolor=[EDGE, OEDGE], width=0.45, lw=1.1)
+b.axhline(100, color=MUTE, lw=1.0, ls=(0, (4, 3)))
+b.text(-0.42, 101.5, "fully funded", ha="left", va="bottom", fontsize=8, color=MUTE)
+for x_, v, sur in zip([0, 1], [103, 118], ["surplus £57bn", "surplus £204bn"]):
+    b.text(x_, v + 1.4, f"{v}%", ha="center", fontsize=11.5, fontweight="bold", color=DARK)
+    b.text(x_, 50, sur, ha="center", fontsize=8.6, color=DARK)
+b.set_ylim(0, 132); b.set_ylabel("assets as a share of liabilities", fontsize=9)
+b.set_title("The pension schemes got healthier\nUK defined-benefit funding ratio",
+            fontsize=10.2, fontweight="bold", color=DARK, pad=8)
+for sp in ("top", "right"): b.spines[sp].set_visible(False)
+b.spines["left"].set_color(EDGE); b.spines["bottom"].set_color(EDGE)
+b.tick_params(labelsize=8.6, length=0)
+
+fig.text(0.5, -0.10,
+         "Both panels are true at once. Rising yields cut the value of the gilts the schemes had "
+         "pledged, and cut the value of\nwhat they owed by more. The margin call landed on the "
+         "left-hand panel. Sources: Bank of England; PPF Purple Book.",
+         ha="center", fontsize=8.4, color=MUTE, linespacing=1.6)
+save(fig, "ddi_ldi_paradox.png")
+
+print("\nall figures written to assets/plots/")

@@ -195,26 +195,64 @@ from the prediction, and the interesting question is what stops you.
 market is about 20%. Being right on average and being comfortable are different
 things.
 
-**Liquidity.** In 2000, 3Com floated 5% of its subsidiary Palm on the public
-market and kept the other 95%. Within days Palm was worth $54B while 3Com — the
-owner of 95% of Palm — was worth $28B in total.
+**Liquidity.** In September 2022, UK defined-benefit pension schemes discovered
+what happens when a hedge is right and still ruins you.
 
-![fig](../../assets/plots/ddi_3com_palm.png)
+These schemes owe pensions decades into the future, and the present value of
+what they owe moves with long-dated gilt yields. To hedge that, they held
+leveraged gilt exposure through liability-driven investment funds — so that when
+yields fell and their liabilities ballooned, the gilts would gain, and the two
+would offset.
 
-Work through it. If 3Com's stake in Palm was worth about $51B and all of 3Com
-was worth $28B, the market was pricing everything else 3Com owned at roughly
-*minus twenty-three billion dollars* — for a company with no debt, a billion in
-cash, and positive cash flow. Buy 3Com, short Palm, wait for the arithmetic to
-assert itself.
+Then yields went the other way, hard. After the 23 September mini-budget the
+30-year gilt yield went from about 4% at the start of that week to a peak above
+5.1%, and gilt prices collapsed.
 
-Almost nobody could do it. Palm shares were nearly impossible to borrow, and
-where they could be borrowed the rate destroyed the trade. The prediction was
-about as certain as predictions get in finance, and it was not tradable.
+![fig](../../assets/plots/ddi_ldi_paradox.png)
+
+Look at what that did. The hedging gilts lost value — and so did the liabilities
+they were hedging, by more. Over 2022 as a whole the aggregate UK
+defined-benefit funding ratio went from 103% to 118%, and the aggregate surplus
+went from £57bn to £204bn. **On any economic measure the schemes ended the year
+in far better shape than they began it.**
+
+It did not help, and the reason is structural rather than economic. The LDI
+vehicle is a separate balance sheet from the pension scheme that owns it, and
+its borrowing is secured only on its own assets. As the Bank of England's own
+researchers put it, *margin debt is collateralised only by its own assets, not
+those of its pension owner.* A liability that fell in value is not collateral.
+You cannot post an improved funding ratio. The margin call arrives in cash, in
+the morning.
+
+So the funds sold the one thing they held that anyone would buy — gilts —
+into a market already falling, which pushed yields up further, which triggered
+the next margin call. Roughly £25bn of gilts went out the door in five weeks,
+almost a third of it in the first five days. The Bank of England stepped in on
+28 September, offering to buy up to £5bn a day; in the end it bought £19.3bn,
+and the announcement alone reversed most of the move within hours.
+
+Nobody was wrong about anything. The hedge did exactly what it was designed to
+do. What failed was the plumbing between two balance sheets.
 
 **Funding.** The moment an asset is cheapest is usually the moment you have just
 lost money on it, your broker wants more margin, and you need to hold a buffer
-against losing more tomorrow. Being right and staying solvent are separate
-constraints, and the second one binds first.
+against losing more tomorrow.
+
+Melvin Capital had been short GameStop since 2014, on the view that a
+mall-based video game retailer was in structural decline. In January 2021 a
+coordinated retail buying campaign took the stock from roughly $17 to an
+intraday $483. Melvin lost **53% in that single month**, took a $2.75bn
+injection from Citadel and Point72 on 25 January, closed the short the next day,
+finished 2021 down more than 39% against an S&P 500 up 28.7%, and wound down
+entirely in May 2022.
+
+Here is the part worth sitting with. At $483, the short was more obviously
+correct than it had ever been. Nobody thought GameStop was worth twenty-eight
+times what it had been worth three weeks earlier, and the price did fall
+roughly 80% from that peak and has never gone back. **The position was at its
+most right on precisely the day they had to close it.** Being right and being
+able to hold on are separate problems, and the second one is settled by your
+financing, not by your analysis.
 
 **Predictable flows.** Index providers rebalance on announced dates using
 published rules, and every fund tracking the index has to trade at the close of
@@ -339,7 +377,8 @@ should expect to meet all three:
    baseline; Fama and French built the tools for measuring anything above it.
 2. **You can only trade what is standardized and liquid.** These two properties
    reinforce each other, and together they set the ceiling on any strategy's
-   size.
+   size. Being right is not the same as being able to hold the position — ask
+   the UK pension schemes, or Melvin Capital.
 3. **The market is not a room full of people trying to beat you.** Indexers,
    hedgers, and retail traders are all in it for reasons other than alpha, and
    that is frequently where your returns come from.
