@@ -103,26 +103,11 @@ the part most courses skip.
 
 We are concerned with claims that are **standardized** and **liquid**.
 
-Standardized means the attributes of the contract are clearly defined and known
-to everyone: one Apple share is indistinguishable from another. Liquid means you
-can buy and sell in the size you need, in the time you have, without a
-transaction cost that eats the whole idea.
-
 The main families are equities and ETFs, futures, bonds, vanilla options, and a
 range of swaps. This course lives almost entirely in equities, but the framing
 matters beyond them.
 
-The two properties are connected. Standardization *creates* liquidity, because
-it consolidates scattered demand for bespoke products onto a small number of
-identical ones. Think about the counterexample. Selling a house means finding
-one specific buyer, who spends weeks searching and then bargains hard, because
-every house differs in location, size, age, layout and condition. There is no
-"the house market" in the sense that there is a stock market.
 
-Hold onto this. When we get to trading costs later in the term, the entire
-question is what happens when you try to trade something in a size the market
-was not expecting — which is a question about liquidity, which is a question
-about how standardized and widely held the thing is.
 
 ### Who is on the other side
 
