@@ -1,7 +1,8 @@
 """Figures for chapters/01/what-is-data-driven-investing.md.
 
 Run from anywhere:  python chapters/01/build_intro_figures.py
-Writes five PNGs into assets/plots/ (ddi_*.png).
+Writes the ddi_*.png figures into assets/plots/.
+(The 3Com/Palm waterfall was cut on 2026-09-01; recover it from git if wanted.)
 
 Palette matches the existing PowerPoint figures on that page (intro1/3/4/5):
 grey boxes, a single orange accent, dark grey type, no gridlines.
@@ -111,36 +112,6 @@ ax.text(5.85, 0.20,
         "After the trade feeds back into Data — the loop is the job.",
         ha="center", va="center", fontsize=9.2, color=DARK, linespacing=1.6)
 save(fig, "ddi_pipeline.png")
-
-
-# ══════════════════════════════════════════════ C · 3Com / Palm
-fig, ax = plt.subplots(figsize=(7.6, 4.3))
-labels = ["Palm\nmarket value", "3Com's 95%\nstake in Palm",
-          "3Com\nmarket value", "Implied value of\n3Com's other assets"]
-vals   = [54, 51, 28, -23]
-cols   = [GREY, GREY, GREY, ORANGE]
-edges  = [EDGE, EDGE, EDGE, OEDGE]
-
-bars = ax.bar(labels, vals, color=cols, edgecolor=edges, width=0.62, lw=1.1)
-ax.axhline(0, color=DARK, lw=1.0)
-for b, v in zip(bars, vals):
-    ax.text(b.get_x() + b.get_width() / 2, v + (2.2 if v > 0 else -3.4),
-            f"${v}B" if v > 0 else f"−${abs(v)}B",
-            ha="center", va="bottom" if v > 0 else "top",
-            fontsize=10.5, fontweight="bold", color=DARK)
-ax.set_ylabel("$ billions", fontsize=9.5)
-ax.set_ylim(-33, 63)
-ax.set_title("3Com and Palm, March 2000", fontsize=11.5, fontweight="bold",
-             color=DARK, pad=12)
-for s in ("top", "right"): ax.spines[s].set_visible(False)
-ax.spines["left"].set_color(EDGE); ax.spines["bottom"].set_visible(False)
-ax.tick_params(axis="x", length=0, labelsize=8.8)
-ax.tick_params(axis="y", labelsize=8.8)
-fig.text(0.5, -0.12,
-         "3Com had no debt, $1B of cash and positive cash flow. The arbitrage was arithmetic.\n"
-         "You could not borrow Palm shares to short at any workable rate.",
-         ha="center", fontsize=8.8, color=MUTE, linespacing=1.6)
-save(fig, "ddi_3com_palm.png")
 
 
 # ══════════════════════════════════════════════ D · who owns, who trades
