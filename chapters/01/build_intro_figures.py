@@ -147,16 +147,16 @@ save(fig, "ddi_3com_palm.png")
 fig, axes = plt.subplots(1, 2, figsize=(11, 3.4))
 
 a = axes[0]
-a.bar(["Novick\n(2017)", "Chinco & Sammon\n(2023)"], [17.5, 38],
-      color=[GREY, ORANGE], edgecolor=[EDGE, OEDGE], width=0.45, lw=1.1)
-for x_, v in zip([0, 1], [17.5, 38]):
-    a.text(x_, v + 1.2, f"{v}%", ha="center", fontsize=11, fontweight="bold", color=DARK)
-a.set_ylim(0, 46); a.set_ylabel("share of market capitalisation", fontsize=9)
-a.set_title("How much of the US stock market is indexed?\ntwo published estimates",
+a.barh([0], [37], color=ORANGE, edgecolor=OEDGE, height=0.40, lw=1.1)
+a.barh([0], [63], left=[37], color=GREY, edgecolor=EDGE, height=0.40, lw=1.1)
+a.text(18.5, 0, "37%", ha="center", va="center", fontsize=12,
+       fontweight="bold", color=DARK)
+a.text(68.5, 0, "everyone else", ha="center", va="center", fontsize=9.5, color=DARK)
+a.text(18.5, -0.34, "index funds\nand ETFs", ha="center", va="top",
+       fontsize=8.6, color=MUTE, linespacing=1.4)
+a.set_xlim(0, 100); a.set_ylim(-0.95, 0.45); a.axis("off")
+a.set_title("Who owns the US stock market\nshare of market capitalisation, 2020",
             fontsize=10.2, fontweight="bold", color=DARK, pad=8)
-for sp in ("top", "right"): a.spines[sp].set_visible(False)
-a.spines["left"].set_color(EDGE); a.spines["bottom"].set_color(EDGE)
-a.tick_params(labelsize=8.6, length=0)
 
 b = axes[1]
 b.bar(["2011", "2020"], [10, 20], color=[GREY, ORANGE],
@@ -171,9 +171,10 @@ b.spines["left"].set_color(EDGE); b.spines["bottom"].set_color(EDGE)
 b.tick_params(labelsize=9, length=0)
 
 fig.text(0.5, -0.13,
-         "Two different denominators — the left panel is ownership, the right is trading. "
-         "They are not shares of the same pie,\nand even the left-hand number is contested.",
-         ha="center", fontsize=8.8, color=MUTE, linespacing=1.6)
+         "Left: Chinco & Sammon (2023). Right: share of trading volume — a different denominator, "
+         "so the two panels\nare not slices of the same pie. Other estimates of the passive share "
+         "are much lower on a different basis; see the text.",
+         ha="center", fontsize=8.4, color=MUTE, linespacing=1.6)
 save(fig, "ddi_who_owns_who_trades.png")
 
 

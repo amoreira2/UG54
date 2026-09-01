@@ -154,10 +154,19 @@ is much more varied than the hedge-fund stereotype:
 
 ![fig](../../assets/plots/ddi_who_owns_who_trades.png)
 
-Two things in that figure. Indexing is now a very large share of the US stock
-market — how large is genuinely contested, which is itself a useful lesson about
-financial data. And retail trading roughly doubled as a share of volume over the
-decade to 2020.
+Two things in that figure, and one warning about it.
+
+Indexing is now a very large share of the US stock market — Chinco and Sammon
+put index funds and ETFs at over 37% of US market capitalisation as of 2020. And
+retail trading roughly doubled as a share of volume over the decade to 2020.
+
+The warning is about the numbers themselves. Other estimates of the passive
+share are far lower — around 17.5% — but they are measured against total assets
+under management rather than US market capitalisation, and for a different year.
+Neither is wrong. They are answers to different questions, and quoting them side
+by side as though they were a disagreement about one number is a mistake you will
+see made constantly. Before you compare two financial statistics, check that
+they have the same denominator.
 
 Now the point of the whole list. **Most of the money in the market is not trying
 to beat you.** An indexer buys a stock because it entered the index, not because
