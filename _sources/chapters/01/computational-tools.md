@@ -1,77 +1,97 @@
-
 Computational Tools
 ====================
 
-This text uses the Python 3 programming language, along with a standard set of numerical and data visualization tools that are used widely in commercial applications, scientific experiments, and open-source projects. Python has recruited enthusiasts from many professions that use data to draw conclusions. By learning the Python language, you will join a million-person-strong community of software developers and data scientists.
+This course uses **Python 3** and an **AI coding assistant**, together, all term.
+That pairing is deliberate. Python is the language the analysis is written in;
+AI writes most of it. Neither half is optional, and the interesting part is why
+they work well together.
 
-A programming language is, loosely speaking, a structured subset of natural language (words) and special characters (e.g. , or {) that allow humans to describe operations they would like their computer to perform on their behalf.
+A programming language is, loosely, a structured subset of natural language
+(words) and special characters (e.g. `,` or `{`) that lets you describe
+operations you would like a computer to perform on your behalf. What has changed
+recently is who does the describing. You now specify the analysis in English,
+and something else translates it into Python.
 
-The programming language translates these words and symbols into instructions the computer can execute.
+### Why Python
 
-### Why Python?
+- Easy to learn and read, relative to almost anything else.
+- Excellent tools for handling data efficiently and succinctly — `pandas`,
+  `numpy`, `statsmodels` and `matplotlib` are what the industry actually runs on.
+- The standard for data analysis in finance. CRSP, Compustat and WRDS all have
+  Python interfaces; so does every broker and data vendor you are likely to meet.
+- General purpose. You will learn it for data analysis, but it also does web
+  scraping, databases, dashboards and modelling, and it is the world's best
+  language for [gluing](https://en.wikipedia.org/wiki/Glue_code) those pieces
+  together.
 
-Among the hundreds of programming languages to choose from, we chose to teach you Python for the
-following reasons:
+It is sometimes said that Python is "the best language for nothing but the
+second best language for everything." A versatile second-best language is a good
+one to learn first.
 
-- Easy to learn and use (relative to other programming languages).  
-- Designed with readability in mind.  
-- Excellent tools for handling data efficiently and succinctly.  
-- Cemented as the world’s [third most popular](https://www.zdnet.com/article/programming-language-of-the-year-python-is-standout-in-latest-rankings/)
-  programming language, the most popular scripting language, and an increasing standard for
-  [data analysis in industry](https://medium.com/@data_driven/python-vs-r-for-data-science-and-the-winner-is-3ebb1a968197).  
-- General purpose: Initially you will learn Python for data analysis, but it
-  can also used for websites, database management, web scraping, financial
-  modeling, data visualization, etc.  In particular, it is the world’s best language for
-  [gluing](https://en.wikipedia.org/wiki/Glue_code)  those different pieces together.  
+### Why AI, and why with Python in particular
 
+Three reasons the combination works better than either half alone.
 
-However, the general purpose nature of Python comes at a cost: it is often said that Python is “the
-best language for nothing but the second best language for everything”.
+**Models write Python better than they write anything else.** Two decades of
+public Python — GitHub repositories, Stack Overflow answers, library
+documentation, millions of notebooks — is what these models learned from. Ask
+for a merge or a rolling regression in Python and you will usually get working
+code on the first try. Ask for the same thing in a proprietary language with a
+fraction of the public corpus and the error rate climbs.
 
-We aren’t sure this is true, but a more optimistic view of that quote is that Python is a great
-language to have in your toolbox to solve all sorts of problems and patch them together.
+**The correction loop is seconds long.** Generate a cell, run it, look at the
+output, fix it. There is no compile step and no licence server between you and
+the answer. That loop is what makes it practical to accept code you did not
+write, because you can check it immediately and cheaply.
 
+**You can read what it did.** Python is close enough to English that you can
+look at generated code and disagree with a specific line — this used total
+returns where it should have used excess, this dropped rows before ranking
+instead of after. That readability is what makes auditing possible at all. Code
+you cannot read is code you have to trust.
 
+### What each of you is for
 
-A versatile “second-best” language might be the best one to learn first.
+The division of labour is **Specify → Implement → Validate**, and Lecture 1 sets
+it up in detail:
 
-Some other languages to consider:
+| Step | Who |
+|------|-----|
+| Say precisely what you want | **You** |
+| Write the code | **AI** |
+| Check whether the output is right | **You** |
 
-- R has an impressive ecosystem of statistical packages, and is defensible as a choice for pure
-  data science. It could be a useful second language to learn for projects that are entirely
-  statistical.  
-- Matlab has much more natural notation for writing linear algebra heavy code.  However, it is:
-  (a) expensive; (b) poor at dealing with data analysis; (c) grossly inferior to Python as a
-  language; and (d) being left behind as Python and Julia ecosystems expand to more packages.  
-- Julia is in part a far better version of Matlab, which can be as fast as Fortran or C.  However,
-  it has a young and immature environment and is currently more appropriate for academics and
-  scientific computing specialists.  
+The failure mode worth knowing before you start: **AI-generated code usually
+runs.** Code that crashes tells you it is wrong. Code that returns a plausible
+number does not. A Sharpe ratio of 0.61 computed on total returns instead of
+excess returns looks exactly like a Sharpe ratio of 0.61 computed correctly, and
+it is wrong by about 40%. Most of this course is built around catching the
+second kind of error.
 
+This is also why you still have to learn Python rather than only prompting. You
+cannot validate what you cannot read.
 
-Another consideration for programming language choice is runtime performance. On this dimension,
-Python, R, and Matlab can be slow for certain types of tasks.
+### Why open source
 
-Luckily, this will not be an issue for data science and the types of analysis we will do in this
-course, because most of the data analytics packages in Python (and R) rely on high-performance
-code written in other languages in the background.
+Software development is now largely a process of stitching together
+high-quality libraries and current research code. Proprietary languages sit
+outside that.
 
-### Why Open Source?
+- Open languages are easier for anyone in the world to write and share packages
+  in, because the code is accessible and available.
+- Academics, businesses and hobbyists all have an incentive to contribute.
+- Public hosting (e.g. GitHub) makes it easier to build a community and
+  collaborate.
+- Package management — finding, downloading, installing and upgrading packages —
+  can be open and simple, with no proprietary licences to negotiate.
 
-Software development has changed radically in the last decade, increasingly becoming a process of
-stitching together both established high quality libraries, and state-of-the-art research projects.
+There is now a further reason. A language whose source, documentation and twenty
+years of question-and-answer archives are all public is a language AI models
+have learned properly. Openness used to be about cost and collaboration; it is
+also, now, about how well your assistant can help you.
 
-A major disadvantage of Matlab, Stata, and other proprietary languages is that they are not
-open-source, and unable to work within this new paradigm.
+### What you will use
 
-Forgetting the cost for a moment, the benefits of using an open-source language are pragmatic rather
-than ideological.
-
-- Open source languages are easier for everyone in the world to write and share packages because
-  the code is accessible and available.  
-- With the right kinds of open source licenses; academics, businesses, and hobbyists all have
-  incentives to contribute.  
-- Because open-source languages are managed on publicly accessible sites (e.g. GitHub), it is
-  easier to build a community and collaborate.  
-- Package management systems (i.e. a way to find, download, install, and upgrade packages) in
-  open-source languages can be very open and accessible since they don’t need to deal with
-  proprietary software licenses.  
+**Google Colab**, which runs Python in the browser with nothing to install and
+has Gemini built in. Bring a charged laptop. **ChatGPT and Claude** are equally
+welcome — use whichever you like, and use it actively.
