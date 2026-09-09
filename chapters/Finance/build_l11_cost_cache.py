@@ -5,6 +5,7 @@ B="assets/data/"
 p=pd.read_parquet(B+"panel_backbone_1980_2000.parquet")
 p=p[p.shrcd.isin([10,11])&p.exchcd.isin([1,2,3])].sort_values(['permno','date']).copy()
 p['1+ret']=p['ret']+1
+p['me_l1']=p.sort_values(['permno','date']).groupby('permno')['me'].shift(1)
 p=p.merge(pd.read_parquet(B+"signals/DolVol.parquet"),on=['permno','date'],how='left')
 p['dvol']=np.exp(-p['DolVol'])                      # signal files are sign-flipped
 p=p.merge(pd.read_parquet(B+"signals/BM.parquet"),on=['permno','date'],how='left')
@@ -14,7 +15,9 @@ p['mom']=p.groupby('permno')['cumret'].shift(1)
 p['sd']=p.groupby('permno')['ret'].transform(lambda s:s.rolling(36,min_periods=12).std())
 
 def build(sig='mom',wcol='me',minvol=None):
-    d=p.dropna(subset=[sig,'ret_fwd','me','dvol','sd']).copy()
+    d=p.sort_values(['permno','date']).copy()
+    d[sig]=d.groupby('permno')[sig].shift(1)      # lag what you sort on
+    d=d.dropna(subset=[sig,'ret','me_l1','dvol','sd'])
     if minvol is not None:
         d=d[d.groupby('date')['dvol'].transform(lambda s:s.rank(pct=True))>=minvol]
     def dec(x):
@@ -25,10 +28,10 @@ def build(sig='mom',wcol='me',minvol=None):
     d['w']=d.groupby(['date','g'])[wcol].transform(lambda s:s/s.sum())*d['side']
     return d
 def rets(d):
-    r=d.groupby('date').apply(lambda x:(x.w*x.ret_fwd).sum()); r.index=r.index+pd.offsets.MonthEnd(1); return r
+    return d.groupby('date').apply(lambda x:(x.w*x.ret).sum())   # dated by month EARNED
 def trades(d):
     W=d.pivot_table(index='date',columns='permno',values='w').fillna(0)
-    R=d.pivot_table(index='date',columns='permno',values='ret_fwd').reindex_like(W).fillna(0)
+    R=d.pivot_table(index='date',columns='permno',values='ret').reindex_like(W).fillna(0)
     dts=W.index; TR={}; drift=[]; naive=[]
     for i in range(1,len(dts)):
         prev,r=W.iloc[i-1],R.iloc[i-1]; dr=prev*(1+r)
@@ -88,7 +91,7 @@ dec={}
 for name,sig in [('momentum','mom'),('value','BM')]:
     d=build(sig=sig)
     W=d.pivot_table(index='date',columns='permno',values='w').fillna(0)
-    R=p.pivot_table(index='date',columns='permno',values='ret_fwd').reindex(index=W.index,columns=W.columns).fillna(0)
+    R=p.pivot_table(index='date',columns='permno',values='ret').reindex(index=W.index,columns=W.columns).fillna(0)
     dec[name]={f'lag{L}':(W.shift(L)*R).sum(axis=1).iloc[12:] for L in [0,1,2,3,6,12]}
 DEC=pd.DataFrame({f'{k}_{kk}':vv for k,v in dec.items() for kk,vv in v.items()})
 DEC.to_parquet(B+"l11_decay.parquet"); print(f"l11_decay.parquet  {DEC.shape}")

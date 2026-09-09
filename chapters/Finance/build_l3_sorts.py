@@ -1,3 +1,11 @@
+# ⚠️  STALE GENERATOR — read before running.
+# The notebook this writes was hand-edited on 2026-09-09 to move off the shipped
+# `ret_fwd` column and onto the lagged convention: the signal and the weights are
+# lagged one month and you earn this month's `ret`. That change is NOT reflected
+# in the cell text below, so regenerating would silently revert it and reintroduce
+# a column the panel no longer has. Port the notebook's current cells back here
+# first, or edit the .ipynb directly.
+
 """
 Build L3_Sorts_AI.ipynb — Lecture 3, Mon Sep 14 2026.
 

@@ -7,23 +7,26 @@ p['1+ret']=p['ret']+1
 p['cumret']=(p.groupby('permno')['1+ret'].rolling(11,min_periods=11).apply(np.prod,raw=True)
               .reset_index(level=0,drop=True))
 p['mom']=p.groupby('permno')['cumret'].shift(1)
+p['me_l1']=p.groupby('permno')['me'].shift(1)
 lab=pd.read_parquet("assets/data/industry_labels.parquet")
-m=p.merge(lab,on=['permno','date'],how='inner').dropna(subset=['mom','ret_fwd','me'])
+m=p.merge(lab,on=['permno','date'],how='inner').dropna(subset=['mom','ret','me_l1'])
 m['mom_ia']=m['mom']-m.groupby(['date','ind'])['mom'].transform('mean')
 sh=lambda x:x.mean()/x.std()*np.sqrt(12)
 def sp(df,signal,vw,ngroups=10):
-    d=df.dropna(subset=[signal]).copy()
+    d=df.sort_values(['permno','date']).copy()
+    d['_s']=d.groupby('permno')[signal].shift(1)          # lag what you sort on
+    d=d.dropna(subset=['_s','ret','me_l1'])
     def b(x):
-        e=np.unique(np.quantile(x.loc[x.exchcd==1,signal],np.linspace(0,1,ngroups+1)))
+        e=np.unique(np.quantile(x.loc[x.exchcd==1,'_s'],np.linspace(0,1,ngroups+1)))
         e[0],e[-1]=-np.inf,np.inf
-        return pd.cut(x[signal],e,labels=False,duplicates='drop')
+        return pd.cut(x['_s'],e,labels=False,duplicates='drop')
     d['g']=d.groupby('date',group_keys=False).apply(b)
-    w=(lambda x:np.average(x.ret_fwd,weights=x.me)) if vw else (lambda x:x.ret_fwd.mean())
+    w=(lambda x:np.average(x.ret,weights=x.me_l1)) if vw else (lambda x:x.ret.mean())
     dec=d.groupby(['date','g']).apply(w).unstack()
-    s=(dec[ngroups-1]-dec[0]).dropna(); s.index=s.index+pd.offsets.MonthEnd(1); return s
+    return (dec[ngroups-1]-dec[0]).dropna()               # already dated by month EARNED
 res={}
 for vw,tag in [(True,'VW'),(False,'EW')]:
-    f=(lambda x:np.average(x.ret_fwd,weights=x.me)) if vw else (lambda x:x.ret_fwd.mean())
+    f=(lambda x:np.average(x.ret,weights=x.me_l1)) if vw else (lambda x:x.ret.mean())
     res[f'plain_{tag}']=sp(m,'mom',vw); res[f'neutral_{tag}']=sp(m,'mom_ia',vw)
     m['pct']=m.groupby(['date','ind'])['mom'].rank(pct=True)
     big=m[m.groupby(['date','ind'])['permno'].transform('size')>=6]
