@@ -543,7 +543,16 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">4.14.1. Next class</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-data-loading">4.15. 📎 Appendix — Data Loading <a id="appendix"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-what-groupby-apply-lambda-g-actually-does">4.15. 📎 Appendix — What <code class="docutils literal notranslate"><span class="pre">groupby(...).apply(lambda</span> <span class="pre">g:</span> <span class="pre">...)</span></code> Actually Does <a id="groupby"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-whole-calculation-is-three-lines">4.15.1. The whole calculation is three lines</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#this-loop-is-correct-and-it-is-the-picture-to-keep-in-your-head">4.15.2. This loop is correct, and it is the picture to keep in your head</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#groupby-is-that-loop-written-once">4.15.3. <code class="docutils literal notranslate"><span class="pre">groupby</span></code> is that loop, written once</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rows-is-a-dataframe-not-a-row">4.15.4. <code class="docutils literal notranslate"><span class="pre">rows</span></code> is a DataFrame, not a row</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-lambda-is-that-same-function-without-a-name">4.15.5. A <code class="docutils literal notranslate"><span class="pre">lambda</span></code> is that same function, without a name</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#which-one-should-you-write">4.15.6. Which one should you write?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-data-loading">4.16. 📎 Appendix — Data Loading <a id="appendix"></a></a></li>
 </ul>
             </nav>
         </div>
@@ -1405,7 +1414,7 @@ investor could actually have earned.</p>
 
 <span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"vw_mean_annual"</span><span class="p">,</span> <span class="s2">"vw_vol_annual"</span><span class="p">,</span> <span class="s2">"corr_vw_ff"</span><span class="p">,</span>
             <span class="s2">"ew_mean_annual"</span><span class="p">,</span> <span class="s2">"ew_vol_annual"</span><span class="p">,</span> <span class="s2">"top10_share"</span><span class="p">,</span> <span class="s2">"MEMO"</span><span class="p">]</span>
-<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">()]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()]</span>
 <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">❌ Missing before submission: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
@@ -1469,8 +1478,187 @@ end, where this data really came from and how you’d pull it yourself.</p>
 </section>
 </section>
 <hr class="docutils" />
+<section id="appendix-what-groupby-apply-lambda-g-actually-does">
+<h2><span class="section-number">4.15. </span>📎 Appendix — What <code class="docutils literal notranslate"><span class="pre">groupby(...).apply(lambda</span> <span class="pre">g:</span> <span class="pre">...)</span></code> Actually Does <a id="groupby"></a><a class="headerlink" href="#appendix-what-groupby-apply-lambda-g-actually-does" title="Link to this heading">#</a></h2>
+<p><em>Not lectured. Work through it if the one-liner in the demo went past you — and
+if it did, you are in the majority.</em></p>
+<p>The line we ended up with was:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vw</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>That is four unfamiliar things stacked into one expression: <code class="docutils literal notranslate"><span class="pre">groupby</span></code>, <code class="docutils literal notranslate"><span class="pre">.apply</span></code>,
+an anonymous function, and <code class="docutils literal notranslate"><span class="pre">np.average</span></code> with a <code class="docutils literal notranslate"><span class="pre">weights=</span></code> argument. Each is
+simple alone. Together they read as magic, and code that reads as magic is code
+you cannot audit.</p>
+<p>So we will compute the same number four ways, starting with a version that has
+no magic in it at all, and check at the end that all four agree.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The appendix is self-contained — rebuild the two columns we need.</span>
+<span class="n">panel</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'me'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">,</span> <span class="s1">'me_l1'</span><span class="p">])</span>
+
+<span class="c1"># ── 1 · ONE month, entirely by hand ───────────────────────────────────────</span>
+<span class="n">june</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">date</span> <span class="o">==</span> <span class="s1">'1995-06-30'</span><span class="p">]</span>
+
+<span class="n">total</span>   <span class="o">=</span> <span class="n">june</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>      <span class="c1"># total market value at the END of May</span>
+<span class="n">weights</span> <span class="o">=</span> <span class="n">june</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">/</span> <span class="n">total</span>    <span class="c1"># each company's share of that total</span>
+<span class="n">rets</span>    <span class="o">=</span> <span class="n">june</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span>              <span class="c1"># what each company returned during June</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"stocks alive in June 1995 : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">june</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"weights sum to            : </span><span class="si">{</span><span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"market return, June 1995  : </span><span class="si">{</span><span class="p">(</span><span class="n">weights</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rets</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="the-whole-calculation-is-three-lines">
+<h3><span class="section-number">4.15.1. </span>The whole calculation is three lines<a class="headerlink" href="#the-whole-calculation-is-three-lines" title="Link to this heading">#</a></h3>
+<p>Nothing there is pandas-specific. You added up everyone’s market value, divided
+each company’s value by that total to get its share, multiplied each share by
+that company’s return, and summed:</p>
+<div class="math notranslate nohighlight">
+\[r_p = \sum_i w_i \, r_i, \qquad w_i = \frac{me_i}{\sum_j me_j}\]</div>
+<p>The only problem is that you have to do it 251 times, once per month.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── 2 · EVERY month, with a plain for loop ────────────────────────────────</span>
+<span class="n">months</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+<span class="n">answers</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">months</span><span class="p">:</span>                                  <span class="c1"># 251 times round</span>
+    <span class="n">rows</span>       <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">date</span> <span class="o">==</span> <span class="n">m</span><span class="p">]</span>                   <span class="c1"># just this month's stocks</span>
+    <span class="n">weights</span>    <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">/</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">answers</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="n">by_loop</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">answers</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">by_loop</span><span class="p">)</span><span class="si">}</span><span class="s2"> monthly returns, computed one month at a time</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">by_loop</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="this-loop-is-correct-and-it-is-the-picture-to-keep-in-your-head">
+<h3><span class="section-number">4.15.2. </span>This loop is correct, and it is the picture to keep in your head<a class="headerlink" href="#this-loop-is-correct-and-it-is-the-picture-to-keep-in-your-head" title="Link to this heading">#</a></h3>
+<p>Read it again. For each month: pull out that month’s rows, compute the weights
+<em>within</em> those rows, take the weighted sum, file it under that month’s date.</p>
+<p>Two things to notice, because both are the point of the lecture:</p>
+<ul class="simple">
+<li><p><strong>The weights are computed inside the loop.</strong> They have to be — the universe
+changes every month, so June’s denominator is not July’s.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">me_l1</span></code> is <em>last</em> month’s market value.</strong> That is the only reason this is
+not look-ahead.</p></li>
+</ul>
+<p>Everything from here is the same arithmetic written more briefly. If a shorter
+version ever disagrees with this one, this one is right.</p>
+</section>
+<section id="groupby-is-that-loop-written-once">
+<h3><span class="section-number">4.15.3. </span><code class="docutils literal notranslate"><span class="pre">groupby</span></code> is that loop, written once<a class="headerlink" href="#groupby-is-that-loop-written-once" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">d.groupby('date')</span></code> computes nothing. It splits the panel into pieces — one per
+distinct date — and hands them to you. Iterate over it and you get exactly the
+pairs the loop was building for itself:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── 3 · look inside a groupby ─────────────────────────────────────────────</span>
+<span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">rows</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"the key  `m`    is a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">  -&gt;  </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"the group `rows` is a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> with shape </span><span class="si">{</span><span class="n">rows</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rows</span><span class="p">[[</span><span class="s1">'permno'</span><span class="p">,</span> <span class="s1">'date'</span><span class="p">,</span> <span class="s1">'ret'</span><span class="p">,</span> <span class="s1">'me_l1'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="k">break</span>                                  <span class="c1"># just look at the first month and stop</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="rows-is-a-dataframe-not-a-row">
+<h3><span class="section-number">4.15.4. </span><code class="docutils literal notranslate"><span class="pre">rows</span></code> is a DataFrame, not a row<a class="headerlink" href="#rows-is-a-dataframe-not-a-row" title="Link to this heading">#</a></h3>
+<p>That is the most common misreading, and the name <code class="docutils literal notranslate"><span class="pre">g</span></code> in the original one-liner
+does nothing to help. Each piece is a <strong>whole DataFrame</strong> — every stock alive
+that month, every column. It is the same object <code class="docutils literal notranslate"><span class="pre">d[d.date</span> <span class="pre">==</span> <span class="pre">m]</span></code> gave you in the
+loop.</p>
+<p>Once you know that, <code class="docutils literal notranslate"><span class="pre">.apply(f)</span></code> is easy to state: it runs <code class="docutils literal notranslate"><span class="pre">f</span></code> on each piece and
+collects the answers into a Series indexed by the group key. So <code class="docutils literal notranslate"><span class="pre">f</span></code> has to be a
+function that <strong>takes a DataFrame and returns one number</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── 4 · a NAMED function, applied to each group ───────────────────────────</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">vw_return</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Value-weighted return of one month's stocks."""</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">/</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"called directly on June 1995 : </span><span class="si">{</span><span class="n">vw_return</span><span class="p">(</span><span class="n">june</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">by_named</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">vw_return</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">".apply(vw_return) returned </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">by_named</span><span class="p">)</span><span class="si">}</span><span class="s2"> numbers"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">by_named</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="a-lambda-is-that-same-function-without-a-name">
+<h3><span class="section-number">4.15.5. </span>A <code class="docutils literal notranslate"><span class="pre">lambda</span></code> is that same function, without a name<a class="headerlink" href="#a-lambda-is-that-same-function-without-a-name" title="Link to this heading">#</a></h3>
+<p>These two are the same function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">vw_return</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">/</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">lambda</span> <span class="n">rows</span><span class="p">:</span> <span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">/</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">lambda</span></code> writes a one-expression function inline, where it is used, without
+naming it first. The word right after <code class="docutils literal notranslate"><span class="pre">lambda</span></code> is just the parameter name —
+<code class="docutils literal notranslate"><span class="pre">rows</span></code>, <code class="docutils literal notranslate"><span class="pre">g</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code>, anything — and it gets bound to each group in turn. Whatever
+the expression evaluates to is what gets returned.</p>
+<p>That is the whole of it. There is no further machinery.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ── 5 · the lambda versions, and all four compared ────────────────────────</span>
+<span class="n">by_lambda</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">rows</span><span class="p">:</span> <span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">/</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="n">rows</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+<span class="c1"># the one we actually use — np.average does the dividing for you</span>
+<span class="n">by_npavg</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'method'</span><span class="si">:</span><span class="s2">26s</span><span class="si">}{</span><span class="s1">'months'</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">'mean/yr'</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}{</span><span class="s1">'max gap vs the loop'</span><span class="si">:</span><span class="s2">&gt;22s</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="mi">66</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">'for loop'</span><span class="p">,</span>            <span class="n">by_loop</span><span class="p">),</span>
+                <span class="p">(</span><span class="s1">'.apply(vw_return)'</span><span class="p">,</span>   <span class="n">by_named</span><span class="p">),</span>
+                <span class="p">(</span><span class="s1">'.apply(lambda ...)'</span><span class="p">,</span>  <span class="n">by_lambda</span><span class="p">),</span>
+                <span class="p">(</span><span class="s1">'.apply(np.average)'</span><span class="p">,</span>  <span class="n">by_npavg</span><span class="p">)]:</span>
+    <span class="n">gap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">by_loop</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">26s</span><span class="si">}{</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}{</span><span class="n">s</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;9.2%</span><span class="si">}{</span><span class="n">gap</span><span class="si">:</span><span class="s2">&gt;22.2e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="which-one-should-you-write">
+<h3><span class="section-number">4.15.6. </span>Which one should you write?<a class="headerlink" href="#which-one-should-you-write" title="Link to this heading">#</a></h3>
+<p>All four are correct. Reach for them in this order:</p>
+<ol class="arabic simple">
+<li><p><strong>A named function</strong> — when the calculation needs more than one line, when
+you will use it twice, or when a name would explain what it does. <code class="docutils literal notranslate"><span class="pre">vw_return</span></code>
+tells a reader what is happening; <code class="docutils literal notranslate"><span class="pre">lambda</span> <span class="pre">g:</span></code> does not.</p></li>
+<li><p><strong>A lambda</strong> — when the body is one short expression and a name would be
+noise.</p></li>
+<li><p><strong>The loop</strong> — when something disagrees and you want to stare at one month.</p></li>
+</ol>
+<blockquote>
+<div><p><strong>📌 The habit worth taking from this</strong></p>
+<p>When an AI hands you a line you cannot read aloud in English, do not run it
+and move on. Unstack it: a loop, then a named function, then the one-liner,
+and check that the answers match. It costs a few minutes, and it is how you
+find the version that is subtly wrong rather than obviously broken.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
 <section id="appendix-data-loading">
-<h2><span class="section-number">4.15. </span>📎 Appendix — Data Loading <a id="appendix"></a><a class="headerlink" href="#appendix-data-loading" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.16. </span>📎 Appendix — Data Loading <a id="appendix"></a><a class="headerlink" href="#appendix-data-loading" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
@@ -1666,7 +1854,16 @@ end, where this data really came from and how you’d pull it yourself.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#next-class">4.14.1. Next class</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-data-loading">4.15. 📎 Appendix — Data Loading <a id="appendix"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-what-groupby-apply-lambda-g-actually-does">4.15. 📎 Appendix — What <code class="docutils literal notranslate"><span class="pre">groupby(...).apply(lambda</span> <span class="pre">g:</span> <span class="pre">...)</span></code> Actually Does <a id="groupby"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-whole-calculation-is-three-lines">4.15.1. The whole calculation is three lines</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#this-loop-is-correct-and-it-is-the-picture-to-keep-in-your-head">4.15.2. This loop is correct, and it is the picture to keep in your head</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#groupby-is-that-loop-written-once">4.15.3. <code class="docutils literal notranslate"><span class="pre">groupby</span></code> is that loop, written once</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rows-is-a-dataframe-not-a-row">4.15.4. <code class="docutils literal notranslate"><span class="pre">rows</span></code> is a DataFrame, not a row</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-lambda-is-that-same-function-without-a-name">4.15.5. A <code class="docutils literal notranslate"><span class="pre">lambda</span></code> is that same function, without a name</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#which-one-should-you-write">4.15.6. Which one should you write?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-data-loading">4.16. 📎 Appendix — Data Loading <a id="appendix"></a></a></li>
 </ul>
   </nav></div>
 
