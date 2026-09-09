@@ -73,6 +73,18 @@ def pull_crsp():
     db = wrds.Connection(wrds_username="am16634")
     print("  connected", flush=True)
 
+    # shrcd 10/11 = ordinary common shares. This is what excludes ETFs, which
+    # CRSP codes as shrcd 73 — deliberately, and not for size reasons. Over
+    # 1980-2000 ETFs barely existed (SPY 1993, WEBS 1996, sector SPDRs 1998,
+    # QQQ 1999; ~80-100 by end-2000), so adding them would cost roughly 2,000
+    # of 1.5m rows. The reason to leave them out is that an ETF holds stocks
+    # already in the panel: value-weight a market containing SPY and you hold
+    # the S&P 500 twice, which silently corrupts the L2 market return and the
+    # L3 size breakpoints. They also carry no accounting signal, so they would
+    # drop out of every sort anyway. Note the exchange filter does NOT exclude
+    # them — in this era ETFs were AMEX-listed (exchcd 2). If the sample is
+    # ever extended past ~2005 the double-counting stops being a rounding
+    # error, so revisit this rather than inheriting it.
     t0 = time.time()
     crsp = db.raw_sql(f"""
         select a.permno, a.date, a.ret, a.prc, a.shrout,
@@ -118,16 +130,18 @@ def pull_crsp():
                       "ret": "float32", "me": "float32", "prc": "float32"}))
     out = out.sort_values(["permno", "date"]).reset_index(drop=True)
 
-    # ret_fwd: the return you EARN by sorting on a signal observed at date t.
-    # Only defined when the next observation is the very next calendar month —
-    # otherwise a gap in the series would silently splice returns across time.
-    # Sorting on a signal at t and measuring ret at t is look-ahead: for
-    # STreversal that single error turns t = -0.4 into t = +70.
-    mo = out["date"].dt.year * 12 + out["date"].dt.month
-    nxt = out.groupby("permno")["date"].shift(-1)
-    nxt = nxt.dt.year * 12 + nxt.dt.month
-    out["ret_fwd"] = (out.groupby("permno")["ret"].shift(-1)
-                         .where((nxt - mo) == 1).astype("float32"))
+    # No ret_fwd column. The panel ships `ret` and `me` only, and the course
+    # lags what it conditions on instead: me_l1 = me.shift(1) weighting this
+    # month's ret, which is how the literature dates portfolio returns. L2 has
+    # students build a forward return themselves as the look-ahead exercise —
+    # shipping it would hand them the answer. If you do want one:
+    #
+    #   nxt = out.groupby("permno")["date"].shift(-1)
+    #   ok  = nxt == out["date"] + pd.offsets.MonthEnd(1)
+    #   out["ret_fwd"] = out.groupby("permno")["ret"].shift(-1).where(ok)
+    #
+    # The calendar-month guard matters: without it a gap in a stock's history
+    # silently splices returns across the missing period.
     return out
 
 
