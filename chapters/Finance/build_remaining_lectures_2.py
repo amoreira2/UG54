@@ -25,7 +25,7 @@ def submission_cell(assignment, required_vars):
     return code(f"""# === 📤 SUBMISSION CELL ===
 import json, base64, hashlib, datetime as dt
 required = [{req_str}, "MEMO"]
-missing = [v for v in required if v not in dir()]
+missing = [v for v in required if v not in globals()]
 if missing: raise NameError(f"\\n❌ Missing: {{missing}}")
 payload = {{"assignment": "{assignment}",
     "ts": dt.datetime.utcnow().isoformat(timespec="seconds") + "Z",

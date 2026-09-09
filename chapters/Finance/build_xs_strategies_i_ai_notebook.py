@@ -207,7 +207,7 @@ cells.append(code("""# === 📤 SUBMISSION CELL ===
 import json, base64, hashlib, datetime as dt
 required = ["q1_growth_return", "q5_value_return", "long_short_return",
             "mean_bm_growth", "mean_bm_value", "MEMO"]
-missing = [v for v in required if v not in dir()]
+missing = [v for v in required if v not in globals()]
 if missing: raise NameError(f"\\n❌ Missing: {missing}")
 payload = {"assignment": "CrossSectional_I_AI",
     "ts": dt.datetime.utcnow().isoformat(timespec="seconds") + "Z",

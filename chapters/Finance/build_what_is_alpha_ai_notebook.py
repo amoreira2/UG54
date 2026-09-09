@@ -472,7 +472,7 @@ required_numeric = [
     "sr_mkt", "sr_str", "sr_best",
 ]
 required_other = ["weights_1970", "MEMO"]
-missing = [v for v in (required_numeric + required_other) if v not in dir()]
+missing = [v for v in (required_numeric + required_other) if v not in globals()]
 if missing: raise NameError(f"\\n❌ Missing: {missing}")
 
 # Extract alphas + t-stats from the regression objects

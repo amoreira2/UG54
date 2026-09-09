@@ -614,7 +614,7 @@ required = [
     "my_ticker", "my_permno", "months_of_data", "latest_mktcap_M",
     "cum_return", "avg_monthly_return", "NOTE",
 ]
-missing = [v for v in required if v not in dir()]
+missing = [v for v in required if v not in globals()]
 if missing:
     raise NameError(f"\\n❌ Missing: {missing}")
 

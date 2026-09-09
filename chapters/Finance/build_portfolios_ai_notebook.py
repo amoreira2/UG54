@@ -535,7 +535,7 @@ required = [
     "best_sharpe_3asset", "w_us_best", "w_intl_best", "w_em_best",
     "MEMO",
 ]
-missing = [v for v in required if v not in dir()]
+missing = [v for v in required if v not in globals()]
 if missing:
     raise NameError(f"\\n❌ Missing: {missing}")
 

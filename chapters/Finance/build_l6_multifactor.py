@@ -529,7 +529,7 @@ import json, base64, hashlib, datetime as dt
 
 required = ["mom_alpha_capm", "mom_alpha_ff3", "mom_alpha_ff5",
             "mom_alpha_ff6", "mom_umd_beta", "mom_r2_ff6", "MEMO"]
-missing = [v for v in required if v not in dir()]
+missing = [v for v in required if v not in globals()]
 if missing:
     raise NameError(f"\\n❌ Missing before submission: {missing}")
 

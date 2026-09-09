@@ -1040,7 +1040,7 @@ required = [
     "n_factors_parallel",
     "MEMO",
 ]
-missing = [v for v in required if v not in dir()]
+missing = [v for v in required if v not in globals()]
 if missing:
     raise NameError(
         f"\\n❌ Missing variables before submission: {missing}\\n"

@@ -940,7 +940,7 @@ required = [
     "MEMO",
 ]
 # my_predictor_id is a string — bundle separately so it survives JSON serialization
-missing = [v for v in required if v not in dir()]
+missing = [v for v in required if v not in globals()]
 if missing: raise NameError(f"\\n❌ Missing: {missing}")
 
 payload = {

@@ -424,7 +424,7 @@ import json, base64, hashlib, datetime as dt
 
 required = ["mean_pairwise_corr", "frac_high_corr",
             "within_cat_corr", "across_cat_corr", "MEMO"]
-missing = [v for v in required if v not in dir()]
+missing = [v for v in required if v not in globals()]
 if missing:
     raise NameError(f"\\n❌ Missing before submission: {missing}")
 

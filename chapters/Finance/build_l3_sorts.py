@@ -743,7 +743,7 @@ import json, base64, hashlib, datetime as dt
 
 required = ["t_ew_all", "t_vw_all", "t_ew_nyse", "t_vw_nyse",
             "n_small_all", "n_small_nyse", "MEMO"]
-missing = [v for v in required if v not in dir()]
+missing = [v for v in required if v not in globals()]
 if missing:
     raise NameError(f"\\n❌ Missing before submission: {missing}")
 
