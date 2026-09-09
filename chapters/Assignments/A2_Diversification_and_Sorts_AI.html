@@ -665,8 +665,8 @@ volatility σ and were uncorrelated, the equal-weighted portfolio’s volatility
 would be σ/√N. Use the average single-stock volatility in <code class="docutils literal notranslate"><span class="pre">W</span></code> for σ, and draw
 that curve across the same range of N.</p>
 <p><strong>Line B — the market.</strong> Compute the value-weighted market return from <code class="docutils literal notranslate"><span class="pre">panel</span></code>
-(you built this in Lecture 2: weight by <code class="docutils literal notranslate"><span class="pre">me</span></code>, earn <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>) and draw its
-annualized volatility as a horizontal line.</p>
+(you built this in Lecture 2: weight by <code class="docutils literal notranslate"><span class="pre">me</span></code> lagged one month, earn this
+month’s <code class="docutils literal notranslate"><span class="pre">ret</span></code>) and draw its annualized volatility as a horizontal line.</p>
 <blockquote>
 <div><p><strong>⚠️ Careful.</strong> Line A is <em>not</em> a fitted line or a prediction. It is what the
 arithmetic gives you under an assumption you have every reason to doubt. The
@@ -741,13 +741,23 @@ you saw the answer.</p>
 <section id="q8-run-the-standard-sort">
 <h2><span class="section-number">22.7.2. </span>Q8 — Run the standard sort<a class="headerlink" href="#q8-run-the-standard-sort" title="Link to this heading">#</a></h2>
 <p>Everyone in the class uses the same convention so results are comparable:
-<strong>NYSE breakpoints, value-weighted, top decile minus bottom decile, <code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code>.</strong></p>
+<strong>NYSE breakpoints, value-weighted, top decile minus bottom decile.</strong> As in
+Lecture 2, everything you condition on is lagged one month and the return you
+earn is this month’s <code class="docutils literal notranslate"><span class="pre">ret</span></code>.</p>
 <blockquote>
-<div><p><strong>📝 Spec.</strong> Merge your signal onto <code class="docutils literal notranslate"><span class="pre">panel</span></code>. Drop rows missing the signal,
-<code class="docutils literal notranslate"><span class="pre">ret_fwd</span></code> or <code class="docutils literal notranslate"><span class="pre">me</span></code>, <strong>before</strong> ranking. Each month, compute the 10th and 90th
-percentile of the signal <strong>using NYSE stocks only</strong> (<code class="docutils literal notranslate"><span class="pre">exchcd</span> <span class="pre">==</span> <span class="pre">1</span></code>), then apply
-those cutoffs to <strong>every</strong> stock. Value-weight within each leg using <code class="docutils literal notranslate"><span class="pre">me</span></code>.
-Return the monthly series of top-minus-bottom.</p>
+<div><p><strong>📝 Spec.</strong> Merge your signal onto <code class="docutils literal notranslate"><span class="pre">panel</span></code>, keeping every panel month
+(<code class="docutils literal notranslate"><span class="pre">how='left'</span></code>), then build two lagged columns:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span>  <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'me'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">d</span><span class="p">[</span><span class="s1">'sig_l1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="n">MY_SIGNAL</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Drop rows missing <code class="docutils literal notranslate"><span class="pre">ret</span></code>, <code class="docutils literal notranslate"><span class="pre">me_l1</span></code> or <code class="docutils literal notranslate"><span class="pre">sig_l1</span></code>, <strong>before</strong> ranking. Each month,
+compute the 10th and 90th percentile of <code class="docutils literal notranslate"><span class="pre">sig_l1</span></code> <strong>using NYSE stocks only</strong>
+(<code class="docutils literal notranslate"><span class="pre">exchcd</span> <span class="pre">==</span> <span class="pre">1</span></code>), then apply those cutoffs to <strong>every</strong> stock. Value-weight
+within each leg using <code class="docutils literal notranslate"><span class="pre">me_l1</span></code>. Return the monthly series of top-minus-bottom.</p>
+<p><strong>Lag the signal, not just the weights.</strong> Sorting on <code class="docutils literal notranslate"><span class="pre">sig</span></code> at <em>t</em> while
+earning <code class="docutils literal notranslate"><span class="pre">ret</span></code> at <em>t</em> is look-ahead — you would be picking stocks using a
+number you could not have known.</p>
 </div></blockquote>
 <p>Lecture 3 has a working version of this. You may reuse it — but read it first
 and make sure you can say what each line does.</p>
