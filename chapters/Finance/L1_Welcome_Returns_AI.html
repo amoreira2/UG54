@@ -544,12 +544,18 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">3.15. 📤 Submission <a id="submit"></a></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">3.16. 🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-next-wednesday-september-9">3.16.1. Before Next Wednesday (september 9)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-the-following-wednesday-september-16">3.16.2. Before the following Wednesday (september 16)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-solutions">3.16. ✅ Challenge Solutions <a id="solutions"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-three-numeric-questions-went-wrong">3.16.1. Where the three numeric questions went wrong</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.16.2. Q4 — the memo</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-things-that-cost-marks">3.16.3. The two things that cost marks</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-belt-and-suspenders-data-loading">3.17. 📎 Appendix — Belt-and-Suspenders Data Loading <a id="appendix"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">3.17. 🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-next-wednesday-september-9">3.17.1. Before Next Wednesday (september 9)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-the-following-wednesday-september-16">3.17.2. Before the following Wednesday (september 16)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-belt-and-suspenders-data-loading">3.18. 📎 Appendix — Belt-and-Suspenders Data Loading <a id="appendix"></a></a></li>
 </ul>
             </nav>
         </div>
@@ -590,6 +596,7 @@ document.write(`
 <li><p><a class="reference internal" href="#excess"><span class="xref myst">Excess returns and the units trap</span></a></p></li>
 <li><p><a class="reference internal" href="#sharpe"><span class="xref myst">The Sharpe ratio</span></a></p></li>
 <li><p><a class="reference internal" href="#challenge"><span class="xref myst">🎯 Challenge: GE vs the market</span></a> (finish at home)</p></li>
+<li><p><a class="reference internal" href="#solutions"><span class="xref myst">✅ Challenge solutions</span></a> — posted after the deadline</p></li>
 <li><p><a class="reference internal" href="#takeaways"><span class="xref myst">Key takeaways</span></a></p></li>
 </ol>
 <blockquote>
@@ -1352,8 +1359,132 @@ to make the case either way.</p>
 </div>
 </section>
 <hr class="docutils" />
+<section id="challenge-solutions">
+<h2><span class="section-number">3.16. </span>✅ Challenge Solutions <a id="solutions"></a><a class="headerlink" href="#challenge-solutions" title="Link to this heading">#</a></h2>
+<p><em>Posted after the deadline. Run the cell below and compare it against what you
+submitted — the point is to find out <strong>which</strong> number went wrong, not just that
+one did.</em></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Solutions — GE vs the market, 1980-2000</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span><span class="o">,</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas_datareader.data</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">web</span>
+
+<span class="n">URL</span>   <span class="o">=</span> <span class="p">(</span><span class="s2">"https://raw.githubusercontent.com/amoreira2/UG54/"</span>
+         <span class="s2">"refs/heads/main/assets/data/panel_backbone_1980_2000.parquet"</span><span class="p">)</span>
+<span class="n">panel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
+
+<span class="n">ff</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">'F-F_Research_Data_Factors'</span><span class="p">,</span> <span class="s1">'famafrench'</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s1">'1980-01-01'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
+<span class="n">ff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">ge</span> <span class="o">=</span> <span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">permno</span> <span class="o">==</span> <span class="mi">12060</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>   <span class="c1"># GE</span>
+
+<span class="c1"># Q1 — compound, do not add</span>
+<span class="n">ge_total_return</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ge</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+
+<span class="c1"># Q2 — subtract the risk-free rate FIRST, then annualize</span>
+<span class="n">rf</span>            <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">ge</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="n">ge_excess</span>     <span class="o">=</span> <span class="p">(</span><span class="n">ge</span> <span class="o">-</span> <span class="n">rf</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">ge_ann_excess</span> <span class="o">=</span> <span class="n">ge_excess</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span>
+<span class="n">ge_ann_vol</span>    <span class="o">=</span> <span class="n">ge_excess</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>  <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ge_sharpe</span>     <span class="o">=</span> <span class="n">ge_ann_excess</span> <span class="o">/</span> <span class="n">ge_ann_vol</span>
+
+<span class="c1"># Q3 — Mkt-RF is ALREADY an excess return; nothing to subtract</span>
+<span class="n">mkt</span>        <span class="o">=</span> <span class="n">ff</span><span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">ge</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">mkt_sharpe</span> <span class="o">=</span> <span class="n">mkt</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">/</span> <span class="p">(</span><span class="n">mkt</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"GE, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ge</span><span class="p">)</span><span class="si">}</span><span class="s2"> months, </span><span class="si">{</span><span class="n">ge</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">ge</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Q1  total return   </span><span class="si">{</span><span class="n">ge_total_return</span><span class="si">:</span><span class="s2">&gt;9.1%</span><span class="si">}</span><span class="s2">    $1,000 -&gt; $</span><span class="si">{</span><span class="mi">1000</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">ge_total_return</span><span class="p">)</span><span class="si">:</span><span class="s2">,.0f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Q2  excess return  </span><span class="si">{</span><span class="n">ge_ann_excess</span><span class="si">:</span><span class="s2">&gt;9.2%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    volatility     </span><span class="si">{</span><span class="n">ge_ann_vol</span><span class="si">:</span><span class="s2">&gt;9.2%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    Sharpe         </span><span class="si">{</span><span class="n">ge_sharpe</span><span class="si">:</span><span class="s2">&gt;9.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Q3  market Sharpe  </span><span class="si">{</span><span class="n">mkt_sharpe</span><span class="si">:</span><span class="s2">&gt;9.3f</span><span class="si">}</span><span class="s2">    market vol </span><span class="si">{</span><span class="n">mkt</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">/yr"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="where-the-three-numeric-questions-went-wrong">
+<h3><span class="section-number">3.16.1. </span>Where the three numeric questions went wrong<a class="headerlink" href="#where-the-three-numeric-questions-went-wrong" title="Link to this heading">#</a></h3>
+<p>Twenty-five of twenty-seven of you got all five right, so this is a short list.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>Answer</p></th>
+<th class="head"><p>The trap</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Q1</strong></p></td>
+<td><p><strong>+8,442.8%</strong> — $1,000 becomes <strong>$85,428</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(1+r).prod()-1</span></code>, not <code class="docutils literal notranslate"><span class="pre">r.sum()</span></code>. Summing 252 monthly returns gives roughly +447%, which is wrong by a factor of nineteen and still looks like a plausible number.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Q2</strong></p></td>
+<td><p>excess <strong>17.13%</strong>/yr, vol <strong>22.16%</strong>/yr, Sharpe <strong>0.773</strong></p></td>
+<td><p>Subtract the risk-free rate <em>before</em> annualizing, and check the units first. Ken French serves <code class="docutils literal notranslate"><span class="pre">RF</span></code> in percent; we divided the whole frame by 100 on load.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Q3</strong></p></td>
+<td><p><strong>0.601</strong>, market vol <strong>15.62%</strong>/yr</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mkt-RF</span></code> is <em>already</em> an excess return. Subtracting <code class="docutils literal notranslate"><span class="pre">RF</span></code> from it again is the most common way to miss this one.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Note the volatilities, because Q4 turns on them: <strong>22.16% against 15.62%</strong> —
+GE was about <strong>1.4 times</strong> as volatile as the market.</p>
+</section>
+<section id="id1">
+<h3><span class="section-number">3.16.2. </span>Q4 — the memo<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>There was no single right answer, and the grading was on the reasoning rather
+than on the arithmetic. What full credit required was two moves: recognising
+that the higher Sharpe is <strong>suggestive but not decisive</strong>, and naming something
+that would actually settle it.</p>
+<p>Here is one answer that would earn full marks. It is not the only one.</p>
+<blockquote>
+<div><p><strong>No.</strong> GE ran 22.2% annualized volatility against the market’s 15.6%, about
+1.4 times the risk, so a large part of the higher return is payment for
+bearing it rather than evidence of skill. The Sharpe ratio already divides by
+that volatility, so GE’s 0.773 against the market’s 0.601 is genuinely
+something — but it is suggestive, not proof. What the statistic cannot do is
+separate skill from exposure: a levered bet on the market, or on whatever else
+happened to be rewarded between 1980 and 2000, would look exactly the same
+here. It also cannot see selection — GE was chosen for this exercise precisely
+because everyone already knows how the story ended, and among thousands of
+listed firms somebody has to finish at the top. To argue it either way I would
+want GE’s return regressed on the market to split leveraged exposure from
+whatever is left over, a comparison against conglomerate peers over the same
+window rather than against the broad index, and a breakdown of how much of the
+return came from GE Capital rather than the industrial businesses.</p>
+</div></blockquote>
+<p><strong>You were not required to say “alpha” or “beta”</strong> — you had not been taught
+them. “How much of this is just a bigger bet on the same thing?” is the same
+idea in plain English and scored the same.</p>
+</section>
+<section id="the-two-things-that-cost-marks">
+<h3><span class="section-number">3.16.3. </span>The two things that cost marks<a class="headerlink" href="#the-two-things-that-cost-marks" title="Link to this heading">#</a></h3>
+<p><strong>Stating the caveat and then ignoring it.</strong> Several memos said a higher Sharpe
+alone does not prove skill, and then concluded he was an exceptional manager
+anyway — on the same evidence they had just called insufficient. If the
+evidence does not settle it, the honest ending is that it does not settle it.</p>
+<p><strong>Assuming the Sharpe ratio has not already adjusted for risk.</strong> A few memos
+argued that GE could win on Sharpe <em>because</em> it was riskier, or that similar
+volatility with a higher Sharpe would be stronger evidence. It would not be:
+the denominator is the volatility. GE’s higher Sharpe survives the volatility
+difference — that is precisely what makes the question interesting rather than
+easy. The gap it cannot close is a different one: <strong>which risks</strong> GE was
+exposed to, not <strong>how much</strong> total risk it took.</p>
+<p>That distinction — total volatility versus the particular exposures inside it —
+is what Lecture 4 is about, and it is the reason the appraisal ratio exists.</p>
+<blockquote>
+<div><p><strong>📌 The one-sentence version</strong></p>
+<p>The Sharpe ratio answers “how much return per unit of risk?” It cannot answer
+“was that return available to anyone who took the same kind of risk?” — and
+that second question is the one that decides whether you are looking at skill.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
 <section id="key-takeaways">
-<h2><span class="section-number">3.16. </span>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.17. </span>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p><strong>AI writes the code; you own the spec, the audit, and the interpretation.</strong>
 That’s the whole shape of this course.</p></li>
@@ -1371,7 +1502,7 @@ twenty years with 40% more volatility. Whether that’s skill is Lecture 4.</p><
 </ol>
 <hr class="docutils" />
 <section id="before-next-wednesday-september-9">
-<h3><span class="section-number">3.16.1. </span>Before Next Wednesday (september 9)<a class="headerlink" href="#before-next-wednesday-september-9" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.17.1. </span>Before Next Wednesday (september 9)<a class="headerlink" href="#before-next-wednesday-september-9" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>Start your WRDS account signup</strong> — you’ll need it later in the term.</p></li>
 <li><p>Next class: where this data actually comes from, and how to turn a pile of
@@ -1379,7 +1510,7 @@ stock returns into a portfolio.</p></li>
 </ul>
 </section>
 <section id="before-the-following-wednesday-september-16">
-<h3><span class="section-number">3.16.2. </span>Before the following Wednesday (september 16)<a class="headerlink" href="#before-the-following-wednesday-september-16" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.17.2. </span>Before the following Wednesday (september 16)<a class="headerlink" href="#before-the-following-wednesday-september-16" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p><strong>Form your group of 3</strong> and submit if here <a class="reference external" href="https://forms.gle/C8MS2dLR8EN9a3mZ8">https://forms.gle/C8MS2dLR8EN9a3mZ8</a></p></li>
 </ul>
@@ -1387,7 +1518,7 @@ stock returns into a portfolio.</p></li>
 </section>
 <hr class="docutils" />
 <section id="appendix-belt-and-suspenders-data-loading">
-<h2><span class="section-number">3.17. </span>📎 Appendix — Belt-and-Suspenders Data Loading <a id="appendix"></a><a class="headerlink" href="#appendix-belt-and-suspenders-data-loading" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.18. </span>📎 Appendix — Belt-and-Suspenders Data Loading <a id="appendix"></a><a class="headerlink" href="#appendix-belt-and-suspenders-data-loading" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ═══════════════════════════════════════════════════════════════════════</span>
@@ -1541,12 +1672,18 @@ stock returns into a portfolio.</p></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">3.15. 📤 Submission <a id="submit"></a></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">3.16. 🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-next-wednesday-september-9">3.16.1. Before Next Wednesday (september 9)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-the-following-wednesday-september-16">3.16.2. Before the following Wednesday (september 16)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-solutions">3.16. ✅ Challenge Solutions <a id="solutions"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-the-three-numeric-questions-went-wrong">3.16.1. Where the three numeric questions went wrong</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.16.2. Q4 — the memo</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-things-that-cost-marks">3.16.3. The two things that cost marks</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-belt-and-suspenders-data-loading">3.17. 📎 Appendix — Belt-and-Suspenders Data Loading <a id="appendix"></a></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">3.17. 🧠 Key Takeaways <a id="takeaways"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-next-wednesday-september-9">3.17.1. Before Next Wednesday (september 9)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-the-following-wednesday-september-16">3.17.2. Before the following Wednesday (september 16)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#appendix-belt-and-suspenders-data-loading">3.18. 📎 Appendix — Belt-and-Suspenders Data Loading <a id="appendix"></a></a></li>
 </ul>
   </nav></div>
 
