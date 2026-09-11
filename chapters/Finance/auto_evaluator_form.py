@@ -77,7 +77,8 @@ def main():
     # Lazy imports — only needed when actually running, not when testing decode_token
     import os
     import gspread
-    from auto_evaluator import ANSWER_KEY, MEMO_RUBRICS, grade_numeric, grade_wrds_tour
+    from auto_evaluator import (ANSWER_KEY, MEMO_RUBRICS, grade_numeric,
+                                grade_wrds_tour, grade_by_signal)
 
     p = argparse.ArgumentParser()
     p.add_argument("--sheet", required=True, help="Google Sheet name")
@@ -164,6 +165,8 @@ def main():
 
         if key == "_dynamic_" and args.assignment == "WRDS_Tour_AI":
             numeric = grade_wrds_tour(payload["answers"])
+        elif key == "_by_signal_":
+            numeric = grade_by_signal(payload, args.assignment)
         else:
             numeric = grade_numeric(payload["answers"], key)
         memo_txt = payload.get("memo", "")

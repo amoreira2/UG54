@@ -201,18 +201,9 @@ ANSWER_KEY = {
         "pfe_beta":      (0.82,   0.15),
         "pfe_appraisal": (0.483,  0.15),
     },
-    "L3_Sorts_AI": {
-        # Size (small minus big) sorted on raw market cap, 1980-2000, four
-        # implementations. Verified by executing the notebook 2026-08-06.
-        # The point of the challenge is that these DISAGREE, so the tolerances
-        # must be tight enough that a student can't hand in one number 4x.
-        "t_ew_all":     ( 3.94, 0.15),
-        "t_vw_all":     ( 1.90, 0.20),
-        "t_ew_nyse":    (-0.56, 0.45),
-        "t_vw_nyse":    (-1.93, 0.20),
-        "n_small_all":  ( 597,  0.10),
-        "n_small_nyse": (3106,  0.10),
-    },
+    # The challenge is done on each student's own signal, so the key depends on
+    # MY_SIGNAL, which the token carries as "signal". See SIGNAL_KEYS below.
+    "L3_Sorts_AI": "_by_signal_",
     "L2_Portfolios_AI": {
         # Rebuild the CRSP value-weighted market from the course panel,
         # 1980-2000. Verified by executing the notebook end-to-end 2026-08-06.
@@ -327,6 +318,12 @@ ANSWER_KEY = {
         "appraisal_b":        (-0.78, 0.30),
         # position_a/b depend on student's choice of vol calc — skip from key
     },
+}
+
+# Per-signal keys, {assignment: {signal: {var: [truth, tol, floor]}}}.
+# keys_L3_by_signal.json is written by build_l3_signal_keys.py.
+SIGNAL_KEYS = {
+    "L3_Sorts_AI": json.load(open(Path(__file__).resolve().parent / "keys_L3_by_signal.json")),
 }
 
 MEMO_RUBRICS = {
@@ -573,58 +570,48 @@ Output via the `grade_memo` tool.
     "L3_Sorts_AI": """
 You are grading a week-3 memo to a portfolio manager. Students have seen
 returns, Sharpe, portfolio weights, and sorts. They have NOT seen factor
-models, alpha, beta, or formal multiple-testing corrections.
+models, alpha, beta, NYSE breakpoints, or multiple-testing corrections.
 
-THE QUESTION: does the size effect exist over 1980-2000? They computed four
-defensible implementations of small-minus-big:
-    all-stock deciles, EW   +20.7%/yr   t =  3.94
-    all-stock deciles, VW    +9.2%/yr   t =  1.90
-    NYSE breakpoints,  EW    -2.1%/yr   t = -0.56
-    NYSE breakpoints,  VW    -6.4%/yr   t = -1.93
+THE TASK: each student picked ONE signal from a menu of 30 published
+predictors and sorted on it the lecture's way (signal lagged one month, ten
+equal-count deciles within each month, D10 - D1, 1980-2000). They built the
+long-short twice, equal-weighted and value-weighted by last month's market cap,
+and computed the average lagged signal in each decile. The memo is at most six
+sentences to a PM about their signal. Their numbers are in the token; you may
+not see them, so grade the reasoning, not the values.
 
-GROUND TRUTH:
-- The defensible answer is "no usable size effect over this period", reported
-  on the NYSE-breakpoint value-weighted specification, which is the academic
-  and industry standard and the only one implementable at scale.
-- MECHANISM: all-stock deciles put ~597 of the very smallest listed firms in
-  the bottom bucket; equal-weighting then lets microcaps worth a few million
-  dollars drive the average. NYSE breakpoints define "small" relative to NYSE
-  and sweep in ~3,106 names, so the extreme tail stops dominating.
-- The +20.7% is REAL ARITHMETIC but uninvestable: bid-ask spreads on 600 of the
-  tiniest US firms, rebalanced monthly, would consume the spread. A student who
-  says this deserves credit even without cost numbers.
-- Banz published the size premium in 1981, at the start of this sample. Noting
-  that it did not survive its own publication is a strong observation but NOT
-  required for a 5.
-
-A memo that reports all four numbers without committing to one has not done the
-job -- the PM asked a question. Say so in the feedback.
+WHAT A GOOD MEMO DOES:
+- Says whether the signal works and UNDER WHICH WEIGHTING. Many signals are much
+  stronger equal-weighted than value-weighted (accruals, asset growth, debt
+  issuance, short-term reversal, illiquidity); some are the reverse (momentum,
+  volatility). Either is fine; not saying is not.
+- EXPLAINS the EW/VW gap by what the weighting does: equal weights let the many
+  small stocks dominate, value weights put the money in the large ones. A signal
+  that works only equal-weighted mostly lives in small, costly-to-trade stocks.
+- READS THE SIGNAL CHART: the extreme deciles hold the tails of the signal, so
+  D1 and D10 usually sit far from their neighbours while the middle deciles are
+  bunched together. A student who notices this and connects it to where the
+  return spread comes from deserves credit.
+- COMPARES THE SHAPES: the signal rises across deciles by construction; does the
+  return? A monotone return staircase is stronger evidence than a gap between
+  two extremes with a flat middle.
 
 Grade 0-5:
-  5 = Commits to ONE answer; names the specification and justifies it
-      (standard / tradability / not microcap-driven); explains the mechanism
-      via bucket composition or weighting; says something substantive about why
-      the +20.7% is not actionable.
-  4 = Commits to one answer with a real justification and the mechanism, but
-      the tradability point is thin or missing.
-  3 = Commits to an answer but justifies it mainly by "it's the convention",
-      with little mechanism.
-  2 = Describes the disagreement without committing, or commits arbitrarily.
-  1 = Restates the table.
+  5 = Commits to an answer and names the weighting; explains the EW/VW gap by
+      which stocks drive each; says something specific about the signal chart
+      and compares it with the return chart.
+  4 = All of that but one element is thin (usually the signal chart).
+  3 = Commits and explains EW vs VW, but ignores the signal chart or the shape.
+  2 = Reports both numbers without committing, or commits with no reason.
+  1 = Restates numbers.
   0 = Empty or off-topic.
 
-ACCEPT a well-argued minority answer. A student who reports the EW all-stock
-result AND explicitly says it is not implementable, and explains who it might
-be relevant to, can score 4-5. Reward the reasoning, not the conclusion.
-
-PENALIZE: presenting all four numbers as equally valid with no recommendation;
-claiming one specification is "wrong" arithmetically (none are).
+A negative or null result reported honestly can score 5. Do not reward claims
+of "alpha" or "abnormal returns": they have not been taught what those require.
 
 For picked_fund return "neither" (not applicable).
-For cited_appraisal_or_alpha return True if the memo gives a concrete
-tradability, liquidity, or transaction-cost reason, else False.
-
-Output via the `grade_memo` tool.
+For cited_appraisal_or_alpha return True if the memo explains the EW/VW gap by
+firm size or by which stocks drive each weighting, else False.
 """,
     "L2_Portfolios_AI": """
 You are grading a second-week memo from an undergraduate. They have seen returns,
@@ -1252,11 +1239,15 @@ def extract_memo(nb) -> str:
 def grade_numeric(submission: dict, key) -> dict:
     """Return per-question correctness. `key` is either a dict {var: (truth, tol)}
     or the string "_dynamic_" which dispatches to an assignment-specific grader."""
-    if key == "_dynamic_":
-        # Caller should use grade_wrds_tour directly; bail out here.
-        raise ValueError("Dynamic answer key — use the assignment-specific grader.")
+    if isinstance(key, str):
+        # "_dynamic_" / "_by_signal_": the caller must use the matching grader.
+        raise ValueError(f"{key} answer key — use the assignment-specific grader.")
     results = {}
-    for q, (truth, tol) in key.items():
+    for q, spec in key.items():
+        # (truth, tol) or (truth, tol, floor): tol is fractional; floor is an
+        # absolute band that stops answers near zero needing absurd precision.
+        truth, tol = spec[0], spec[1]
+        floor = spec[2] if len(spec) > 2 else 0.0
         got = submission.get(q)
         if got is None:
             results[q] = {"correct": False, "got": None, "expected": truth,
@@ -1264,12 +1255,26 @@ def grade_numeric(submission: dict, key) -> dict:
             continue
         try:
             got = float(got)
-            ok = abs(got - truth) <= abs(truth) * tol if truth != 0 else abs(got) <= tol
+            ok = abs(got - truth) <= max(abs(truth) * tol, floor) if truth != 0 else abs(got) <= max(tol, floor)
+            off = f"off by {(got - truth) / truth * 100:.0f}%" if truth != 0 else f"off by {got:+.3g}"
             results[q] = {"correct": ok, "got": got, "expected": truth,
-                          "reason": "ok" if ok else f"off by {(got - truth) / truth * 100:.0f}%"}
+                          "reason": "ok" if ok else off}
         except Exception as e:
             results[q] = {"correct": False, "got": got, "expected": truth, "reason": str(e)}
     return results
+
+
+def grade_by_signal(payload: dict, assignment: str) -> dict:
+    """Numeric grading when each student works on a signal of their own: look up
+    the key for the signal named in the token, then grade as usual."""
+    signal = str(payload.get("signal", "")).strip()
+    keys = SIGNAL_KEYS.get(assignment, {})
+    if signal not in keys:
+        why = ("no signal in the token" if not signal else
+               f"no key for {signal!r}: not on the menu, or it cannot be cut into ten buckets")
+        return {"signal": {"correct": False, "got": signal, "expected": "a menu signal",
+                           "reason": why}}
+    return grade_numeric(payload.get("answers", {}), keys[signal])
 
 
 def grade_wrds_tour(submission: dict, **kwargs) -> dict:
