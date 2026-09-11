@@ -65,7 +65,7 @@
     <link rel="icon" href="../../_static/figuremain2.jpg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="5. Sorts, Breakpoints, and Long-Short Portfolios" href="L3_Sorts_AI.html" />
+    <link rel="next" title="5. Sorts and Long-Short Portfolios" href="L3_Sorts_AI.html" />
     <link rel="prev" title="3. Welcome to UG54 — Data-Driven Investing" href="L1_Welcome_Returns_AI.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -212,6 +212,7 @@
 
 
 <li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">22.5. Assignment 2 — Diversification, and Your First Sort</a></li>
+
 
 
 </ul>
@@ -1068,8 +1069,8 @@ reference only fills a value when the next observation is the very next
 history. That is a second, stricter rule you would have to ask for explicitly.</p>
 <blockquote>
 <div><p><strong>📌 Remember</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'ret_fwd'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># ✅</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">'ret_fwd'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>                     <span class="c1"># ❌ crosses stocks</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'me'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># ✅</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'me'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>                     <span class="c1"># ❌ crosses stocks</span>
 </pre></div>
 </div>
 <p>19,156 plausible numbers scattered through 1.5 million rows. No summary
@@ -1512,6 +1513,13 @@ no magic in it at all, and check at the end that all four agree.</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>stocks alive in June 1995 : 6,641
+weights sum to            : 1.000000
+market return, June 1995  : 0.031830
+</pre></div>
+</div>
+</div>
 </div>
 <section id="the-whole-calculation-is-three-lines">
 <h3><span class="section-number">4.15.1. </span>The whole calculation is three lines<a class="headerlink" href="#the-whole-calculation-is-three-lines" title="Link to this heading">#</a></h3>
@@ -1535,6 +1543,15 @@ that company’s return, and summed:</p>
 <span class="n">by_loop</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">answers</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">by_loop</span><span class="p">)</span><span class="si">}</span><span class="s2"> monthly returns, computed one month at a time</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">by_loop</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>251 monthly returns, computed one month at a time
+
+1980-02-29   -0.003410
+1980-03-31   -0.116828
+1980-04-30    0.051708
 </pre></div>
 </div>
 </div>
@@ -1566,7 +1583,1768 @@ pairs the loop was building for itself:</p>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"the key  `m`    is a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">  -&gt;  </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"the group `rows` is a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> with shape </span><span class="si">{</span><span class="n">rows</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">rows</span><span class="p">[[</span><span class="s1">'permno'</span><span class="p">,</span> <span class="s1">'date'</span><span class="p">,</span> <span class="s1">'ret'</span><span class="p">,</span> <span class="s1">'me_l1'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-    <span class="k">break</span>                                  <span class="c1"># just look at the first month and stop</span>
+                                  <span class="c1"># just look at the first month and stop</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>the key  `m`    is a Timestamp  -&gt;  1980-02-29
+the group `rows` is a DataFrame with shape (4457, 9)
+
+ permno       date       ret    me_l1
+  10006 1980-02-29 -0.058795 367648.5
+  10057 1980-02-29 -0.183582 142408.5
+  10058 1980-02-29  0.000000   3127.5
+the key  `m`    is a Timestamp  -&gt;  1980-03-31
+the group `rows` is a DataFrame with shape (4474, 9)
+
+ permno       date       ret    me_l1
+  10006 1980-03-31 -0.172078 341071.5
+  10057 1980-03-31 -0.111111 114777.0
+  10058 1980-03-31 -0.200000   3127.5
+the key  `m`    is a Timestamp  -&gt;  1980-04-30
+the group `rows` is a DataFrame with shape (4482, 9)
+
+ permno       date       ret      me_l1
+  10006 1980-04-30 -0.027451 282380.625
+  10057 1980-04-30 -0.141667 102384.000
+  10058 1980-04-30  0.125000   2502.000
+the key  `m`    is a Timestamp  -&gt;  1980-05-31
+the group `rows` is a DataFrame with shape (4484, 9)
+
+ permno       date      ret     me_l1
+  10006 1980-05-31 0.084677 274629.00
+  10057 1980-05-31 0.185185  86386.50
+  10058 1980-05-31 0.111111   2814.75
+the key  `m`    is a Timestamp  -&gt;  1980-06-30
+the group `rows` is a DataFrame with shape (4478, 9)
+
+ permno       date       ret    me_l1
+  10006 1980-06-30 -0.007576 292347.0
+  10057 1980-06-30  0.010417 102384.0
+  10058 1980-06-30 -0.100000   3127.5
+the key  `m`    is a Timestamp  -&gt;  1980-07-31
+the group `rows` is a DataFrame with shape (4486, 9)
+
+ permno       date       ret     me_l1
+  10006 1980-07-31  0.091603 291114.75
+  10057 1980-07-31  0.113402 103450.50
+  10058 1980-07-31 -0.055556   2814.75
+the key  `m`    is a Timestamp  -&gt;  1980-08-31
+the group `rows` is a DataFrame with shape (4502, 9)
+
+ permno       date      ret      me_l1
+  10006 1980-08-31 0.059441 317781.750
+  10057 1980-08-31 0.087037 115182.000
+  10058 1980-08-31 0.058824   2658.375
+the key  `m`    is a Timestamp  -&gt;  1980-09-30
+the group `rows` is a DataFrame with shape (4512, 9)
+
+ permno       date       ret     me_l1
+  10006 1980-09-30  0.144295 331115.25
+  10057 1980-09-30  0.017241 123714.00
+  10058 1980-09-30 -0.055556   2814.75
+the key  `m`    is a Timestamp  -&gt;  1980-10-31
+the group `rows` is a DataFrame with shape (4533, 9)
+
+ permno       date       ret     me_l1
+  10006 1980-10-31  0.000000 380300.25
+  10057 1980-10-31 -0.140678 126053.50
+  10058 1980-10-31  0.058824   2473.50
+the key  `m`    is a Timestamp  -&gt;  1980-11-30
+the group `rows` is a DataFrame with shape (4562, 9)
+
+ permno       date      ret     me_l1
+  10006 1980-11-30 0.120235 380300.25
+  10057 1980-11-30 0.030000 106825.00
+  10058 1980-11-30 0.000000   2619.00
+the key  `m`    is a Timestamp  -&gt;  1980-12-31
+the group `rows` is a DataFrame with shape (4598, 9)
+
+ permno       date       ret     me_l1
+  10006 1980-12-31 -0.023560 426025.50
+  10057 1980-12-31 -0.009709 110029.75
+  10058 1980-12-31  0.000000   2619.00
+the key  `m`    is a Timestamp  -&gt;  1981-01-31
+the group `rows` is a DataFrame with shape (4612, 9)
+
+ permno       date       ret     me_l1
+  10006 1981-01-31  0.108696 414414.00
+  10057 1981-01-31 -0.009804 108961.50
+  10058 1981-01-31  0.000000   2603.25
+the key  `m`    is a Timestamp  -&gt;  1981-02-28
+the group `rows` is a DataFrame with shape (4639, 9)
+
+ permno       date       ret     me_l1
+  10006 1981-02-28 -0.022059 459459.00
+  10057 1981-02-28 -0.005941 107893.25
+  10058 1981-02-28  0.000000   2603.25
+the key  `m`    is a Timestamp  -&gt;  1981-03-31
+the group `rows` is a DataFrame with shape (4667, 9)
+
+ permno       date       ret      me_l1
+  10006 1981-03-31 -0.005013 449323.875
+  10057 1981-03-31  0.020202 105756.750
+  10058 1981-03-31  0.000000   2603.250
+the key  `m`    is a Timestamp  -&gt;  1981-04-30
+the group `rows` is a DataFrame with shape (4684, 9)
+
+ permno       date       ret     me_l1
+  10006 1981-04-30 -0.066327 441441.00
+  10057 1981-04-30  0.098020 108221.50
+  10058 1981-04-30  0.000000   2603.25
+the key  `m`    is a Timestamp  -&gt;  1981-05-31
+the group `rows` is a DataFrame with shape (4730, 9)
+
+ permno       date      ret     me_l1
+  10006 1981-05-31 0.066995 412161.75
+  10057 1981-05-31 0.073059 117329.25
+  10058 1981-05-31 0.000000   2603.25
+the key  `m`    is a Timestamp  -&gt;  1981-06-30
+the group `rows` is a DataFrame with shape (4779, 9)
+
+ permno       date       ret      me_l1
+  10006 1981-06-30 -0.075325 433558.125
+  10057 1981-06-30 -0.080851 126958.750
+  10058 1981-06-30  0.000000   2603.250
+the key  `m`    is a Timestamp  -&gt;  1981-07-31
+the group `rows` is a DataFrame with shape (4824, 9)
+
+ permno       date       ret    me_l1
+  10006 1981-07-31 -0.039326 403526.0
+  10057 1981-07-31 -0.088889 116694.0
+  10058 1981-07-31 -0.277778   2592.0
+the key  `m`    is a Timestamp  -&gt;  1981-08-31
+the group `rows` is a DataFrame with shape (4872, 9)
+
+ permno       date       ret    me_l1
+  10006 1981-08-31 -0.027719 387657.0
+  10057 1981-08-31 -0.092784 104808.5
+  10058 1981-08-31  0.000000   1872.0
+the key  `m`    is a Timestamp  -&gt;  1981-09-30
+the group `rows` is a DataFrame with shape (4906, 9)
+
+ permno       date       ret    me_l1
+  10006 1981-09-30 -0.122324 370654.5
+  10057 1981-09-30 -0.119318  95084.0
+  10058 1981-09-30 -0.230769   1872.0
+the key  `m`    is a Timestamp  -&gt;  1981-10-31
+the group `rows` is a DataFrame with shape (4947, 9)
+
+ permno       date       ret     me_l1
+  10006 1981-10-31  0.024390 326462.50
+  10057 1981-10-31 -0.014194  84203.75
+  10058 1981-10-31  0.000000   1422.50
+the key  `m`    is a Timestamp  -&gt;  1981-11-30
+the group `rows` is a DataFrame with shape (4967, 9)
+
+ permno       date       ret    me_l1
+  10006 1981-11-30  0.066395 334425.0
+  10057 1981-11-30  0.060000  81487.5
+  10058 1981-11-30 -0.200000   1422.5
+the key  `m`    is a Timestamp  -&gt;  1981-12-31
+the group `rows` is a DataFrame with shape (4975, 9)
+
+ permno       date       ret     me_l1
+  10006 1981-12-31  0.061688 350350.00
+  10057 1981-12-31  0.062893  86376.75
+  10058 1981-12-31 -0.062500   1138.00
+the key  `m`    is a Timestamp  -&gt;  1982-01-31
+the group `rows` is a DataFrame with shape (5000, 9)
+
+ permno       date       ret     me_l1
+  10006 1982-01-31 -0.094801 374251.50
+  10057 1982-01-31  0.088757  91809.25
+  10058 1982-01-31  0.066667   1061.25
+the key  `m`    is a Timestamp  -&gt;  1982-02-28
+the group `rows` is a DataFrame with shape (5037, 9)
+
+ permno       date       ret    me_l1
+  10006 1982-02-28  0.000000 338772.0
+  10057 1982-02-28 -0.028261  99958.0
+  10058 1982-02-28 -0.062500   1132.0
+the key  `m`    is a Timestamp  -&gt;  1982-03-31
+the group `rows` is a DataFrame with shape (5023, 9)
+
+ permno       date       ret     me_l1
+  10006 1982-03-31 -0.062432 338772.00
+  10057 1982-03-31 -0.022727  95612.00
+  10058 1982-03-31  0.066667   1061.25
+the key  `m`    is a Timestamp  -&gt;  1982-04-30
+the group `rows` is a DataFrame with shape (5006, 9)
+
+ permno       date       ret    me_l1
+  10006 1982-04-30  0.073529 311304.0
+  10057 1982-04-30  0.045349  93439.0
+  10058 1982-04-30 -0.062500   1132.0
+the key  `m`    is a Timestamp  -&gt;  1982-05-31
+the group `rows` is a DataFrame with shape (5001, 9)
+
+ permno       date       ret     me_l1
+  10006 1982-05-31 -0.070137 334194.00
+  10057 1982-05-31 -0.101695  96155.25
+  10058 1982-05-31  0.000000   1061.25
+the key  `m`    is a Timestamp  -&gt;  1982-06-30
+the group `rows` is a DataFrame with shape (4984, 9)
+
+ permno       date       ret     me_l1
+  10006 1982-06-30 -0.071429 304437.00
+  10057 1982-06-30 -0.113208  86376.75
+  10058 1982-06-30  0.000000   1061.25
+the key  `m`    is a Timestamp  -&gt;  1982-07-31
+the group `rows` is a DataFrame with shape (4967, 9)
+
+ permno       date       ret      me_l1
+  10006 1982-07-31 -0.076923 284297.000
+  10057 1982-07-31  0.007092  76756.875
+  10058 1982-07-31  0.000000   1059.375
+the key  `m`    is a Timestamp  -&gt;  1982-08-31
+the group `rows` is a DataFrame with shape (4974, 9)
+
+ permno       date      ret      me_l1
+  10006 1982-08-31 0.107544 262428.000
+  10057 1982-08-31 0.174648  77301.250
+  10058 1982-08-31 0.000000   1059.375
+the key  `m`    is a Timestamp  -&gt;  1982-09-30
+the group `rows` is a DataFrame with shape (4957, 9)
+
+ permno       date       ret      me_l1
+  10006 1982-09-30  0.040486 284297.000
+  10057 1982-09-30 -0.079268  89277.500
+  10058 1982-09-30  0.066667   1059.375
+the key  `m`    is a Timestamp  -&gt;  1982-10-31
+the group `rows` is a DataFrame with shape (4929, 9)
+
+ permno       date       ret      me_l1
+  10006 1982-10-31 -0.035020 253048.625
+  10057 1982-10-31  0.005298  82257.250
+  10058 1982-10-31 -0.125000   1130.000
+the key  `m`    is a Timestamp  -&gt;  1982-11-30
+the group `rows` is a DataFrame with shape (4927, 9)
+
+ permno       date       ret     me_l1
+  10006 1982-11-30  0.046452 244187.00
+  10057 1982-11-30 -0.046980  81167.75
+  10058 1982-11-30  0.000000    988.75
+the key  `m`    is a Timestamp  -&gt;  1982-12-31
+the group `rows` is a DataFrame with shape (4921, 9)
+
+ permno       date       ret     me_l1
+  10006 1982-12-31  0.031496 250475.75
+  10057 1982-12-31  0.021127  77354.50
+  10058 1982-12-31 -0.071429    988.75
+the key  `m`    is a Timestamp  -&gt;  1983-01-31
+the group `rows` is a DataFrame with shape (4930, 9)
+
+ permno       date      ret     me_l1
+  10006 1983-01-31 0.026718 269106.75
+  10057 1983-01-31 0.034483  78988.75
+  10058 1983-01-31 0.000000    913.25
+the key  `m`    is a Timestamp  -&gt;  1983-02-28
+the group `rows` is a DataFrame with shape (4966, 9)
+
+ permno       date       ret      me_l1
+  10006 1983-02-28 -0.038959 276296.625
+  10057 1983-02-28 -0.001333  81712.500
+  10058 1983-02-28  0.076923    913.250
+the key  `m`    is a Timestamp  -&gt;  1983-03-31
+the group `rows` is a DataFrame with shape (4968, 9)
+
+ permno       date      ret      me_l1
+  10006 1983-03-31 0.007905 259862.625
+  10057 1983-03-31 0.061225  80151.750
+  10058 1983-03-31 0.000000    983.500
+the key  `m`    is a Timestamp  -&gt;  1983-04-30
+the group `rows` is a DataFrame with shape (4980, 9)
+
+ permno       date      ret      me_l1
+  10006 1983-04-30 0.066667 261916.875
+  10057 1983-04-30 0.038462  85059.000
+  10058 1983-04-30 0.000000    983.500
+the key  `m`    is a Timestamp  -&gt;  1983-05-31
+the group `rows` is a DataFrame with shape (5017, 9)
+
+ permno       date       ret    me_l1
+  10006 1983-05-31 -0.008088 279378.0
+  10057 1983-05-31  0.122222  88330.5
+  10058 1983-05-31  0.000000    983.5
+the key  `m`    is a Timestamp  -&gt;  1983-06-30
+the group `rows` is a DataFrame with shape (5037, 9)
+
+ permno       date      ret      me_l1
+  10006 1983-06-30 0.033708 276178.125
+  10057 1983-06-30 0.127072  98690.250
+  10058 1983-06-30 0.000000    983.500
+the key  `m`    is a Timestamp  -&gt;  1983-07-31
+the group `rows` is a DataFrame with shape (5086, 9)
+
+ permno       date       ret    me_l1
+  10006 1983-07-31 -0.014493 285487.5
+  10057 1983-07-31 -0.127451 111333.0
+  10058 1983-07-31  0.000000    983.5
+the key  `m`    is a Timestamp  -&gt;  1983-08-31
+the group `rows` is a DataFrame with shape (5137, 9)
+
+ permno       date       ret    me_l1
+  10006 1983-08-31 -0.055882 281350.0
+  10057 1983-08-31  0.071910  97143.5
+  10058 1983-08-31  0.000000    983.5
+the key  `m`    is a Timestamp  -&gt;  1983-09-30
+the group `rows` is a DataFrame with shape (5202, 9)
+
+ permno       date       ret     me_l1
+  10006 1983-09-30  0.574803 262731.25
+  10057 1983-09-30 -0.042105 103692.50
+  10058 1983-09-30 -0.071429    983.50
+the key  `m`    is a Timestamp  -&gt;  1983-10-31
+the group `rows` is a DataFrame with shape (5286, 9)
+
+ permno       date       ret       me_l1
+  10006 1983-10-31 -0.025000 415950.0000
+  10057 1983-10-31 -0.006593  96323.5000
+  10058 1983-10-31  0.000000    910.8125
+the key  `m`    is a Timestamp  -&gt;  1983-11-30
+the group `rows` is a DataFrame with shape (5357, 9)
+
+ permno       date      ret     me_l1
+  10006 1983-11-30 0.053333 405551.25
+  10015 1983-11-30 0.181818  24530.00
+  10057 1983-11-30 0.172222  95265.00
+the key  `m`    is a Timestamp  -&gt;  1983-12-31
+the group `rows` is a DataFrame with shape (5428, 9)
+
+ permno       date       ret     me_l1
+  10006 1983-12-31 -0.019608 426462.00
+  10015 1983-12-31 -0.076923  28990.00
+  10057 1983-12-31 -0.042654 111671.75
+the key  `m`    is a Timestamp  -&gt;  1984-01-31
+the group `rows` is a DataFrame with shape (5481, 9)
+
+ permno       date       ret    me_l1
+  10006 1984-01-31 -0.087500 419250.0
+  10015 1984-01-31  0.100000  26775.0
+  10057 1984-01-31 -0.014852 106908.5
+the key  `m`    is a Timestamp  -&gt;  1984-02-29
+the group `rows` is a DataFrame with shape (5560, 9)
+
+ permno       date       ret      me_l1
+  10006 1984-02-29  0.054247 382565.625
+  10015 1984-02-29 -0.196970  29452.500
+  10031 1984-02-29 -0.121951  13750.375
+the key  `m`    is a Timestamp  -&gt;  1984-03-31
+the group `rows` is a DataFrame with shape (5605, 9)
+
+ permno       date       ret     me_l1
+  10006 1984-03-31  0.068063 400383.75
+  10015 1984-03-31 -0.009434  23651.25
+  10031 1984-03-31  0.166667  12073.50
+the key  `m`    is a Timestamp  -&gt;  1984-04-30
+the group `rows` is a DataFrame with shape (5650, 9)
+
+ permno       date       ret     me_l1
+  10006 1984-04-30  0.031863 427635.00
+  10015 1984-04-30  0.104762  23415.00
+  10031 1984-04-30 -0.178571  14085.75
+the key  `m`    is a Timestamp  -&gt;  1984-05-31
+the group `rows` is a DataFrame with shape (5686, 9)
+
+ permno       date       ret       me_l1
+  10006 1984-05-31  0.000000 441260.6250
+  10015 1984-05-31 -0.189655  25868.0000
+  10031 1984-05-31  0.014493  11570.4375
+the key  `m`    is a Timestamp  -&gt;  1984-06-30
+the group `rows` is a DataFrame with shape (5686, 9)
+
+ permno       date       ret      me_l1
+  10015 1984-06-30  0.010638  20962.000
+  10031 1984-06-30 -0.028571  11738.125
+  10057 1984-06-30 -0.060811 112961.000
+the key  `m`    is a Timestamp  -&gt;  1984-07-31
+the group `rows` is a DataFrame with shape (5697, 9)
+
+ permno       date       ret     me_l1
+  10015 1984-07-31 -0.168421  21185.00
+  10031 1984-07-31 -0.235294  11402.75
+  10057 1984-07-31 -0.215827 106126.50
+the key  `m`    is a Timestamp  -&gt;  1984-08-31
+the group `rows` is a DataFrame with shape (5727, 9)
+
+ permno       date       ret    me_l1
+  10015 1984-08-31 -0.164557 17617.00
+  10031 1984-08-31  0.076923  8719.75
+  10057 1984-08-31  0.089908 83221.50
+the key  `m`    is a Timestamp  -&gt;  1984-09-30
+the group `rows` is a DataFrame with shape (5704, 9)
+
+ permno       date      ret   me_l1
+  10015 1984-09-30 0.166667 14718.0
+  10031 1984-09-30 0.000000  9390.5
+  10057 1984-09-30 0.008475 90093.0
+the key  `m`    is a Timestamp  -&gt;  1984-10-31
+the group `rows` is a DataFrame with shape (5694, 9)
+
+ permno       date       ret    me_l1
+  10015 1984-10-31 -0.116883 17171.00
+  10031 1984-10-31 -0.107143  9390.50
+  10057 1984-10-31  0.065546 90886.25
+the key  `m`    is a Timestamp  -&gt;  1984-11-30
+the group `rows` is a DataFrame with shape (5673, 9)
+
+ permno       date       ret     me_l1
+  10015 1984-11-30 -0.132353 15164.000
+  10031 1984-11-30 -0.160000  8384.375
+  10057 1984-11-30 -0.095238 96232.500
+the key  `m`    is a Timestamp  -&gt;  1984-12-31
+the group `rows` is a DataFrame with shape (5680, 9)
+
+ permno       date       ret     me_l1
+  10015 1984-12-31  0.033898 13157.000
+  10031 1984-12-31  0.142857  7042.875
+  10057 1984-12-31 -0.087719 87067.500
+the key  `m`    is a Timestamp  -&gt;  1985-01-31
+the group `rows` is a DataFrame with shape (5669, 9)
+
+ permno       date      ret     me_l1
+  10015 1985-01-31 0.311475 13610.625
+  10031 1985-01-31 0.083333  8049.000
+  10057 1985-01-31 0.440385 79430.000
+the key  `m`    is a Timestamp  -&gt;  1985-02-28
+the group `rows` is a DataFrame with shape (5673, 9)
+
+ permno       date       ret     me_l1
+  10015 1985-02-28  0.200000  17850.00
+  10031 1985-02-28 -0.038462   8719.75
+  10057 1985-02-28 -0.013423 113798.75
+the key  `m`    is a Timestamp  -&gt;  1985-03-31
+the group `rows` is a DataFrame with shape (5674, 9)
+
+ permno       date       ret      me_l1
+  10015 1985-03-31 -0.083333  21420.000
+  10031 1985-03-31  0.000000   8384.375
+  10057 1985-03-31 -0.156463 112271.250
+the key  `m`    is a Timestamp  -&gt;  1985-04-30
+the group `rows` is a DataFrame with shape (5662, 9)
+
+ permno       date       ret     me_l1
+  10015 1985-04-30  0.113636 19596.500
+  10031 1985-04-30 -0.020000  8384.375
+  10057 1985-04-30 -0.058065 94705.000
+the key  `m`    is a Timestamp  -&gt;  1985-05-31
+the group `rows` is a DataFrame with shape (5637, 9)
+
+ permno       date       ret      me_l1
+  10015 1985-05-31 -0.040816 21823.3750
+  10031 1985-05-31  0.224490  8216.6875
+  10057 1985-05-31 -0.008621 88595.0000
+the key  `m`    is a Timestamp  -&gt;  1985-06-30
+the group `rows` is a DataFrame with shape (5621, 9)
+
+ permno       date      ret     me_l1
+  10015 1985-06-30 0.106383 20932.625
+  10031 1985-06-30 0.000000 10061.250
+  10057 1985-06-30 0.173913 87831.250
+the key  `m`    is a Timestamp  -&gt;  1985-07-31
+the group `rows` is a DataFrame with shape (5612, 9)
+
+ permno       date       ret     me_l1
+  10015 1985-07-31  0.038462  25902.50
+  10031 1985-07-31  0.383333  10061.25
+  10057 1985-07-31 -0.060741 103106.25
+the key  `m`    is a Timestamp  -&gt;  1985-08-31
+the group `rows` is a DataFrame with shape (5615, 9)
+
+ permno       date       ret      me_l1
+  10015 1985-08-31  0.074074 26898.7500
+  10031 1985-08-31  0.036145 13918.0625
+  10057 1985-08-31 -0.103175 96232.5000
+the key  `m`    is a Timestamp  -&gt;  1985-09-30
+the group `rows` is a DataFrame with shape (5621, 9)
+
+ permno       date       ret     me_l1
+  10015 1985-09-30  0.103448 28891.250
+  10031 1985-09-30 -0.023256 14421.125
+  10057 1985-09-30 -0.079646 86303.750
+the key  `m`    is a Timestamp  -&gt;  1985-10-31
+the group `rows` is a DataFrame with shape (5624, 9)
+
+ permno       date       ret    me_l1
+  10015 1985-10-31  0.000000 31880.00
+  10031 1985-10-31  0.000000 14085.75
+  10057 1985-10-31 -0.088462 81627.00
+the key  `m`    is a Timestamp  -&gt;  1985-11-30
+the group `rows` is a DataFrame with shape (5622, 9)
+
+ permno       date       ret    me_l1
+  10015 1985-11-30  0.187500 31880.00
+  10031 1985-11-30 -0.095238 14085.75
+  10057 1985-11-30  0.127660 73778.25
+the key  `m`    is a Timestamp  -&gt;  1985-12-31
+the group `rows` is a DataFrame with shape (5622, 9)
+
+ permno       date       ret    me_l1
+  10015 1985-12-31  0.065790 37857.50
+  10031 1985-12-31 -0.013158 12744.25
+  10057 1985-12-31 -0.056604 83196.75
+the key  `m`    is a Timestamp  -&gt;  1986-01-31
+the group `rows` is a DataFrame with shape (5628, 9)
+
+ permno       date      ret      me_l1
+  10015 1986-01-31 0.000000 40378.5000
+  10031 1986-01-31 0.013333 12576.5625
+  10057 1986-01-31 0.098000 78487.5000
+the key  `m`    is a Timestamp  -&gt;  1986-02-28
+the group `rows` is a DataFrame with shape (5642, 9)
+
+ permno       date       ret     me_l1
+  10015 1986-02-28  0.086420 40378.500
+  10031 1986-02-28 -0.026316 12744.250
+  10057 1986-02-28 -0.100917 85551.375
+the key  `m`    is a Timestamp  -&gt;  1986-03-31
+the group `rows` is a DataFrame with shape (5632, 9)
+
+ permno       date      ret    me_l1
+  10000 1986-03-31 0.365385 11960.00
+  10001 1986-03-31 0.025200  6156.25
+  10002 1986-03-31 0.070755 15568.75
+the key  `m`    is a Timestamp  -&gt;  1986-04-30
+the group `rows` is a DataFrame with shape (5626, 9)
+
+ permno       date       ret      me_l1
+  10000 1986-04-30 -0.098592 16330.0000
+  10001 1986-04-30  0.009901  6217.8125
+  10002 1986-04-30  0.052863 16670.3125
+the key  `m`    is a Timestamp  -&gt;  1986-05-31
+the group `rows` is a DataFrame with shape (5634, 9)
+
+ permno       date       ret      me_l1
+  10000 1986-05-31 -0.222656 15172.0000
+  10001 1986-05-31 -0.009804  6279.3750
+  10002 1986-05-31 -0.020921 17551.5625
+the key  `m`    is a Timestamp  -&gt;  1986-06-30
+the group `rows` is a DataFrame with shape (5645, 9)
+
+ permno       date       ret       me_l1
+  10000 1986-06-30 -0.005025 11793.87793
+  10001 1986-06-30 -0.013069  6217.81250
+  10002 1986-06-30 -0.132479 17184.37500
+the key  `m`    is a Timestamp  -&gt;  1986-07-31
+the group `rows` is a DataFrame with shape (5680, 9)
+
+ permno       date       ret       me_l1
+  10000 1986-07-31 -0.080808 11734.59375
+  10001 1986-07-31 -0.010204  6033.12500
+  10002 1986-07-31  0.049261 14907.81250
+the key  `m`    is a Timestamp  -&gt;  1986-08-31
+the group `rows` is a DataFrame with shape (5749, 9)
+
+ permno       date       ret       me_l1
+  10000 1986-08-31 -0.615385 10786.34375
+  10001 1986-08-31  0.072165  5971.56250
+  10002 1986-08-31  0.000000 15642.18750
+the key  `m`    is a Timestamp  -&gt;  1986-09-30
+the group `rows` is a DataFrame with shape (5799, 9)
+
+ permno       date       ret       me_l1
+  10000 1986-09-30 -0.057143  4148.59375
+  10001 1986-09-30 -0.003077  6402.50000
+  10002 1986-09-30  0.070423 15642.18750
+the key  `m`    is a Timestamp  -&gt;  1986-10-31
+the group `rows` is a DataFrame with shape (5824, 9)
+
+ permno       date       ret       me_l1
+  10000 1986-10-31 -0.242424  3911.53125
+  10001 1986-10-31  0.039216  6317.62500
+  10002 1986-10-31 -0.061404 16743.75000
+the key  `m`    is a Timestamp  -&gt;  1986-11-30
+the group `rows` is a DataFrame with shape (5836, 9)
+
+ permno       date      ret       me_l1
+  10000 1986-11-30 0.060000  3002.34375
+  10001 1986-11-30 0.056604  6565.37500
+  10002 1986-11-30 0.000000 15715.62500
+the key  `m`    is a Timestamp  -&gt;  1986-12-31
+the group `rows` is a DataFrame with shape (5829, 9)
+
+ permno       date       ret        me_l1
+  10000 1986-12-31 -0.377358  3182.503662
+  10001 1986-12-31  0.015000  6937.000000
+  10002 1986-12-31 -0.074766 15715.625000
+the key  `m`    is a Timestamp  -&gt;  1987-01-31
+the group `rows` is a DataFrame with shape (5858, 9)
+
+ permno       date       ret       me_l1
+  10000 1987-01-31 -0.212121  1981.56604
+  10001 1987-01-31 -0.035714  6937.00000
+  10002 1987-01-31  0.095960 14540.62500
+the key  `m`    is a Timestamp  -&gt;  1987-02-28
+the group `rows` is a DataFrame with shape (5938, 9)
+
+ permno       date       ret       me_l1
+  10000 1987-02-28  0.000000  1581.53125
+  10001 1987-02-28 -0.074074  6689.25000
+  10002 1987-02-28 -0.013825 15935.93750
+the key  `m`    is a Timestamp  -&gt;  1987-03-31
+the group `rows` is a DataFrame with shape (5958, 9)
+
+ permno       date       ret       me_l1
+  10000 1987-03-31 -0.384615  1581.53125
+  10001 1987-03-31  0.036800  6193.75000
+  10002 1987-03-31 -0.037383 15715.62500
+the key  `m`    is a Timestamp  -&gt;  1987-04-30
+the group `rows` is a DataFrame with shape (6002, 9)
+
+ permno       date       ret     me_l1
+  10000 1987-04-30 -0.062500   973.250
+  10001 1987-04-30 -0.039216  6317.625
+  10002 1987-04-30  0.009709 15128.125
+the key  `m`    is a Timestamp  -&gt;  1987-05-31
+the group `rows` is a DataFrame with shape (6062, 9)
+
+ permno       date       ret        me_l1
+  10000 1987-05-31 -0.066667   912.441345
+  10001 1987-05-31 -0.071429  6069.875000
+  10002 1987-05-31  0.038462 15275.000000
+the key  `m`    is a Timestamp  -&gt;  1987-06-30
+the group `rows` is a DataFrame with shape (6074, 9)
+
+ permno       date       ret      me_l1
+  10001 1987-06-30  0.051429  5636.3125
+  10002 1987-06-30  0.000000 15862.5000
+  10003 1987-06-30 -0.027397 39985.7500
+the key  `m`    is a Timestamp  -&gt;  1987-07-31
+the group `rows` is a DataFrame with shape (6108, 9)
+
+ permno       date       ret     me_l1
+  10001 1987-07-31  0.021277  5822.125
+  10002 1987-07-31  0.037037 15862.500
+  10003 1987-07-31 -0.049296 38890.250
+the key  `m`    is a Timestamp  -&gt;  1987-08-31
+the group `rows` is a DataFrame with shape (6167, 9)
+
+ permno       date       ret     me_l1
+  10001 1987-08-31  0.083333  5946.000
+  10002 1987-08-31 -0.035714 16450.000
+  10003 1987-08-31  0.065185 36973.125
+the key  `m`    is a Timestamp  -&gt;  1987-09-30
+the group `rows` is a DataFrame with shape (6211, 9)
+
+ permno       date       ret     me_l1
+  10001 1987-09-30 -0.022308  6441.500
+  10002 1987-09-30 -0.074074 15862.500
+  10003 1987-09-30 -0.041958 39164.125
+the key  `m`    is a Timestamp  -&gt;  1987-10-31
+the group `rows` is a DataFrame with shape (6237, 9)
+
+ permno       date       ret     me_l1
+  10001 1987-10-31  0.020000  6200.000
+  10002 1987-10-31 -0.200000 14687.500
+  10003 1987-10-31 -0.226277 37520.875
+the key  `m`    is a Timestamp  -&gt;  1987-11-30
+the group `rows` is a DataFrame with shape (6270, 9)
+
+ permno       date       ret    me_l1
+  10001 1987-11-30 -0.029412  6324.00
+  10002 1987-11-30  0.012500 11750.00
+  10003 1987-11-30  0.113208 29030.75
+the key  `m`    is a Timestamp  -&gt;  1987-12-31
+the group `rows` is a DataFrame with shape (6260, 9)
+
+ permno       date       ret     me_l1
+  10001 1987-12-31 -0.033535  6138.000
+  10002 1987-12-31 -0.012346 11896.875
+  10003 1987-12-31 -0.034483 31813.000
+the key  `m`    is a Timestamp  -&gt;  1988-01-31
+the group `rows` is a DataFrame with shape (6239, 9)
+
+ permno       date      ret   me_l1
+  10001 1988-01-31 0.063830  5828.0
+  10002 1988-01-31 0.037500 11750.0
+  10003 1988-01-31 0.339286 30716.0
+the key  `m`    is a Timestamp  -&gt;  1988-02-29
+the group `rows` is a DataFrame with shape (6210, 9)
+
+ permno       date       ret     me_l1
+  10001 1988-02-29  0.080000  6200.000
+  10002 1988-02-29 -0.036145 12190.625
+  10003 1988-02-29  0.026667 41137.500
+the key  `m`    is a Timestamp  -&gt;  1988-03-31
+the group `rows` is a DataFrame with shape (6184, 9)
+
+ permno       date       ret   me_l1
+  10001 1988-03-31 -0.076296  6696.0
+  10002 1988-03-31  0.025000 11750.0
+  10003 1988-03-31  0.026316 41686.0
+the key  `m`    is a Timestamp  -&gt;  1988-04-30
+the group `rows` is a DataFrame with shape (6160, 9)
+
+ permno       date       ret    me_l1
+  10001 1988-04-30  0.030612  6076.00
+  10002 1988-04-30 -0.048781 12043.75
+  10003 1988-04-30 -0.089744 42783.00
+the key  `m`    is a Timestamp  -&gt;  1988-05-31
+the group `rows` is a DataFrame with shape (6116, 9)
+
+ permno       date       ret    me_l1
+  10001 1988-05-31  0.019802  6262.00
+  10002 1988-05-31 -0.012821 11456.25
+  10003 1988-05-31  0.063380 38943.50
+the key  `m`    is a Timestamp  -&gt;  1988-06-30
+the group `rows` is a DataFrame with shape (6100, 9)
+
+ permno       date       ret     me_l1
+  10001 1988-06-30 -0.012039  6386.000
+  10002 1988-06-30  0.025974 11309.375
+  10003 1988-06-30  0.127517 40863.250
+the key  `m`    is a Timestamp  -&gt;  1988-07-31
+the group `rows` is a DataFrame with shape (6104, 9)
+
+ permno       date       ret     me_l1
+  10001 1988-07-31  0.030000  6200.000
+  10002 1988-07-31 -0.012658 11603.125
+  10003 1988-07-31  0.059524 46074.000
+the key  `m`    is a Timestamp  -&gt;  1988-08-31
+the group `rows` is a DataFrame with shape (6071, 9)
+
+ permno       date       ret    me_l1
+  10001 1988-08-31  0.029126  6386.00
+  10002 1988-08-31 -0.025641 11456.25
+  10003 1988-08-31 -0.056180 48816.50
+the key  `m`    is a Timestamp  -&gt;  1988-09-30
+the group `rows` is a DataFrame with shape (6050, 9)
+
+ permno       date       ret   me_l1
+  10001 1988-09-30 -0.021132  6572.0
+  10002 1988-09-30 -0.013158 11162.5
+  10003 1988-09-30 -0.108434 45525.5
+the key  `m`    is a Timestamp  -&gt;  1988-10-31
+the group `rows` is a DataFrame with shape (6054, 9)
+
+ permno       date      ret     me_l1
+  10001 1988-10-31 0.039216  6362.250
+  10002 1988-10-31 0.000000 11015.625
+  10003 1988-10-31 0.027027 40589.000
+the key  `m`    is a Timestamp  -&gt;  1988-11-30
+the group `rows` is a DataFrame with shape (6020, 9)
+
+ permno       date       ret     me_l1
+  10001 1988-11-30  0.000000  6611.750
+  10002 1988-11-30 -0.066667 11015.625
+  10003 1988-11-30  0.000000 41686.000
+the key  `m`    is a Timestamp  -&gt;  1988-12-31
+the group `rows` is a DataFrame with shape (5985, 9)
+
+ permno       date       ret    me_l1
+  10001 1988-12-31 -0.021132  6611.75
+  10002 1988-12-31 -0.042857 10281.25
+  10003 1988-12-31  0.013333 41137.50
+the key  `m`    is a Timestamp  -&gt;  1989-01-31
+the group `rows` is a DataFrame with shape (5963, 9)
+
+ permno       date       ret     me_l1
+  10001 1989-01-31  0.019608  6362.250
+  10002 1989-01-31  0.059702  9840.625
+  10003 1989-01-31 -0.039474 41686.000
+the key  `m`    is a Timestamp  -&gt;  1989-02-28
+the group `rows` is a DataFrame with shape (5949, 9)
+
+ permno       date       ret     me_l1
+  10001 1989-02-28  0.038462  6487.000
+  10002 1989-02-28 -0.014085 10428.125
+  10003 1989-02-28 -0.054795 40040.500
+the key  `m`    is a Timestamp  -&gt;  1989-03-31
+the group `rows` is a DataFrame with shape (5936, 9)
+
+ permno       date       ret    me_l1
+  10001 1989-03-31  0.017778  6736.50
+  10002 1989-03-31 -0.028571 10281.25
+  10003 1989-03-31  0.073529 37298.00
+the key  `m`    is a Timestamp  -&gt;  1989-04-30
+the group `rows` is a DataFrame with shape (5921, 9)
+
+ permno       date       ret   me_l1
+  10001 1989-04-30  0.074074  6736.5
+  10002 1989-04-30 -0.029412  9987.5
+  10003 1989-04-30 -0.054795 40040.5
+the key  `m`    is a Timestamp  -&gt;  1989-05-31
+the group `rows` is a DataFrame with shape (5886, 9)
+
+ permno       date       ret    me_l1
+  10001 1989-05-31 -0.034483  7235.50
+  10002 1989-05-31 -0.030303  9693.75
+  10003 1989-05-31  0.123188 37846.50
+the key  `m`    is a Timestamp  -&gt;  1989-06-30
+the group `rows` is a DataFrame with shape (5850, 9)
+
+ permno       date       ret    me_l1
+  10001 1989-06-30  0.017143  6986.00
+  10002 1989-06-30  0.046875  9400.00
+  10003 1989-06-30 -0.189542 41960.25
+the key  `m`    is a Timestamp  -&gt;  1989-07-31
+the group `rows` is a DataFrame with shape (5844, 9)
+
+ permno       date       ret     me_l1
+  10001 1989-07-31  0.035714  7007.000
+  10002 1989-07-31 -0.029851  9840.625
+  10003 1989-07-31  0.032258 34007.000
+the key  `m`    is a Timestamp  -&gt;  1989-08-31
+the group `rows` is a DataFrame with shape (5825, 9)
+
+ permno       date       ret     me_l1
+  10001 1989-08-31  0.275862  7257.250
+  10002 1989-08-31 -0.030769  9546.875
+  10003 1989-08-31  0.126563 35104.000
+the key  `m`    is a Timestamp  -&gt;  1989-09-30
+the group `rows` is a DataFrame with shape (5806, 9)
+
+ permno       date       ret     me_l1
+  10001 1989-09-30 -0.027027  9259.250
+  10002 1989-09-30 -0.095238  9253.125
+  10003 1989-09-30 -0.070423 38943.500
+the key  `m`    is a Timestamp  -&gt;  1989-10-31
+the group `rows` is a DataFrame with shape (5797, 9)
+
+ permno       date       ret     me_l1
+  10001 1989-10-31  0.070423  9043.625
+  10002 1989-10-31 -0.122807  8371.875
+  10003 1989-10-31 -0.196970 36201.000
+the key  `m`    is a Timestamp  -&gt;  1989-11-30
+the group `rows` is a DataFrame with shape (5773, 9)
+
+ permno       date       ret    me_l1
+  10001 1989-11-30  0.039474  9680.50
+  10002 1989-11-30  0.020000  7343.75
+  10003 1989-11-30 -0.132075 29070.50
+the key  `m`    is a Timestamp  -&gt;  1989-12-31
+the group `rows` is a DataFrame with shape (5758, 9)
+
+ permno       date       ret     me_l1
+  10001 1989-12-31  0.037975 10062.625
+  10002 1989-12-31 -0.039216  7490.625
+  10003 1989-12-31 -0.260870 25231.000
+the key  `m`    is a Timestamp  -&gt;  1990-01-31
+the group `rows` is a DataFrame with shape (5755, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-01-31 -0.018519 10347.750
+  10002 1990-01-31  0.020408  7196.875
+  10003 1990-01-31 -0.088235 18649.000
+the key  `m`    is a Timestamp  -&gt;  1990-02-28
+the group `rows` is a DataFrame with shape (5768, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-02-28 -0.006289 10156.125
+  10002 1990-02-28  0.020000  7343.750
+  10003 1990-02-28  0.258065 17003.500
+the key  `m`    is a Timestamp  -&gt;  1990-03-31
+the group `rows` is a DataFrame with shape (5761, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-03-31  0.012658 10092.250
+  10002 1990-03-31  0.000000  7490.625
+  10003 1990-03-31 -0.179487 21391.500
+the key  `m`    is a Timestamp  -&gt;  1990-04-30
+the group `rows` is a DataFrame with shape (5743, 9)
+
+ permno       date    ret     me_l1
+  10001 1990-04-30  0.000 10141.625
+  10002 1990-04-30  0.000  7490.625
+  10003 1990-04-30 -0.125 17552.000
+the key  `m`    is a Timestamp  -&gt;  1990-05-31
+the group `rows` is a DataFrame with shape (5739, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-05-31 -0.012658 10141.625
+  10002 1990-05-31  0.000000  7490.625
+  10003 1990-05-31  0.000000 15358.000
+the key  `m`    is a Timestamp  -&gt;  1990-06-30
+the group `rows` is a DataFrame with shape (5723, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-06-30  0.014103 10013.250
+  10002 1990-06-30  0.000000  7490.625
+  10003 1990-06-30 -0.178571 15358.000
+the key  `m`    is a Timestamp  -&gt;  1990-07-31
+the group `rows` is a DataFrame with shape (5715, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-07-31  0.025641 10052.250
+  10002 1990-07-31 -0.039216  7490.625
+  10003 1990-07-31 -0.130435 12615.500
+the key  `m`    is a Timestamp  -&gt;  1990-08-31
+the group `rows` is a DataFrame with shape (5714, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-08-31 -0.050000 10310.000
+  10002 1990-08-31 -0.040816  7196.875
+  10003 1990-08-31  0.225000 10970.000
+the key  `m`    is a Timestamp  -&gt;  1990-09-30
+the group `rows` is a DataFrame with shape (5722, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-09-30  0.040790  9794.500
+  10002 1990-09-30 -0.127660  6903.125
+  10003 1990-09-30 -0.367347 13438.250
+the key  `m`    is a Timestamp  -&gt;  1990-10-31
+the group `rows` is a DataFrame with shape (5715, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-10-31 -0.012821 10179.000
+  10002 1990-10-31  0.073171  6021.875
+  10003 1990-10-31  0.032258  8501.750
+the key  `m`    is a Timestamp  -&gt;  1990-11-30
+the group `rows` is a DataFrame with shape (5692, 9)
+
+ permno       date       ret   me_l1
+  10001 1990-11-30  0.000000 10048.5
+  10002 1990-11-30 -0.022727  6462.5
+  10003 1990-11-30 -0.187500  8776.0
+the key  `m`    is a Timestamp  -&gt;  1990-12-31
+the group `rows` is a DataFrame with shape (5675, 9)
+
+ permno       date       ret     me_l1
+  10001 1990-12-31  0.001299 10048.500
+  10002 1990-12-31 -0.069767  6315.625
+  10003 1990-12-31 -0.230769  7130.500
+the key  `m`    is a Timestamp  -&gt;  1991-01-31
+the group `rows` is a DataFrame with shape (5650, 9)
+
+ permno       date       ret   me_l1
+  10001 1991-01-31  0.013158 10013.0
+  10002 1991-01-31 -0.025000  5875.0
+  10003 1991-01-31  0.050000  5485.0
+the key  `m`    is a Timestamp  -&gt;  1991-02-28
+the group `rows` is a DataFrame with shape (5640, 9)
+
+ permno       date      ret     me_l1
+  10001 1991-02-28 0.012987 10144.750
+  10002 1991-02-28 0.000000  5728.125
+  10003 1991-02-28 0.142857  5759.250
+the key  `m`    is a Timestamp  -&gt;  1991-03-31
+the group `rows` is a DataFrame with shape (5620, 9)
+
+ permno       date       ret     me_l1
+  10001 1991-03-31 -0.011539 10276.500
+  10002 1991-03-31  0.000000  5728.125
+  10003 1991-03-31 -0.041667  6582.000
+the key  `m`    is a Timestamp  -&gt;  1991-04-30
+the group `rows` is a DataFrame with shape (5583, 9)
+
+ permno       date       ret     me_l1
+  10001 1991-04-30  0.039474 10013.000
+  10002 1991-04-30 -0.051282  5728.125
+  10003 1991-04-30  0.000000  6307.750
+the key  `m`    is a Timestamp  -&gt;  1991-05-31
+the group `rows` is a DataFrame with shape (5572, 9)
+
+ permno       date     ret     me_l1
+  10001 1991-05-31 0.00000 10408.250
+  10002 1991-05-31 0.00000  5434.375
+  10003 1991-05-31 0.26087  6307.750
+the key  `m`    is a Timestamp  -&gt;  1991-06-30
+the group `rows` is a DataFrame with shape (5581, 9)
+
+ permno       date       ret     me_l1
+  10001 1991-06-30  0.078481 10408.250
+  10002 1991-06-30  0.000000  5434.375
+  10003 1991-06-30 -0.310345  7953.250
+the key  `m`    is a Timestamp  -&gt;  1991-07-31
+the group `rows` is a DataFrame with shape (5577, 9)
+
+ permno       date       ret     me_l1
+  10001 1991-07-31 -0.035714 11266.500
+  10002 1991-07-31  0.000000  5434.375
+  10003 1991-07-31  0.200000  5485.000
+the key  `m`    is a Timestamp  -&gt;  1991-08-31
+the group `rows` is a DataFrame with shape (5606, 9)
+
+ permno       date       ret     me_l1
+  10001 1991-08-31  0.135802 10864.125
+  10002 1991-08-31  0.081081  5434.375
+  10003 1991-08-31 -0.041667  6582.000
+the key  `m`    is a Timestamp  -&gt;  1991-09-30
+the group `rows` is a DataFrame with shape (5632, 9)
+
+ permno       date       ret    me_l1
+  10001 1991-09-30  0.013044 12339.50
+  10002 1991-09-30  0.025000  5875.00
+  10003 1991-09-30 -0.043478  6307.75
+the key  `m`    is a Timestamp  -&gt;  1991-10-31
+the group `rows` is a DataFrame with shape (5644, 9)
+
+ permno       date       ret     me_l1
+  10001 1991-10-31  0.130435 12339.500
+  10002 1991-10-31  0.000000  6021.875
+  10003 1991-10-31 -0.272727  6033.500
+the key  `m`    is a Timestamp  -&gt;  1991-11-30
+the group `rows` is a DataFrame with shape (5651, 9)
+
+ permno       date       ret     me_l1
+  10001 1991-11-30  0.134615 13949.000
+  10002 1991-11-30  0.000000  6021.875
+  10003 1991-11-30 -0.187500  4388.000
+the key  `m`    is a Timestamp  -&gt;  1991-12-31
+the group `rows` is a DataFrame with shape (5658, 9)
+
+ permno       date       ret     me_l1
+  10001 1991-12-31 -0.006780 15826.750
+  10002 1991-12-31  0.170732  6021.875
+  10003 1991-12-31 -0.269231  3565.250
+the key  `m`    is a Timestamp  -&gt;  1992-01-31
+the group `rows` is a DataFrame with shape (5675, 9)
+
+ permno       date       ret     me_l1
+  10001 1992-01-31 -0.051724 15587.500
+  10002 1992-01-31  0.020833  7050.000
+  10003 1992-01-31  1.736842  2605.375
+the key  `m`    is a Timestamp  -&gt;  1992-02-29
+the group `rows` is a DataFrame with shape (5694, 9)
+
+ permno       date       ret     me_l1
+  10001 1992-02-29 -0.200000 14781.250
+  10002 1992-02-29  0.000000  7196.875
+  10003 1992-02-29 -0.153846  7130.500
+the key  `m`    is a Timestamp  -&gt;  1992-03-31
+the group `rows` is a DataFrame with shape (5703, 9)
+
+ permno       date      ret     me_l1
+  10001 1992-03-31 0.081818 11825.000
+  10002 1992-03-31 0.040816  7196.875
+  10003 1992-03-31 0.136364  6033.500
+the key  `m`    is a Timestamp  -&gt;  1992-04-30
+the group `rows` is a DataFrame with shape (5715, 9)
+
+ permno       date       ret     me_l1
+  10001 1992-04-30  0.010638 12631.250
+  10002 1992-04-30  0.176471  7490.625
+  10003 1992-04-30 -0.060000  6856.250
+the key  `m`    is a Timestamp  -&gt;  1992-05-31
+the group `rows` is a DataFrame with shape (5744, 9)
+
+ permno       date      ret     me_l1
+  10001 1992-05-31 0.010526 12765.625
+  10002 1992-05-31 0.000000  8812.500
+  10003 1992-05-31 0.106383  6444.875
+the key  `m`    is a Timestamp  -&gt;  1992-06-30
+the group `rows` is a DataFrame with shape (5735, 9)
+
+ permno       date       ret   me_l1
+  10001 1992-06-30 -0.007708 12900.0
+  10002 1992-06-30  0.000000  8812.5
+  10003 1992-06-30 -0.173077  7130.5
+the key  `m`    is a Timestamp  -&gt;  1992-07-31
+the group `rows` is a DataFrame with shape (5717, 9)
+
+ permno       date       ret     me_l1
+  10001 1992-07-31  0.063830 12631.250
+  10002 1992-07-31  0.033333 10815.000
+  10003 1992-07-31 -0.255814  5896.375
+the key  `m`    is a Timestamp  -&gt;  1992-08-31
+the group `rows` is a DataFrame with shape (5724, 9)
+
+ permno       date      ret   me_l1
+  10001 1992-08-31 0.040000 13437.5
+  10002 1992-08-31 0.096774 11175.5
+  10003 1992-08-31 0.062500  4388.0
+the key  `m`    is a Timestamp  -&gt;  1992-09-30
+the group `rows` is a DataFrame with shape (5742, 9)
+
+ permno       date      ret    me_l1
+  10001 1992-09-30 0.165962 13975.00
+  10002 1992-09-30 0.058824 12257.00
+  10003 1992-09-30 0.294118  4662.25
+the key  `m`    is a Timestamp  -&gt;  1992-10-31
+the group `rows` is a DataFrame with shape (5736, 9)
+
+ permno       date       ret   me_l1
+  10001 1992-10-31 -0.025000 16125.0
+  10002 1992-10-31  0.000000 12978.0
+  10003 1992-10-31 -0.272727  6033.5
+the key  `m`    is a Timestamp  -&gt;  1992-11-30
+the group `rows` is a DataFrame with shape (5742, 9)
+
+ permno       date       ret     me_l1
+  10001 1992-11-30 -0.017094 15721.875
+  10002 1992-11-30  0.000000 12978.000
+  10003 1992-11-30  0.375000  4388.000
+the key  `m`    is a Timestamp  -&gt;  1992-12-31
+the group `rows` is a DataFrame with shape (5771, 9)
+
+ permno       date       ret     me_l1
+  10001 1992-12-31 -0.015130 15453.125
+  10002 1992-12-31  0.000000 12978.000
+  10003 1992-12-31  0.409091  6033.500
+the key  `m`    is a Timestamp  -&gt;  1993-01-31
+the group `rows` is a DataFrame with shape (5775, 9)
+
+ permno       date      ret    me_l1
+  10001 1993-01-31 0.000000 15120.00
+  10002 1993-01-31 0.055556 12978.00
+  10003 1993-01-31 0.225806  8501.75
+the key  `m`    is a Timestamp  -&gt;  1993-02-28
+the group `rows` is a DataFrame with shape (5823, 9)
+
+ permno       date       ret   me_l1
+  10001 1993-02-28  0.017857 15120.0
+  10002 1993-02-28  0.105263 13699.0
+  10003 1993-02-28 -0.078947 10421.5
+the key  `m`    is a Timestamp  -&gt;  1993-03-31
+the group `rows` is a DataFrame with shape (5821, 9)
+
+ permno       date       ret    me_l1
+  10001 1993-03-31  0.011053 15390.00
+  10002 1993-03-31 -0.047619 15141.00
+  10003 1993-03-31 -0.028571  9598.75
+the key  `m`    is a Timestamp  -&gt;  1993-04-30
+the group `rows` is a DataFrame with shape (5849, 9)
+
+ permno       date       ret    me_l1
+  10001 1993-04-30  0.070175 15318.75
+  10002 1993-04-30  0.225000 14420.00
+  10003 1993-04-30 -0.176471  9324.50
+the key  `m`    is a Timestamp  -&gt;  1993-05-31
+the group `rows` is a DataFrame with shape (5906, 9)
+
+ permno       date       ret    me_l1
+  10001 1993-05-31 -0.008197 16393.75
+  10002 1993-05-31  0.000000 17664.50
+  10003 1993-05-31 -0.071429  7679.00
+the key  `m`    is a Timestamp  -&gt;  1993-06-30
+the group `rows` is a DataFrame with shape (5943, 9)
+
+ permno       date       ret     me_l1
+  10001 1993-06-30  0.102479 16259.375
+  10002 1993-06-30  0.000000 17664.500
+  10003 1993-06-30 -0.019231 16341.000
+the key  `m`    is a Timestamp  -&gt;  1993-07-31
+the group `rows` is a DataFrame with shape (5971, 9)
+
+ permno       date       ret    me_l1
+  10001 1993-07-31 -0.007576 17985.00
+  10002 1993-07-31  0.000000 17664.50
+  10003 1993-07-31  0.098039 16026.75
+the key  `m`    is a Timestamp  -&gt;  1993-08-31
+the group `rows` is a DataFrame with shape (6016, 9)
+
+ permno       date       ret    me_l1
+  10001 1993-08-31 -0.030534 17848.75
+  10002 1993-08-31  0.030612 17664.50
+  10003 1993-08-31  0.000000 17598.00
+the key  `m`    is a Timestamp  -&gt;  1993-09-30
+the group `rows` is a DataFrame with shape (6061, 9)
+
+ permno       date      ret    me_l1
+  10001 1993-09-30 0.066142 17303.75
+  10002 1993-09-30 0.029703 18205.25
+  10003 1993-09-30 0.035714 17598.00
+the key  `m`    is a Timestamp  -&gt;  1993-10-31
+the group `rows` is a DataFrame with shape (6102, 9)
+
+ permno       date       ret    me_l1
+  10001 1993-10-31  0.029851 18274.25
+  10002 1993-10-31  0.042308 38987.00
+  10003 1993-10-31 -0.172414 18226.50
+the key  `m`    is a Timestamp  -&gt;  1993-11-30
+the group `rows` is a DataFrame with shape (6151, 9)
+
+ permno       date       ret    me_l1
+  10001 1993-11-30 -0.014493 18819.75
+  10002 1993-11-30 -0.046296 40486.50
+  10003 1993-11-30 -0.083333 15084.00
+the key  `m`    is a Timestamp  -&gt;  1993-12-31
+the group `rows` is a DataFrame with shape (6196, 9)
+
+ permno       date       ret     me_l1
+  10001 1993-12-31  0.091177 18547.000
+  10002 1993-12-31  0.010097 38612.125
+  10003 1993-12-31 -0.068182 13827.000
+the key  `m`    is a Timestamp  -&gt;  1994-01-31
+the group `rows` is a DataFrame with shape (6270, 9)
+
+ permno       date       ret     me_l1
+  10001 1994-01-31 -0.047619 20047.125
+  10002 1994-01-31  0.038835 38612.125
+  10003 1994-01-31  0.073171 12884.250
+the key  `m`    is a Timestamp  -&gt;  1994-02-28
+the group `rows` is a DataFrame with shape (6350, 9)
+
+ permno       date       ret     me_l1
+  10001 1994-02-28  0.000000 19092.500
+  10002 1994-02-28 -0.009346 40111.625
+  10003 1994-02-28 -0.090909 13827.000
+the key  `m`    is a Timestamp  -&gt;  1994-03-31
+the group `rows` is a DataFrame with shape (6390, 9)
+
+ permno       date       ret    me_l1
+  10001 1994-03-31 -0.004286 19092.50
+  10002 1994-03-31  0.004528 39736.75
+  10003 1994-03-31  0.050000 12570.00
+the key  `m`    is a Timestamp  -&gt;  1994-04-30
+the group `rows` is a DataFrame with shape (6429, 9)
+
+ permno       date       ret    me_l1
+  10001 1994-04-30 -0.144928 18819.75
+  10002 1994-04-30 -0.056604 39736.75
+  10003 1994-04-30  0.000000 13198.50
+the key  `m`    is a Timestamp  -&gt;  1994-05-31
+the group `rows` is a DataFrame with shape (6480, 9)
+
+ permno       date      ret    me_l1
+  10001 1994-05-31 0.067797 16092.25
+  10002 1994-05-31 0.060000 37487.50
+  10003 1994-05-31 0.190476 13198.50
+the key  `m`    is a Timestamp  -&gt;  1994-06-30
+the group `rows` is a DataFrame with shape (6506, 9)
+
+ permno       date       ret    me_l1
+  10001 1994-06-30  0.107302 17183.25
+  10002 1994-06-30  0.061132 39736.75
+  10003 1994-06-30 -0.100000 15725.00
+the key  `m`    is a Timestamp  -&gt;  1994-07-31
+the group `rows` is a DataFrame with shape (6560, 9)
+
+ permno       date       ret     me_l1
+  10001 1994-07-31  0.072464 18897.375
+  10002 1994-07-31 -0.053571 41986.000
+  10003 1994-07-31  0.022222 14152.500
+the key  `m`    is a Timestamp  -&gt;  1994-08-31
+the group `rows` is a DataFrame with shape (6582, 9)
+
+ permno       date       ret    me_l1
+  10001 1994-08-31 -0.027027 20266.75
+  10002 1994-08-31  0.009434 39736.75
+  10003 1994-08-31 -0.086957 14467.00
+the key  `m`    is a Timestamp  -&gt;  1994-09-30
+the group `rows` is a DataFrame with shape (6586, 9)
+
+ permno       date       ret     me_l1
+  10001 1994-09-30  0.038333 19719.000
+  10002 1994-09-30 -0.022804 40111.625
+  10003 1994-09-30 -0.095238 13214.250
+the key  `m`    is a Timestamp  -&gt;  1994-10-31
+the group `rows` is a DataFrame with shape (6613, 9)
+
+ permno       date       ret    me_l1
+  10001 1994-10-31 -0.054054 20451.75
+  10002 1994-10-31  0.000000 38987.00
+  10003 1994-10-31  0.157895 11955.75
+the key  `m`    is a Timestamp  -&gt;  1994-11-30
+the group `rows` is a DataFrame with shape (6616, 9)
+
+ permno       date       ret    me_l1
+  10001 1994-11-30 -0.042857 19346.25
+  10002 1994-11-30 -0.038462 38987.00
+  10003 1994-11-30 -0.090909 13843.50
+the key  `m`    is a Timestamp  -&gt;  1994-12-31
+the group `rows` is a DataFrame with shape (6624, 9)
+
+ permno       date       ret     me_l1
+  10001 1994-12-31 -0.033433 18517.125
+  10002 1994-12-31  0.055600 37487.500
+  10003 1994-12-31 -0.100000 12592.500
+the key  `m`    is a Timestamp  -&gt;  1995-01-31
+the group `rows` is a DataFrame with shape (6630, 9)
+
+ permno       date       ret     me_l1
+  10001 1995-01-31 -0.031250 17792.000
+  10002 1995-01-31  0.000000 39361.875
+  10003 1995-01-31 -0.055556 11335.500
+the key  `m`    is a Timestamp  -&gt;  1995-02-28
+the group `rows` is a DataFrame with shape (6642, 9)
+
+ permno       date       ret     me_l1
+  10001 1995-02-28 -0.026210 17236.000
+  10002 1995-02-28  0.000000 39361.875
+  10003 1995-02-28  0.029412 10705.750
+the key  `m`    is a Timestamp  -&gt;  1995-03-31
+the group `rows` is a DataFrame with shape (6624, 9)
+
+ permno       date       ret        me_l1
+  10001 1995-03-31  0.006377 16784.261719
+  10002 1995-03-31 -0.022476 39361.875000
+  10003 1995-03-31 -0.085714 11020.625000
+the key  `m`    is a Timestamp  -&gt;  1995-04-30
+the group `rows` is a DataFrame with shape (6635, 9)
+
+ permno       date      ret    me_l1
+  10001 1995-04-30 0.000000 16830.00
+  10002 1995-04-30 0.019608 38237.25
+  10003 1995-04-30 0.500000 10080.00
+the key  `m`    is a Timestamp  -&gt;  1995-05-31
+the group `rows` is a DataFrame with shape (6640, 9)
+
+ permno       date       ret   me_l1
+  10001 1995-05-31  0.050000 16830.0
+  10002 1995-05-31  0.038462 38987.0
+  10003 1995-05-31 -0.125000 15120.0
+the key  `m`    is a Timestamp  -&gt;  1995-06-30
+the group `rows` is a DataFrame with shape (6641, 9)
+
+ permno       date       ret   me_l1
+  10001 1995-06-30  0.060318 17671.5
+  10002 1995-06-30 -0.031111 40486.5
+  10003 1995-06-30  0.523810 13230.0
+the key  `m`    is a Timestamp  -&gt;  1995-07-31
+the group `rows` is a DataFrame with shape (6644, 9)
+
+ permno       date     ret   me_l1
+  10001 1995-07-31 0.00000 18595.5
+  10002 1995-07-31 0.00000 38987.0
+  10003 1995-07-31 0.15625 20168.0
+the key  `m`    is a Timestamp  -&gt;  1995-08-31
+the group `rows` is a DataFrame with shape (6683, 9)
+
+ permno       date       ret    me_l1
+  10001 1995-08-31 -0.030303 18595.50
+  10002 1995-08-31  0.000000 38987.00
+  10003 1995-08-31  0.081081 23319.25
+the key  `m`    is a Timestamp  -&gt;  1995-09-30
+the group `rows` is a DataFrame with shape (6711, 9)
+
+ permno       date      ret   me_l1
+  10001 1995-09-30 0.043750 18032.0
+  10002 1995-09-30 0.121538 38987.0
+  10003 1995-09-30 0.075000 25210.0
+the key  `m`    is a Timestamp  -&gt;  1995-10-31
+the group `rows` is a DataFrame with shape (6741, 9)
+
+ permno       date       ret     me_l1
+  10001 1995-10-31 -0.030303 18810.000
+  10002 1995-10-31 -0.137931 43485.500
+  10003 1995-10-31 -0.046512 27106.125
+the key  `m`    is a Timestamp  -&gt;  1995-11-30
+the group `rows` is a DataFrame with shape (6744, 9)
+
+ permno       date      ret     me_l1
+  10001 1995-11-30 0.093750 18240.000
+  10002 1995-11-30 0.070000 37487.500
+  10003 1995-11-30 0.048781 25845.375
+the key  `m`    is a Timestamp  -&gt;  1995-12-31
+the group `rows` is a DataFrame with shape (6779, 9)
+
+ permno       date      ret     me_l1
+  10001 1995-12-31 0.082857 19950.000
+  10002 1995-12-31 0.052710 40111.625
+  10009 1995-12-31 0.009259 31509.000
+the key  `m`    is a Timestamp  -&gt;  1996-01-31
+the group `rows` is a DataFrame with shape (6804, 9)
+
+ permno       date       ret     me_l1
+  10001 1996-01-31 -0.026667 21384.375
+  10002 1996-01-31 -0.035714 42028.000
+  10009 1996-01-31 -0.009174 31868.875
+the key  `m`    is a Timestamp  -&gt;  1996-02-29
+the group `rows` is a DataFrame with shape (6863, 9)
+
+ permno       date      ret     me_l1
+  10001 1996-02-29 0.013699 20814.125
+  10002 1996-02-29 0.027778 40527.000
+  10009 1996-02-29 0.005926 31576.500
+the key  `m`    is a Timestamp  -&gt;  1996-03-31
+the group `rows` is a DataFrame with shape (6870, 9)
+
+ permno       date      ret    me_l1
+  10001 1996-03-31 0.036149 21099.25
+  10002 1996-03-31 0.052252 41652.75
+  10009 1996-03-31 0.101852 31576.50
+the key  `m`    is a Timestamp  -&gt;  1996-04-30
+the group `rows` is a DataFrame with shape (6904, 9)
+
+ permno       date       ret        me_l1
+  10001 1996-04-30 -0.070840 21899.433594
+  10002 1996-04-30 -0.043103 43529.000000
+  10009 1996-04-30 -0.025210 34941.375000
+the key  `m`    is a Timestamp  -&gt;  1996-05-31
+the group `rows` is a DataFrame with shape (6953, 9)
+
+ permno       date       ret      me_l1
+  10001 1996-05-31 -0.021277 20348.0625
+  10002 1996-05-31  0.000000 41652.7500
+  10009 1996-05-31  0.040000 34060.5000
+the key  `m`    is a Timestamp  -&gt;  1996-06-30
+the group `rows` is a DataFrame with shape (6999, 9)
+
+ permno       date       ret     me_l1
+  10001 1996-06-30 -0.060290 19915.125
+  10002 1996-06-30  0.007207 41652.750
+  10009 1996-06-30  0.025000 35235.000
+the key  `m`    is a Timestamp  -&gt;  1996-07-31
+the group `rows` is a DataFrame with shape (7068, 9)
+
+ permno       date       ret     me_l1
+  10001 1996-07-31  0.023438 18568.000
+  10002 1996-07-31 -0.031532 41652.750
+  10009 1996-07-31  0.008130 36238.875
+the key  `m`    is a Timestamp  -&gt;  1996-08-31
+the group `rows` is a DataFrame with shape (7116, 9)
+
+ permno       date      ret      me_l1
+  10001 1996-08-31 0.038168 19003.1875
+  10002 1996-08-31 0.004651 40339.3750
+  10009 1996-08-31 0.013226 36533.5000
+the key  `m`    is a Timestamp  -&gt;  1996-09-30
+the group `rows` is a DataFrame with shape (7159, 9)
+
+ permno       date      ret     me_l1
+  10001 1996-09-30 0.041765 19728.500
+  10002 1996-09-30 0.016667 40527.000
+  10009 1996-09-30 0.016000 36828.125
+the key  `m`    is a Timestamp  -&gt;  1996-10-31
+the group `rows` is a DataFrame with shape (7198, 9)
+
+ permno       date       ret     me_l1
+  10001 1996-10-31 -0.028571 20527.500
+  10002 1996-10-31 -0.018349 40902.250
+  10009 1996-10-31  0.031496 37480.875
+the key  `m`    is a Timestamp  -&gt;  1996-11-30
+the group `rows` is a DataFrame with shape (7216, 9)
+
+ permno       date      ret     me_l1
+  10001 1996-11-30 0.029412 19941.000
+  10002 1996-11-30 0.000000 40151.750
+  10009 1996-11-30 0.043053 38661.375
+the key  `m`    is a Timestamp  -&gt;  1996-12-31
+the group `rows` is a DataFrame with shape (7274, 9)
+
+ permno       date       ret    me_l1
+  10001 1996-12-31 -0.059429 20527.50
+  10002 1996-12-31 -0.020561 40151.75
+  10009 1996-12-31  0.000000 40137.00
+the key  `m`    is a Timestamp  -&gt;  1997-01-31
+the group `rows` is a DataFrame with shape (7314, 9)
+
+ permno       date      ret     me_l1
+  10001 1997-01-31 0.061539 19150.625
+  10002 1997-01-31 0.000000 39026.000
+  10009 1997-01-31 0.058824 40256.000
+the key  `m`    is a Timestamp  -&gt;  1997-02-28
+the group `rows` is a DataFrame with shape (7339, 9)
+
+ permno       date      ret     me_l1
+  10001 1997-02-28 0.000000 20329.125
+  10002 1997-02-28 0.019231 39026.000
+  10009 1997-02-28 0.129444 42624.000
+the key  `m`    is a Timestamp  -&gt;  1997-03-31
+the group `rows` is a DataFrame with shape (7331, 9)
+
+ permno       date      ret     me_l1
+  10001 1997-03-31 0.012174 20329.125
+  10002 1997-03-31 0.139623 39776.500
+  10009 1997-03-31 0.061728 47952.000
+the key  `m`    is a Timestamp  -&gt;  1997-04-30
+the group `rows` is a DataFrame with shape (7352, 9)
+
+ permno       date       ret     me_l1
+  10001 1997-04-30  0.000000 20329.125
+  10002 1997-04-30 -0.075000 63405.000
+  10009 1997-04-30 -0.046512 51019.500
+the key  `m`    is a Timestamp  -&gt;  1997-05-31
+the group `rows` is a DataFrame with shape (7353, 9)
+
+ permno       date      ret     me_l1
+  10001 1997-05-31 0.000000 20329.125
+  10002 1997-05-31 0.155963 57592.875
+  10009 1997-05-31 0.003902 48646.500
+the key  `m`    is a Timestamp  -&gt;  1997-06-30
+the group `rows` is a DataFrame with shape (7335, 9)
+
+ permno       date       ret     me_l1
+  10001 1997-06-30 -0.030725 20329.125
+  10002 1997-06-30  0.038095 66575.250
+  10009 1997-06-30  0.048781 48646.500
+the key  `m`    is a Timestamp  -&gt;  1997-07-31
+the group `rows` is a DataFrame with shape (7313, 9)
+
+ permno       date      ret    me_l1
+  10001 1997-07-31 0.045455 19445.25
+  10002 1997-07-31 0.092308 68753.75
+  10009 1997-07-31 0.186047 51105.50
+the key  `m`    is a Timestamp  -&gt;  1997-08-31
+the group `rows` is a DataFrame with shape (7303, 9)
+
+ permno       date      ret     me_l1
+  10001 1997-08-31 0.014493 20329.125
+  10002 1997-08-31 0.070423 75100.250
+  10009 1997-08-31 0.023529 60613.500
+the key  `m`    is a Timestamp  -&gt;  1997-09-30
+the group `rows` is a DataFrame with shape (7318, 9)
+
+ permno       date       ret    me_l1
+  10001 1997-09-30  0.026857 20623.75
+  10002 1997-09-30  0.097895 80389.00
+  10009 1997-09-30 -0.009615 61802.00
+the key  `m`    is a Timestamp  -&gt;  1997-10-31
+the group `rows` is a DataFrame with shape (7310, 9)
+
+ permno       date      ret    me_l1
+  10001 1997-10-31 0.000000 21104.75
+  10002 1997-10-31 0.018072 88000.75
+  10009 1997-10-31 0.000000 61491.00
+the key  `m`    is a Timestamp  -&gt;  1997-11-30
+the group `rows` is a DataFrame with shape (7306, 9)
+
+ permno       date       ret     me_l1
+  10001 1997-11-30 -0.014085 21104.750
+  10002 1997-11-30  0.035503 89591.125
+  10009 1997-11-30 -0.025243 61491.000
+the key  `m`    is a Timestamp  -&gt;  1997-12-31
+the group `rows` is a DataFrame with shape (7295, 9)
+
+ permno       date      ret     me_l1
+  10001 1997-12-31 0.041143 20807.500
+  10002 1997-12-31 0.125029 92771.875
+  10009 1997-12-31 0.030000 59700.000
+the key  `m`    is a Timestamp  -&gt;  1998-01-31
+the group `rows` is a DataFrame with shape (7307, 9)
+
+ permno       date       ret     me_l1
+  10001 1998-01-31  0.000000  21555.00
+  10002 1998-01-31  0.020408 104027.00
+  10009 1998-01-31 -0.014563  61516.75
+the key  `m`    is a Timestamp  -&gt;  1998-02-28
+the group `rows` is a DataFrame with shape (7299, 9)
+
+ permno       date       ret      me_l1
+  10001 1998-02-28 -0.006944  21555.000
+  10002 1998-02-28  0.060000 106150.000
+  10009 1998-02-28 -0.000985  60620.875
+the key  `m`    is a Timestamp  -&gt;  1998-03-31
+the group `rows` is a DataFrame with shape (7260, 9)
+
+ permno       date       ret       me_l1
+  10001 1998-03-31 -0.008671  21405.3125
+  10002 1998-03-31 -0.019434 112519.0000
+  10009 1998-03-31 -0.009901  60322.2500
+the key  `m`    is a Timestamp  -&gt;  1998-04-30
+the group `rows` is a DataFrame with shape (7241, 9)
+
+ permno       date       ret     me_l1
+  10001 1998-04-30  0.007143  21008.75
+  10002 1998-04-30 -0.053140 109917.00
+  10009 1998-04-30  0.010000  59825.00
+the key  `m`    is a Timestamp  -&gt;  1998-05-31
+the group `rows` is a DataFrame with shape (7222, 9)
+
+ permno       date       ret       me_l1
+  10001 1998-05-31 -0.014184  21158.8125
+  10002 1998-05-31  0.122449 104076.0000
+  10009 1998-05-31  0.053465  60423.2500
+the key  `m`    is a Timestamp  -&gt;  1998-06-30
+the group `rows` is a DataFrame with shape (7193, 9)
+
+ permno       date       ret       me_l1
+  10001 1998-06-30  0.006043  20858.6875
+  10002 1998-06-30  0.095546 116820.0000
+  10009 1998-06-30 -0.084906  63414.5000
+the key  `m`    is a Timestamp  -&gt;  1998-07-31
+the group `rows` is a DataFrame with shape (7176, 9)
+
+ permno       date       ret      me_l1
+  10001 1998-07-31  0.014493  20725.875
+  10002 1998-07-31 -0.012500 127440.000
+  10009 1998-07-31 -0.009021  58272.750
+the key  `m`    is a Timestamp  -&gt;  1998-08-31
+the group `rows` is a DataFrame with shape (7168, 9)
+
+ permno       date       ret        me_l1
+  10001 1998-08-31  0.000000  21026.25000
+  10002 1998-08-31 -0.164557 125847.00000
+  10009 1998-08-31 -0.184395  57747.09375
+the key  `m`    is a Timestamp  -&gt;  1998-09-30
+the group `rows` is a DataFrame with shape (7146, 9)
+
+ permno       date       ret     me_l1
+  10001 1998-09-30  0.070286  21026.25
+  10002 1998-09-30 -0.010000 105138.00
+  10009 1998-09-30  0.076923  46858.50
+the key  `m`    is a Timestamp  -&gt;  1998-10-31
+the group `rows` is a DataFrame with shape (7057, 9)
+
+ permno       date       ret     me_l1
+  10001 1998-10-31  0.000000  22264.75
+  10002 1998-10-31 -0.076923 106047.50
+  10009 1998-10-31 -0.083333  50484.00
+the key  `m`    is a Timestamp  -&gt;  1998-11-30
+the group `rows` is a DataFrame with shape (7013, 9)
+
+ permno       date       ret    me_l1
+  10001 1998-11-30  0.020270 22264.75
+  10002 1998-11-30  0.016667 97890.00
+  10009 1998-11-30 -0.014286 46277.00
+the key  `m`    is a Timestamp  -&gt;  1998-12-31
+the group `rows` is a DataFrame with shape (6940, 9)
+
+ permno       date      ret      me_l1
+  10001 1998-12-31 0.032053 22716.0625
+  10002 1998-12-31 0.005574 99521.5000
+  10009 1998-12-31 0.112583 45375.5000
+the key  `m`    is a Timestamp  -&gt;  1999-01-31
+the group `rows` is a DataFrame with shape (6877, 9)
+
+ permno       date      ret      me_l1
+  10001 1999-01-31 0.000000  23302.125
+  10002 1999-01-31 0.016393 117867.250
+  10009 1999-01-31 0.047619  50610.000
+the key  `m`    is a Timestamp  -&gt;  1999-02-28
+the group `rows` is a DataFrame with shape (6843, 9)
+
+ permno       date       ret      me_l1
+  10001 1999-02-28 -0.090909  23302.125
+  10002 1999-02-28 -0.096774 119799.500
+  10009 1999-02-28 -0.006818  53020.000
+the key  `m`    is a Timestamp  -&gt;  1999-03-31
+the group `rows` is a DataFrame with shape (6758, 9)
+
+ permno       date       ret     me_l1
+  10001 1999-03-31  0.013143  21183.75
+  10002 1999-03-31 -0.011786 108206.00
+  10009 1999-03-31 -0.040230  52417.50
+the key  `m`    is a Timestamp  -&gt;  1999-04-30
+the group `rows` is a DataFrame with shape (6717, 9)
+
+ permno       date       ret     me_l1
+  10001 1999-04-30  0.014286  21183.75
+  10002 1999-04-30 -0.054546 106273.75
+  10009 1999-04-30 -0.089820  50308.75
+the key  `m`    is a Timestamp  -&gt;  1999-05-31
+the group `rows` is a DataFrame with shape (6688, 9)
+
+ permno       date       ret      me_l1
+  10001 1999-05-31 -0.021127  21486.375
+  10002 1999-05-31  0.014423 100477.000
+  10009 1999-05-31 -0.007895  45790.000
+the key  `m`    is a Timestamp  -&gt;  1999-06-30
+the group `rows` is a DataFrame with shape (6652, 9)
+
+ permno       date       ret       me_l1
+  10001 1999-06-30  0.006619  21032.4375
+  10002 1999-06-30  0.025782 101926.1875
+  10009 1999-06-30 -0.006667  45187.5000
+the key  `m`    is a Timestamp  -&gt;  1999-07-31
+the group `rows` is a DataFrame with shape (6623, 9)
+
+ permno       date      ret       me_l1
+  10001 1999-07-31 0.021739  21131.2500
+  10002 1999-07-31 0.041861 103858.4375
+  10009 1999-07-31 0.003356  44886.2500
+the key  `m`    is a Timestamp  -&gt;  1999-08-31
+the group `rows` is a DataFrame with shape (6609, 9)
+
+ permno       date       ret      me_l1
+  10001 1999-08-31 -0.007092  21590.625
+  10002 1999-08-31 -0.071429 108206.000
+  10009 1999-08-31 -0.010301  45036.875
+the key  `m`    is a Timestamp  -&gt;  1999-09-30
+the group `rows` is a DataFrame with shape (6604, 9)
+
+ permno       date       ret     me_l1
+  10001 1999-09-30 -0.072000  21437.50
+  10002 1999-09-30  0.153558 100477.00
+  10009 1999-09-30 -0.061225  44283.75
+the key  `m`    is a Timestamp  -&gt;  1999-10-31
+the group `rows` is a DataFrame with shape (6580, 9)
+
+ permno       date       ret        me_l1
+  10001 1999-10-31  0.085938  19600.00000
+  10002 1999-10-31 -0.111111 115210.40625
+  10009 1999-10-31  0.028986  41865.75000
+the key  `m`    is a Timestamp  -&gt;  1999-11-30
+the group `rows` is a DataFrame with shape (6536, 9)
+
+ permno       date       ret      me_l1
+  10001 1999-11-30 -0.003597  21284.375
+  10002 1999-11-30  0.056604 102409.250
+  10009 1999-11-30  0.049014  43079.250
+the key  `m`    is a Timestamp  -&gt;  1999-12-31
+the group `rows` is a DataFrame with shape (6529, 9)
+
+ permno       date       ret       me_l1
+  10001 1999-12-31 -0.004188  21207.8125
+  10002 1999-12-31 -0.123036 108206.0000
+  10009 1999-12-31 -0.202703  44899.5000
+the key  `m`    is a Timestamp  -&gt;  2000-01-31
+the group `rows` is a DataFrame with shape (6534, 9)
+
+ permno       date       ret      me_l1
+  10001 2000-01-31 -0.044118 20825.0000
+  10002 2000-01-31 -0.025641 94197.1875
+  10009 2000-01-31 -0.008475 34028.2500
+the key  `m`    is a Timestamp  -&gt;  2000-02-29
+the group `rows` is a DataFrame with shape (6520, 9)
+
+ permno       date       ret     me_l1
+  10001 2000-02-29  0.015385 19906.250
+  10002 2000-02-29 -0.163158 91781.875
+  10009 2000-02-29 -0.028120 33739.875
+the key  `m`    is a Timestamp  -&gt;  2000-03-31
+the group `rows` is a DataFrame with shape (6468, 9)
+
+ permno       date       ret       me_l1
+  10001 2000-03-31 -0.015758 20212.50000
+  10002 2000-03-31  0.028931 76806.93750
+  10009 2000-03-31  1.235033 32514.28125
+the key  `m`    is a Timestamp  -&gt;  2000-04-30
+the group `rows` is a DataFrame with shape (6480, 9)
+
+ permno       date      ret     me_l1
+  10001 2000-04-30 0.011719 19712.000
+  10002 2000-04-30 0.012346 86943.375
+  10009 2000-04-30 0.018849 72670.500
+the key  `m`    is a Timestamp  -&gt;  2000-05-31
+the group `rows` is a DataFrame with shape (6497, 9)
+
+ permno       date       ret       me_l1
+  10001 2000-05-31 -0.023166 19943.00000
+  10002 2000-05-31 -0.024390 88016.75000
+  10009 2000-05-31  0.019318 74040.28125
+the key  `m`    is a Timestamp  -&gt;  2000-06-30
+the group `rows` is a DataFrame with shape (6480, 9)
+
+ permno       date      ret       me_l1
+  10001 2000-06-30 0.027668 19481.00000
+  10002 2000-06-30 0.041250 85870.00000
+  10009 2000-06-30 0.002876 75193.78125
+the key  `m`    is a Timestamp  -&gt;  2000-07-31
+the group `rows` is a DataFrame with shape (6456, 9)
+
+ permno       date       ret      me_l1
+  10001 2000-07-31 -0.015625 19800.0000
+  10002 2000-07-31 -0.012121 88553.4375
+  10009 2000-07-31  0.005736 75410.0625
+the key  `m`    is a Timestamp  -&gt;  2000-08-31
+the group `rows` is a DataFrame with shape (6454, 9)
+
+ permno       date       ret      me_l1
+  10001 2000-08-31  0.047619 19490.6250
+  10002 2000-08-31 -0.018405 87480.0625
+  10009 2000-08-31 -0.002053 75842.6250
+the key  `m`    is a Timestamp  -&gt;  2000-09-30
+the group `rows` is a DataFrame with shape (6435, 9)
+
+ permno       date       ret      me_l1
+  10001 2000-09-30  0.075758 20418.7500
+  10002 2000-09-30 -0.252500 85870.0000
+  10009 2000-09-30  0.009560 75410.0625
+the key  `m`    is a Timestamp  -&gt;  2000-10-31
+the group `rows` is a DataFrame with shape (6414, 9)
+
+ permno       date      ret     me_l1
+  10001 2000-10-31 0.028571 21840.000
+  10002 2000-10-31 0.169492 63329.125
+  10009 2000-10-31 0.001894 76131.000
+the key  `m`    is a Timestamp  -&gt;  2000-11-30
+the group `rows` is a DataFrame with shape (6369, 9)
+
+ permno       date       ret     me_l1
+  10001 2000-11-30  0.062500 22464.000
+  10002 2000-11-30  0.018116 74062.875
+  10012 2000-11-30 -0.365672 83406.625
+the key  `m`    is a Timestamp  -&gt;  2000-12-31
+the group `rows` is a DataFrame with shape (6313, 9)
+
+ permno       date       ret       me_l1
+  10001 2000-12-31  0.032680 23868.00000
+  10002 2000-12-31  0.057651 75404.59375
+  10012 2000-12-31 -0.247059 52907.18750
 </pre></div>
 </div>
 </div>
@@ -1594,6 +3372,17 @@ function that <strong>takes a DataFrame and returns one number</strong>.</p>
 <span class="n">by_named</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">vw_return</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">".apply(vw_return) returned </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">by_named</span><span class="p">)</span><span class="si">}</span><span class="s2"> numbers"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">by_named</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>called directly on June 1995 : 0.031830
+
+.apply(vw_return) returned 251 numbers
+date
+1980-02-29   -0.003410
+1980-03-31   -0.116828
+1980-04-30    0.051708
 </pre></div>
 </div>
 </div>
@@ -1632,6 +3421,16 @@ the expression evaluates to is what gets returned.</p>
                 <span class="p">(</span><span class="s1">'.apply(np.average)'</span><span class="p">,</span>  <span class="n">by_npavg</span><span class="p">)]:</span>
     <span class="n">gap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">by_loop</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">26s</span><span class="si">}{</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}{</span><span class="n">s</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;9.2%</span><span class="si">}{</span><span class="n">gap</span><span class="si">:</span><span class="s2">&gt;22.2e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>method                      months   mean/yr   max gap vs the loop
+------------------------------------------------------------------
+for loop                       251   15.73%              0.00e+00
+.apply(vw_return)              251   15.73%              0.00e+00
+.apply(lambda ...)             251   15.73%              0.00e+00
+.apply(np.average)             251   15.73%              1.49e-08
 </pre></div>
 </div>
 </div>
@@ -1785,7 +3584,7 @@ find the version that is subtly wrong rather than obviously broken.</p>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">5. </span>Sorts, Breakpoints, and Long-Short Portfolios</p>
+        <p class="prev-next-title"><span class="section-number">5. </span>Sorts and Long-Short Portfolios</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
