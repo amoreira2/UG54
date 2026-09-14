@@ -509,6 +509,8 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-is-relative-to-a-model">8.7. 2. Alpha Is Relative to a Model <a id="relative"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#four-signals-four-completely-different-stories">8.7.1. Four signals, four completely different stories</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arkk-and-berkshire-again">8.7.2. ARKK and Berkshire, again</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-loadings-before-the-alpha">8.7.3. Read the loadings before the alpha</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-ways-to-estimate-the-same-thing">8.8. 3. Two Ways to Estimate the Same Thing <a id="twoways"></a></a></li>
@@ -564,7 +566,7 @@ the same thing</p></li>
 <li><p><a class="reference internal" href="#many"><span class="xref myst">From one factor to many</span></a></p></li>
 <li><p><a class="reference internal" href="#pitfalls"><span class="xref myst">Pitfall checklist</span></a></p></li>
 <li><p><a class="reference internal" href="#demo"><span class="xref myst">🔄 Live Demo: the alpha ladder</span></a></p></li>
-<li><p><a class="reference internal" href="#relative"><span class="xref myst">Alpha is relative to a model</span></a></p></li>
+<li><p><a class="reference internal" href="#relative"><span class="xref myst">Alpha is relative to a model — and ARKK vs Berkshire again</span></a></p></li>
 <li><p><a class="reference internal" href="#twoways"><span class="xref myst">Two ways to estimate the same thing</span></a></p></li>
 <li><p><a class="reference internal" href="#fm"><span class="xref myst">Fama-MacBeth</span></a></p></li>
 <li><p><a class="reference internal" href="#ho1"><span class="xref myst">🛠️ Hands-On: run your signal up the ladder</span></a></p></li>
@@ -850,6 +852,58 @@ by what an investor could actually buy cheaply. If a low-cost momentum ETF
 exists, UMD belongs in your model, and momentum’s α is 3.5% not 18%.</p>
 <p>The indefensible version is running all four and reporting whichever is
 biggest. That is pitfall 2, and it is depressingly common.</p>
+</div></blockquote>
+</section>
+<section id="arkk-and-berkshire-again">
+<h3><span class="section-number">8.7.2. </span>ARKK and Berkshire, again<a class="headerlink" href="#arkk-and-berkshire-again" title="Link to this heading">#</a></h3>
+<p>In <em>Performance Evaluation</em> we measured these two funds against the market
+alone. ARKK had the better Sharpe ratio, and their appraisal ratios were close,
+0.43 and 0.38. Here are the same two funds against six factors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">funds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">'https://raw.githubusercontent.com/amoreira2/Fin418/'</span>
+                       <span class="s1">'main/assets/data/df_WarrenBAndCathieW_monthly.pkl'</span><span class="p">)</span>
+<span class="n">funds</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">funds</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>      <span class="c1"># 'Mom   ' has trailing spaces</span>
+<span class="n">SIX</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">,</span> <span class="s1">'SMB'</span><span class="p">,</span> <span class="s1">'HML'</span><span class="p">,</span> <span class="s1">'RMW'</span><span class="p">,</span> <span class="s1">'CMA'</span><span class="p">,</span> <span class="s1">'Mom'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'ARKK'</span><span class="p">,</span> <span class="s1">'BRK'</span><span class="p">]:</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">funds</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">nm</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">nm</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nm</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="si">}</span><span class="s2"> months"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'model'</span><span class="si">:</span><span class="s2">14s</span><span class="si">}{</span><span class="s1">'alpha'</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">'t'</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}{</span><span class="s1">'R²'</span><span class="si">:</span><span class="s2">&gt;6s</span><span class="si">}{</span><span class="s1">'appraisal'</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">F</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">'market only'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]),</span> <span class="p">(</span><span class="s1">'six factors'</span><span class="p">,</span> <span class="n">SIX</span><span class="p">)]:</span>
+        <span class="n">m</span>  <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">F</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">iv</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">14s</span><span class="si">}{</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">&gt;8.1%</span><span class="si">}{</span><span class="n">m</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;7.2f</span><span class="si">}</span><span class="s2">"</span>
+              <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">&gt;6.2f</span><span class="si">}{</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="o">*</span><span class="mi">12</span><span class="o">/</span><span class="n">iv</span><span class="si">:</span><span class="s2">&gt;11.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"  six-factor loadings: "</span> <span class="o">+</span> <span class="s2">"  "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">SIX</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="read-the-loadings-before-the-alpha">
+<h3><span class="section-number">8.7.3. </span>Read the loadings before the alpha<a class="headerlink" href="#read-the-loadings-before-the-alpha" title="Link to this heading">#</a></h3>
+<p><strong>ARKK</strong> loads <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">+1.54</span></code>, <code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">−0.95</span></code>, <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">−0.81</span></code>: levered, growth,
+unprofitable. The six factors explain 84% of its variance, up from 64%. Its alpha
+barely moves, but its residual risk shrinks, so its appraisal ratio <strong>rises</strong>, to
+0.63 — still with t = 1.23 on 59 months.</p>
+<p><strong>Berkshire</strong> loads <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">+0.69</span></code>, <code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">+0.57</span></code>, <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">+0.35</span></code>: defensive, value,
+profitable. Part of what looked like alpha against the market was that style,
+so its alpha falls from 6.5% to 4.4% a year and its appraisal ratio from 0.38
+to 0.29.</p>
+<p>The formula from <em>Performance Evaluation</em> carries over, with the best mix of the
+factors in place of the market:</p>
+<div class="math notranslate nohighlight">
+\[SR_{\max} = \sqrt{SR_F^2 + AR^2}\]</div>
+<p>So the appraisal ratio against six factors is what a fund adds for someone who
+already holds all six.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight: the model decides the ranking</strong></p>
+<p>Against the market, the two appraisal ratios were close. Against six factors,
+ARKK’s is twice Berkshire’s. Buffett’s value-and-quality tilt can now be bought
+as an ETF, so against a model that includes it, less of his return counts as
+alpha.</p>
 </div></blockquote>
 </section>
 </section>
@@ -1251,7 +1305,9 @@ about the market for the CAPM number to be the right one.</p>
 in Lecture 3. Adding one asks “can you beat <em>that</em> too?”</p></li>
 <li><p><strong>α is a property of (strategy, model), not of a strategy.</strong> Momentum’s α is
 +18% or +3.5% depending only on whether UMD is in the model.</p></li>
-<li><p><strong>Never report an alpha without naming the model.</strong></p></li>
+<li><p><strong>Never report an alpha without naming the model.</strong> The same goes for the
+appraisal ratio: against six factors ARKK’s rises from 0.43 to 0.63 and
+Berkshire’s falls from 0.38 to 0.29.</p></li>
 <li><p><strong>Alpha can grow when you add a factor.</strong> GP’s α rises under FF3 because it
 loads <em>negatively</em> on HML.</p></li>
 <li><p><strong>Fix the model before you look.</strong> Justify it by what an investor could
@@ -1382,6 +1438,8 @@ and how you would ever know whether any of it is real.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alpha-is-relative-to-a-model">8.7. 2. Alpha Is Relative to a Model <a id="relative"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#four-signals-four-completely-different-stories">8.7.1. Four signals, four completely different stories</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arkk-and-berkshire-again">8.7.2. ARKK and Berkshire, again</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-loadings-before-the-alpha">8.7.3. Read the loadings before the alpha</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-ways-to-estimate-the-same-thing">8.8. 3. Two Ways to Estimate the Same Thing <a id="twoways"></a></a></li>

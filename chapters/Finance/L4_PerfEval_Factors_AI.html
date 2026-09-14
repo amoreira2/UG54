@@ -530,7 +530,9 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-famous-funds">6.10. 5. Two Famous Funds <a id="funds"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-loadings-before-the-alpha">6.10.1. Read the loadings before the alpha</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-versus-appraisal">6.10.1. Sharpe versus appraisal</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-t-statistic-and-sample-size">6.10.2. Appraisal, t-statistic, and sample size</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-appraisal-ratio-is-the-number-to-care-about">6.10.3. Why the appraisal ratio is the number to care about</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-does-your-signal-have-alpha">6.11. 🛠️ Hands-On: Does Your Signal Have Alpha? <a id="ho1"></a></a><ul class="nav section-nav flex-column">
@@ -574,7 +576,8 @@ or appraisal — and say what each one assumes</p></li>
 appraisal are one formula against three different benchmarks</p></li>
 <li><p><strong>Build a hedged portfolio</strong> and explain why hedging buys you alpha capacity</p></li>
 <li><p><strong>Answer the question from Lecture 1</strong> — was General Electric skill, or beta?</p></li>
-<li><p><strong>Take apart a real fund</strong> — what ARKK and Berkshire were actually doing</p></li>
+<li><p><strong>Compare two real funds</strong> — ARKK and Berkshire — on Sharpe and on appraisal,
+and see what the length of a track record does to a t-statistic</p></li>
 </ol>
 </section>
 <section id="today-s-plan">
@@ -635,13 +638,13 @@ appraisal are one formula against three different benchmarks</p></li>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><em>Was it worth the risk at all?</em></p></td>
+<tr class="row-even"><td><p><em>What is the bang for risk on a univariate basis?</em></p></td>
 <td><p><strong>Sharpe</strong></p></td>
 </tr>
-<tr class="row-odd"><td><p><em>Did I beat what I was hired to beat?</em></p></td>
+<tr class="row-odd"><td><p><em>What is the bang for risk relative to a benchmark?</em></p></td>
 <td><p><strong>Information ratio</strong></p></td>
 </tr>
-<tr class="row-even"><td><p><em>Was any of it something I couldn’t have bought cheaply?</em></p></td>
+<tr class="row-even"><td><p><em>How much it can increase the Sharpe Ratio relative to another asset/assets/factors?</em></p></td>
 <td><p><strong>Appraisal ratio</strong></p></td>
 </tr>
 </tbody>
@@ -740,7 +743,7 @@ is the special case where your mandate is “don’t lose to a T-bill.”</p>
 <td><p>Long-duration government bonds</p></td>
 </tr>
 <tr class="row-even"><td><p>Hedge fund, absolute return</p></td>
-<td><p>Cash</p></td>
+<td><p>?</p></td>
 </tr>
 </tbody>
 </table>
@@ -770,15 +773,6 @@ replicates the fund</strong>, and use that:</p>
 Whatever mix of market, size and value the manager was actually running, the
 regression finds it, and you measure them against that mix rather than against
 a label.</p>
-<blockquote>
-<div><p><strong>💡 Key Insight: alpha is scarce, beta is plentiful — pay different prices</strong></p>
-<p>This is how large allocators actually think. Beta exposure is available for a
-few basis points in an ETF, so nobody should pay a performance fee for it.
-Alpha is hard to find and worth paying for. The whole job is telling them
-apart, and a factor regression is the tool that does it.</p>
-<p>The gains from beta come from <strong>implementation</strong> — getting it cheaply. The
-gains from alpha come from <strong>selection</strong> — finding someone who has it.</p>
-</div></blockquote>
 </section>
 </section>
 <hr class="docutils" />
@@ -945,6 +939,15 @@ whatever your choice of model made it mean. We come back to this repeatedly.</p>
 </tbody>
 </table>
 </div>
+<blockquote>
+<div><p><strong>💡 Key Insight: alpha is scarce, beta is plentiful — pay different prices</strong></p>
+<p>This is how large allocators actually think. Beta exposure is available for a
+few basis points in an ETF, so nobody should pay a performance fee for it.
+Alpha is hard to find and worth paying for. The whole job is telling them
+apart, and a factor regression is the tool that does it.</p>
+<p>The gains from beta come from <strong>implementation</strong> — getting it cheaply. The
+gains from alpha come from <strong>selection</strong> — finding someone who has it.</p>
+</div></blockquote>
 <p>A model can be excellent at one job and useless at the other. The market factor
 explains 56% of GE’s variance — a serviceable risk model. It says essentially
 nothing about whether GE will earn anything next year.</p>
@@ -1017,8 +1020,7 @@ averaged 6.7%/yr over 1980–2000, and with nothing to absorb it, α swallowed i
 whole. You would have reported that GE beat the market by 14 points a year and
 half of it would have been T-bills.</p>
 <blockquote>
-<div><p><strong>🤖 AI-Era Insight</strong></p>
-<p>Neither version errors. Both print a beta near 1.07 and an R² near 0.56, so the
+<div><p>Neither version errors. Both print a beta near 1.07 and an R² near 0.56, so the
 output <em>looks</em> the same. The only defence is having said “excess returns” in
 the request — which is why the specification is the skill and the four lines
 are not.</p>
@@ -1240,9 +1242,9 @@ is the honest comparison.</p>
 </section>
 <section id="and-it-can-reverse-the-ranking">
 <h3><span class="section-number">6.9.3. </span>And it can reverse the ranking<a class="headerlink" href="#and-it-can-reverse-the-ranking" title="Link to this heading">#</a></h3>
-<p>Here is the value long-short from Lecture 3 — the standard convention, NYSE
-breakpoints and value-weighted, so <strong>+5.2%/yr and not the +20.8% the demo
-showed</strong> — run through the same regression.</p>
+<p>Here is value under the standard convention from Assignment 2 — NYSE
+breakpoints, value-weighted, so <strong>+5.2%/yr and not the +20.8% of the sorts
+lecture’s demo</strong> — run through the same regression.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="n">dv</span><span class="p">[</span><span class="n">dv</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)[</span><span class="s1">'BM_l1'</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
@@ -1308,13 +1310,12 @@ good by chance. We also picked GE <em>because</em> it was famous.</p>
 Spectacular returns and a huge following.</p>
 <p><strong>Warren Buffett’s Berkshire Hathaway (BRK)</strong> — the most famous track record in
 finance.</p>
-<p>Both against the six-factor model. Watch what separates them.</p>
+<p>Both against the market portfolio. Watch what separates them.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">funds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">'https://raw.githubusercontent.com/amoreira2/Fin418/'</span>
                        <span class="s1">'main/assets/data/df_WarrenBAndCathieW_monthly.pkl'</span><span class="p">)</span>
-<span class="n">funds</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">funds</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>      <span class="c1"># 'Mom   ' has trailing spaces</span>
-<span class="n">FACT</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">,</span><span class="s1">'SMB'</span><span class="p">,</span><span class="s1">'HML'</span><span class="p">,</span><span class="s1">'RMW'</span><span class="p">,</span><span class="s1">'CMA'</span><span class="p">,</span><span class="s1">'Mom'</span><span class="p">]</span>
+<span class="n">FACT</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]</span>
 
 <span class="n">rows</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'ARKK'</span><span class="p">,</span><span class="s1">'BRK'</span><span class="p">]:</span>
@@ -1344,48 +1345,76 @@ finance.</p>
 </div>
 </div>
 </div>
-<section id="read-the-loadings-before-the-alpha">
-<h3><span class="section-number">6.10.1. </span>Read the loadings before the alpha<a class="headerlink" href="#read-the-loadings-before-the-alpha" title="Link to this heading">#</a></h3>
-<p><strong>ARKK has the better Sharpe ratio — 0.96 against 0.64.</strong> On the Lecture 1
-measure it wins comfortably. Now look at what it is made of.</p>
-<p><code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">=</span> <span class="pre">+1.54</span></code> — half again as much market exposure as the market itself.
-<code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">=</span> <span class="pre">−0.95</span></code> — a large <em>growth</em> tilt. <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">=</span> <span class="pre">−0.81</span></code> — tilted toward
-<strong>unprofitable</strong> firms. <code class="docutils literal notranslate"><span class="pre">CMA</span> <span class="pre">=</span> <span class="pre">−0.53</span></code> — toward heavy investors.</p>
-<p>That is a recognizable style: <strong>levered, small, unprofitable growth.</strong> And
-<code class="docutils literal notranslate"><span class="pre">R²</span> <span class="pre">=</span> <span class="pre">0.84</span></code> says 84% of ARKK’s month-to-month variation is that style, not
-stock selection. Its alpha is +8.2%/yr with <strong>t = 1.23</strong> — not distinguishable
-from zero.</p>
-<p>Berkshire is the mirror image. <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">=</span> <span class="pre">+0.69</span></code> — <em>defensive</em>, less market risk
-than the market. <code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">=</span> <span class="pre">+0.57</span></code> — value. <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">=</span> <span class="pre">+0.35</span></code> — profitable, quality
-firms. R² = 0.40, so most of what Berkshire did is <em>not</em> explained by the six
-factors.</p>
+<section id="sharpe-versus-appraisal">
+<h3><span class="section-number">6.10.1. </span>Sharpe versus appraisal<a class="headerlink" href="#sharpe-versus-appraisal" title="Link to this heading">#</a></h3>
+<p><strong>ARKK wins on Sharpe, 0.96 to 0.64. On appraisal it is close: 0.43 to 0.38.</strong></p>
+<p>The Sharpe gap is mostly the market. ARKK’s β is <strong>1.61</strong> and Berkshire’s
+<strong>0.59</strong>, and the two funds lived through different markets: the market’s own
+Sharpe ratio was 0.88 over ARKK’s months and 0.65 over Berkshire’s (printed
+below). Each fund roughly matched the market it lived in. The appraisal ratio
+takes the market out, over the same months, so it compares like with like.</p>
+</section>
+<section id="appraisal-t-statistic-and-sample-size">
+<h3><span class="section-number">6.10.2. </span>Appraisal, t-statistic, and sample size<a class="headerlink" href="#appraisal-t-statistic-and-sample-size" title="Link to this heading">#</a></h3>
+<p>The appraisal ratios are close; the t-statistics are not, 0.92 against 1.80. For
+a regression alpha,</p>
+<div class="math notranslate nohighlight">
+\[t(\alpha) \approx AR \times \sqrt{T} \qquad (T \text{ in years})\]</div>
+<p>ARKK has 4.9 years of data and Berkshire 23. The appraisal ratio measures how
+good the manager was; the t-statistic measures how sure you can be, and that
+grows only with the square root of time. At an appraisal ratio of 0.4, reaching
+t = 2 takes (2/0.4)² = 25 years.</p>
+</section>
+<section id="why-the-appraisal-ratio-is-the-number-to-care-about">
+<h3><span class="section-number">6.10.3. </span>Why the appraisal ratio is the number to care about<a class="headerlink" href="#why-the-appraisal-ratio-is-the-number-to-care-about" title="Link to this heading">#</a></h3>
+<p>If you already hold the market, the highest Sharpe ratio you can reach by adding
+a fund to it, in the best proportion, is</p>
+<div class="math notranslate nohighlight">
+\[SR_{\max} = \sqrt{SR_m^2 + AR^2}\]</div>
+<p>The fund’s own Sharpe ratio is not in the formula. Only the part of its return
+the market can’t replicate helps you, and the appraisal ratio is that part per
+unit of risk. This is the third question in the table at the top: how much can
+this raise my Sharpe ratio?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">''</span><span class="si">:</span><span class="s2">6s</span><span class="si">}{</span><span class="s1">'years'</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}{</span><span class="s1">'appraisal'</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}{</span><span class="s1">'AR x sqrt(years)'</span><span class="si">:</span><span class="s2">&gt;18s</span><span class="si">}{</span><span class="s1">'actual t'</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'ARKK'</span><span class="p">,</span> <span class="s1">'BRK'</span><span class="p">]:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+    <span class="n">yrs</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">months</span> <span class="o">/</span> <span class="mi">12</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">6s</span><span class="si">}{</span><span class="n">yrs</span><span class="si">:</span><span class="s2">&gt;7.1f</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">appraisal</span><span class="si">:</span><span class="s2">&gt;11.2f</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">appraisal</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">yrs</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;18.2f</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">t</span><span class="si">:</span><span class="s2">&gt;10.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="s1">''</span><span class="si">:</span><span class="s2">6s</span><span class="si">}{</span><span class="s1">'market Sharpe'</span><span class="si">:</span><span class="s2">&gt;15s</span><span class="si">}{</span><span class="s1">'appraisal'</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}{</span><span class="s1">'max Sharpe'</span><span class="si">:</span><span class="s2">&gt;12s</span><span class="si">}</span><span class="s2">   over the fund's months"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'ARKK'</span><span class="p">,</span> <span class="s1">'BRK'</span><span class="p">]:</span>
+    <span class="n">mk</span>   <span class="o">=</span> <span class="n">funds</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">n</span><span class="p">])[</span><span class="s1">'Mkt-RF'</span><span class="p">]</span>
+    <span class="n">sr_m</span> <span class="o">=</span> <span class="n">mk</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">mk</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ar</span>   <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="s1">'appraisal'</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n</span><span class="si">:</span><span class="s2">6s</span><span class="si">}{</span><span class="n">sr_m</span><span class="si">:</span><span class="s2">&gt;15.2f</span><span class="si">}{</span><span class="n">ar</span><span class="si">:</span><span class="s2">&gt;11.2f</span><span class="si">}{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sr_m</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ar</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="si">:</span><span class="s2">&gt;12.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Adding Berkshire to the market lifts the best Sharpe ratio from 0.65 to 0.75;
+adding ARKK lifts it from 0.88 to 0.98. About the same gain, as the appraisal
+ratios said it would be.</p>
 <blockquote>
-<div><p><strong>💡 Key Insight: the same tools, opposite readings</strong></p>
-<p>Buffett’s reputation is stock-picking genius. The regression says a large part
-of it is a <strong>systematic, describable style</strong> — buy cheap, profitable, low-beta
-companies and hold them — which is now sold as a “quality” ETF. That is not a
-debunking. It is the discovery that his edge was a repeatable idea, decades
-before anyone packaged it.</p>
-<p>ARKK’s returns are 84% a levered growth bet, over 59 months that happened to
-be a growth bull market.</p>
+<div><p><strong>⚠️ Caution.</strong> This is all in-sample: the best mix is chosen knowing how it
+turned out. And the months have gaps. The file runs from 1988 to 2021 with
+about 30% of months missing, and ARKK’s 59 months are spread over seven years.
+A demonstration of the method, not a verdict on either manager.</p>
 </div></blockquote>
 <blockquote>
-<div><p><strong>⚠️ Caution: read the sample lengths</strong></p>
-<p>Berkshire has 279 months. ARKK has <strong>59</strong>. Neither alpha clears |t| &gt; 2, and
-ARKK’s window is a single regime. Note also that Berkshire’s 279 months are
-<strong>not contiguous</strong> — this file spans 1988–2021, which is 398 months, so about
-30% of the calendar is missing at scattered single months. We use it because
-it is the only place ARKK and Berkshire sit side by side; every number in the
-table inherits that gap. This is a demonstration of the <em>method</em>, not
-a verdict on either manager — and how to reason about that gap is Lecture 8.</p>
+<div><p><strong>🔜 Coming back.</strong> Here the only thing you could buy cheaply was the market.
+In <em>Multi-Factor Models</em> we run the same two funds against six factors, and
+their appraisal ratios move in opposite directions.</p>
 </div></blockquote>
 </section>
 </section>
 <hr class="docutils" />
 <section id="hands-on-does-your-signal-have-alpha">
 <h2><span class="section-number">6.11. </span>🛠️ Hands-On: Does Your Signal Have Alpha? <a id="ho1"></a><a class="headerlink" href="#hands-on-does-your-signal-have-alpha" title="Link to this heading">#</a></h2>
-<p>In Lecture 3 you each picked a signal and computed its long-short return. Now
-run it through a factor regression and find out how much of it was market
+<p>In the sorts lecture you each picked a signal. The cell below builds its
+long-short under the standard convention from Assignment 2 — NYSE breakpoints,
+value-weighted. Regress it on the market and find out how much of it was market
 exposure.</p>
 <blockquote>
 <div><p><strong>🤔 Predict first.</strong> A long-short is roughly market-neutral by construction —
@@ -1571,30 +1600,27 @@ should care about that neither ratio captures.</p>
 <section id="key-takeaways">
 <h2><span class="section-number">6.14. </span>🧠 Key Takeaways <a id="takeaways"></a><a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p><strong>Three ratios, three questions.</strong> Sharpe: was it worth the risk? Information:
-did I beat my mandate? Appraisal: was any of it mine?</p></li>
-<li><p><strong>Sharpe is the information ratio against cash.</strong> Not a separate idea.</p></li>
+<li><p><strong>Three ratios, one formula:</strong> active return over tracking error, against
+cash (Sharpe), a mandate (information), or what you could have bought
+cheaply (appraisal).</p></li>
 <li><p><strong>The benchmark is a choice, and it manufactures performance.</strong> A value
-manager measured against the broad market gets paid for the tilt itself.</p></li>
+manager measured against the market gets paid for the tilt.</p></li>
 <li><p><strong>α is what the factor doesn’t explain; β is what you could have bought
-cheaply.</strong> That is the whole point of the regression.</p></li>
+cheaply.</strong></p></li>
 <li><p><strong>Variances add, volatilities don’t:</strong> σ² = β²σ²ₘ + σ²ε.</p></li>
-<li><p><strong>R² is not a quality score.</strong> High R² means <em>less</em> room for alpha.</p></li>
-<li><p><strong>GE was skill, not leverage.</strong> β = 1.07, α = +7.1%/yr. The extra volatility
-was idiosyncratic. The week-1 suspicion was reasonable and wrong — which is
-why you run the regression.</p></li>
-<li><p><strong>A factor model does two separate jobs</strong> — risk (β, σ_ε) and expected return
-(α). A high R² is good for the first and bad for the second.</p></li>
-<li><p><strong>Hedging converts risk budget into alpha capacity.</strong> Stripping GE’s market
-exposure lets the same $5M vol budget carry ~50% more position.</p></li>
-<li><p><strong>Alpha is scarce, beta is plentiful — pay different prices.</strong> That split is
-why index funds and hedge funds are different products.</p></li>
-<li><p><strong>ARKK had the better Sharpe and an R² of 0.84.</strong> Most of it was a levered
-growth style. Buffett’s R² was 0.40 — but much of <em>his</em> edge turned out to be
-a describable value-and-quality tilt too.</p></li>
-<li><p><strong>Sharpe and appraisal can rank things differently</strong>, and neither is wrong.
-The value long-short has a worse Sharpe and a better appraisal because its
-β is negative. Which matters depends on what you already own.</p></li>
+<li><p><strong>A factor model does two jobs:</strong> risk (β, σε) and expected return (α). A
+high R² helps the first and leaves less room for the second.</p></li>
+<li><p><strong>GE was skill, not leverage.</strong> β = 1.07, α = +7.1%/yr; the extra volatility
+was idiosyncratic.</p></li>
+<li><p><strong>Hedging converts risk budget into alpha capacity.</strong> Beta is cheap and alpha
+is scarce, so they should cost different amounts.</p></li>
+<li><p><strong>Sharpe and appraisal can disagree.</strong> Value has the worse Sharpe and the
+better appraisal ratio because its β is negative; ARKK beats Berkshire on
+Sharpe mostly through β = 1.61.</p></li>
+<li><p><strong>The appraisal ratio sets how far a fund can raise your Sharpe:</strong>
+SR²max = SR²ₘ + AR².</p></li>
+<li><p><strong>t ≈ AR × √T.</strong> An appraisal ratio of 0.4 needs about 25 years of data to
+reach t = 2.</p></li>
 </ol>
 <hr class="docutils" />
 <section id="next-class">
@@ -1731,7 +1757,9 @@ the other factors people use, where they came from, and how you’d choose.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-famous-funds">6.10. 5. Two Famous Funds <a id="funds"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-loadings-before-the-alpha">6.10.1. Read the loadings before the alpha</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-versus-appraisal">6.10.1. Sharpe versus appraisal</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-t-statistic-and-sample-size">6.10.2. Appraisal, t-statistic, and sample size</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-appraisal-ratio-is-the-number-to-care-about">6.10.3. Why the appraisal ratio is the number to care about</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-does-your-signal-have-alpha">6.11. 🛠️ Hands-On: Does Your Signal Have Alpha? <a id="ho1"></a></a><ul class="nav section-nav flex-column">
