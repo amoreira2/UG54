@@ -205,17 +205,21 @@ ANSWER_KEY = {
     # MY_SIGNAL, which the token carries as "signal". See SIGNAL_KEYS below.
     "L3_Sorts_AI": "_by_signal_",
     "L2_Portfolios_AI": {
-        # Rebuild the CRSP value-weighted market from the course panel,
-        # 1980-2000. Verified by executing the notebook end-to-end 2026-08-06.
-        "vw_mean_annual": (0.1574, 0.10),
+        # Rebuild the CRSP value-weighted market from the course panel, weights
+        # me_l1, 251 months 1980-02 to 2000-12. Re-verified 2026-09-14.
+        "vw_mean_annual": (0.1573, 0.10),
         "vw_vol_annual":  (0.1553, 0.10),
-        # Correlation with Ken French is 1.0000 to four decimals. A student who
-        # forgets to shift their series forward one month gets ~0, so this is
-        # the check that catches the alignment error.
-        "corr_vw_ff":     (1.0000, 0.02),
-        "ew_mean_annual": (0.1422, 0.12),
-        "ew_vol_annual":  (0.1856, 0.10),
-        "top10_share":    (0.2049, 0.15),
+        # Under me_l1 the VW series is already dated by the month earned, so its
+        # correlation with Ken French is 1.0000 with no shift. The Fall 2026
+        # notebook's Q1 still told students to shift forward one month (left
+        # over from ret_fwd), which gives 0.025. Six of the first sixteen did as
+        # told; both answers get credit for this cohort.
+        "corr_vw_ff":     ([1.0000, 0.0249], 0.02, 0.005),
+        "ew_mean_annual": (0.1420, 0.12),
+        "ew_vol_annual":  (0.1857, 0.10),
+        # Largest ten by me_l1 in Dec 2000. Ranking by that month's me gives
+        # 0.1895, also defensible, and within the tolerance.
+        "top10_share":    (0.2052, 0.15),
     },
     "L1_Returns_AI": {
         # GE (permno 12060) vs the market, 1980-2000, from the course panel.
@@ -618,7 +622,7 @@ You are grading a second-week memo from an undergraduate. They have seen returns
 Sharpe ratios, and portfolio weights. They have NOT seen factor models or beta.
 
 THE QUESTION: they built value-weighted and equal-weighted portfolios from the
-same ~6,000 stocks. EW earned 14.22%/yr with 18.6% vol; VW earned 15.74%/yr with
+same ~6,000 stocks. EW earned 14.20%/yr with 18.6% vol; VW earned 15.73%/yr with
 15.5% vol. Why do they differ, which is "the market", and why might the EW
 return overstate what was achievable?
 
@@ -1246,8 +1250,15 @@ def grade_numeric(submission: dict, key) -> dict:
     for q, spec in key.items():
         # (truth, tol) or (truth, tol, floor): tol is fractional; floor is an
         # absolute band that stops answers near zero needing absurd precision.
+        # truth may be a list of acceptable answers; matching any one counts.
         truth, tol = spec[0], spec[1]
         floor = spec[2] if len(spec) > 2 else 0.0
+        if isinstance(truth, (list, tuple)):
+            got = submission.get(q)
+            subs = [grade_numeric({q: got}, {q: (t, tol, floor)})[q] for t in truth]
+            best = next((r for r in subs if r["correct"]), subs[0])
+            results[q] = {**best, "expected": list(truth)}
+            continue
         got = submission.get(q)
         if got is None:
             results[q] = {"correct": False, "got": None, "expected": truth,
