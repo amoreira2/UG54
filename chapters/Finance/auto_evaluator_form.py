@@ -73,6 +73,18 @@ def decode_token(text: str) -> tuple[dict, str | None]:
         return {}, f"JSON parse failed: {e}"
 
 
+def submission_code(text: str) -> str:
+    """The code exactly as the notebook printed it, so a student can find their
+    row by searching for it. Cut out of the paste the same way decode_token
+    reads it; if there is no code in the paste, keep the paste as it is."""
+    m = TOKEN_RE.search(text or "")
+    if not m:
+        return (text or "").strip()
+    body = re.sub(r"\\s+", "", m.group(2)).rstrip("=")
+    body += "=" * (-len(body) % 4)
+    return f"UG54::{m.group(1)}::{body}"
+
+
 def main():
     # Lazy imports — only needed when actually running, not when testing decode_token
     import os
@@ -150,7 +162,7 @@ def main():
             rows.append({
                 "ts": ts, "name": name, "email": email, "status": "DECODE_ERROR",
                 "error": err, "numeric_pct": 0, "memo_score": 0, "overall": 0,
-                "flag": True,
+                "flag": True, "submission_code": submission_code(token),
             })
             print(f"❌ {email}: {err}")
             continue
@@ -211,6 +223,7 @@ def main():
             "flag": flag,
             "feedback": memo_grade["feedback"],
             **{f"{q}_ok": r["correct"] for q, r in numeric.items()},
+            "submission_code": submission_code(token),
         })
         who = name or email
         if use_api:
@@ -244,11 +257,17 @@ def main():
         return
 
     # Write to the grades tab
-    header = list(rows[0].keys())
+    header = []
+    for r in rows:                       # every column any row has, in first-seen order
+        header += [h for h in r if h not in header]
+    header.remove("submission_code")     # the long code goes last, out of the way
+    header.append("submission_code")
     # Pad rows so they all have the same columns
     for r in rows:
         for h in header:
             r.setdefault(h, "")
+    if len(header) > grades_ws.col_count:
+        grades_ws.add_cols(len(header) - grades_ws.col_count)
     grades_ws.clear()
     grades_ws.update([header] + [[r[h] for h in header] for r in rows])
     print(f"\n✅ Wrote {len(rows)} grades to '{args.grades_tab}'")
