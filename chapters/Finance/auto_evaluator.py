@@ -188,19 +188,9 @@ ANSWER_KEY = {
         "within_cat_corr":    (0.579, 0.15),
         "across_cat_corr":    (0.189, 0.20),
     },
-    "L4_PerfEval_AI": {
-        # Exxon (11850) and Pfizer (21936) vs the market, 1980-2000.
-        # Verified by executing the notebook 2026-08-07.
-        # Sharpe ratios are 0.720 and 0.718 -- indistinguishable. The point of
-        # the challenge is that the DECOMPOSITION differs sharply even though
-        # both the Sharpe and the appraisal ratios come out nearly equal.
-        "xom_alpha_ann": (0.0676, 0.15),
-        "xom_beta":      (0.59,   0.15),
-        "xom_appraisal": (0.470,  0.15),
-        "pfe_alpha_ann": (0.1087, 0.15),
-        "pfe_beta":      (0.82,   0.15),
-        "pfe_appraisal": (0.483,  0.15),
-    },
+    # Two factors of the student's own choosing, so there is no fixed answer.
+    # Graded on completion: the numbers must be there, finite, and not absurd.
+    "L4_PerfEval_AI": "_completion_",
     # The challenge is done on each student's own signal, so the key depends on
     # MY_SIGNAL, which the token carries as "signal". See SIGNAL_KEYS below.
     "L3_Sorts_AI": "_by_signal_",
@@ -519,57 +509,61 @@ correlation number in its argument, else False.
 Output via the `grade_memo` tool.
 """,
     "L4_PerfEval_AI": """
-You are grading a week-4 memo. Students have just met factor regressions, alpha,
-beta, and the appraisal ratio. They have NOT seen multi-factor models, multiple
-testing, or transaction costs.
+You are grading a week-4 memo. Students have seen the Sharpe ratio, the
+information ratio, a single-factor regression (alpha, beta, R-squared,
+idiosyncratic volatility), the appraisal ratio, and this identity for adding ONE
+asset to the market:
 
-THE QUESTION: Exxon and Pfizer have Sharpe ratios of 0.720 and 0.718. After
-running the regressions, are the two positions interchangeable for a CIO who
-already holds the market?
+    SR_max^2 = SR_market^2 + AR^2
 
-GROUND TRUTH (1980-2000, monthly, vs Mkt-RF):
-  Exxon : alpha  +6.76%/yr (t=2.12), beta 0.59, idio vol 14.4%, appraisal 0.470
-  Pfizer: alpha +10.87%/yr (t=2.18), beta 0.82, idio vol 22.5%, appraisal 0.483
+They have NOT seen multi-factor models, mean-variance optimisation as a topic,
+or matrix algebra beyond a dot product. They each picked TWO signals of their
+own, built a long-short for each, measured both against the market, and computed
+the best Sharpe ratio from the two factors combined using mu' Sigma^-1 mu.
 
-- The Sharpe ratios match, AND the appraisal ratios nearly match (0.470 vs
-  0.483). So on a per-unit-of-idiosyncratic-risk basis they really are close to
-  equivalent. A student who says "the ratios say they're the same" is CORRECT,
-  not lazy -- but should notice this is a non-obvious result.
-- What DIFFERS is the composition. Pfizer delivers 60% more alpha (10.9% vs
-  6.8%) but carries 56% more idiosyncratic risk (22.5% vs 14.4%). The ratio is
-  the same because both scale together.
-- Beta differs materially: 0.59 vs 0.82. Adding Exxon changes your total market
-  exposure much less. For a CIO already at their target market exposure, the
-  lower-beta position is easier to size without rebalancing the core.
-- Best answers note something the ratios DON'T capture. Any of: position size
-  needed to move the needle (Pfizer gives more alpha per dollar deployed);
-  capacity/liquidity; that a single stock's alpha is not diversified regardless
-  of ratio; that t-stats of ~2.1 over 20 years are marginal for both; that these
-  are two firms picked with hindsight.
+THE QUESTION: how would you find the best Sharpe ratio available from all THREE
+-- the market and both factors -- held in the best proportions?
+
+GROUND TRUTH:
+- The direct answer: put all three excess-return series in one vector, take the
+  mean vector mu and the 3x3 covariance matrix Sigma, and compute
+  sqrt(mu' Sigma^-1 mu), annualized. That is the tangency portfolio of the three.
+- The equivalent answer through today's material: regress BOTH factors on the
+  market, collect the two alphas and the covariance matrix of the two residuals,
+  and add that appraisal term to the market's squared Sharpe:
+  SR_max^2 = SR_market^2 + a' Omega^-1 a. Either route earns full credit.
+- Why it is not just adding the two Q2 numbers in squares: that would double
+  count whatever the two factors share. Their correlation WITH EACH OTHER enters
+  through the off-diagonal of Sigma (or of the residual covariance Omega): two
+  factors that overlap add less than the sum of their parts, and two that are
+  negatively correlated can add more.
+- Their correlation WITH THE MARKET is what the betas take out. Once each factor
+  is measured by its alpha and residual, the market exposure is already stripped,
+  so it does not get counted twice.
+- The answer for three can never be LOWER than the best of the pairs: adding an
+  asset cannot hurt, since you can always hold none of it. A student who says
+  this has understood the structure.
+- Honest caveats worth credit: all of this is in-sample, the optimal weights are
+  estimated with error, and the more assets you optimise over the worse that gets.
 
 Grade 0-5:
-  5 = Reports both decompositions correctly; recognizes the appraisal ratios are
-      close so the ratios call them equivalent; identifies the beta difference
-      or the alpha/idio-scale difference as what actually separates them; raises
-      at least one consideration the ratios miss.
-  4 = Correct decomposition and the equivalence point, plus one of the two
-      differentiators, but nothing beyond the ratios.
-  3 = Correct numbers, concludes "the same" or "Pfizer" without engaging with
-      why the appraisal ratios match.
-  2 = Reports the regressions but the argument doesn't follow from them.
-  1 = Restates the Sharpe ratios.
+  5 = Names a concrete calculation (3-asset tangency, or alphas with the residual
+      covariance matrix); explains that the factors' mutual correlation is what
+      stops you adding the Q2 numbers; says where the market correlation went.
+  4 = Concrete calculation and the correlation point, but vague on one of them.
+  3 = The right idea -- "combine all three, account for correlations" -- without
+      saying what to compute.
+  2 = Restates Q2 or proposes adding the two answers in squares with no caveat.
+  1 = Vague gesture at diversification.
   0 = Empty or off-topic.
 
-PENALIZE: claiming Pfizer is clearly better because its alpha is bigger, with no
-mention of its higher idiosyncratic risk -- that is the exact error the appraisal
-ratio exists to prevent. Also penalize treating a higher R-squared as better.
+Do not require matrix notation. A student who describes the steps in words --
+"regress both on the market, then see how much the leftovers overlap" -- has the
+idea and should score as if they wrote the formula.
 
-For picked_fund return "neither" unless the memo clearly picks one, in which
-case return "A" for Exxon or "B" for Pfizer.
-For cited_appraisal_or_alpha return True if the memo uses alpha or the appraisal
-ratio in its argument, else False.
-
-Output via the `grade_memo` tool.
+For picked_fund return "neither" (not applicable).
+For cited_appraisal_or_alpha return True if the memo uses the appraisal ratio or
+alpha in its argument, else False.
 """,
     "L3_Sorts_AI": """
 You are grading a week-3 memo to a portfolio manager. Students have seen
@@ -1272,6 +1266,50 @@ def grade_numeric(submission: dict, key) -> dict:
                           "reason": "ok" if ok else off}
         except Exception as e:
             results[q] = {"correct": False, "got": got, "expected": truth, "reason": str(e)}
+    return results
+
+
+# Plausibility bands for a completion check: wide enough that any honest answer
+# passes, narrow enough to catch a placeholder or a percent/decimal slip.
+COMPLETION_BANDS = {
+    "L4_PerfEval_AI": {
+        "f1_alpha": (-1.0, 1.0), "f2_alpha": (-1.0, 1.0),
+        "f1_beta": (-3.0, 3.0),  "f2_beta": (-3.0, 3.0),
+        "f1_appraisal": (-5.0, 5.0), "f2_appraisal": (-5.0, 5.0),
+        "f1_sharpe": (-5.0, 5.0), "f2_sharpe": (-5.0, 5.0),
+        "f1_ir": (-5.0, 5.0), "f2_ir": (-5.0, 5.0),
+        "sr_market": (-2.0, 3.0),
+        "sr_max_f1": (0.0, 6.0), "sr_max_f2": (0.0, 6.0), "sr_both": (0.0, 6.0),
+    },
+}
+
+
+def grade_completion(payload: dict, assignment: str) -> dict:
+    """Completion grading: the work is the student's own, so check that every
+    answer is there, is a finite number, and sits in a plausible range."""
+    import math
+    answers = payload.get("answers", {}) or {}
+    bands = COMPLETION_BANDS.get(assignment, {})
+    results = {}
+    for q, (lo, hi) in bands.items():
+        got = answers.get(q)
+        if got is None:
+            results[q] = {"correct": False, "got": None, "expected": f"{lo} to {hi}",
+                          "reason": "missing"}
+            continue
+        try:
+            got = float(got)
+            ok = math.isfinite(got) and lo <= got <= hi
+            results[q] = {"correct": ok, "got": got, "expected": f"{lo} to {hi}",
+                          "reason": "ok" if ok else "outside a plausible range"}
+        except Exception as e:
+            results[q] = {"correct": False, "got": got, "expected": f"{lo} to {hi}",
+                          "reason": str(e)}
+    picked = [str(f).strip() for f in (payload.get("factors") or []) if str(f).strip()]
+    named = len(picked) == 2 and len(set(picked)) == 2 and "____" not in picked
+    results["factors"] = {"correct": named, "got": ", ".join(picked) or None,
+                          "expected": "two different signal acronyms",
+                          "reason": "ok" if named else "two distinct factors not named"}
     return results
 
 

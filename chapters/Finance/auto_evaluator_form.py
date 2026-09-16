@@ -90,7 +90,7 @@ def main():
     import os
     import gspread
     from auto_evaluator import (ANSWER_KEY, MEMO_RUBRICS, grade_numeric,
-                                grade_wrds_tour, grade_by_signal)
+                                grade_wrds_tour, grade_by_signal, grade_completion)
 
     p = argparse.ArgumentParser()
     p.add_argument("--sheet", required=True, help="Google Sheet name")
@@ -179,6 +179,8 @@ def main():
             numeric = grade_wrds_tour(payload["answers"])
         elif key == "_by_signal_":
             numeric = grade_by_signal(payload, args.assignment)
+        elif key == "_completion_":
+            numeric = grade_completion(payload, args.assignment)
         else:
             numeric = grade_numeric(payload["answers"], key)
         memo_txt = payload.get("memo", "")
