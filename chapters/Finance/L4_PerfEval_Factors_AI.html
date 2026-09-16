@@ -531,12 +531,12 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#they-were-never-three-ratios">6.9.2. They were never three ratios</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#and-it-can-reverse-the-ranking">6.9.3. And it can reverse the ranking</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-ratios-disagree">6.9.4. The two ratios disagree</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-appraisal-ratio-is-the-number-to-care-about">6.9.5. Why the appraisal ratio is the number to care about?</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-famous-funds">6.10. 5. Two Famous Funds <a id="funds"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-versus-appraisal">6.10.1. Sharpe versus appraisal</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-t-statistic-and-sample-size">6.10.2. Appraisal, t-statistic, and sample size</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-appraisal-ratio-is-the-number-to-care-about">6.10.3. Why the appraisal ratio is the number to care about</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-does-your-signal-have-alpha">6.11. 🛠️ Hands-On: Does Your Signal Have Alpha? <a id="ho1"></a></a><ul class="nav section-nav flex-column">
@@ -579,7 +579,6 @@ or appraisal — and say what each one assumes</p></li>
 <li><p><strong>Compute an appraisal ratio</strong>, and show that Sharpe, information and
 appraisal are one formula against three different benchmarks</p></li>
 <li><p><strong>Build a hedged portfolio</strong> and explain why hedging buys you alpha capacity</p></li>
-<li><p><strong>Answer the question from Lecture 1</strong> — was General Electric skill, or beta?</p></li>
 <li><p><strong>Compare two real funds</strong> — ARKK and Berkshire — on Sharpe and on appraisal,
 and see what the length of a track record does to a t-statistic</p></li>
 </ol>
@@ -619,6 +618,10 @@ and see what the length of a track record does to a t-statistic</p></li>
 <span class="n">panel</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/panel_backbone_1980_2000.parquet"</span><span class="p">)</span>
 
 <span class="n">ff</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">'F-F_Research_Data_Factors'</span><span class="p">,</span> <span class="s1">'famafrench'</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s1">'1980-01-01'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span>
+<span class="c1">#Below we are converting the index to a timestamp and then adding a MonthEnd offset to ensure that the dates are at the end of each month. </span>
+<span class="c1"># this is due to the fact that the Fama-French data is of the end of each month, but the index is not timestamp. uncomment below to see what I mean</span>
+<span class="c1">#print(ff)</span>
+
 <span class="n">ff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_timestamp</span><span class="p">())</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">ff</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1980-01-31'</span><span class="p">:</span><span class="s1">'2000-12-31'</span><span class="p">]</span>
 
@@ -758,6 +761,7 @@ is the special case where your mandate is “don’t lose to a T-bill.”</p>
 being a value manager — the whole style tilt shows up as active return. The
 same manager benchmarked against a <em>value index</em> has to beat other value
 managers.</p>
+<p>It is an art in the mutual fund industry to carefully pick poorly performing benchmarks.</p>
 <p>Our fund’s IR against the market is 0.55. Against a proper value benchmark it
 would be far lower, because most of that 5% active return <strong>is</strong> the value
 tilt.</p>
@@ -777,6 +781,10 @@ replicates the fund</strong>, and use that:</p>
 Whatever mix of market, size and value the manager was actually running, the
 regression finds it, and you measure them against that mix rather than against
 a label.</p>
+<p>We will get to this multi-factor model in a few classes–for today–we will pick one factor.</p>
+<div class="math notranslate nohighlight">
+\[r^b_t = \beta f_{mkt,t}\]</div>
+<p>What this bechmark accounts for that <span class="math notranslate nohighlight">\(r^b_t = f_{mkt,t}\)</span> does not?</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -807,9 +815,9 @@ a label.</p>
 <td><p>Do both sides have the same number of rows?</p></td>
 </tr>
 <tr class="row-odd"><td><p>4</p></td>
-<td><p><strong>Reading a high R² as good</strong></p></td>
-<td><p>R² measures how much is <em>market</em>, not how much is <em>skill</em></p></td>
-<td><p>R² near 1 means almost no alpha is possible</p></td>
+<td><p><strong>Reading a high R²</strong></p></td>
+<td><p>R² measures how much the factor explains from realized returns</p></td>
+<td><p>R² near 1 means you measure risk very well</p></td>
 </tr>
 <tr class="row-even"><td><p>5</p></td>
 <td><p><strong>Annualizing α wrong</strong></p></td>
@@ -824,13 +832,6 @@ a label.</p>
 </tbody>
 </table>
 </div>
-<blockquote>
-<div><p><strong>🤖 AI-Era Insight</strong></p>
-<p>Pitfall 2 is the one to watch. <code class="docutils literal notranslate"><span class="pre">sm.OLS(y,</span> <span class="pre">x).fit()</span></code> runs perfectly happily
-without a constant and reports a beta — which is now wrong, because the
-regression line is forced through the origin. Nothing warns you. Always look
-for <code class="docutils literal notranslate"><span class="pre">const</span></code> in the output.</p>
-</div></blockquote>
 </section>
 <hr class="docutils" />
 <section id="live-demo-was-ge-skill-or-beta">
@@ -975,10 +976,9 @@ wrong if you don’t say them out loud.</p>
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
-<span class="n">MY_PROMPT</span> <span class="o">=</span> <span class="s2">"""</span>
-<span class="s2">                                    ← write your prompt here</span>
-<span class="s2">"""</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#MY_PROMPT = "</span>
+
+
 
 <span class="c1"># ---- paste the AI's code below ----</span>
 </pre></div>
@@ -1105,8 +1105,7 @@ regression instead of reasoning from volatility.</p>
 <blockquote>
 <div><p><strong>⚠️ Caution: R² is not a quality measure</strong></p>
 <p>GE’s R² is 0.56. That is not “56% good.” It says 56% of GE’s variance was
-market movement. A <em>higher</em> R² would mean <em>less</em> room for alpha, not more. An
-index fund has R² ≈ 1.00 and zero alpha by construction.</p>
+market movement. A <em>higher</em> R² would mean the returns on the factor explain more of the variation in the returns of the asset</p>
 </div></blockquote>
 <section id="why-anyone-bothers-the-hedged-portfolio">
 <h3><span class="section-number">6.8.1. </span>Why anyone bothers: the hedged portfolio<a class="headerlink" href="#why-anyone-bothers-the-hedged-portfolio" title="Link to this heading">#</a></h3>
@@ -1155,10 +1154,7 @@ well as <span class="math notranslate nohighlight">\(\beta^2\sigma_m^2\)</span> 
 large and your α is small, you can easily end up with a <em>worse</em> Sharpe ratio
 than you started with.</p>
 <p>So why does anyone do it? Because exposure to a <strong>factor</strong> and exposure to
-<strong>ε</strong> are not the same kind of thing, even when the arithmetic looks alike.
-Think about which of the two you could have had for free, which one diversifies
-away in a large portfolio, and which one you are being paid a fee for. Hold
-that question — the next section is the answer.</p>
+<strong>ε</strong> are not the same kind of thing, even when the arithmetic looks alike.</p>
 </div></blockquote>
 <blockquote>
 <div><p><strong>📌 Remember</strong></p>
@@ -1246,8 +1242,7 @@ is the honest comparison.</p>
 </section>
 <section id="and-it-can-reverse-the-ranking">
 <h3><span class="section-number">6.9.3. </span>And it can reverse the ranking<a class="headerlink" href="#and-it-can-reverse-the-ranking" title="Link to this heading">#</a></h3>
-<p>Here is value under the standard convention from Assignment 2 — NYSE
-breakpoints, value-weighted, so <strong>+5.2%/yr and not the +20.8% of the sorts
+<p>Here is value under the standard convention from Assignment 2 , so <strong>+5.2%/yr and not the +20.8% of the sorts
 lecture’s demo</strong> — run through the same regression.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1255,6 +1250,7 @@ lecture’s demo</strong> — run through the same regression.</p>
         <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">'lo'</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">'hi'</span><span class="p">})</span>
 <span class="n">dl</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">'permno'</span><span class="p">,</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">'permno'</span><span class="p">,</span><span class="s1">'date'</span><span class="p">])</span>
 <span class="n">dl</span><span class="p">[</span><span class="s1">'BM_l1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'BM'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">dl</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'me'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">dl</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'BM_l1'</span><span class="p">,</span> <span class="s1">'ret'</span><span class="p">,</span> <span class="s1">'me_l1'</span><span class="p">])</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'date'</span><span class="p">)</span>
 <span class="n">dl</span><span class="p">[</span><span class="s1">'g'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">BM_l1</span> <span class="o">&lt;=</span> <span class="n">dl</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">BM_l1</span> <span class="o">&gt;=</span> <span class="n">dl</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">))</span>
 <span class="n">dl</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'g'</span><span class="p">])</span>
@@ -1297,6 +1293,16 @@ investor choosing one single thing to own, Sharpe is right and GE wins.</p>
 <p><strong>The ratios don’t disagree because one is wrong. They answer different
 questions.</strong> Know which one you’re asking.</p>
 </div></blockquote>
+</section>
+<section id="why-the-appraisal-ratio-is-the-number-to-care-about">
+<h3><span class="section-number">6.9.5. </span>Why the appraisal ratio is the number to care about?<a class="headerlink" href="#why-the-appraisal-ratio-is-the-number-to-care-about" title="Link to this heading">#</a></h3>
+<p>If you already hold the market, the highest Sharpe ratio you can reach by adding
+a fund to it, in the best proportion, is</p>
+<div class="math notranslate nohighlight">
+\[SR_{\max} = \sqrt{SR_m^2 + AR^2}\]</div>
+<p>The fund’s own Sharpe ratio is not in the formula. Only the part of its return
+the market can’t replicate helps you, and the appraisal ratio is that part per
+unit of risk.</p>
 <blockquote>
 <div><p><strong>⚠️ Caution: two things we are not doing today</strong></p>
 <p>GE’s alpha has <strong>t = 2.19</strong> over twenty years — statistically marginal, and we
@@ -1368,17 +1374,6 @@ a regression alpha,</p>
 good the manager was; the t-statistic measures how sure you can be, and that
 grows only with the square root of time. At an appraisal ratio of 0.4, reaching
 t = 2 takes (2/0.4)² = 25 years.</p>
-</section>
-<section id="why-the-appraisal-ratio-is-the-number-to-care-about">
-<h3><span class="section-number">6.10.3. </span>Why the appraisal ratio is the number to care about<a class="headerlink" href="#why-the-appraisal-ratio-is-the-number-to-care-about" title="Link to this heading">#</a></h3>
-<p>If you already hold the market, the highest Sharpe ratio you can reach by adding
-a fund to it, in the best proportion, is</p>
-<div class="math notranslate nohighlight">
-\[SR_{\max} = \sqrt{SR_m^2 + AR^2}\]</div>
-<p>The fund’s own Sharpe ratio is not in the formula. Only the part of its return
-the market can’t replicate helps you, and the appraisal ratio is that part per
-unit of risk. This is the third question in the table at the top: how much can
-this raise my Sharpe ratio?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">''</span><span class="si">:</span><span class="s2">6s</span><span class="si">}{</span><span class="s1">'years'</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}{</span><span class="s1">'appraisal'</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}{</span><span class="s1">'AR x sqrt(years)'</span><span class="si">:</span><span class="s2">&gt;18s</span><span class="si">}{</span><span class="s1">'actual t'</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -1406,18 +1401,13 @@ turned out. And the months have gaps. The file runs from 1988 to 2021 with
 about 30% of months missing, and ARKK’s 59 months are spread over seven years.
 A demonstration of the method, not a verdict on either manager.</p>
 </div></blockquote>
-<blockquote>
-<div><p><strong>🔜 Coming back.</strong> Here the only thing you could buy cheaply was the market.
-In <em>Multi-Factor Models</em> we run the same two funds against six factors, and
-their appraisal ratios move in opposite directions.</p>
-</div></blockquote>
 </section>
 </section>
 <hr class="docutils" />
 <section id="hands-on-does-your-signal-have-alpha">
 <h2><span class="section-number">6.11. </span>🛠️ Hands-On: Does Your Signal Have Alpha? <a id="ho1"></a><a class="headerlink" href="#hands-on-does-your-signal-have-alpha" title="Link to this heading">#</a></h2>
 <p>In the sorts lecture you each picked a signal. The cell below builds its
-long-short under the standard convention from Assignment 2 — NYSE breakpoints,
+long-short under the standard convention from Assignment 2 –
 value-weighted. Regress it on the market and find out how much of it was market
 exposure.</p>
 <blockquote>
@@ -1427,12 +1417,24 @@ before running.</p>
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title list of signals</span>
+<span class="n">menu</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signal_menu.csv"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"menu : </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span><span class="si">}</span><span class="s2"> signals available</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">menu</span><span class="p">[[</span><span class="s1">'Acronym'</span><span class="p">,</span> <span class="s1">'Authors'</span><span class="p">,</span> <span class="s1">'Year'</span><span class="p">,</span> <span class="s1">'Cat.Economic'</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === EDIT THIS CELL: your signal from Lecture 3 ===</span>
-<span class="n">MY_SIGNAL</span> <span class="o">=</span> <span class="s2">"GP"</span>      <span class="c1"># ← your pick</span>
+<span class="n">MY_SIGNAL</span> <span class="o">=</span>       <span class="c1"># ← your pick</span>
 
 <span class="n">sig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/signals/</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">.parquet"</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">panel</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">'permno'</span><span class="p">,</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">'permno'</span><span class="p">,</span><span class="s1">'date'</span><span class="p">])</span>
 <span class="n">x</span><span class="p">[</span><span class="s1">'sig_l1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="n">MY_SIGNAL</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span><span class="p">[</span><span class="s1">'me_l1'</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'permno'</span><span class="p">)[</span><span class="s1">'me'</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'sig_l1'</span><span class="p">,</span> <span class="s1">'ret'</span><span class="p">,</span> <span class="s1">'me_l1'</span><span class="p">])</span>
 <span class="n">qq</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">exchcd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)[</span><span class="s1">'sig_l1'</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">([</span><span class="mf">.1</span><span class="p">,</span><span class="mf">.9</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
         <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="mf">0.1</span><span class="p">:</span><span class="s1">'lo'</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">:</span><span class="s1">'hi'</span><span class="p">}))</span>
@@ -1452,8 +1454,8 @@ before running.</p>
 
 <span class="n">jj</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">'r'</span><span class="p">),</span> <span class="n">ff</span><span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
-<span class="n">mm</span> <span class="o">=</span> <span class="n">____</span>        <span class="c1"># hint: sm.OLS(jj.r, sm.add_constant(jj['Mkt-RF'])).fit()</span>
-<span class="n">iv</span> <span class="o">=</span> <span class="n">____</span>        <span class="c1"># hint: mm.resid.std() * np.sqrt(12)</span>
+<span class="n">mm</span> <span class="o">=</span><span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">jj</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">jj</span><span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="n">iv</span> <span class="o">=</span> <span class="n">mm</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">MY_SIGNAL</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  raw return  </span><span class="si">{</span><span class="n">jj</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">*</span><span class="mi">12</span><span class="si">:</span><span class="s2">+7.2%</span><span class="si">}</span><span class="s2">/yr    Sharpe    </span><span class="si">{</span><span class="n">jj</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">/</span><span class="n">jj</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -1758,12 +1760,12 @@ the other factors people use, where they came from, and how you’d choose.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#they-were-never-three-ratios">6.9.2. They were never three ratios</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#and-it-can-reverse-the-ranking">6.9.3. And it can reverse the ranking</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-ratios-disagree">6.9.4. The two ratios disagree</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-appraisal-ratio-is-the-number-to-care-about">6.9.5. Why the appraisal ratio is the number to care about?</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-famous-funds">6.10. 5. Two Famous Funds <a id="funds"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpe-versus-appraisal">6.10.1. Sharpe versus appraisal</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#appraisal-t-statistic-and-sample-size">6.10.2. Appraisal, t-statistic, and sample size</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-the-appraisal-ratio-is-the-number-to-care-about">6.10.3. Why the appraisal ratio is the number to care about</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hands-on-does-your-signal-have-alpha">6.11. 🛠️ Hands-On: Does Your Signal Have Alpha? <a id="ho1"></a></a><ul class="nav section-nav flex-column">
