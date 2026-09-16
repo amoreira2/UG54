@@ -539,10 +539,11 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-with-the-room">6.10.1. Compare with the room</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-exxon-vs-pfizer">6.11. 🎯 Challenge: Exxon vs Pfizer <a id="challenge"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-exxon">6.11.1. Q1 — Exxon</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-pfizer">6.11.2. Q2 — Pfizer</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-memo">6.11.3. Q3 — The memo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-two-factors-and-the-market">6.11. 🎯 Challenge: Two Factors and the Market <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-each-factor-on-its-own">6.11.1. Q1 — Each factor on its own</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-each-factor-added-to-the-market">6.11.2. Q2 — Each factor, added to the market</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-both-factors-at-once">6.11.3. Q3 — Both factors at once</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-the-memo">6.11.4. Q4 — The memo</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">6.12. 📤 Submission <a id="submit"></a></a></li>
@@ -1427,24 +1428,44 @@ was just market.</p></li>
 </section>
 </section>
 <hr class="docutils" />
-<section id="challenge-exxon-vs-pfizer">
-<h2><span class="section-number">6.11. </span>🎯 Challenge: Exxon vs Pfizer <a id="challenge"></a><a class="headerlink" href="#challenge-exxon-vs-pfizer" title="Link to this heading">#</a></h2>
-<p><em>Homework — due before Lecture 5.</em></p>
-<p>Two of the largest US companies, both public for the whole 1980–2000 sample.
-Their Sharpe ratios are <strong>0.720</strong> and <strong>0.718</strong> — indistinguishable.</p>
-<p>Your CIO already holds the market and wants to add one satellite position. Run
-the regressions and tell them which.</p>
-<ul class="simple">
-<li><p><strong>Exxon</strong> is permno <strong>11850</strong></p></li>
-<li><p><strong>Pfizer</strong> is permno <strong>21936</strong></p></li>
-</ul>
-<section id="q1-exxon">
-<h3><span class="section-number">6.11.1. </span>Q1 — Exxon<a class="headerlink" href="#q1-exxon" title="Link to this heading">#</a></h3>
+<section id="challenge-two-factors-and-the-market">
+<h2><span class="section-number">6.11. </span>🎯 Challenge: Two Factors and the Market <a id="challenge"></a><a class="headerlink" href="#challenge-two-factors-and-the-market" title="Link to this heading">#</a></h2>
+<p><em>Homework — due before Lecture 5. Graded on completion.</em></p>
+<p>Pick <strong>two</strong> signals from the menu and build a long-short for each, exactly as
+the Hands-On did: signal lagged one month, NYSE breakpoints, value-weighted, top
+decile minus bottom. Pick two you expect to be different in kind — an accounting
+signal and a price-based one, say.</p>
+<p>Everything below is measured against the market, <code class="docutils literal notranslate"><span class="pre">ff['Mkt-RF']</span></code>, over the months
+your series and the market share.</p>
+<blockquote>
+<div><p><strong>⚠️</strong> <code class="docutils literal notranslate"><span class="pre">DivSeason</span></code>, <code class="docutils literal notranslate"><span class="pre">OScore</span></code> and <code class="docutils literal notranslate"><span class="pre">ShareIss1Y</span></code> take too few distinct values to
+cut cleanly. Pick anything else.</p>
+</div></blockquote>
+<section id="q1-each-factor-on-its-own">
+<h3><span class="section-number">6.11.1. </span>Q1 — Each factor on its own<a class="headerlink" href="#q1-each-factor-on-its-own" title="Link to this heading">#</a></h3>
+<p>Regress each long-short on the market and report, for <strong>each</strong> factor: the
+annualized alpha, the beta, the appraisal ratio, the factor’s own Sharpe ratio,
+and its information ratio against the market.</p>
+<p>Three of those five you have seen computed today; two you have to think about.
+The Sharpe ratio of a long-short has no risk-free rate to subtract. The
+information ratio is the mean of <code class="docutils literal notranslate"><span class="pre">factor</span> <span class="pre">−</span> <span class="pre">market</span></code> over its standard deviation,
+annualized.</p>
 <blockquote>
 <div><p><strong>📌 Required variable names:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xom_alpha_ann</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized alpha, e.g. 0.05 for 5%/yr</span>
-<span class="n">xom_beta</span>      <span class="o">=</span> <span class="n">____</span>
-<span class="n">xom_appraisal</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># annualized alpha / annualized idiosyncratic vol</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">f1</span> <span class="o">=</span> <span class="s2">"____"</span>          <span class="c1"># the acronym you picked, e.g. "GP"</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="s2">"____"</span>
+
+<span class="n">f1_alpha</span>     <span class="o">=</span> <span class="n">____</span>  <span class="c1"># annualized, 0.05 = 5%/yr</span>
+<span class="n">f1_beta</span>      <span class="o">=</span> <span class="n">____</span>
+<span class="n">f1_appraisal</span> <span class="o">=</span> <span class="n">____</span>  <span class="c1"># annualized alpha / annualized idiosyncratic vol</span>
+<span class="n">f1_sharpe</span>    <span class="o">=</span> <span class="n">____</span>  <span class="c1"># the factor's own Sharpe ratio</span>
+<span class="n">f1_ir</span>        <span class="o">=</span> <span class="n">____</span>  <span class="c1"># information ratio against the market</span>
+
+<span class="n">f2_alpha</span>     <span class="o">=</span> <span class="n">____</span>
+<span class="n">f2_beta</span>      <span class="o">=</span> <span class="n">____</span>
+<span class="n">f2_appraisal</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">f2_sharpe</span>    <span class="o">=</span> <span class="n">____</span>
+<span class="n">f2_ir</span>        <span class="o">=</span> <span class="n">____</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -1454,23 +1475,42 @@ the regressions and tell them which.</p>
 
 
 <span class="c1"># Required outputs — fill these in:</span>
-<span class="n">xom_alpha_ann</span> <span class="o">=</span> <span class="n">____</span>
-<span class="n">xom_beta</span>      <span class="o">=</span> <span class="n">____</span>
-<span class="n">xom_appraisal</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">f1</span> <span class="o">=</span> <span class="s2">"____"</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="s2">"____"</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Exxon: alpha </span><span class="si">{</span><span class="n">xom_alpha_ann</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr  beta </span><span class="si">{</span><span class="n">xom_beta</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  appraisal </span><span class="si">{</span><span class="n">xom_appraisal</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">f1_alpha</span>     <span class="o">=</span> <span class="n">____</span>
+<span class="n">f1_beta</span>      <span class="o">=</span> <span class="n">____</span>
+<span class="n">f1_appraisal</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">f1_sharpe</span>    <span class="o">=</span> <span class="n">____</span>
+<span class="n">f1_ir</span>        <span class="o">=</span> <span class="n">____</span>
+
+<span class="n">f2_alpha</span>     <span class="o">=</span> <span class="n">____</span>
+<span class="n">f2_beta</span>      <span class="o">=</span> <span class="n">____</span>
+<span class="n">f2_appraisal</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">f2_sharpe</span>    <span class="o">=</span> <span class="n">____</span>
+<span class="n">f2_ir</span>        <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">''</span><span class="si">:</span><span class="s2">10s</span><span class="si">}{</span><span class="s1">'alpha'</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}{</span><span class="s1">'beta'</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">'appraisal'</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}{</span><span class="s1">'Sharpe'</span><span class="si">:</span><span class="s2">&gt;9s</span><span class="si">}{</span><span class="s1">'IR'</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f1</span><span class="si">:</span><span class="s2">10s</span><span class="si">}{</span><span class="n">f1_alpha</span><span class="si">:</span><span class="s2">&gt;8.2%</span><span class="si">}{</span><span class="n">f1_beta</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}{</span><span class="n">f1_appraisal</span><span class="si">:</span><span class="s2">&gt;11.2f</span><span class="si">}{</span><span class="n">f1_sharpe</span><span class="si">:</span><span class="s2">&gt;9.2f</span><span class="si">}{</span><span class="n">f1_ir</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f2</span><span class="si">:</span><span class="s2">10s</span><span class="si">}{</span><span class="n">f2_alpha</span><span class="si">:</span><span class="s2">&gt;8.2%</span><span class="si">}{</span><span class="n">f2_beta</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}{</span><span class="n">f2_appraisal</span><span class="si">:</span><span class="s2">&gt;11.2f</span><span class="si">}{</span><span class="n">f2_sharpe</span><span class="si">:</span><span class="s2">&gt;9.2f</span><span class="si">}{</span><span class="n">f2_ir</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
-<section id="q2-pfizer">
-<h3><span class="section-number">6.11.2. </span>Q2 — Pfizer<a class="headerlink" href="#q2-pfizer" title="Link to this heading">#</a></h3>
+<section id="q2-each-factor-added-to-the-market">
+<h3><span class="section-number">6.11.2. </span>Q2 — Each factor, added to the market<a class="headerlink" href="#q2-each-factor-added-to-the-market" title="Link to this heading">#</a></h3>
+<p>You already hold the market. Section 4 gives the best Sharpe ratio you can reach
+by adding <strong>one</strong> more thing to it:</p>
+<div class="math notranslate nohighlight">
+\[SR_{\max} = \sqrt{SR_m^2 + AR^2}\]</div>
+<p>Do that once for each of your factors, and report the market’s own Sharpe ratio
+over the same months alongside them.</p>
 <blockquote>
 <div><p><strong>📌 Required variable names:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pfe_alpha_ann</span> <span class="o">=</span> <span class="n">____</span>
-<span class="n">pfe_beta</span>      <span class="o">=</span> <span class="n">____</span>
-<span class="n">pfe_appraisal</span> <span class="o">=</span> <span class="n">____</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sr_market</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># the market's Sharpe ratio, same months</span>
+<span class="n">sr_max_f1</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># best Sharpe from the market plus factor 1</span>
+<span class="n">sr_max_f2</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># best Sharpe from the market plus factor 2</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -1480,26 +1520,55 @@ the regressions and tell them which.</p>
 
 
 <span class="c1"># Required outputs — fill these in:</span>
-<span class="n">pfe_alpha_ann</span> <span class="o">=</span> <span class="n">____</span>
-<span class="n">pfe_beta</span>      <span class="o">=</span> <span class="n">____</span>
-<span class="n">pfe_appraisal</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">sr_market</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">sr_max_f1</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">sr_max_f2</span> <span class="o">=</span> <span class="n">____</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pfizer: alpha </span><span class="si">{</span><span class="n">pfe_alpha_ann</span><span class="si">:</span><span class="s2">+.2%</span><span class="si">}</span><span class="s2">/yr  beta </span><span class="si">{</span><span class="n">pfe_beta</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  appraisal </span><span class="si">{</span><span class="n">pfe_appraisal</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"the market alone      </span><span class="si">{</span><span class="n">sr_market</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"market + </span><span class="si">{</span><span class="n">f1</span><span class="si">:</span><span class="s2">12s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">sr_max_f1</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"market + </span><span class="si">{</span><span class="n">f2</span><span class="si">:</span><span class="s2">12s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">sr_max_f2</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
-<section id="q3-the-memo">
-<h3><span class="section-number">6.11.3. </span>Q3 — The memo<a class="headerlink" href="#q3-the-memo" title="Link to this heading">#</a></h3>
+<section id="q3-both-factors-at-once">
+<h3><span class="section-number">6.11.3. </span>Q3 — Both factors at once<a class="headerlink" href="#q3-both-factors-at-once" title="Link to this heading">#</a></h3>
+<p><strong>This one is harder than anything else today. Have a go at it.</strong></p>
+<p>Forget the market for a moment. Hold <strong>both</strong> of your factors, in whatever
+proportions are best. What is the highest Sharpe ratio that combination can
+reach?</p>
+<p>Use what we learned to get there!</p>
 <blockquote>
-<div><p><strong>📝 Your task — maximum 6 sentences</strong></p>
-<p>Their Sharpe ratios are the same. Once you have the regressions, are these two
-positions interchangeable?</p>
-<p>Address: what is <em>different</em> about how each one earned its return; whether the
-appraisal ratio separates them; and what a CIO who already owns the market
-should care about that neither ratio captures.</p>
-<p>There is a defensible answer in either direction. I’m grading the reasoning.</p>
+<div><p><strong>📌 Required variable name:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sr_both</span> <span class="o">=</span> <span class="n">____</span>     <span class="c1"># best annualized Sharpe from the two factors together</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="c1"># Required output — fill this in:</span>
+<span class="n">sr_both</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f1</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">f2</span><span class="si">}</span><span class="s2">, best combination: </span><span class="si">{</span><span class="n">sr_both</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  for comparison — </span><span class="si">{</span><span class="n">f1</span><span class="si">}</span><span class="s2"> alone </span><span class="si">{</span><span class="n">f1_sharpe</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">f2</span><span class="si">}</span><span class="s2"> alone </span><span class="si">{</span><span class="n">f2_sharpe</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q4-the-memo">
+<h3><span class="section-number">6.11.4. </span>Q4 — The memo<a class="headerlink" href="#q4-the-memo" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Maximum 6 sentences</strong></p>
+<p>You now know what each factor adds to the market on its own, and what the two
+of them can do together without it. How would you work out the best Sharpe
+ratio available from <strong>all three</strong> — the market and both factors — held in the
+best proportions?</p>
+<p>I want you to especulate about how to get this done.</p>
 </div></blockquote>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1521,8 +1590,10 @@ should care about that neither ratio captures.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
 
-<span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"xom_alpha_ann"</span><span class="p">,</span> <span class="s2">"xom_beta"</span><span class="p">,</span> <span class="s2">"xom_appraisal"</span><span class="p">,</span>
-            <span class="s2">"pfe_alpha_ann"</span><span class="p">,</span> <span class="s2">"pfe_beta"</span><span class="p">,</span> <span class="s2">"pfe_appraisal"</span><span class="p">,</span> <span class="s2">"MEMO"</span><span class="p">]</span>
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"f1"</span><span class="p">,</span> <span class="s2">"f2"</span><span class="p">,</span>
+            <span class="s2">"f1_alpha"</span><span class="p">,</span> <span class="s2">"f1_beta"</span><span class="p">,</span> <span class="s2">"f1_appraisal"</span><span class="p">,</span> <span class="s2">"f1_sharpe"</span><span class="p">,</span> <span class="s2">"f1_ir"</span><span class="p">,</span>
+            <span class="s2">"f2_alpha"</span><span class="p">,</span> <span class="s2">"f2_beta"</span><span class="p">,</span> <span class="s2">"f2_appraisal"</span><span class="p">,</span> <span class="s2">"f2_sharpe"</span><span class="p">,</span> <span class="s2">"f2_ir"</span><span class="p">,</span>
+            <span class="s2">"sr_market"</span><span class="p">,</span> <span class="s2">"sr_max_f1"</span><span class="p">,</span> <span class="s2">"sr_max_f2"</span><span class="p">,</span> <span class="s2">"sr_both"</span><span class="p">,</span> <span class="s2">"MEMO"</span><span class="p">]</span>
 <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()]</span>
 <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">❌ Missing before submission: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -1530,7 +1601,8 @@ should care about that neither ratio captures.</p>
 <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"assignment"</span><span class="p">:</span> <span class="s2">"L4_PerfEval_AI"</span><span class="p">,</span>
     <span class="s2">"ts"</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">"seconds"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"+00:00"</span><span class="p">,</span> <span class="s2">"Z"</span><span class="p">),</span>
-    <span class="s2">"answers"</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"MEMO"</span><span class="p">},</span>
+    <span class="s2">"factors"</span><span class="p">:</span> <span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">],</span>
+    <span class="s2">"answers"</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"f1"</span><span class="p">,</span> <span class="s2">"f2"</span><span class="p">,</span> <span class="s2">"MEMO"</span><span class="p">)},</span>
     <span class="s2">"memo"</span><span class="p">:</span> <span class="n">MEMO</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
 <span class="p">}</span>
 <span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1714,10 +1786,11 @@ the other factors people use, where they came from, and how you’d choose.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compare-with-the-room">6.10.1. Compare with the room</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-exxon-vs-pfizer">6.11. 🎯 Challenge: Exxon vs Pfizer <a id="challenge"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-exxon">6.11.1. Q1 — Exxon</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-pfizer">6.11.2. Q2 — Pfizer</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-the-memo">6.11.3. Q3 — The memo</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-two-factors-and-the-market">6.11. 🎯 Challenge: Two Factors and the Market <a id="challenge"></a></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-each-factor-on-its-own">6.11.1. Q1 — Each factor on its own</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-each-factor-added-to-the-market">6.11.2. Q2 — Each factor, added to the market</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-both-factors-at-once">6.11.3. Q3 — Both factors at once</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-the-memo">6.11.4. Q4 — The memo</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">6.12. 📤 Submission <a id="submit"></a></a></li>
