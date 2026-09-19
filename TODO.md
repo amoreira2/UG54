@@ -9,6 +9,32 @@ through and dated rather than deleted, so the reasoning survives.
 
 ## Open decisions
 
+- [ ] **The signal menu grew from 30 to 32 (2026-09-18) — check the other lectures.**
+      Added `CustomerMomentum` (Cohen–Frazzini 2008, supply chain) and
+      `retConglomerate` (Cohen–Lou 2012) to `signal_menu.csv` and `signals/`.
+      L5 is done: its zoo is now 31 strategies, and the prose, key and rubric
+      match. Still to check:
+      - **L4** "list of signals" cell prints `menu[...].head(30)`, which hides the
+        two new rows. The L4 challenge is live.
+      - **L3** prose says "30 published" / "30 signals", and its stored outputs
+        show 30. It is past, so maybe leave it.
+      - **L6** "Momentum is the most profitable signal in our whole menu —
+        +19.9%/yr" still holds. The next are IdioVol3F 13.9% and
+        CustomerMomentum 13.5% (NYSE 10/90, VW). But the same construction gives
+        Mom12m **+19.8%**, so check the 19.9.
+      - **L8–L10** read the frozen `longshort_29.parquet` ("our 29 strategies",
+        a Bonferroni bar over 27 published t's). Keep 29 there, or rebuild to 31
+        and redo those numbers? L5 now says 31, so L9's "the same 29 long-shorts
+        as last time" reads oddly.
+      - **`build_course_panel.py`** `WORKHORSE` still lists 30. Add the two so a
+        rebuild keeps them.
+      - **Ties.** `CustomerMomentum` has ~445 stocks a month but only ~162
+        distinct values (suppliers share customers), so `pd.qcut(…, 10,
+        duplicates='drop')` gets a tenth bucket in only 190 of 251 months. Break
+        ties with `rank(method='first')` first. The NYSE 10/90 breakpoints in
+        L4–L6 are unaffected. `keys_L3_by_signal.json` has no key for either new
+        signal (L3 is closed).
+
 - [ ] **A8 (Thu Dec 3).** Its Thursday is Thanksgiving so it slips to the day
       before the final report. Keep it and let students drop it, or cut it and
       run seven? *Postponed — nothing dropped for now.*

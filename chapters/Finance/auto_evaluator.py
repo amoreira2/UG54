@@ -181,13 +181,9 @@ ANSWER_KEY = {
         "mom_umd_beta":   (1.46,   0.12),
         "mom_r2_ff6":     (0.84,   0.10),
     },
-    "L5_FactorZoo_AI": {
-        # Correlation structure of 29 long-shorts, 251 common months.
-        "mean_pairwise_corr": (0.049, 0.45),   # near zero -> loose fractional band
-        "frac_high_corr":     (0.086, 0.30),
-        "within_cat_corr":    (0.579, 0.15),
-        "across_cat_corr":    (0.189, 0.20),
-    },
+    # Ten portfolios on BookLeverage and on IdioVol3F, and each one's 10 - 1.
+    # Written by build_l5_key.py.
+    "L5_FactorZoo_AI": json.load(open(Path(__file__).resolve().parent / "keys_L5.json")),
     # Two factors of the student's own choosing, so there is no fixed answer.
     # Graded on completion: the numbers must be there, finite, and not absurd.
     "L4_PerfEval_AI": "_completion_",
@@ -470,41 +466,67 @@ loading in its argument, else False.
 Output via the `grade_memo` tool.
 """,
     "L5_FactorZoo_AI": """
-Grading a week-5 memo to an investment committee that believes "we run a
-30-factor model, so we're extremely diversified."
+You are grading a week-5 memo. Students have seen sorts, long-shorts, the CAPM
+regression, alpha, the appraisal ratio and SR_max^2 = SR_m^2 + (alpha/sigma_e)^2.
+This lecture showed that a spread in average returns is not a factor unless it
+has alpha.
 
-GROUND TRUTH (29 long-shorts, 251 months, 1980-2000):
-- Mean pairwise correlation +0.049; only 8.6% of pairs exceed |0.5|. Taken
-  alone this SUPPORTS the committee.
-- But mean |corr| WITHIN economic category is 0.579 vs 0.189 ACROSS -- a 3.1x
-  difference. The average hides block structure.
-- Near-duplicates: MaxRet/RealizedVol 0.97, IdioVol3F/RealizedVol 0.96,
-  IdioVol3F/MaxRet 0.94, Illiquidity/Size 0.92, DolVol/Illiquidity 0.89.
-- Correct recommendation: diversification comes from spanning FAMILIES, not
-  from collecting names. Count distinct bets (roughly the number of economic
-  categories represented), not signals. Adding a fourth volatility signal adds
-  nothing.
+THE TASK: for two given signals, BookLeverage and IdioVol3F, students formed ten
+value-weighted portfolios (NYSE decile breakpoints, 1980-2000), estimated each
+one's market beta, and plotted beta (x) against average excess return (y),
+together with the market (beta 1, 9.2%/yr) and the 10 - 1 long-short, whose
+alpha t-statistic they also report. The memo (max 6 sentences) describes both
+plots and says what an investor fully invested in the market, who wants a
+higher Sharpe ratio, should do.
+
+GROUND TRUTH:
+- BookLeverage: betas 0.87-1.23, average excess returns 8.2%-11.8%, every
+  portfolio within about 2.5%/yr of the line through the origin and the market.
+  10 - 1: beta +0.15, average -2.8%/yr, alpha -4.1%/yr with t = -1.07 -- not
+  distinguishable from zero. In sample it would lift the Sharpe ratio only from
+  0.59 to 0.63, and that is noise.
+- IdioVol3F: returns FALL with beta. Portfolio 1 has beta 1.36 and earns
+  -3.7%/yr; portfolio 10 has beta 0.68 and earns +10.2%/yr. 10 - 1: beta -0.69,
+  average +13.9%/yr, alpha +20.2%/yr with t = 4.22 -- larger than its raw return
+  because its beta is negative. Appraisal ratio 0.94; adding it to the market
+  lifts the in-sample Sharpe ratio from 0.59 to about 1.11.
+
+WHAT A GOOD MEMO DOES:
+- DESCRIBES both plots: BookLeverage's portfolios sit near the line through the
+  origin and the market; IdioVol3F's do not -- high-beta portfolios earn less,
+  low-beta ones more.
+- USES THE LINE: holding more or less of the market (the rest in T-bills, or
+  shorting it) moves the investor along the line from the origin through the
+  market. That is what they can already get; distance above or below is alpha.
+- PLACES THE LONG-SHORTS: BookLeverage's 10 - 1 sits near the line (a little
+  below, not reliably); IdioVol3F's sits far above it, at a negative beta.
+- CONCLUDES: leave BookLeverage alone -- it offers nothing the market itself does
+  not; add the IdioVol3F long-short, which raises the Sharpe ratio and, with a
+  negative beta, also offsets some market risk. Credit: the gain comes from
+  alpha relative to residual risk, not from the raw return; a reliable negative
+  alpha would be as useful as a positive one (take the other side), which is
+  why BookLeverage's -4% needs its t-statistic; caveats (in sample, trading
+  costs, shorting small volatile stocks).
 
 Grade 0-5:
-  5 = Uses BOTH numbers and explains why they conflict (the average is diluted
-      by the many across-category pairs); names a specific near-duplicate pair
-      with its correlation; recommends counting families rather than signals.
-  4 = Both numbers and the right recommendation, but no specific pair named, or
-      the reconciliation of the two numbers is vague.
-  3 = Notices the within/across gap but doesn't turn it into a recommendation.
-  2 = Reports the average correlation and concludes "diversified" -- the exact
-      trap the lecture is built around.
-  1 = Restates numbers with no argument.
+  5 = Describes both plots correctly, uses the line through the market as the
+      benchmark, places both long-shorts against it, and gives the right action
+      for each (nothing for BookLeverage, add IdioVol3F).
+  4 = Right actions for both, one element thin -- usually the line only
+      implicit, or the long-shorts not placed.
+  3 = Right about IdioVol3F but misreads BookLeverage (e.g. "short it for +4%
+      alpha" with no word on its t-statistic, or "it works"); or describes both
+      well without a clear action.
+  2 = Argues from average returns alone ("IdioVol3F earns 13.9%, add it") with no
+      role for beta or the market.
+  1 = Restates numbers.
   0 = Empty or off-topic.
 
-PENALIZE: concluding the model IS well diversified on the strength of the +0.05
-average alone. Also penalize claiming high correlation is inherently bad -- the
-point is double-counting of evidence and false diversification, not that
-correlated signals are useless.
+Do not require the phrase "security market line".
 
 For picked_fund return "neither".
-For cited_appraisal_or_alpha return True if the memo cites a specific
-correlation number in its argument, else False.
+For cited_appraisal_or_alpha return True if the memo uses alpha (distance from
+the market's line) or the appraisal ratio in its argument, else False.
 
 Output via the `grade_memo` tool.
 """,
@@ -1242,6 +1264,20 @@ def grade_numeric(submission: dict, key) -> dict:
         raise ValueError(f"{key} answer key — use the assignment-specific grader.")
     results = {}
     for q, spec in key.items():
+        # {"each": [...], "abs_tol": x}: a list, every element within x of the key.
+        if isinstance(spec, dict):
+            got = submission.get(q)
+            try:
+                vals = [float(v) for v in got]
+                bad = [i + 1 for i, (v, t) in enumerate(zip(vals, spec["each"]))
+                       if not abs(v - t) <= spec["abs_tol"]]
+                ok = len(vals) == len(spec["each"]) and not bad
+                why = ("ok" if ok else f"expected {len(spec['each'])} numbers" if len(vals) != len(spec["each"])
+                       else f"off in position(s) {bad}")
+            except Exception as e:
+                ok, why = False, "missing" if got is None else str(e)
+            results[q] = {"correct": ok, "got": got, "expected": spec["each"], "reason": why}
+            continue
         # (truth, tol) or (truth, tol, floor): tol is fractional; floor is an
         # absolute band that stops answers near zero needing absurd precision.
         # truth may be a list of acceptable answers; matching any one counts.
