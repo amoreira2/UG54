@@ -472,52 +472,54 @@ This lecture showed that a spread in average returns is not a factor unless it
 has alpha.
 
 THE TASK: for two given signals, BookLeverage and IdioVol3F, students formed ten
-value-weighted portfolios (NYSE decile breakpoints, 1980-2000), estimated each
-one's market beta, and plotted beta (x) against average excess return (y),
+value-weighted portfolios (equal-count groups each month, 1980-2000), estimated
+each one's market beta, and plotted beta (x) against average excess return (y),
 together with the market (beta 1, 9.2%/yr) and the 10 - 1 long-short, whose
 alpha t-statistic they also report. The memo (max 6 sentences) describes both
-plots and says what an investor fully invested in the market, who wants a
-higher Sharpe ratio, should do.
+plots and says what an investor fully invested in the market, who wants a higher
+Sharpe ratio, should do.
 
 GROUND TRUTH:
-- BookLeverage: betas 0.87-1.23, average excess returns 8.2%-11.8%, every
-  portfolio within about 2.5%/yr of the line through the origin and the market.
-  10 - 1: beta +0.15, average -2.8%/yr, alpha -4.1%/yr with t = -1.07 -- not
-  distinguishable from zero. In sample it would lift the Sharpe ratio only from
-  0.59 to 0.63, and that is noise.
-- IdioVol3F: returns FALL with beta. Portfolio 1 has beta 1.36 and earns
-  -3.7%/yr; portfolio 10 has beta 0.68 and earns +10.2%/yr. 10 - 1: beta -0.69,
-  average +13.9%/yr, alpha +20.2%/yr with t = 4.22 -- larger than its raw return
-  because its beta is negative. Appraisal ratio 0.94; adding it to the market
-  lifts the in-sample Sharpe ratio from 0.59 to about 1.11.
+- BookLeverage: betas 0.86 to 1.27, average excess returns 4.7% to 12.1%. Nine of
+  the ten portfolios sit within about 2%/yr of the line through the origin and
+  the market. The exception is portfolio 10, the most levered, which is 7%/yr
+  BELOW it. The 10 - 1 long-short: beta +0.20, average -7.4%/yr, alpha -9.2%/yr
+  with t = -2.11. So the alpha is marginal, negative, and comes from one extreme
+  portfolio -- weak evidence, especially after this lecture's warning about
+  searching across many signals.
+- IdioVol3F: returns FALL with beta. Portfolio 1 has beta 1.31 and earns
+  -21.3%/yr; portfolio 10 has beta 0.70 and earns +11.3%/yr. The 10 - 1
+  long-short: beta -0.61, average +32.6%/yr, alpha +38.2%/yr with t = 6.37 --
+  larger than its raw return because the beta is negative. Appraisal ratio 1.41;
+  adding it to the market lifts the in-sample Sharpe ratio from 0.59 to 1.53.
 
 WHAT A GOOD MEMO DOES:
 - DESCRIBES both plots: BookLeverage's portfolios sit near the line through the
-  origin and the market; IdioVol3F's do not -- high-beta portfolios earn less,
-  low-beta ones more.
+  origin and the market, with the top decile the exception; IdioVol3F's do not --
+  high-beta portfolios earn less, low-beta ones more.
 - USES THE LINE: holding more or less of the market (the rest in T-bills, or
   shorting it) moves the investor along the line from the origin through the
   market. That is what they can already get; distance above or below is alpha.
-- PLACES THE LONG-SHORTS: BookLeverage's 10 - 1 sits near the line (a little
-  below, not reliably); IdioVol3F's sits far above it, at a negative beta.
-- CONCLUDES: leave BookLeverage alone -- it offers nothing the market itself does
-  not; add the IdioVol3F long-short, which raises the Sharpe ratio and, with a
-  negative beta, also offsets some market risk. Credit: the gain comes from
-  alpha relative to residual risk, not from the raw return; a reliable negative
-  alpha would be as useful as a positive one (take the other side), which is
-  why BookLeverage's -4% needs its t-statistic; caveats (in sample, trading
-  costs, shorting small volatile stocks).
+- PLACES THE LONG-SHORTS: BookLeverage's 10 - 1 sits below the line but only
+  marginally (t = -2.1); IdioVol3F's sits far above it, at a negative beta.
+- CONCLUDES: add the IdioVol3F long-short -- it raises the Sharpe ratio a lot and,
+  with a negative beta, offsets market risk too. On BookLeverage either answer
+  earns full credit IF the t-statistic carries it: leave it alone because one
+  marginal extreme decile is not evidence, or take the other side (long the low-
+  leverage portfolio, short the high) in small size while saying the evidence is
+  weak. Credit: the gain comes from alpha relative to residual risk, not the raw
+  return; caveats (in sample, trading costs, shorting small volatile stocks).
 
 Grade 0-5:
   5 = Describes both plots correctly, uses the line through the market as the
-      benchmark, places both long-shorts against it, and gives the right action
-      for each (nothing for BookLeverage, add IdioVol3F).
-  4 = Right actions for both, one element thin -- usually the line only
-      implicit, or the long-shorts not placed.
-  3 = Right about IdioVol3F but misreads BookLeverage (e.g. "short it for +4%
-      alpha" with no word on its t-statistic, or "it works"); or describes both
-      well without a clear action.
-  2 = Argues from average returns alone ("IdioVol3F earns 13.9%, add it") with no
+      benchmark, places both long-shorts against it, and gives a defensible
+      action for each, using the t-statistics.
+  4 = Right on both, one element thin -- usually the line only implicit, or the
+      long-shorts not placed.
+  3 = Right about IdioVol3F but treats BookLeverage's -9.2% as a solid result
+      with no word on its t-statistic or on the single decile behind it; or
+      describes both well without a clear action.
+  2 = Argues from average returns alone ("IdioVol3F earns 32.6%, add it") with no
       role for beta or the market.
   1 = Restates numbers.
   0 = Empty or off-topic.
