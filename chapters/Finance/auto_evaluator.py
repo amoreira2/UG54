@@ -170,17 +170,9 @@ ANSWER_KEY = {
         "factor_share_96":  (0.38,  0.20),
         "top_name_spec_96": (0.79,  0.15),
     },
-    "L6_MultiFactor_AI": {
-        # Mom12m long-short up the factor ladder, 1980-2000. Verified 2026-08-07.
-        # The whole point is that these DIFFER, so tolerances must be tight
-        # enough that a student can't submit one number four times.
-        "mom_alpha_capm": (0.1817, 0.12),
-        "mom_alpha_ff3":  (0.2303, 0.12),
-        "mom_alpha_ff5":  (0.2242, 0.12),
-        "mom_alpha_ff6":  (0.0346, 0.40),   # small number, looser fractional band
-        "mom_umd_beta":   (1.46,   0.12),
-        "mom_r2_ff6":     (0.84,   0.10),
-    },
+    # The ladder is run on the student's own signal, so there is no fixed
+    # answer. Graded on completion, like L4.
+    "L6_MultiFactor_AI": "_completion_",
     # Ten portfolios on BookLeverage and on IdioVol3F, and each one's 10 - 1.
     # Written by build_l5_key.py.
     "L5_FactorZoo_AI": json.load(open(Path(__file__).resolve().parent / "keys_L5.json")),
@@ -425,43 +417,57 @@ Grading a week-6 memo. Students have factor regressions, multi-factor models and
 Fama-MacBeth. They have NOT seen multiple testing, out-of-sample testing, or
 transaction costs.
 
-THE QUESTION: should the PM pay for a momentum manager? Momentum's alpha is
-+18.17%/yr vs CAPM and +3.46%/yr (t=1.75) vs FF6.
+THE TASK: each group ran ITS OWN signal's long-short up the ladder (CAPM, FF3,
+FF5, FF6), reported the four annualized alphas, the loadings at every rung, and the six annualized factor
+premiums over 1980-2000. The memo (max 8 sentences) says which
+rung moved the alpha most and which loading did it, backed by loading x premium,
+what that exposure means in plain language, and which number they would put in
+front of an investment committee. Their signal and numbers vary; grade the
+reasoning, not the values.
 
-GROUND TRUTH:
-- The defensible answer is the FF6 number, because UMD is a cheaply investable
-  momentum factor. Paying an active fee for exposure you can buy in an ETF is
-  paying for beta.
-- UMD loading is 1.46 with R2 jumping 0.12 -> 0.84. In plain language: this
-  strategy IS the momentum factor, slightly levered. 84% of its month-to-month
-  variation is explained by a factor anyone can buy.
-- At FF6 the alpha is 3.46% with t = 1.75 -- it does NOT clear the conventional
-  |t| > 2 bar. So even the residual is not established.
-- The CAPM number would be right only if UMD were NOT investable -- e.g. no
-  momentum ETF exists, or the fund accesses momentum in a market where it can't
-  be bought cheaply. A student who articulates that condition has understood the
-  whole lecture.
-- Strong memos may note the model should be fixed BEFORE looking, so choosing
-  CAPM after seeing that it gives a bigger number is exactly the error.
+THE ARITHMETIC THEY SHOULD BE USING: alpha = raw return - sum(loading x premium)
+over the factors in the model. So the drop in alpha from one rung to the next is
+(near enough) the loading x premium of the factors that entered at that rung. A
+memo that names the rung, the factor and the size of that product has done the
+work.
+
+WHAT THE PREMIUMS LOOK LIKE over 1980-2000: the market earns about 9%/yr, UMD
+about 12%, HML about 5%, RMW and CMA about 4% each, SMB about zero. A large
+loading on SMB therefore moves the alpha very little, which is a point worth
+credit if a student notices it.
+
+WHAT A GOOD MEMO DOES:
+- NAMES THE RUNG where the alpha moved most and the loading responsible, and
+  supports it with the product, not just the loading.
+- TRANSLATES the exposure: a positive HML loading means the strategy is long
+  cheap firms and short expensive ones, so it is partly a value fund; a large UMD
+  loading means it is buying recent winners; a negative SMB loading means it is
+  tilted to large caps.
+- HANDLES A RISING ALPHA correctly when it happened: alpha rises when the
+  strategy loads NEGATIVELY on a factor that paid, so the raw return understated
+  it.
+- COMMITS TO A RUNG with a reason. The defensible reason is investability: a
+  factor anyone can buy cheaply should not be sold as alpha. Picking the rung
+  with the biggest alpha because it is biggest is the error to catch, and so is
+  choosing the model after seeing which one flatters the strategy.
+- A memo whose alpha barely moves across the ladder should say so; "my signal is
+  not any of these factors" is a real finding and can score 5.
 
 Grade 0-5:
-  5 = Picks FF6 with the investability argument; explains the UMD loading as
-      "this is the momentum factor, levered ~1.5x"; notes t=1.75 fails the usual
-      bar; states the condition under which CAPM would be right.
-  4 = Picks FF6 with a sound investability argument and reads the loading
-      correctly, but misses either the t-stat point or the CAPM condition.
-  3 = Picks FF6 but justifies it only as "more factors is more conservative".
-  2 = Picks CAPM's 18% without engaging with the UMD loading.
-  1 = Reports the numbers with no recommendation.
+  5 = Names the rung and the loading, quantifies with loading x premium,
+      translates the exposure into plain language, and commits to a rung on
+      investability grounds.
+  4 = All of that but one element thin, usually the product not computed or the
+      plain-language translation missing.
+  3 = Identifies where the alpha moved but does not connect it to a specific
+      loading, or gives no defensible choice of rung.
+  2 = Reports the four alphas with no account of what changed them.
+  1 = Restates numbers.
   0 = Empty or off-topic.
 
-PENALIZE: treating the FF6 R-squared of 0.84 as evidence the strategy is GOOD --
-it is evidence the strategy is REPLICABLE, which is the opposite of the case for
-paying a fee.
-
 For picked_fund return "neither".
-For cited_appraisal_or_alpha return True if the memo uses alpha or the factor
-loading in its argument, else False.
+For cited_appraisal_or_alpha return True if the memo argues from alpha or from
+loading x premium, else False.
 
 Output via the `grade_memo` tool.
 """,
@@ -1319,6 +1325,12 @@ COMPLETION_BANDS = {
         "sr_market": (-2.0, 3.0),
         "sr_max_f1": (0.0, 6.0), "sr_max_f2": (0.0, 6.0), "sr_both": (0.0, 6.0),
     },
+    # (lo, hi, n) = a list of n numbers, each in [lo, hi].
+    "L6_MultiFactor_AI": {
+        "alpha":    (-1.0, 1.0, 4),     # annualized alpha at each rung
+        "loadings": (-5.0, 5.0, 15),    # 1 + 3 + 5 + 6 loadings down the ladder
+        "premiums": (-0.5, 0.5, 6),     # annualized factor premiums
+    },
 }
 
 
@@ -1329,20 +1341,41 @@ def grade_completion(payload: dict, assignment: str) -> dict:
     answers = payload.get("answers", {}) or {}
     bands = COMPLETION_BANDS.get(assignment, {})
     results = {}
-    for q, (lo, hi) in bands.items():
+    for q, band in bands.items():
+        lo, hi = band[0], band[1]
         got = answers.get(q)
         if got is None:
             results[q] = {"correct": False, "got": None, "expected": f"{lo} to {hi}",
                           "reason": "missing"}
             continue
         try:
-            got = float(got)
-            ok = math.isfinite(got) and lo <= got <= hi
+            if len(band) == 3:                        # band[2] numbers, labelled or not,
+                flat = []                             # and possibly a table: {row: {col: v}}
+                for v in (got.values() if isinstance(got, dict) else got):
+                    flat.extend(v.values() if isinstance(v, dict) else [v])
+                vals = [float(x) for x in flat]
+                ok = (len(vals) == band[2] and
+                      all(math.isfinite(x) and lo <= x <= hi for x in vals))
+                why = ("ok" if ok else f"expected {band[2]} numbers, each {lo} to {hi}")
+            else:
+                got = float(got)
+                ok = math.isfinite(got) and lo <= got <= hi
+                why = "ok" if ok else "outside a plausible range"
             results[q] = {"correct": ok, "got": got, "expected": f"{lo} to {hi}",
-                          "reason": "ok" if ok else "outside a plausible range"}
+                          "reason": why}
         except Exception as e:
             results[q] = {"correct": False, "got": got, "expected": f"{lo} to {hi}",
                           "reason": str(e)}
+    if assignment == "L6_MultiFactor_AI":
+        sig = str(payload.get("signal", "")).strip()
+        import csv
+        with open(Path(__file__).resolve().parents[2] / "assets" / "data" / "signal_menu.csv") as f:
+            menu = {r["Acronym"] for r in csv.DictReader(f)}
+        ok = sig in menu
+        results["signal"] = {"correct": ok, "got": sig or None,
+                             "expected": "a signal on the menu",
+                             "reason": "ok" if ok else "not a menu signal"}
+        return results
     picked = [str(f).strip() for f in (payload.get("factors") or []) if str(f).strip()]
     named = len(picked) == 2 and len(set(picked)) == 2 and "____" not in picked
     results["factors"] = {"correct": named, "got": ", ".join(picked) or None,
