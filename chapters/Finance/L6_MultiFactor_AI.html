@@ -518,6 +518,8 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#four-signals-four-completely-different-stories">8.7.1. Four signals, four completely different stories</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arkk-and-berkshire-again">8.7.2. ARKK and Berkshire, again</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-loadings-before-the-alpha">8.7.3. Read the loadings before the alpha</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-same-fit-at-the-daily-frequency">8.7.4. The same fit at the daily frequency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-daily-data-changes-and-what-it-doesn-t">8.7.5. What the daily data changes — and what it doesn’t</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-ways-to-estimate-the-same-thing">8.8. 3. Two Ways to Estimate the Same Thing <a id="twoways"></a></a></li>
@@ -863,15 +865,30 @@ biggest. That is pitfall 2, and it is depressingly common.</p>
 </section>
 <section id="arkk-and-berkshire-again">
 <h3><span class="section-number">8.7.2. </span>ARKK and Berkshire, again<a class="headerlink" href="#arkk-and-berkshire-again" title="Link to this heading">#</a></h3>
-<p>In <em>Performance Evaluation</em> you took Berkshire apart against the market alone:
-β = 0.59, R² = 0.22, an appraisal ratio of 0.38. Here it is again with ARKK
-alongside it, both against six factors.</p>
+<p>In <em>Performance Evaluation</em> you took Berkshire apart against the market alone and
+got β = 0.59, R² = 0.22, an appraisal ratio of 0.38. You are about to get 0.63,
+0.22 and 0.40 instead — from the same fund, over the same years.</p>
+<p><strong>The file changed, not the fund.</strong> The monthly series used in Lecture 4 spans
+398 months but contains only 279 of them: scattered single months are missing,
+three or four a year, all the way through. Nobody chose those months — it is a
+merge artifact — but a third of the sample was quietly gone. This lecture uses a
+version rebuilt from the daily file, with all 397 months present. Berkshire
+barely moves. ARKK, which had 59 of its 86 months, moves a lot.</p>
+<p>Keep that in view while you read the table. The first thing that decides an
+alpha is not the model — it is whether you looked at your data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">funds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">'https://raw.githubusercontent.com/amoreira2/Fin418/'</span>
-                       <span class="s1">'main/assets/data/df_WarrenBAndCathieW_monthly.pkl'</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Rebuilt from the daily file: all 397 months, no gaps. Funds compounded from</span>
+<span class="c1"># daily returns, factors from Ken French's monthly files.</span>
+<span class="c1"># Built by chapters/Finance/build_funds_monthly.py</span>
+<span class="n">funds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/df_WarrenBAndCathieW_monthly.pkl"</span><span class="p">)</span>
 <span class="n">funds</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">funds</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>      <span class="c1"># 'Mom   ' has trailing spaces</span>
 <span class="n">SIX</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">,</span> <span class="s1">'SMB'</span><span class="p">,</span> <span class="s1">'HML'</span><span class="p">,</span> <span class="s1">'RMW'</span><span class="p">,</span> <span class="s1">'CMA'</span><span class="p">,</span> <span class="s1">'Mom'</span><span class="p">]</span>
+
+<span class="c1"># The point of this section is that the old file was missing months, so say so</span>
+<span class="c1"># loudly rather than quietly reporting the old numbers if it loads anyway.</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">funds</span><span class="p">)</span> <span class="o">==</span> <span class="mi">397</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"expected the rebuilt 397-month file, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">funds</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+
 
 <span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'ARKK'</span><span class="p">,</span> <span class="s1">'BRK'</span><span class="p">]:</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">funds</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">nm</span><span class="p">])</span>
@@ -891,14 +908,14 @@ alongside it, both against six factors.</p>
 </section>
 <section id="read-the-loadings-before-the-alpha">
 <h3><span class="section-number">8.7.3. </span>Read the loadings before the alpha<a class="headerlink" href="#read-the-loadings-before-the-alpha" title="Link to this heading">#</a></h3>
-<p><strong>ARKK</strong> loads <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">+1.54</span></code>, <code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">−0.95</span></code>, <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">−0.81</span></code>: levered, growth,
-unprofitable. The six factors explain 84% of its variance, up from 64%. Its alpha
-barely moves, but its residual risk shrinks, so its appraisal ratio <strong>rises</strong>, to
-0.63 — still with t = 1.23 on 59 months.</p>
-<p><strong>Berkshire</strong> loads <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">+0.69</span></code>, <code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">+0.57</span></code>, <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">+0.35</span></code>: defensive, value,
-profitable. Part of what looked like alpha against the market was that style,
-so its alpha falls from 6.5% to 4.4% a year and its appraisal ratio from 0.38
-to 0.29.</p>
+<p><strong>ARKK</strong> loads <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">+1.49</span></code>, <code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">−0.95</span></code>, <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">−0.89</span></code>, <code class="docutils literal notranslate"><span class="pre">SMB</span> <span class="pre">+0.60</span></code>: levered,
+growth, unprofitable, small. The six factors explain 80% of its variance, up from
+57%. Its alpha barely moves — 4.5% to 4.3% — but its residual risk shrinks, so
+its appraisal ratio <strong>rises</strong>, from 0.23 to 0.32, on t = 0.76 over 86 months.</p>
+<p><strong>Berkshire</strong> loads <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span> <span class="pre">+0.76</span></code>, <code class="docutils literal notranslate"><span class="pre">HML</span> <span class="pre">+0.51</span></code>, <code class="docutils literal notranslate"><span class="pre">RMW</span> <span class="pre">+0.25</span></code>: defensive, value,
+profitable. Part of what looked like alpha against the market was that style, so
+its alpha falls from 7.3% to 5.3% a year and its appraisal ratio from 0.40 to
+0.32.</p>
 <p>The formula from <em>Performance Evaluation</em> carries over, with the best mix of the
 factors in place of the market:</p>
 <div class="math notranslate nohighlight">
@@ -907,11 +924,97 @@ factors in place of the market:</p>
 already holds all six.</p>
 <blockquote>
 <div><p><strong>💡 Key Insight: the model decides the ranking</strong></p>
-<p>Against the market, the two appraisal ratios were close. Against six factors,
-ARKK’s is twice Berkshire’s. Buffett’s value-and-quality tilt can now be bought
-as an ETF, so against a model that includes it, less of his return counts as
-alpha.</p>
+<p>Against the market, Berkshire looks clearly better than ARKK — 0.40 against
+0.23. Against six factors the gap closes completely: <strong>0.32 each</strong>. Berkshire’s
+edge over ARKK <em>was</em> its style. Value and quality can now be bought as an ETF,
+so against a model that contains them, that edge stops counting as alpha.</p>
+<p>Note which way each one moved. Adding factors took Berkshire’s number down and
+pushed ARKK’s up. “More factors is a tougher test” is not a rule.</p>
 </div></blockquote>
+<p>⚠️ Neither t-statistic clears 2. On this evidence you cannot reject zero alpha for
+either fund against the six-factor model. The ranking above is a statement about
+point estimates, and the point estimates are not distinguishable from each other
+or from nothing.</p>
+</section>
+<section id="the-same-fit-at-the-daily-frequency">
+<h3><span class="section-number">8.7.4. </span>The same fit at the daily frequency<a class="headerlink" href="#the-same-fit-at-the-daily-frequency" title="Link to this heading">#</a></h3>
+<p>Nothing above says the model has to be estimated monthly. The daily file carries
+the <strong>daily</strong> versions of the same six factors next to the two funds, so the
+regression is identical — only <code class="docutils literal notranslate"><span class="pre">12</span></code> becomes <code class="docutils literal notranslate"><span class="pre">252</span></code>.</p>
+<p>Daily data buys 21× the observations. The question is what that actually buys you.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fundsD</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">'https://raw.githubusercontent.com/amoreira2/Fin418/'</span>
+                        <span class="s1">'main/assets/data/df_WarrenBAndCathieW.pkl'</span><span class="p">)</span>
+<span class="n">fundsD</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">fundsD</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>   <span class="c1"># same trailing-space fix</span>
+
+<span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'ARKK'</span><span class="p">,</span> <span class="s1">'BRK'</span><span class="p">]:</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">fundsD</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">nm</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">nm</span><span class="p">]</span> <span class="o">-</span> <span class="n">d</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nm</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="si">}</span><span class="s2"> days  (</span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">d</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="s1">'model'</span><span class="si">:</span><span class="s2">14s</span><span class="si">}{</span><span class="s1">'alpha'</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">'t'</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}{</span><span class="s1">'R²'</span><span class="si">:</span><span class="s2">&gt;6s</span><span class="si">}{</span><span class="s1">'appraisal'</span><span class="si">:</span><span class="s2">&gt;11s</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">F</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">'market only'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]),</span> <span class="p">(</span><span class="s1">'six factors'</span><span class="p">,</span> <span class="n">SIX</span><span class="p">)]:</span>
+        <span class="n">m</span>  <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">F</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">iv</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">252</span><span class="p">)</span>                      <span class="c1"># 252, not 12</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">label</span><span class="si">:</span><span class="s2">14s</span><span class="si">}{</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="o">*</span><span class="mi">252</span><span class="si">:</span><span class="s2">&gt;8.1%</span><span class="si">}{</span><span class="n">m</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;7.2f</span><span class="si">}</span><span class="s2">"</span>
+              <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">&gt;6.2f</span><span class="si">}{</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="o">*</span><span class="mi">252</span><span class="o">/</span><span class="n">iv</span><span class="si">:</span><span class="s2">&gt;11.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"  six-factor loadings: "</span> <span class="o">+</span> <span class="s2">"  "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">SIX</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># Daily vs monthly on the *identical* sample: compound the same daily rows up to</span>
+<span class="c1"># months, so the only thing changing is the horizon, not the window or the data.</span>
+<span class="c1"># Note this compounds the daily FACTORS too, which is deliberate here and is not</span>
+<span class="c1"># the same as French's monthly factor files -- he rebuilds those from monthly</span>
+<span class="c1"># returns, and for Mom the two differ by ~70bp in the average month. For a</span>
+<span class="c1"># genuine monthly study use his monthly files; for a clean horizon comparison</span>
+<span class="c1"># you want one underlying dataset viewed at two frequencies, as here.</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'six factors, same sample'</span><span class="si">:</span><span class="s2">26s</span><span class="si">}{</span><span class="s1">'alpha'</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}{</span><span class="s1">'t'</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}{</span><span class="s1">'R²'</span><span class="si">:</span><span class="s2">&gt;6s</span><span class="si">}{</span><span class="s1">'appr'</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}</span><span class="s2">   "</span>
+      <span class="o">+</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">f</span><span class="si">:</span><span class="s2">&gt;8s</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">SIX</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'ARKK'</span><span class="p">,</span> <span class="s1">'BRK'</span><span class="p">]:</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">fundsD</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">nm</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">dd</span><span class="p">,</span> <span class="n">ppy</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">'daily'</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="mi">252</span><span class="p">),</span>
+                           <span class="p">(</span><span class="s1">'monthly'</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">'ME'</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">12</span><span class="p">)]:</span>
+        <span class="n">m</span>  <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">dd</span><span class="p">[</span><span class="n">nm</span><span class="p">]</span> <span class="o">-</span> <span class="n">dd</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">],</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">dd</span><span class="p">[</span><span class="n">SIX</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">iv</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ppy</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">nm</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">' '</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">label</span><span class="si">:</span><span class="s2">24s</span><span class="si">}{</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="o">*</span><span class="n">ppy</span><span class="si">:</span><span class="s2">&gt;8.1%</span><span class="si">}{</span><span class="n">m</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;7.2f</span><span class="si">}</span><span class="s2">"</span>
+              <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">rsquared</span><span class="si">:</span><span class="s2">&gt;6.2f</span><span class="si">}{</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="o">*</span><span class="n">ppy</span><span class="o">/</span><span class="n">iv</span><span class="si">:</span><span class="s2">&gt;7.2f</span><span class="si">}</span><span class="s2">   "</span>
+              <span class="o">+</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="si">:</span><span class="s2">&gt;8.2f</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">SIX</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="what-the-daily-data-changes-and-what-it-doesn-t">
+<h3><span class="section-number">8.7.5. </span>What the daily data changes — and what it doesn’t<a class="headerlink" href="#what-the-daily-data-changes-and-what-it-doesn-t" title="Link to this heading">#</a></h3>
+<p><strong>The betas move.</strong> Berkshire’s <code class="docutils literal notranslate"><span class="pre">RMW</span></code> goes from <strong>−0.17 daily to +0.24 monthly</strong>;
+its <code class="docutils literal notranslate"><span class="pre">SMB</span></code> from −0.10 to −0.41, its <code class="docutils literal notranslate"><span class="pre">Mkt-RF</span></code> from 0.63 to 0.76. ARKK’s market beta
+goes from 1.17 to 1.44. Same fund, same window, same factors — only the horizon
+is different.</p>
+<p>This is not a bug. A daily beta measures how much of the factor move a fund picks
+up <em>the same day</em>. Exposure that arrives with a lag — because the fund’s stocks
+or the factor’s legs trade less often, or because the fund’s positions reprice
+slowly — shows up at the monthly horizon and not at the daily one. Daily betas
+are biased toward zero for exactly that piece. <strong>Report the horizon along with
+the model.</strong></p>
+<p><strong>The t-statistic does not improve.</strong> This is the part that surprises people.
+The t on alpha is</p>
+<div class="math notranslate nohighlight">
+\[t(\alpha) \;\approx\; AR \times \sqrt{\text{years of data}}\]</div>
+<p>— the appraisal ratio times the square root of the <em>span</em>, not the square root of
+the number of observations. Berkshire’s 8,338 days and its 398 months cover the
+same 33 years, so they give you about the same precision on alpha. Sampling more
+often within a year tells you almost nothing new about the mean.</p>
+<blockquote>
+<div><p><strong>💡 Key Insight: frequency helps betas, not alphas</strong></p>
+<p>Going daily shrinks the standard errors on the <strong>loadings</strong> a lot — you are
+measuring co-movement, and there is 21× more co-movement to see. It does
+essentially nothing for the standard error on <strong>alpha</strong>, which is a statement
+about an average return and needs calendar time. The only cure for a noisy
+alpha is a longer sample.</p>
+</div></blockquote>
+<p>⚠️ One caution before you reach for daily data reflexively: the appraisal ratios
+here differ across horizons (Berkshire 0.40 daily vs 0.30 monthly) <em>because the
+betas differ</em>, not because the fund is better at one horizon. Pick the horizon
+that matches how the strategy is actually held, and stay with it.</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -1313,10 +1416,19 @@ in Lecture 3. Adding one asks “can you beat <em>that</em> too?”</p></li>
 <li><p><strong>α is a property of (strategy, model), not of a strategy.</strong> Momentum’s α is
 +18% or +3.5% depending only on whether UMD is in the model.</p></li>
 <li><p><strong>Never report an alpha without naming the model.</strong> The same goes for the
-appraisal ratio: against six factors ARKK’s rises from 0.43 to 0.63 and
-Berkshire’s falls from 0.38 to 0.29.</p></li>
+appraisal ratio: against six factors ARKK’s rises from 0.23 to 0.32 and
+Berkshire’s falls from 0.40 to 0.32 — a clear ranking against the market
+becomes a tie.</p></li>
 <li><p><strong>Alpha can grow when you add a factor.</strong> GP’s α rises under FF3 because it
 loads <em>negatively</em> on HML.</p></li>
+<li><p><strong>Name the horizon too.</strong> Estimating the same six-factor model daily instead
+of monthly moves Berkshire’s RMW loading from +0.24 to −0.17. Higher frequency
+sharpens the betas and does nothing for the alpha’s t-statistic, which needs
+calendar span, not observations.</p></li>
+<li><p><strong>Check the file before you trust the number.</strong> The monthly series used in
+Lecture 4 was missing a third of its months. Berkshire’s appraisal ratio moved
+from 0.38 to 0.40 once they were restored; ARKK’s six-factor number moved from
+0.63 to 0.32.</p></li>
 <li><p><strong>Fix the model before you look.</strong> Justify it by what an investor could
 actually buy cheaply. Running all four and reporting the best is not analysis.</p></li>
 <li><p><strong>Two estimation routes to the same object.</strong> Time-series needs factor
@@ -1447,6 +1559,8 @@ and how you would ever know whether any of it is real.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#four-signals-four-completely-different-stories">8.7.1. Four signals, four completely different stories</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arkk-and-berkshire-again">8.7.2. ARKK and Berkshire, again</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-loadings-before-the-alpha">8.7.3. Read the loadings before the alpha</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-same-fit-at-the-daily-frequency">8.7.4. The same fit at the daily frequency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-the-daily-data-changes-and-what-it-doesn-t">8.7.5. What the daily data changes — and what it doesn’t</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-ways-to-estimate-the-same-thing">8.8. 3. Two Ways to Estimate the Same Thing <a id="twoways"></a></a></li>
