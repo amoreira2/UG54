@@ -380,7 +380,7 @@ The lecture block fixes the **skill**; the group's own strategy supplies the
 | **A1** | **Thu Sep 10** | L2 (Wed Sep 9) | Python and pandas warm-up on the 49-industry file. Execution order, the compounding bug, sentinel values, dates, units, excess returns, moments. *Not strategy-specific.* |
 | **A2** | **Thu Sep 17** | L3 (Mon Sep 14) | Diversification lab, then decile-sort your signal. Long-short spread, Sharpe, both legs, monotonicity. |
 | **A3** | **Thu Sep 24** | L6 (Wed Sep 23) | Regress your long-short return on FF6. Alpha, betas, t-stat, R². Skill or exposure? Plus the beta-mandate and largest-alpha questions from the old Assignment 3. |
-| **A4** | **Thu Oct 8** | L9 (Mon Oct 5) | Split your sample. IS vs OOS Sharpe, how many variants you tried, a multiple-testing haircut. |
+| **A4** | **Thu Oct 8** | L8 (Wed Sep 30) | Variance split of your strategy: market, then six factors. Then combine it with the market — optimal weights (mean over variance, on the hedged strategy) against equal, inverse-vol and appraisal weights — through estimate → tune → test. *Multiple testing left out (decided 2026-10-05).* |
 | **A5** | **Thu Oct 22** | L10 (Wed Oct 21) | Build the (12,1) benchmark. Your signal's correlation with it, and its alpha controlling for momentum. **Is your signal just momentum?** |
 | **A6** | **Thu Nov 5** | L13 (Mon Nov 2) | Vol-scale your strategy; MVE combination with the market; optimal weight. |
 | **A7** | **Thu Nov 19** | L11 (Mon Oct 26) | Bootstrap your Sharpe SE; apply a cost model; net-of-cost Sharpe. Turnover is defined here. |

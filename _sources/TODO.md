@@ -71,9 +71,12 @@ through and dated rather than deleted, so the reasoning survives.
       meeting. Otherwise cut §5 to the linked table alone, dropping the live
       Novy-Marx test — which would be a real loss, since it is the one published
       momentum result that replicates in our sample.
-- [ ] **Assignments 4–8 do not exist yet.** A1, A2 and A3 are built and tested.
-      **A4 can now be written** — L8 and L9 both exist. A5–A8 wait on their
-      lectures, and A5's due date needs the fix noted below.
+- [ ] **Assignments 5–8 do not exist yet.** A1–A3 are built and tested.
+      **A4 is drafted (2026-10-05)** as `A4_Decomposition_and_Backtest_AI.ipynb`:
+      variance split, then optimal vs equal / inverse-vol / appraisal weights with
+      the market through estimate → tune → test. Added to `_toc.yml` 2026-10-05.
+      A5–A8
+      wait on their lectures, and A5's due date needs the fix noted below.
 
 ---
 
