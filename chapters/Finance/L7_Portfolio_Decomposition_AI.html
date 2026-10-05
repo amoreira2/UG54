@@ -514,10 +514,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-portfolio-decomposition">9.6. 🛡️ Pitfall Checklist for Portfolio Decomposition <a id="pitfalls"></a></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-a-top-down">9.7. 3. Approach A — Top-Down <a id="topdown"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#look-at-the-standard-errors">9.7.1. Look at the standard errors</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-a-top-down">9.7. 3. Approach A — Top-Down <a id="topdown"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-b-bottom-up">9.8. 4. Approach B — Bottom-Up <a id="bottomup"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-long-a-window">9.8.1. How long a window?</a></li>
 </ul>
@@ -802,24 +799,22 @@ either way — print the SEs.</p>
 <hr class="docutils" />
 <section id="approach-a-top-down">
 <h2><span class="section-number">9.7. </span>3. Approach A — Top-Down <a id="topdown"></a><a class="headerlink" href="#approach-a-top-down" title="Link to this heading">#</a></h2>
-<p>The simplest route, and the one from Lecture 4: <strong>regress the fund’s own return
-series on the factors.</strong> You need nothing but the fund’s returns.</p>
-<blockquote>
-<div><p><strong>📝 Spec</strong></p>
-<p>Take Berkshire’s own monthly excess returns over 1995–1999 — permno 17778 in
-the course panel. Regress on CAPM, then
-on FF6. Report each loading <strong>with its standard error</strong>, plus R² and the
-number of months.</p>
-</div></blockquote>
+<p>A quick reminder, because you have done this already. In <em>Multi-Factor Models</em> you
+regressed Berkshire’s monthly excess returns on the six factors. That is the
+top-down approach: <strong>regress the fund’s own return series on the factors.</strong> It
+needs nothing but the fund’s returns.</p>
+<p>Here it is again, from the same Berkshire file, over the five years that end at
+our snapshot: 1995 to 1999.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SPECS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'CAPM'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">],</span>
          <span class="s1">'FF6'</span> <span class="p">:</span> <span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">,</span><span class="s1">'SMB'</span><span class="p">,</span><span class="s1">'HML'</span><span class="p">,</span><span class="s1">'RMW'</span><span class="p">,</span><span class="s1">'CMA'</span><span class="p">,</span><span class="s1">'UMD'</span><span class="p">]}</span>
 <span class="n">W0</span><span class="p">,</span> <span class="n">W1</span> <span class="o">=</span> <span class="s1">'1995-01-31'</span><span class="p">,</span> <span class="s1">'1999-12-31'</span>
 
-<span class="c1"># Berkshire's own returns, from the same panel as everything else in the course</span>
-<span class="n">brk</span> <span class="o">=</span> <span class="p">(</span><span class="n">panel</span><span class="p">[</span><span class="n">panel</span><span class="o">.</span><span class="n">permno</span> <span class="o">==</span> <span class="mi">17778</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)[</span><span class="s1">'ret'</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">W0</span><span class="p">:</span><span class="n">W1</span><span class="p">]</span>
-         <span class="o">-</span> <span class="n">FF</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="c1"># Berkshire's own monthly returns: the same file as in Multi-Factor Models</span>
+<span class="n">funds</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/df_WarrenBAndCathieW_monthly.pkl"</span><span class="p">)</span>
+<span class="n">funds</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">funds</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+<span class="n">brk</span> <span class="o">=</span> <span class="p">(</span><span class="n">funds</span><span class="p">[</span><span class="s1">'BRK'</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">W0</span><span class="p">:</span><span class="n">W1</span><span class="p">]</span> <span class="o">-</span> <span class="n">FF</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
 <span class="n">TD</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">nm</span><span class="p">,</span> <span class="n">cols</span> <span class="ow">in</span> <span class="n">SPECS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -835,27 +830,8 @@ number of months.</p>
 </div>
 </div>
 </div>
-<section id="look-at-the-standard-errors">
-<h3><span class="section-number">9.7.1. </span>Look at the standard errors<a class="headerlink" href="#look-at-the-standard-errors" title="Link to this heading">#</a></h3>
-<p>The CAPM beta is <strong>0.78 with a standard error of 0.22</strong>. Sixty months of data,
-one parameter, and the interval still runs from about 0.34 to 1.22. That is not
-a precise measurement.</p>
-<p>FF6 is worse, and it is worse in an informative way. Only <strong>two of six loadings
-are two standard errors from zero.</strong> CMA comes in at <strong>+0.07 with a standard
-error of 0.70</strong> — the data has essentially nothing to say about Berkshire’s
-investment exposure, and the regression reports a number anyway.</p>
-<blockquote>
-<div><p><strong>⚠️ Caution: more factors means more precision about less</strong></p>
-<p>Watch the market loading. CAPM says <strong>0.78</strong>; FF6 says <strong>1.09</strong>. The same
-portfolio, the same 60 months, and adding five regressors moved the one
-coefficient you thought you knew by a third — because the added factors are
-themselves correlated with the market and each other, and the regression
-splits the shared variation however the sample happens to fall.</p>
-<p>Re-estimate on a slightly different window and these will move again. Print
-the standard errors, always, and do not read a loading whose se is as large
-as the estimate.</p>
-</div></blockquote>
-</section>
+<p><strong>What to look at:</strong> the standard error printed next to each loading, and what
+happens to the market loading once the other five factors go in.</p>
 </section>
 <hr class="docutils" />
 <section id="approach-b-bottom-up">
@@ -1360,7 +1336,7 @@ specific risk, cleanly, because ε is uncorrelated with f.</p></li>
 <li><p><strong>A time-series regression measures an average over a changing portfolio.</strong>
 It’s only current exposure if positions <em>and</em> betas were stable. For
 Berkshire, neither was.</p></li>
-<li><p><strong>Print standard errors on loadings.</strong> Six factors on 60 months left four of
+<li><p><strong>Print standard errors on loadings.</strong> Six factors on 60 months left five of
 six loadings inside two standard errors of zero — CMA came in at +0.07 with an
 se of 0.70. And the market loading moved from 0.78 to 1.09 purely from adding
 the other five.</p></li>
@@ -1396,11 +1372,13 @@ trade — and how you would ever know whether the result is real.</p>
 <span class="c1"># Berkshire's 13F filings, from WRDS:</span>
 <span class="c1">#     tr_13f.s34type3, mgrno = 8350  (BERKSHIRE HATHAWAY INC)</span>
 <span class="c1"># joined to CRSP via ncusip for permno, and priced with crsp.msf.</span>
-<span class="c1"># Berkshire's OWN return series is permno 17778 in the course panel -- a complete</span>
-<span class="c1"># 252-month series, 1980-01 to 2000-12. We use it rather than a fund-return file:</span>
-<span class="c1"># the widely-circulated df_WarrenBAndCathieW_monthly.pkl spans 398 months and</span>
-<span class="c1"># contains 279, dropping scattered single months, which over 1995-1999 leaves 41</span>
-<span class="c1"># of 60 and quietly inflates every standard error in this section.</span>
+<span class="c1"># Berkshire's OWN return series is the BRK column of</span>
+<span class="c1"># df_WarrenBAndCathieW_monthly.pkl, the file rebuilt for Multi-Factor Models by</span>
+<span class="c1"># chapters/Finance/build_funds_monthly.py: 397 months, 1988-12 to 2021-12, none</span>
+<span class="c1"># missing. It is the same series as permno 17778 in the course panel. Do not use</span>
+<span class="c1"># the copy of that file that used to circulate: it has 279 of its 398 months,</span>
+<span class="c1"># which over 1995-1999 leaves 41 of 60 and quietly inflates every standard error</span>
+<span class="c1"># in this section.</span>
 <span class="c1">#</span>
 <span class="c1"># Built once by chapters/Finance/build_brk_holdings.py and cached at</span>
 <span class="c1">#     https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data/brk_13f_holdings.csv</span>
@@ -1497,10 +1475,7 @@ trade — and how you would ever know whether the result is real.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pitfall-checklist-for-portfolio-decomposition">9.6. 🛡️ Pitfall Checklist for Portfolio Decomposition <a id="pitfalls"></a></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-a-top-down">9.7. 3. Approach A — Top-Down <a id="topdown"></a></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#look-at-the-standard-errors">9.7.1. Look at the standard errors</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-a-top-down">9.7. 3. Approach A — Top-Down <a id="topdown"></a></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#approach-b-bottom-up">9.8. 4. Approach B — Bottom-Up <a id="bottomup"></a></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-long-a-window">9.8.1. How long a window?</a></li>
 </ul>
