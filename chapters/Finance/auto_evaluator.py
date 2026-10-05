@@ -366,9 +366,9 @@ Grading a week-7 memo to a risk committee asking: "we already regress the fund's
 returns on factors -- why pay for a holdings-based system?"
 
 GROUND TRUTH (Berkshire, from the lecture and the challenge):
-- 1999 snapshot: top-down CAPM beta 0.68 (se 0.26); bottom-up 1.08. FF6 top-down
-  gave HML +2.08 (se 0.61) and CMA -2.20 (se 1.01) -- four of six loadings not
-  two standard errors from zero on 41 months.
+- 1999 snapshot: top-down CAPM beta 0.78 (se 0.22); bottom-up 1.08. FF6 top-down
+  moved the market loading to 1.09 and left five of six loadings inside two
+  standard errors of zero on 60 months -- CMA came in at +0.07 (se 0.70).
 - 1996 snapshot: bottom-up beta 0.58, top-3 weight 86.8%, factor share of
   variance 38%, largest name 79% of specific variance.
 - So the bottom-up beta moved 0.58 -> 1.08 between 1996 and 1999 as the book
