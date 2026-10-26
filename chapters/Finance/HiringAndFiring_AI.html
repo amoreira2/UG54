@@ -1,0 +1,1071 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>11. Hiring and Firing &#8212; Data Driven Investing with Python</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/book.css?v=c2893119" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/Finance/HiringAndFiring_AI';</script>
+    <link rel="canonical" href="https://amoreira2.github.io/UG54/chapters/Finance/HiringAndFiring_AI.html" />
+    <link rel="icon" href="../../_static/figuremain2.jpg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="12. Why Should This Work?" href="L9_WhyShouldThisWork_AI.html" />
+    <link rel="prev" title="10. Backtesting: Estimate, Tune, Test" href="L8_Backtesting_AI.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/figuremain2.jpg" class="logo__image only-light" alt="Data Driven Investing with Python - Home"/>
+    <script>document.write(`<img src="../../_static/figuremain2.jpg" class="logo__image only-dark" alt="Data Driven Investing with Python - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01/what-is-data-driven-investing.html">1. What is Data-Driven Investing?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01/statistical-techniques.html">1.6. Statistical Techniques</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01/computational-tools.html">1.7. Computational Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02/getting_started.html">2. Getting Started</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02/cloud_setup.html">2.3. Cloud Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02/local_install.html">2.4. Local Installation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="L1_Welcome_Returns_AI.html">3. The Workflow, and What a Return Is</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L2_Panel_Portfolios_AI.html">4. The Panel and Portfolio Mathematics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L3_Sorts_AI.html">5. Sorts, Breakpoints, and Long-Short Portfolios</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L4_PerfEval_Factors_AI.html">6. Performance Evaluation, and Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L5_Factor_Zoo_AI.html">7. Where Factors Come From, and the Factor Zoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L6_MultiFactor_AI.html">8. Multi-Factor Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L7_Portfolio_Decomposition_AI.html">9. Decomposing a Portfolio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L8_Backtesting_AI.html">10. Backtesting: Estimate, Tune, Test</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">11. Hiring and Firing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L9_WhyShouldThisWork_AI.html">12. Why Should This Work?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="L10_Momentum_AI.html">13. Momentum: One Signal, All the Way Down</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L11_Transaction_Costs.html">14. Transaction Costs  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L12_Capital_Allocation_I.html">15. Capital Allocation I  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L13_Capital_Allocation_II.html">16. Capital Allocation II — Estimation Error  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L14_Conditional_Strategies_I.html">17. Conditional Strategies I — Volatility Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L15_Conditional_Strategies_II.html">18. Conditional Strategies II — Factor Timing  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L16_Leverage_and_Shorting.html">19. Leverage, Shorting, and the Capital Base  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L17_Fundamental_Risk_Models_BARRA.html">20. Fundamental Risk Models (BARRA)  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L18_PCA_and_Statistical_Factors.html">21. PCA and Statistical Factors  ◦</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming/L19_Machine_Learning.html">22. Machine Learning  ◦</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../Assignments/Assignments.html">23. Assignments</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_AI.html">23.1. Assignment 1 — Python, pandas, and Data That Fights Back</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A1_Python_and_Pandas_solutions.html">23.5. Assignment 1 — Solutions</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A2_Diversification_and_Sorts_AI.html">23.9. Assignment 2 — Diversification, and Your First Sort</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A3_Beta_and_Alpha_AI.html">23.13. Assignment 3 — Beta, Alpha, and Whether You Have Either</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../Assignments/A4_Decomposition_and_Backtest_AI.html">23.16. Assignment 4 — What Your Strategy Is Made Of, and How Much of It to Hold</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/PythonCompanion_AI.html">24. Appendix · Python Companion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Appendix/SignalHygiene_AI.html">25. Appendix · Signal Hygiene</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../essentials/intro.html">26. Python Essentials</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/basics.html">26.1. Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/collections.html">26.2. Collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/numpy.html">26.3. Numpy</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../essentials/introtopandas.html">26.4. Pandas</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/the_index.html">26.4.3. Indexing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/timeseries.html">26.4.4. Time-Series</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/reshape.html">26.4.5. Reshape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/merge.html">26.4.6. Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/groupby.html">26.4.7. Group-by</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/matplotlib.html">26.4.8. Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/data_clean.html">26.4.9. Cleaning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../essentials/pandas/storage_formats.html">26.4.10. Data Storage</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/control_flow.html">26.5. Flow Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/functions.html">26.6. Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../essentials/plotting.html">26.7. Plotting</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../scientific/linear_algebra1_c.html">27. Linear Algebra Review</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../additional/additional.html">28. Additional Statistics Material</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="intro.html">29. Archive · Pre-AI Notebooks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="IntrotoReturns_c.html">29.1. Introduction to Asset Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TheChoiceofFrequency_c.html">29.2. Choice of Frequency and Annualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UsingAPI_c.html">29.3. Data APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PortfolioMath_c.html">29.4. Portfolio Mathematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FactorModels_c.html">29.5. Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MultiFactorModels_c.html">29.6. Multi-Factor Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="InterpretingFactorModels.html">29.7. 📊 Interpreting Factor Models</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="FactorModelEstimation_c.html">29.11. Factor Model Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="crosssectionalequitystrategies.html">29.12. Cross-Sectional Equity Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Momentum.html">29.13. Momentum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Factors.html">29.14. An Overview of Factors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Timing_c.html">29.15. Timing Strategies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MarketTiming_c.html">29.16. Expected-Return Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Volatilitytiming_c.html">29.17. Volatility Timing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationI_cc.html">29.18. Capital Allocation I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CapitalAllocationII.html">29.19. Capital Allocation II</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Performance_evaluation_c.html">29.20. Performance Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RiskManagement.html">29.21. Risk Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TradingCosts.html">29.22. Liquidity and Trading Costs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LeverageandShorting.html">29.23. Leverage, Shorting, Limits to Arbitrage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MachineLearning_cc.html">29.24. Machine Learning in Finance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LLMs.html">29.25. Gen AI and LLMs in Finance</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/amoreira2/UG54/blob/main/chapters/Finance/HiringAndFiring_AI.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/amoreira2/UG54/issues/new?title=Issue%20on%20page%20%2Fchapters/Finance/HiringAndFiring_AI.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/chapters/Finance/HiringAndFiring_AI.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Hiring and Firing</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data">11.1. Our data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#would-you-hire-him">11.2. 1. Would you hire him?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#you-hired-him-now-the-clock-restarts">11.3. 2. You hired him. Now the clock restarts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-happened-next">11.4. 3. What happened next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#back-to-the-slides">11.5. ⏸ Back to the slides</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-what-if-you-trusted-your-process">11.6. 🎯 Challenge: what if you trusted your process?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-an-investor-with-no-inside-view">11.6.1. Q1 — An investor with no inside view</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-an-investor-who-trusts-the-process">11.6.2. Q2 — An investor who trusts the process</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-what-each-investor-ended-up-with">11.6.3. Q3 — What each investor ended up with</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-the-memo">11.6.4. Q4 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">11.7. 📤 Submission</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">11.8. 🧠 Key Takeaways</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="hiring-and-firing">
+<h1><span class="section-number">11. </span>Hiring and Firing<a class="headerlink" href="#hiring-and-firing" title="Link to this heading">#</a></h1>
+<p>In the slides we saw that going into a strategy and hiring a manager are the same problem.</p>
+<p>You need three things: a goal, how sure you want to be, and time.</p>
+<p>Today lets try it on a manager everybody knows.</p>
+<p>Suppose it is January 1999. You run manager selection at a pension fund, and you are thinking
+about giving money to Warren Buffett.</p>
+<ul class="simple">
+<li><p>Would his record have convinced you?</p></li>
+<li><p>Once you hire him, when would you fire him?</p></li>
+<li><p>And what does it mean if the rule fires him at the wrong time?</p></li>
+</ul>
+<p><strong>The plan</strong></p>
+<ol class="arabic simple">
+<li><p>Would you hire him? His record against the hiring line</p></li>
+<li><p>You hired him. Now the clock restarts: his record against the walk-away line</p></li>
+<li><p>What happened next. Then back to the slides</p></li>
+<li><p>🎯 Challenge (homework, after the rest of the slides): what if you trusted your process?</p></li>
+</ol>
+<p>📑 <strong>Slides for this class:</strong> <a class="reference external" href="https://amoreira2.github.io/UG54/slides/hiring_and_firing.pdf">Hiring and Firing (PDF)</a></p>
+<iframe src="../../slides/hiring_and_firing.pdf" width="100%" height="520" style="border: 1px solid #ddd;"></iframe><hr class="docutils" />
+<section id="our-data">
+<h2><span class="section-number">11.1. </span>Our data<a class="headerlink" href="#our-data" title="Link to this heading">#</a></h2>
+<p>Same daily data we used in the multi-factor lecture: Berkshire Hathaway and the Fama-French
+factors. We compound the daily returns within each month: the same <code class="docutils literal notranslate"><span class="pre">(1+r).prod()-1</span></code> from the first lecture.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title Setup — run this first</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+
+<span class="n">BASE</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data"</span>
+
+<span class="n">daily</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/daily_funds_etfs.parquet"</span><span class="p">)</span>
+<span class="n">daily</span> <span class="o">=</span> <span class="n">daily</span><span class="p">[[</span><span class="s1">'BRK'</span><span class="p">,</span> <span class="s1">'Mkt-RF'</span><span class="p">,</span> <span class="s1">'RF'</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="c1"># compound the days in each month</span>
+<span class="n">monthly</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">'BRK'</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">daily</span><span class="p">[</span><span class="s1">'BRK'</span><span class="p">])</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">'ME'</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">'MKT'</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">daily</span><span class="p">[</span><span class="s1">'Mkt-RF'</span><span class="p">]</span> <span class="o">+</span> <span class="n">daily</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">'ME'</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">'RF'</span><span class="p">:</span>  <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">daily</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">])</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">'ME'</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">})</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1989-01'</span><span class="p">:]</span>
+
+<span class="n">brk_ex</span> <span class="o">=</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">'BRK'</span><span class="p">]</span> <span class="o">-</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span>     <span class="c1"># Berkshire's excess return</span>
+<span class="n">mkt_ex</span> <span class="o">=</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">'MKT'</span><span class="p">]</span> <span class="o">-</span> <span class="n">monthly</span><span class="p">[</span><span class="s1">'RF'</span><span class="p">]</span>     <span class="c1"># the market's excess return</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">monthly</span><span class="p">)</span><span class="si">}</span><span class="s2"> months, </span><span class="si">{</span><span class="n">monthly</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">monthly</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The record we care about is Berkshire’s <strong>appraisal ratio</strong> against the market: alpha over
+the volatility of what the market does not explain.</p>
+<p>Recall that after <span class="math notranslate nohighlight">\(T\)</span> years an appraisal ratio has a standard error of about <span class="math notranslate nohighlight">\(1/\sqrt{T}\)</span>.</p>
+<p>The function below re-estimates the CAPM regression every month, each time with one more month
+of data, and saves the appraisal ratio. It waits for one year of data before it starts.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">track_record</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Berkshire's appraisal ratio against the market, re-estimated every month from `start` on."""</span>
+    <span class="n">y_all</span> <span class="o">=</span> <span class="n">brk_ex</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+    <span class="n">x_all</span> <span class="o">=</span> <span class="n">mkt_ex</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_all</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y_all</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">x_all</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">reg</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span> <span class="o">*</span> <span class="mi">12</span>                 <span class="c1"># per year</span>
+        <span class="n">resid_vol</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">resid</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>        <span class="c1"># per year</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'date'</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s1">'years'</span><span class="p">:</span> <span class="n">i</span> <span class="o">/</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">'AR'</span><span class="p">:</span> <span class="n">alpha</span> <span class="o">/</span> <span class="n">resid_vol</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="would-you-hire-him">
+<h2><span class="section-number">11.2. </span>1. Would you hire him?<a class="headerlink" href="#would-you-hire-him" title="Link to this heading">#</a></h2>
+<p>Recall the rule from the slides. You go in when the record clears</p>
+<div class="math notranslate nohighlight">
+\[\widehat{AR}_T \;\geq\; a^* + \frac{z_p}{\sqrt{T}}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(a^*\)</span> is your goal: the appraisal ratio you are looking for</p></li>
+<li><p><span class="math notranslate nohighlight">\(z_p\)</span> is how sure you want to be: 1.64 for 95%</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the number of years in the record</p></li>
+</ul>
+<p>Lets start simple. You just want to be 95% sure that Buffett has a positive alpha, so <span class="math notranslate nohighlight">\(a^*=0\)</span>.</p>
+<p>Before you start: how many years of Buffett do you think it takes?</p>
+<p>The slider below is time. It starts after his first year, December 1989. The black line is
+everything you would have seen up to that month; the dashed line is the bar. Move it forward one
+year at a time and watch the two lines. (Click the slider, then the arrow keys move it one month.)</p>
+<p>The other two sliders are the other two levers: your goal and how sure you want to be.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">interact</span><span class="p">,</span> <span class="n">SelectionSlider</span><span class="p">,</span> <span class="n">FloatSlider</span><span class="p">,</span> <span class="n">Dropdown</span>
+
+<span class="n">record</span> <span class="o">=</span> <span class="n">track_record</span><span class="p">(</span><span class="s1">'1989-01'</span><span class="p">,</span> <span class="s1">'1998-12'</span><span class="p">)</span>    <span class="c1"># his record as of every month, up to the day you decide</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">hire_view</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">confidence</span><span class="p">):</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">confidence</span><span class="p">)</span>
+    <span class="n">hire_line</span> <span class="o">=</span> <span class="n">goal</span> <span class="o">+</span> <span class="n">z</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s1">'years'</span><span class="p">])</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">date</span><span class="p">]</span>
+    <span class="n">ar</span><span class="p">,</span> <span class="n">years</span><span class="p">,</span> <span class="n">bar</span> <span class="o">=</span> <span class="n">seen</span><span class="p">[</span><span class="s1">'AR'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">seen</span><span class="p">[</span><span class="s1">'years'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">hire_line</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">date</span><span class="p">]</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">seen</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">seen</span><span class="p">[</span><span class="s1">'AR'</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Berkshire record'</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hire_line</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">hire_line</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'tab:red'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'hire line: goal </span><span class="si">{</span><span class="n">goal</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">confidence</span><span class="si">:</span><span class="s1">.0%</span><span class="si">}</span><span class="s1"> sure'</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">ar</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">'1989-01-01'</span><span class="p">),</span> <span class="n">record</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'appraisal ratio'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">'upper right'</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">date</span><span class="si">:</span><span class="s2">%b %Y</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">years</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> years of record, appraisal ratio </span><span class="si">{</span><span class="n">ar</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, hire line </span><span class="si">{</span><span class="n">bar</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  -&gt;  "</span>
+          <span class="o">+</span> <span class="p">(</span><span class="s2">"clears the line"</span> <span class="k">if</span> <span class="n">ar</span> <span class="o">&gt;=</span> <span class="n">bar</span> <span class="k">else</span> <span class="s2">"not yet"</span><span class="p">))</span>
+
+<span class="n">interact</span><span class="p">(</span><span class="n">hire_view</span><span class="p">,</span>
+         <span class="n">date</span><span class="o">=</span><span class="n">SelectionSlider</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">d</span><span class="si">:</span><span class="s2">%b %Y</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">index</span><span class="p">],</span> <span class="n">description</span><span class="o">=</span><span class="s1">'record up to'</span><span class="p">,</span>
+                              <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s1">'description_width'</span><span class="p">:</span> <span class="s1">'initial'</span><span class="p">},</span> <span class="n">layout</span><span class="o">=</span><span class="p">{</span><span class="s1">'width'</span><span class="p">:</span> <span class="s1">'600px'</span><span class="p">}),</span>
+         <span class="n">goal</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">'goal a*'</span><span class="p">),</span>
+         <span class="n">confidence</span><span class="o">=</span><span class="n">Dropdown</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="mf">0.80</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">'how sure'</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>After one year his appraisal ratio is 1.34. That is a fantastic number. Is it enough? Why not?</p></li>
+<li><p>Keep sliding. What happens to his record in 1990–1992? And to the line?</p></li>
+<li><p>When does the record first clear the line? How many years of data did you need?</p></li>
+<li><p>Is he above the line in December 1998, when you make the decision?</p></li>
+<li><p>Now go back to the first year and set <code class="docutils literal notranslate"><span class="pre">how</span> <span class="pre">sure</span></code> to 80%. Would you have hired him? What happened next?</p></li>
+<li><p>Set the goal to 0.5. Can you ever be 95% sure that Buffett is a 0.5 manager?</p></li>
+<li><p>In the slides, 5 in every 100 managers with no skill clear a 95% bar. Is that a reason to doubt
+Buffett’s record? What else would you want to know?</p></li>
+<li><p>What does this tell you about how long it takes to learn about alpha?</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="you-hired-him-now-the-clock-restarts">
+<h2><span class="section-number">11.3. </span>2. You hired him. Now the clock restarts<a class="headerlink" href="#you-hired-him-now-the-clock-restarts" title="Link to this heading">#</a></h2>
+<p>Lets say you hired him in January 1999.</p>
+<p>Recall from the slides: his record before that is why he is sitting in front of you. It is the estimate sample.
+<strong>The test starts the day you hire.</strong> So from now on we only look at returns from January 1999 on.</p>
+<p>You walk away once you are sure enough that he does not meet your goal:</p>
+<div class="math notranslate nohighlight">
+\[\widehat{AR}_T \;\leq\; a^* - \frac{z_p}{\sqrt{T}}\]</div>
+<p>Same three ingredients. The slider is time again: it starts after his first year with you,
+December 1999. Slide forward and watch the record against the line.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">after</span> <span class="o">=</span> <span class="n">track_record</span><span class="p">(</span><span class="s1">'1999-01'</span><span class="p">)</span>     <span class="c1"># his record since you hired him, as of every month</span>
+<span class="n">first</span> <span class="o">=</span> <span class="n">after</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="s1">'2003-12'</span><span class="p">]</span>       <span class="c1"># we look at his first five years with you</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fire_view</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">confidence</span><span class="p">):</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">confidence</span><span class="p">)</span>
+    <span class="n">walk_away_line</span> <span class="o">=</span> <span class="n">goal</span> <span class="o">-</span> <span class="n">z</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">first</span><span class="p">[</span><span class="s1">'years'</span><span class="p">])</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">date</span><span class="p">]</span>
+    <span class="n">ar</span><span class="p">,</span> <span class="n">years</span><span class="p">,</span> <span class="n">bar</span> <span class="o">=</span> <span class="n">seen</span><span class="p">[</span><span class="s1">'AR'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">seen</span><span class="p">[</span><span class="s1">'years'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">walk_away_line</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">date</span><span class="p">]</span>
+    <span class="n">below</span> <span class="o">=</span> <span class="n">seen</span><span class="p">[</span><span class="n">seen</span><span class="p">[</span><span class="s1">'AR'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">walk_away_line</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">date</span><span class="p">]]</span>     <span class="c1"># months where the record is below the line</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">seen</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">seen</span><span class="p">[</span><span class="s1">'AR'</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Berkshire record since you hired him'</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">walk_away_line</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">walk_away_line</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'tab:red'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'walk-away line: goal </span><span class="si">{</span><span class="n">goal</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">confidence</span><span class="si">:</span><span class="s1">.0%</span><span class="si">}</span><span class="s1"> sure'</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">ar</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">below</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">below</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">below</span><span class="p">[</span><span class="s1">'AR'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">'tab:red'</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'you walk away'</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'grey'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">'1999-01-01'</span><span class="p">),</span> <span class="n">first</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]);</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'appraisal ratio'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">'lower right'</span><span class="p">);</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">date</span><span class="si">:</span><span class="s2">%b %Y</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">years</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> years with you, appraisal ratio </span><span class="si">{</span><span class="n">ar</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, walk-away line </span><span class="si">{</span><span class="n">bar</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">  -&gt;  "</span>
+          <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"you walked away in </span><span class="si">{</span><span class="n">below</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%b %Y</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">below</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"keep him"</span><span class="p">))</span>
+
+<span class="n">interact</span><span class="p">(</span><span class="n">fire_view</span><span class="p">,</span>
+         <span class="n">date</span><span class="o">=</span><span class="n">SelectionSlider</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">d</span><span class="si">:</span><span class="s2">%b %Y</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">first</span><span class="o">.</span><span class="n">index</span><span class="p">],</span> <span class="n">description</span><span class="o">=</span><span class="s1">'record up to'</span><span class="p">,</span>
+                              <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s1">'description_width'</span><span class="p">:</span> <span class="s1">'initial'</span><span class="p">},</span> <span class="n">layout</span><span class="o">=</span><span class="p">{</span><span class="s1">'width'</span><span class="p">:</span> <span class="s1">'600px'</span><span class="p">}),</span>
+         <span class="n">goal</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">'goal a*'</span><span class="p">),</span>
+         <span class="n">confidence</span><span class="o">=</span><span class="n">Dropdown</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="mf">0.80</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">'how sure'</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>When does the rule fire him? How many months of record did it take?</p></li>
+<li><p>What was going on in 1999? Look at Berkshire and the market that year (next cell).</p></li>
+<li><p>Which lever moves the fire date the most: the goal or the confidence?</p></li>
+<li><p>Keep sliding after he is gone. What happens to his record?</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y1999</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthly</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1999'</span><span class="p">])</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"1999:  Berkshire </span><span class="si">{</span><span class="n">y1999</span><span class="p">[</span><span class="s1">'BRK'</span><span class="p">]</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">   market </span><span class="si">{</span><span class="n">y1999</span><span class="p">[</span><span class="s1">'MKT'</span><span class="p">]</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="what-happened-next">
+<h2><span class="section-number">11.4. </span>3. What happened next<a class="headerlink" href="#what-happened-next" title="Link to this heading">#</a></h2>
+<p>Here is what you would have seen if you had kept him. The red line is the month the rule
+(goal 0, 95% sure) fires him.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">goal</span><span class="p">,</span> <span class="n">confidence</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.95</span>
+<span class="n">after</span><span class="p">[</span><span class="s1">'walk_away_line'</span><span class="p">]</span> <span class="o">=</span> <span class="n">goal</span> <span class="o">-</span> <span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">confidence</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">after</span><span class="p">[</span><span class="s1">'years'</span><span class="p">])</span>
+<span class="n">fire_date</span> <span class="o">=</span> <span class="n">after</span><span class="p">[</span><span class="n">after</span><span class="p">[</span><span class="s1">'AR'</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">after</span><span class="p">[</span><span class="s1">'walk_away_line'</span><span class="p">]]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+
+<span class="n">window</span> <span class="o">=</span> <span class="n">monthly</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1999-01'</span><span class="p">:</span><span class="s1">'2003-12'</span><span class="p">]</span>
+<span class="n">growth</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">window</span><span class="p">[[</span><span class="s1">'BRK'</span><span class="p">,</span> <span class="s1">'MKT'</span><span class="p">]])</span><span class="o">.</span><span class="n">cumprod</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">growth</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">'black'</span><span class="p">,</span> <span class="s1">'tab:blue'</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">fire_date</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'tab:red'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'fired, </span><span class="si">{</span><span class="n">fire_date</span><span class="si">:</span><span class="s1">%b %Y</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'growth of $1 invested in January 1999'</span><span class="p">);</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">'Berkshire'</span><span class="p">,</span> <span class="s1">'market'</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'fired, </span><span class="si">{</span><span class="n">fire_date</span><span class="si">:</span><span class="s1">%b %Y</span><span class="si">}</span><span class="s1">'</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">after_fire</span> <span class="o">=</span> <span class="n">monthly</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">fire_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span><span class="s1">'2002-12'</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"from </span><span class="si">{</span><span class="n">after_fire</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to 2002-12:  Berkshire </span><span class="si">{</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">after_fire</span><span class="p">[</span><span class="s1">'BRK'</span><span class="p">])</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">"</span>
+      <span class="sa">f</span><span class="s2">"   market </span><span class="si">{</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">after_fire</span><span class="p">[</span><span class="s1">'MKT'</span><span class="p">])</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">:</span><span class="s2">+.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">kept</span>  <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthly</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1999-01'</span><span class="p">:,</span> <span class="s1">'BRK'</span><span class="p">])</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span>
+<span class="n">fired</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthly</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1999-01'</span><span class="p">:</span><span class="n">fire_date</span><span class="p">,</span> <span class="s1">'BRK'</span><span class="p">])</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthly</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">fire_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">1</span><span class="p">):,</span> <span class="s1">'MKT'</span><span class="p">])</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"$1 given to Buffett in January 1999, by </span><span class="si">{</span><span class="n">monthly</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">:  kept $</span><span class="si">{</span><span class="n">kept</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   fired and moved to the market $</span><span class="si">{</span><span class="n">fired</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>So was the rule wrong?</p>
+<ul class="simple">
+<li><p>Does one bad outcome tell you the rule was bad? Think about the Melvin example from the slides.</p></li>
+<li><p>The rule was 95% sure that Buffett was not a positive-alpha manager. Why was it so sure, after only
+one year?</p></li>
+<li><p>What did the rule ignore that you knew in January 1999?</p></li>
+<li><p>If you had been the one making this call, what would you have done?</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="back-to-the-slides">
+<h2><span class="section-number">11.5. </span>⏸ Back to the slides<a class="headerlink" href="#back-to-the-slides" title="Link to this heading">#</a></h2>
+<p>Stop here. Bring one answer back with you: <strong>what did the rule not know?</strong></p>
+<p>The challenge below is homework, for after class. It uses the second half of today’s slides.</p>
+</section>
+<hr class="docutils" />
+<section id="challenge-what-if-you-trusted-your-process">
+<h2><span class="section-number">11.6. </span>🎯 Challenge: what if you trusted your process?<a class="headerlink" href="#challenge-what-if-you-trusted-your-process" title="Link to this heading">#</a></h2>
+<p><em>Homework — due before the next class.</em></p>
+<p>In the second half of the slides (“How much two flat years should move you”) we had another way
+to fire: be a Bayesian.</p>
+<ul class="simple">
+<li><p>There are two kinds of manager: good, with appraisal ratio <span class="math notranslate nohighlight">\(a\)</span>, and unskilled, with zero</p></li>
+<li><p>A share <span class="math notranslate nohighlight">\(\pi\)</span> of the people your process hires are good. That is your hit rate: how much you trust your process</p></li>
+<li><p>Every year of record updates the odds that he is good:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\frac{\pi_T}{1-\pi_T} \;=\; \frac{\pi}{1-\pi} \times \exp\!\big(T\,a\,(\widehat{AR}_T - a/2)\big)\]</div>
+<ul class="simple">
+<li><p>Fire once the odds fall below 1: he is now more likely unskilled than good. Take logs and you get the fire line:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\widehat{AR}_T \;&lt;\; \frac{a}{2} \;-\; \frac{1}{a\,T}\,\ln\frac{\pi}{1-\pi}\]</div>
+<p>You hired Buffett to deliver <span class="math notranslate nohighlight">\(a = 0.5\)</span>. Use the record since January 1999, the same <code class="docutils literal notranslate"><span class="pre">after</span></code> as in
+part 2. Note that <span class="math notranslate nohighlight">\(T\)</span> here is the number of years since you hired him, the <code class="docutils literal notranslate"><span class="pre">years</span></code> column.</p>
+<section id="q1-an-investor-with-no-inside-view">
+<h3><span class="section-number">11.6.1. </span>Q1 — An investor with no inside view<a class="headerlink" href="#q1-an-investor-with-no-inside-view" title="Link to this heading">#</a></h3>
+<p>Set <span class="math notranslate nohighlight">\(\pi = 0.5\)</span>. Does the rule fire him? After how many months of record?</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fires_50</span> <span class="o">=</span> <span class="n">____</span>            <span class="c1"># True or False</span>
+<span class="n">months_to_fire_50</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># months of record when it first fires, counting January 1999 as month 1</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">fires_50</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">months_to_fire_50</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fires_50</span><span class="p">,</span> <span class="n">months_to_fire_50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q2-an-investor-who-trusts-the-process">
+<h3><span class="section-number">11.6.2. </span>Q2 — An investor who trusts the process<a class="headerlink" href="#q2-an-investor-who-trusts-the-process" title="Link to this heading">#</a></h3>
+<p>Now set <span class="math notranslate nohighlight">\(\pi = 0.8\)</span>: four out of five of the people you hire turn out to be good. Does the rule fire
+him at any point up to December 2021?</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fires_80</span> <span class="o">=</span> <span class="n">____</span>            <span class="c1"># True or False</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">fires_80</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fires_80</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q3-what-each-investor-ended-up-with">
+<h3><span class="section-number">11.6.3. </span>Q3 — What each investor ended up with<a class="headerlink" href="#q3-what-each-investor-ended-up-with" title="Link to this heading">#</a></h3>
+<p>$1 given to Buffett in January 1999. One investor keeps him until December 2021. The other fires him
+when the <span class="math notranslate nohighlight">\(\pi = 0.5\)</span> rule fires, and moves the money to the market for the rest of the period.</p>
+<blockquote>
+<div><p><strong>📌 Required variable names:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">wealth_kept</span> <span class="o">=</span> <span class="n">____</span>         <span class="c1"># $ value in December 2021, kept</span>
+<span class="n">wealth_fired_50</span> <span class="o">=</span> <span class="n">____</span>     <span class="c1"># $ value in December 2021, fired by the pi = 0.5 rule</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Your work here</span>
+
+
+<span class="n">wealth_kept</span> <span class="o">=</span> <span class="n">____</span>
+<span class="n">wealth_fired_50</span> <span class="o">=</span> <span class="n">____</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"kept $</span><span class="si">{</span><span class="n">wealth_kept</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   fired $</span><span class="si">{</span><span class="n">wealth_fired_50</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="q4-the-memo">
+<h3><span class="section-number">11.6.4. </span>Q4 — The memo<a class="headerlink" href="#q4-the-memo" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>📝 Your task — maximum eight sentences.</strong></p>
+<p>Your boss asks why two investors, looking at the same returns, made opposite calls on Buffett in
+early 2000. Explain what made the difference, and which investor you would rather have been.
+Then connect it to Citadel and Point72 putting money into Melvin in January 2021.
+Finally: would the investor who trusted the process have been just as right if Buffett had really
+lost his edge? What would have told them?</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MEMO</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">Write your memo here. Don't delete the surrounding triple quotes.</span>
+<span class="s2">"""</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">MEMO</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="submission">
+<h2><span class="section-number">11.7. </span>📤 Submission<a class="headerlink" href="#submission" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === 📤 SUBMISSION CELL — Run this last ===</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+
+<span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"fires_50"</span><span class="p">,</span> <span class="s2">"months_to_fire_50"</span><span class="p">,</span> <span class="s2">"fires_80"</span><span class="p">,</span> <span class="s2">"wealth_kept"</span><span class="p">,</span> <span class="s2">"wealth_fired_50"</span><span class="p">,</span> <span class="s2">"MEMO"</span><span class="p">]</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()]</span>
+<span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">❌ Missing before submission: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"assignment"</span><span class="p">:</span> <span class="s2">"HiringAndFiring_AI"</span><span class="p">,</span>
+    <span class="s2">"ts"</span><span class="p">:</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">timespec</span><span class="o">=</span><span class="s2">"seconds"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"+00:00"</span><span class="p">,</span> <span class="s2">"Z"</span><span class="p">),</span>
+    <span class="s2">"answers"</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">k</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"MEMO"</span><span class="p">},</span>
+    <span class="s2">"memo"</span><span class="p">:</span> <span class="n">MEMO</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">checksum</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">token</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"UG54::</span><span class="si">{</span><span class="n">checksum</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"📋  COPY THE LINE BELOW AND PASTE INTO THE SUBMISSION FORM"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">72</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Submission form: https://forms.gle/yazZ8bbatL87jdJi7"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-takeaways">
+<h2><span class="section-number">11.8. </span>🧠 Key Takeaways<a class="headerlink" href="#key-takeaways" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Hiring and firing are the same statistical decision: a goal, how sure you want to be, and time.</p></li>
+<li><p>Even Buffett needs years of record to clear a hiring line. You can never be 95% sure he is a 0.5 manager.</p></li>
+<li><p>Once you hire, the clock restarts. The record that got him hired is the estimate sample.</p></li>
+<li><p>A rule that only looks at returns can fire a great manager at the worst moment: Buffett in early 2000.</p></li>
+<li><p>How sure you need to be to fire depends on how much you trust the process that hired him.</p></li>
+<li><p>One outcome does not grade a decision. Melvin closed; Buffett did not. Both looked the same in their bad year.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters/Finance"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="L8_Backtesting_AI.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">10. </span>Backtesting: Estimate, Tune, Test</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="L9_WhyShouldThisWork_AI.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">12. </span>Why Should This Work?</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#our-data">11.1. Our data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#would-you-hire-him">11.2. 1. Would you hire him?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#you-hired-him-now-the-clock-restarts">11.3. 2. You hired him. Now the clock restarts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-happened-next">11.4. 3. What happened next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#back-to-the-slides">11.5. ⏸ Back to the slides</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-what-if-you-trusted-your-process">11.6. 🎯 Challenge: what if you trusted your process?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q1-an-investor-with-no-inside-view">11.6.1. Q1 — An investor with no inside view</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q2-an-investor-who-trusts-the-process">11.6.2. Q2 — An investor who trusts the process</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q3-what-each-investor-ended-up-with">11.6.3. Q3 — What each investor ended up with</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q4-the-memo">11.6.4. Q4 — The memo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submission">11.7. 📤 Submission</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways">11.8. 🧠 Key Takeaways</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alan Moreira
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2021 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
