@@ -151,6 +151,66 @@ ANSWER_KEY = {
         "sr_str":            (0.0, 10.0),
         "sr_best":           (0.0, 10.0),
     },
+    "HiringAndFiring_AI": {
+        # Buffett, hired January 1999 to deliver a = 0.5; Bayesian fire rule on the
+        # record since the hire. Booleans arrive as 1.0 / 0.0. Verified by executing
+        # the notebook 2026-10-26. fires_80 is close to the line: pi = 0.8 comes within
+        # 0.07 of firing in 2020-06, so a slightly different regression can flip it.
+        "fires_50":          (1.0,  0.0),
+        "months_to_fire_50": (12,   0.0, 0.5),   # December 1999, counting Jan 1999 as 1
+        "fires_80":          (0.0,  0.0),
+        "wealth_kept":       (6.44, 0.05),
+        "wealth_fired_50":   (4.24, 0.05),
+    },
+    "L10_Momentum_v2_AI": {
+        # Industry momentum 1927-2026 (49 industries, t-12 to t-2, top 5 minus bottom 5),
+        # scaled by c / RV of last month's daily returns, c matching IM's volatility.
+        # Verified 2026-10-26. Tolerances cover reasonable constructions (RV demeaned or
+        # not, mean vs sum of squares, rolling 21-day variance): Sharpe 0.69-0.72,
+        # maxDD -0.51 to -0.55, CAPM 0.155-0.160, Mkt+UMD 0.102-0.105.
+        # Scaling by 1/vol instead of 1/variance gives Mkt+UMD 0.085 and fails, as it should.
+        "imv_sharpe":     (0.700,  0.05),
+        "imv_maxdd":      (-0.530, 0.10),
+        "imv_alpha_capm": (0.160,  0.10),
+        "imv_alpha_umd":  (0.105,  0.15),
+    },
+    "L12_CapitalAllocationI_v2_AI": {
+        # 49 industries in excess returns, 1980-2026, in sample. Verified 2026-10-30. sr_gross2 needs an
+        # optimizer (10% volatility, gross <= 2): a convex problem, so solvers should agree; SLSQP gives 1.125.
+        # Stages are cumulative. Control: 14 random drops, 300 draws, 5-95% range 1.03-1.21.
+        "tan_sharpe":      (1.264, 0.02),
+        "tbills_at_10vol": (0.448, 0.03),
+        "vol_for_8pct":    (0.0633, 0.02),
+        "vol_at_gross2":   (0.0453, 0.02),
+        "sr_gross2":       (1.125, 0.05),
+        "sr_stage1":       (1.204, 0.01),
+        "sr_stage2":       (1.171, 0.01),
+        "sr_stage3":       (1.154, 0.01),
+        "sr_stage4":       (1.127, 0.01),
+        "sr_stage5":       (1.035, 0.01),
+        "sr_random14":     (1.122, 0.02),
+    },
+    "L12b_CapitalAllocationII_v2_AI": {
+        # Every group has its own four ideas, so only the mechanics can be checked: the book must run 10%
+        # volatility on its own covariance matrix. ex_ante_sharpe, top_share and realized_sharpe are reported
+        # for the memo grader and not keyed.
+        "n_ideas":  (4,    0.0),
+        "book_vol": (0.10, 0.02),
+    },
+    "L13_CapitalAllocationIII_v2_AI": {
+        # Verified 2026-10-30. alpha_cost re-estimates alpha, beta and sd_eps each month on
+        # the months before it, and hedges with that beta: no alpha 1.859, alpha book 1.763.
+        # Hedging with a full-sample beta looks ahead and gives 0.2265, which fails, as it
+        # should: the notebook warns about it. Not applying gross1 gives a different number
+        # and fails too; the notebook asks for gross1.
+        # best_a: 0.5, 0.6 and 0.7 are within 0.003 of each other, so all three pass.
+        # live_shrinkage_sr uses a = 0 for the first 60 months, as the notebook asks.
+        # Other starting rules (2, 12 or 24 months) give 0.778-0.781, which also pass.
+        # Plain mean-variance is 0.828: every version lands below it.
+        "alpha_cost":        (0.096, 0.30, 0.03),
+        "best_a":            (0.6,   0.0,  0.101),
+        "live_shrinkage_sr": (0.791, 0.03),
+    },
     "L8_Backtesting_AI": {
         # Estimate ends 1987-12, tune ends 1991-12, test 1992-01 to 2000-12.
         # 29 cached long-shorts; grid N in {1,3,5,10,20,29} x W in {ew,ivol,sharpe}.
@@ -309,6 +369,275 @@ SIGNAL_KEYS = {
 }
 
 MEMO_RUBRICS = {
+    "HiringAndFiring_AI": """
+You are grading a memo on firing a manager with a prior. Students hired Warren
+Buffett in January 1999 to deliver an appraisal ratio of 0.5, then applied the
+Bayesian fire rule  AR_T < a/2 - ln(pi/(1-pi)) / (a T)  to his record since the
+hire, for two investors: one with no inside view (pi = 0.5) and one who trusts
+the process (pi = 0.8).
+
+THE QUESTION: why did two investors, looking at the same returns, make opposite
+calls in early 2000, and which would you rather have been? Connect it to Citadel
+and Point72 putting money into Melvin in January 2021. Would the investor who
+trusted the process have been just as right if Buffett had really lost his edge,
+and what would have told them?
+
+GROUND TRUTH:
+- The returns are identical; the prior is the only difference. After one year
+  Buffett's record was about -1.1 (1999: Berkshire -20%, market +26%). With
+  pi = 0.5 that is enough to fire him (December 1999). With pi = 0.8 the prior
+  odds of 4:1 absorb it, and the rule never fires through 2021.
+- Kept: $1 became about $6.44 by December 2021. Fired by the pi = 0.5 rule and
+  moved to the market: about $4.24. From March 2000 to December 2002 Berkshire
+  rose about 65% while the market fell about 37%.
+- Ex post the trusting investor did better, but ONE OUTCOME DOES NOT GRADE THE
+  DECISION. The best answers say which investor they would rather have been AND
+  why the outcome alone cannot settle it: it depends on whether pi = 0.8 was a
+  calibrated belief about the process.
+- Melvin: Citadel and Point72 read a terrible month the way the pi = 0.8 investor
+  read 1999, as bad luck for a good manager. Same reasoning, opposite outcome:
+  Melvin closed in 2022. Good answers see that the logic is the same and the
+  difference is whether the prior was right.
+- If Buffett had lost his edge, the trusting investor would have kept losing for
+  longer, but not forever: the fire line rises toward a/2 = 0.25 as T grows, so a
+  record that stays low eventually fires even pi = 0.8. In this data the pi = 0.8
+  rule came within 0.07 of firing in mid-2020. What would tell them: more years
+  of record, and evidence about the process itself (a change in strategy, size or
+  people), not one more bad month.
+
+GRADE THE REASONING, NOT THE ARITHMETIC. Quoting the numbers is evidence they
+looked; it earns no credit on its own. Never deduct for not quoting figures.
+
+Grade 0-5:
+  5 = Identifies the prior as the only difference; picks an investor and says why
+      one outcome cannot grade the call; makes the Melvin parallel (same logic,
+      opposite outcome); explains what would eventually fire the trusting
+      investor if the edge were gone.
+  4 = Three of those four, reasoned well.
+  3 = Gets the prior as the difference and picks an investor, but judges the
+      decision by how it turned out.
+  2 = Says the pi = 0.8 investor was right because they made more money, with no
+      other argument.
+  1 = Restates the numbers.
+  0 = Empty or off-topic.
+
+PENALIZE: calling the pi = 0.5 rule "wrong" because Buffett recovered; treating a
+strong prior as never needing to fire.
+
+For picked_fund return "neither".
+For cited_appraisal_or_alpha return True if the memo reasons from the record (the
+appraisal ratio, the fire line or the odds), not just from wealth, else False.
+
+Output via the `grade_memo` tool.
+""",
+    "L10_Momentum_v2_AI": """
+You are grading a memo on volatility-managed momentum. Students built industry
+momentum (49 industries, rank on t-12 to t-2, top 5 minus bottom 5, 1927-2026),
+scaled each month's position by c / RV, where RV is last month's realized
+variance of the strategy's daily returns, and ran the CAPM and the market + UMD
+regressions on the result.
+
+THE QUESTION: what would the volatility-managed version have done in industry
+momentum's worst years, and why does it work: what is predictable here, and what
+is not? What does the market + UMD alpha tell you that the CAPM alpha does not?
+One reason you might not earn this in practice.
+
+GROUND TRUTH:
+- Plain industry momentum: Sharpe 0.48, maximum drawdown -90%; 1932 about -71%,
+  2009 about -50%. Managed: Sharpe about 0.70, maximum drawdown about -53%, and
+  roughly flat in both 1932 and 2009.
+- Why it works: volatility is persistent, so last month's variance predicts this
+  month's, while the average return does not rise with volatility (the slides
+  show it for UMD: Sharpe about 1.6 after the calmest months, about zero after the
+  most volatile). Cutting the position when volatility is high removes risk
+  without giving up return. Crashes come in high-volatility states (rebounds after
+  bear markets), so the position is already small when they hit. Returns are NOT
+  being forecast, only volatility.
+- CAPM alpha about 16%/yr against about 10.5% on market + UMD. Plain industry
+  momentum has little alpha once UMD is included (about 3%, t 1.8): it is mostly
+  UMD. The managed version keeps a large alpha after UMD, so the scaling adds
+  something UMD does not have. A CAPM alpha on its own could be momentum exposure.
+- Practical limits: leverage (after calm months the position is several times
+  normal, about 6x at the 99th percentile), trading costs from resizing every
+  month, c chosen with hindsight (it sets the leverage, not the Sharpe ratio),
+  financing and margin, shorting costs.
+
+GRADE THE REASONING, NOT THE ARITHMETIC. Quoting the numbers is evidence they
+looked; it earns no credit on its own. Never deduct for not quoting figures.
+
+Grade 0-5:
+  5 = Describes the crash years; says volatility is predictable and returns are
+      not, and why that makes the scaling work; reads the market + UMD alpha as
+      evidence the scaling adds something beyond momentum; gives a concrete
+      practical limit.
+  4 = Three of those four, reasoned well.
+  3 = Gets the crash years and a practical limit, but explains the gain loosely
+      ("less risk") without the predictability point.
+  2 = Claims the method forecasts returns or crashes, or reads the CAPM alpha as
+      the whole story.
+  1 = Restates the numbers.
+  0 = Empty or off-topic.
+
+PENALIZE: saying the strategy predicts when crashes happen; treating the higher
+Sharpe ratio as free money with no mention of leverage or costs.
+
+For picked_fund return "neither".
+For cited_appraisal_or_alpha return True if the memo uses the alphas or another
+risk-adjusted comparison rather than raw returns, else False.
+
+Output via the `grade_memo` tool.
+""",
+    "L12_CapitalAllocationI_v2_AI": """
+You are grading a memo on the cost and consequences of an exclusion mandate. Students built the tangency portfolio on 49
+industries, 1980-2026, and removed industries in widening stages. Stage 3 excludes Smoke, Guns, Beer, Coal and Oil.
+
+THE QUESTION: an endowment is considering stage 3. What does it cost, and how far do you trust that number? If a large share of
+all investors adopted the same list, what happens to prices and expected returns of those industries? Who is harmed and who
+benefits, over the transition and afterwards? What does this imply about the measured cost, and about whether exclusion changes
+what those firms do?
+
+GROUND TRUTH:
+- All 49: Sharpe 1.264. Stage 1 to 5: 1.204, 1.171, 1.154, 1.127, 1.035. Stage 3 costs 0.11 of Sharpe ratio, about 1.1% of expected
+  return a year at 10% volatility.
+- The control: dropping ANY asset lowers an in-sample maximum. Dropping 5 at random costs about 0.05, and dropping 14 at random costs
+  about 0.14 against 0.23 for stage 5, so roughly half of the measured cost is having fewer assets, not these assets. It is also
+  in sample: the tangency's weights are estimates and tobacco happened to do well.
+- If many exclude: the same risk must be held by fewer investors, so they need to be paid more. Prices of the excluded fall, then
+  expected returns are higher.
+- Transition: anyone holding the excluded stocks as prices fall loses, including investors who exclude late. Early excluders avoid
+  it. Buyers at the lower price gain later. The remaining firms' prices rise a little, a one-time gain for their holders, and their
+  expected returns fall.
+- Afterwards: investors who keep holding earn a higher expected return, in part as pay for holding what others will not, and carry less
+  diversified portfolios if they must absorb more of it. Excluders earn less, so the cost of the mandate RISES with adoption: the
+  historical number may understate it. Some of the past sin return may itself reflect earlier exclusion (Hong and Kacperczyk 2009).
+- Firms: a lower price means a higher cost of capital, so less investment. That is the channel by which exclusion could change behavior,
+  and it is what the excluders pay for. It needs a large share of investors to be large (Heinkel, Kraus and Zechner 2001; Berk and van
+  Binsbergen). Firms with little need for outside equity are barely affected. The excluder's cost and the firm's cost are the same
+  thing seen from two sides.
+- Accept reasoned disagreement on magnitudes. Students need not cite papers.
+
+GRADE THE REASONING, NOT THE ARITHMETIC. Exact numbers earn no credit on their own. Never deduct for not quoting figures.
+
+Grade 0-5:
+  5 = States the cost and discounts it using the control; explains why prices fall and expected returns rise; separates the transition
+      from the long run and names winners and losers on both sides; links the investor's return cost to the firm's cost of capital.
+  4 = Three of those four, reasoned well.
+  3 = Says prices fall and sin investors earn more, with no transition or no use of the control.
+  2 = Says excluded stocks will do badly and therefore exclusion costs nothing, or treats the in-sample number as the true price.
+  1 = Restates the numbers.
+  0 = Empty or off-topic.
+
+PENALIZE: confusing a lower price today with lower expected returns after; claiming exclusion is free or always harms firms by assertion;
+treating the measured cost as precise.
+
+For picked_fund return "neither".
+For cited_appraisal_or_alpha return True if the memo discusses expected returns or Sharpe ratio rather than only prices, else False.
+
+Output via the `grade_memo` tool.
+""",
+    "L12b_CapitalAllocationII_v2_AI": """
+You are grading a memo defending a four-idea book. Students wrote four hedged long-short ideas on 49 industries BEFORE looking at data,
+with an alpha and a standard error for each; estimated covariances on 2016-2026; compared their numbers with the historical record; applied
+Black-Litterman with a prior of zero (tau = 0.05); sized the book at 10% volatility; and ran it over 2016-2026. The text submitted begins
+with their written ideas.
+
+THE QUESTION: defend your biggest position: what you believe, why the market does not, by when you will know, and what would make you close it.
+Where did each alpha come from: a record, a signal or a hunch? Which number in the process do you trust least? What would you write down today so
+that a year from now you can tell whether you had any skill?
+
+THERE ARE NO RIGHT IDEAS. Do not grade whether the ideas are good trades or whether they would have made money. Grade the discipline.
+
+WHAT GOOD LOOKS LIKE:
+- The belief is specific, dated and falsifiable. It says what is in the price and why others have not acted, or admits they may have.
+- The alpha came from a stated chain of numbers: a size, a likelihood, a horizon. A one-shot view is not annualized as if it repeated.
+- The student separates hunch, signal and record. Good answers notice that a strong record is a reason for suspicion if they chose the idea knowing
+  it, and that realized 2016-2026 Sharpe proves little: the ideas were chosen in 2026.
+- The number trusted least is usually an alpha or omega, not a covariance. Saying the covariance is the least trusted input needs a reason.
+- The closing rule says what would make them wrong, before it happens.
+- Scoring: writing down alpha, horizon and confidence now, then comparing with the outcome, over many bets, since one bet says very little. A strong
+  answer notes how many bets or years that would take (Hiring and Firing: standard error of an appraisal ratio is about 1/sqrt(T)).
+
+GRADE THE REASONING, NOT THE ARITHMETIC. Exact numbers earn no credit on their own. Never deduct for not quoting figures.
+
+Grade 0-5:
+  5 = Specific dated belief with a reason it is not priced; sources of each alpha separated; a reasoned least-trusted number; a closing rule; a scoring
+      plan that recognizes how little one outcome proves.
+  4 = Four of those, reasoned well.
+  3 = A clear position and a sensible plan, but alpha sources are blurred, or there is no closing rule.
+  2 = "This sector will do well." Vague belief, or defends the position by its historical return alone.
+  1 = Restates the numbers.
+  0 = Empty or off-topic.
+
+PENALIZE: picking ideas from the data and presenting them as views; treating realized Sharpe as proof; alphas with no stated chain of reasoning.
+
+For picked_fund return "neither".
+For cited_appraisal_or_alpha return True if the memo reasons about alpha and its uncertainty, rather than only about raw returns, else False.
+
+Output via the `grade_memo` tool.
+""",
+    "L13_CapitalAllocationIII_v2_AI": """
+You are grading a memo auditing a 29-strategy alpha book. Students ran, out of sample with
+an expanding window and a 120-month burn-in, the alpha book (w = alpha / sd_eps^2) against
+a no-alpha rule (w = 1 / sd_eps^2), hedging each month with a beta estimated on prior
+months. Then they shrank the covariance of six factors toward the scaled identity,
+choosing the intensity first with hindsight, then live.
+
+THE QUESTION: the head of research wants to drop the alphas on the evidence of Q1. Do you
+agree? What does Q1 establish and not establish? How would you put a standard error on it?
+You found a shrinkage intensity that helps, and choosing it honestly gave the improvement
+back: what have you learned? What one piece of evidence would most change your mind?
+
+GROUND TRUTH:
+- Q1: no alpha 1.86, alpha book 1.76, difference +0.096, over only 131 months, 1990-2000.
+  A bootstrap of the months gives a 95% interval of about -0.42 to +0.66, and the rule
+  wins in about 62% of resamples. So Q1 does NOT establish that alphas hurt, or that they
+  are useless: the difference is far inside the noise. Good answers bootstrap the
+  difference or say it needs one; the two returns are correlated, so comparing two
+  separate standard errors is weaker but acceptable.
+- It does establish something narrower: on this evidence the alpha estimates did not earn
+  their keep over simple risk-based weights, which is what the fragility of estimated means
+  predicts.
+- Also relevant: the 29 are published signals, chosen because they worked, and 23 of 29 have
+  a positive alpha. Within a set selected on alpha the differences in alpha may carry little
+  information, and that says little about alphas in general. 1/sd_eps^2 piles into quiet
+  strategies, and so depends on residual volatilities staying put. The sample ends in 2000.
+  Costs are ignored.
+- Q2: best a = 0.6, Sharpe 0.908 against 0.828 at a = 0, but a from 0.4 to 0.7 is nearly
+  flat (0.904-0.908). Q3: chosen live, 0.79, BELOW plain mean-variance at 0.828.
+- What was learned: the intensity is itself an estimated parameter, and estimating it costs
+  about what it buys: the Backtesting lesson one level up. Hindsight's 0.908 was never
+  available. It does not follow that shrinkage is useless. The defensible reading is to set
+  the prior in advance rather than tune it, for example a fixed moderate a, or a formula
+  such as Ledoit-Wolf, and to say the gain cannot be promised.
+- Evidence that would change your mind: a longer or later out-of-sample record, the same
+  control on strategies not selected on past alpha, or direct evidence that past alpha
+  predicts future alpha across strategies.
+
+GRADE THE REASONING, NOT THE ARITHMETIC. Exact numbers earn no credit on their own. Never
+deduct for not quoting figures.
+
+Grade 0-5:
+  5 = Does not accept the proposal on Q1 alone; explains the difference is within noise and
+      how to measure that; reads Q2 and Q3 as the intensity being an estimate, with a
+      practical consequence; names specific evidence.
+  4 = Three of those, reasoned well.
+  3 = Says the evidence is weak or the sample short, without saying how to measure it, and
+      reads Q3 only loosely.
+  2 = Accepts or rejects on the sign of the point estimate alone, or treats 0.908 as
+      achievable.
+  1 = Restates the numbers.
+  0 = Empty or off-topic.
+
+PENALIZE: claiming Q1 proves alphas are worthless; concluding shrinkage does not work
+because the live version lost; treating a difference of 0.1 in Sharpe ratio over 11 years
+as settled.
+
+For picked_fund return "neither".
+For cited_appraisal_or_alpha return True if the memo discusses the alpha estimates or their
+sampling error rather than only raw Sharpe ratios, else False.
+
+Output via the `grade_memo` tool.
+""",
     "L8_Backtesting_AI": """
 You are grading a memo on backtesting protocol. Students have just met the
 estimate/tune/test split, walk-forward testing, and Bonferroni.

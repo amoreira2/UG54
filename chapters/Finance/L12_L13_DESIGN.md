@@ -11,6 +11,47 @@ Written as one design because the split only makes sense jointly.
 
 ---
 
+## Rebuilt 2026-10-30: three lectures, slides + lean notebook (supersedes the rest of this note where they differ)
+
+| | Deck (figures: `slides/capital_allocation_figures.py`) | Notebook | Challenge |
+|---|---|---|---|
+| I, How much risk, and whose | `slides/capital_allocation_1.tex` | `L12_CapitalAllocationI_v2_AI.ipynb` | goals and mandates, 49 industries |
+| II, Factor bets and alpha bets | `slides/capital_allocation_2.tex` | `L12b_CapitalAllocationII_v2_AI.ipynb` | four trading ideas |
+| III, Estimation error | `slides/capital_allocation_3.tex` | `L13_CapitalAllocationIII_v2_AI.ipynb` | audit the book |
+
+**Deck I and its notebook reworked 2026-10-30** after Bert's review. The sectors were a poor way to learn the mechanics (94% in Sin), so the formula slides and the in-class
+notebook now use the six factors: tangency line by line, minimum variance, the curve from those two, one portfolio at several sizes, then spanning. HML (alpha 0.2%, t 0.2, best Sharpe
+unchanged) against momentum (alpha 7.8%, t 3.5, 1.04 to 1.17) makes the point that the alpha test is a test of whether the tangency portfolio spans the new asset. The alpha on the tangency
+portfolio equals the alpha on all the assets exactly. The tilts and mandates stay on the sectors because they need named sectors. The challenge stays on the 49 industries, unchanged.
+
+**Deck III rewritten 2026-10-30** after Bert's review. It now runs: the amplifier $(1+\rho)/(1-\rho)$ (generic, then Hardware vs Chips); the three inputs
+one standard error at a time, then the bootstrap one input at a time, by asset set and by rule; the race as $SR^2$ against $N/Y$, with $Y$ the years of data ($T$ is kept for the number of observations on the standard-error slide); shrinkage as dials whose corners are the rules.
+Choices worth keeping: the race is shown on four asset sets, never as a general result. The 49 industries stay out of the out-of-sample table (Assignment 5), and the factors stay out of the
+dial grid (challenge Q2). The dial shrinks Sharpe ratios rather than means, because same-mean does not help on sectors (0.44 vs 0.46) while same-Sharpe does (0.71).
+Asset classes come from `GlobalFinMonthly.csv`, whose `MKT` is a total return: subtract `RF`. The sign flip, the four-rule bootstrap and the known-world crossover figures were dropped.
+
+The 31 August notebooks are untouched. "Build the Book" stopped being a challenge: the 29-strategy book is now in class in II.
+
+- **`alpha_cost` changed from 0.2265 to 0.096.** The August version hedged with a full-sample beta inside an "out of sample" test.
+  Re-estimating each month gives no alpha 1.86, alpha book 1.76, bootstrap 95% interval about -0.42 to +0.66. So "the alphas were the
+  negative contributor" and the +0.3 / -0.2 decomposition do not survive. The challenge now asks for the monthly hedge.
+- **`live_shrinkage_sr` changed from 0.7882 to 0.791.** The rule for the first months was unspecified; now a = 0 for 60 months. Starting
+  rules from 2 to 60 months give 0.778-0.791, all below 0.828. Weights are `gross1` each month in Q1 for the same reason.
+- **Persistence.** 49 industries, one window on the next: alpha correlation +0.05 (3y), -0.12 (5y), -0.17 (10y); beta about 0.6; residual vol
+  about 0.75. The market premium is positive in every 20-year window, but UMD goes 9% to 1% in 2007-26. The 29 strategies show alpha correlation
+  0.78 across 1980-2000: selection, and the slide says so.
+- **Exclusions.** Stages cost 0.06, 0.09, 0.11, 0.14, 0.23 of cumulative Sharpe. The marginal cost does not rise steadily (0.06, 0.03, 0.02, 0.03, 0.09). A random
+  control costs about 0.14 at 14 industries, so more than half of the stage 5 cost is having fewer assets in sample.
+- **Black-Litterman with a zero prior:** weights are a multiple of P', so one view gives one position, however the neighbouring alphas move.
+- **Angle picture:** cos(angle) = rho, each Sharpe ratio is the projection of the best-combination vector. Exact: SR = s*sqrt(2/(1+rho)) at equal Sharpes.
+- **Pooling.** s*sqrt(N/(1+(N-1)rho)) is an identity for an equal-volatility pool: 1.383 for the 29. The limit is 1.78. The figure averages random subsets, so the
+  9-to-16 dip in the August table (column order) is gone.
+- **Monte Carlo re-runs with one seed:** HML 45%, SMB 22%, CMA 4%; mean-variance 76/85/92/96%. Noise against the August 46/20/5 and 74/86/92/96.
+- **Off-by-one:** `F.iloc[:t+1]` takes mean-variance from 0.83 to 1.03, past 1/N at 0.92.
+- **Grader keys** are in `auto_evaluator.py` under the `_v2_AI` names. Four trading ideas keys only the mechanics.
+
+---
+
 ## The spine, across both meetings
 
 > **How much do you bet, and on what? There is exactly one formula. It is
