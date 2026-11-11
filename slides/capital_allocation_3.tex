@@ -283,7 +283,7 @@ Which one moves your portfolio the most?
 \end{frame}
 
 %------------------------------------------------------------------ 11
-\begin{frame}{Exercise 2: move them all, as history would}
+\begin{frame}[label=boot_back]{Exercise 2: move them all, as history would}
 \begin{center}
 \adjustbox{max width=\textwidth, max height=0.50\textheight}{\includegraphics{figures/ca_boot_inputs.pdf}}
 \end{center}
@@ -295,6 +295,8 @@ Which one moves your portfolio the most?
 \vskip 5pt
 \item Variance of the weights: \textcolor{red}{79\% means}, 14\% correlations, 7\% volatilities
 \end{itemize}
+\vskip 2pt
+\hfill \hyperlink{appendix_boot}{\beamerbutton{The bootstrap, in a picture}}
 \end{frame}
 
 %------------------------------------------------------------------ 12
@@ -704,7 +706,102 @@ Whiten the assets: $z = \Sigma^{-1/2}\mu$, so $|z|^{2} = SR^{2}$. The estimate o
 \hfill \hyperlink{appendix_world_back}{\beamerreturnbutton{Back}}
 \end{frame}
 
-\begin{frame}{A4: How not to measure the cost}
+\begin{frame}[label=appendix_boot]{A4: The bootstrap, in a picture}
+\begin{center}
+\adjustbox{max width=\textwidth}{%
+\begin{tikzpicture}[x=1cm, y=1cm, month/.style={draw=gray!70, minimum size=0.40cm, inner sep=0pt, font=\scriptsize}]
+% the real history
+\node[anchor=east, font=\small] at (2.20,4.6) {the history we have};
+\node[month, fill=gray!15] at (2.40,4.6) {1};
+\node[month, fill=gray!15] at (2.85,4.6) {2};
+\node[month, fill=gray!15] at (3.30,4.6) {3};
+\node[month, fill=gray!15] at (3.75,4.6) {4};
+\node[month, fill=gray!15] at (4.20,4.6) {5};
+\node[month, fill=gray!15] at (4.65,4.6) {6};
+\node[month, fill=gray!15] at (5.10,4.6) {7};
+\node[month, fill=gray!15] at (5.55,4.6) {8};
+\node[month, fill=gray!15] at (6.00,4.6) {9};
+\node[month, fill=gray!15] at (6.45,4.6) {10};
+\node[anchor=west, font=\small] at (6.72,4.6) {$\dots$ 558 months};
+\draw[-{Latex}, thick] (4.42,4.3) -- (4.42,3.3) node[midway, right, font=\scriptsize, align=left] {draw 558 months at random,\\ with replacement};
+% column headers
+\node[font=\scriptsize, gray!40!black] at (8.2,3.55) {its inputs};
+\node[font=\scriptsize, gray!40!black] at (10.55,3.55) {the rule's weights};
+% made-up histories
+\node[anchor=east, font=\small] at (2.20,2.90) {history 1};
+\node[month, fill=gray!15] at (2.40,2.90) {3};
+\node[month, fill=red!25] at (2.85,2.90) {7};
+\node[month, fill=red!25] at (3.30,2.90) {7};
+\node[month, fill=gray!15] at (3.75,2.90) {1};
+\node[month, fill=gray!15] at (4.20,2.90) {9};
+\node[month, fill=gray!15] at (4.65,2.90) {4};
+\node[month, fill=gray!15] at (5.10,2.90) {10};
+\node[month, fill=gray!15] at (5.55,2.90) {2};
+\node[month, fill=red!25] at (6.00,2.90) {7};
+\node[month, fill=gray!15] at (6.45,2.90) {5};
+\draw[-{Latex}] (6.75,2.90) -- (7.55,2.90);
+\node[draw=gray!70, rounded corners=2pt, font=\scriptsize, inner sep=3pt] at (8.2,2.90) {$\mu,\ \sigma,\ \rho$};
+\draw[-{Latex}] (8.85,2.90) -- (9.85,2.90);
+\draw[gray!70] (10.05,2.60) -- (11.05,2.60);
+\fill[blue!45] (10.20,2.60) rectangle (10.42,3.15);
+\fill[blue!45] (10.53,2.60) rectangle (10.75,2.75);
+\fill[blue!45] (10.86,2.60) rectangle (11.08,2.95);
+\node[anchor=east, font=\small] at (2.20,2.00) {history 2};
+\node[month, fill=gray!15] at (2.40,2.00) {8};
+\node[month, fill=gray!15] at (2.85,2.00) {2};
+\node[month, fill=red!25] at (3.30,2.00) {6};
+\node[month, fill=red!25] at (3.75,2.00) {6};
+\node[month, fill=gray!15] at (4.20,2.00) {10};
+\node[month, fill=gray!15] at (4.65,2.00) {1};
+\node[month, fill=red!25] at (5.10,2.00) {3};
+\node[month, fill=red!25] at (5.55,2.00) {3};
+\node[month, fill=gray!15] at (6.00,2.00) {9};
+\node[month, fill=gray!15] at (6.45,2.00) {4};
+\draw[-{Latex}] (6.75,2.00) -- (7.55,2.00);
+\node[draw=gray!70, rounded corners=2pt, font=\scriptsize, inner sep=3pt] at (8.2,2.00) {$\mu,\ \sigma,\ \rho$};
+\draw[-{Latex}] (8.85,2.00) -- (9.85,2.00);
+\draw[gray!70] (10.05,1.70) -- (11.05,1.70);
+\fill[blue!45] (10.20,1.70) rectangle (10.42,2.00);
+\fill[blue!45] (10.53,1.70) rectangle (10.75,2.15);
+\fill[blue!45] (10.86,1.70) rectangle (11.08,1.90);
+\node[anchor=east, font=\small] at (2.20,0.70) {history 1,000};
+\node[month, fill=red!25] at (2.40,0.70) {5};
+\node[month, fill=red!25] at (2.85,0.70) {5};
+\node[month, fill=gray!15] at (3.30,0.70) {9};
+\node[month, fill=gray!15] at (3.75,0.70) {2};
+\node[month, fill=gray!15] at (4.20,0.70) {8};
+\node[month, fill=gray!15] at (4.65,0.70) {10};
+\node[month, fill=gray!15] at (5.10,0.70) {1};
+\node[month, fill=gray!15] at (5.55,0.70) {6};
+\node[month, fill=red!25] at (6.00,0.70) {4};
+\node[month, fill=red!25] at (6.45,0.70) {4};
+\draw[-{Latex}] (6.75,0.70) -- (7.55,0.70);
+\node[draw=gray!70, rounded corners=2pt, font=\scriptsize, inner sep=3pt] at (8.2,0.70) {$\mu,\ \sigma,\ \rho$};
+\draw[-{Latex}] (8.85,0.70) -- (9.85,0.70);
+\draw[gray!70] (10.05,0.40) -- (11.05,0.40);
+\fill[blue!45] (10.20,0.40) rectangle (10.42,1.00);
+\fill[blue!45] (10.53,0.40) rectangle (10.75,0.28);
+\fill[blue!45] (10.86,0.40) rectangle (11.08,0.80);
+\node at (4.42,1.45) {$\vdots$};
+\node at (8.2,1.45) {$\vdots$};
+\node at (10.55,1.45) {$\vdots$};
+% the point
+\draw[decorate, decoration={brace, amplitude=6pt}, thick] (11.35,3.2) -- (11.35,0.35);
+\node[anchor=west, align=left, font=\small] at (11.65,1.78) {repeat 1,000 times:\\[2pt] how far apart the\\ weights end up is how\\ much the data could\\ have moved you};
+\node[font=\scriptsize, gray!40!black] at (5.02,-0.05) {red: a month drawn more than once. Others are left out. Each history is as long as the real one.};
+\end{tikzpicture}%
+}
+\end{center}
+\vskip 4pt
+\begin{itemize}
+\item Each made-up history is one way the past could have gone. The rule reads it as if it were the truth.
+\vskip 4pt
+\item Exercise 2 hands the rule one new input at a time from each history, say the new means, with the volatilities and correlations of the real one
+\end{itemize}
+\hfill \hyperlink{boot_back}{\beamerreturnbutton{Back}}
+\end{frame}
+
+\begin{frame}{A5: How not to measure the cost}
 The obvious test: fit on one ten-year window, run on the next, compare with the best that window allowed.
 \vskip 8pt
 \begin{center}
@@ -730,7 +827,7 @@ Before you trust a test, run it on something that cannot be wrong
 \end{beamercolorbox}
 \end{frame}
 
-\begin{frame}{A5: The same assets, two periods}
+\begin{frame}{A6: The same assets, two periods}
 \vskip 4pt
 \begin{center}
 \renewcommand{\arraystretch}{1.4}
@@ -751,7 +848,7 @@ six factors, five-year burn-in in each period & mean-variance & 1/N & gap \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}{A6: Data, and what to be careful about}
+\begin{frame}{A7: Data, and what to be careful about}
 \begin{itemize}
 \item \textbf{Six factors.} Ken French, 1980--2026. \textbf{Eight sectors.} Built from his 49 industries, equal-weighted, 1980--2026.
 \vskip 6pt
