@@ -211,6 +211,21 @@ ANSWER_KEY = {
         "best_a":            (0.6,   0.0,  0.101),
         "live_shrinkage_sr": (0.791, 0.03),
     },
+    "L14_ConditionalStrategiesI_AI": {
+        # Volatility-managed UMD, 1963-2026, weight c / RV_{t-1} with c matching UMD's volatility,
+        # then capped at 2. Verified 2026-11-16. Reasonable variants of RV (demeaned sum of squares,
+        # variance, sum of squared returns, 21-day rolling variance) and capping before or after
+        # rescaling give 0.959-0.967. Forgetting the cap gives 0.89-0.91 and fails.
+        "umd_cap2_sharpe": (0.963, 0.03),
+    },
+    "L15_ConditionalStrategiesII_AI": {
+        # Out-of-sample R2 of next-month market excess return on D/P (last 12 months of dividends
+        # over price), expanding window from 1927, forecasts from 1980-01, benchmark the historical
+        # average. Verified 2026-11-16: -0.0155. Starting in 1981 gives -0.0164 and passes.
+        # Fitting on the pair that includes the month being forecast looks ahead and gives -0.0114,
+        # which fails, as it should.
+        "oos_r2_1980": (-0.0155, 0.15),
+    },
     "L8_Backtesting_AI": {
         # Estimate ends 1987-12, tune ends 1991-12, test 1992-01 to 2000-12.
         # 29 cached long-shorts; grid N in {1,3,5,10,20,29} x W in {ew,ivol,sharpe}.
@@ -635,6 +650,67 @@ as settled.
 For picked_fund return "neither".
 For cited_appraisal_or_alpha return True if the memo discusses the alpha estimates or their
 sampling error rather than only raw Sharpe ratios, else False.
+
+Output via the `grade_memo` tool.
+""",
+    "L14_ConditionalStrategiesI_AI": """
+This is a short check-in, not an essay. Students volatility-managed momentum (UMD), 1963-2026, with
+the weight c / last month's realized variance, then capped the weight at 2, and wrote at most three
+sentences: did the cap cost anything, and why or why not?
+
+GROUND TRUTH:
+- It cost nothing. The capped Sharpe ratio, about 0.96, is slightly HIGHER than uncapped, about 0.91.
+- Why: the largest weights come after the calmest months, when a low realized variance is partly
+  luck and the next month is riskier than it looked. Capping trims the bets that rely most on one
+  noisy month. The same happened for the market in class (0.55 capped at 2 against 0.52).
+- A good answer may also note that the cap makes the strategy easier to run: less borrowing, less
+  trading.
+
+GRADE GENEROUSLY. This is an attendance check. Any sensible reading earns 4 or 5.
+
+Grade 0-5:
+  5 = Says the cap cost nothing (or helped) and gives a reason: the extreme weights come from
+      calm months that overstate how safe the next month is, or they add noise.
+  4 = Says it cost nothing or little, with a vague reason.
+  3 = Reports the numbers correctly with no reason.
+  2 = Gets the direction wrong, or says the cap must cost something "because leverage raises returns".
+  1 = Restates the question.
+  0 = Empty or off-topic.
+
+For picked_fund return "neither".
+For cited_appraisal_or_alpha return False.
+
+Output via the `grade_memo` tool.
+""",
+    "L15_ConditionalStrategiesII_AI": """
+This is a short check-in, not an essay. Students reran the out-of-sample test of the dividend yield
+(D/P) as a forecast of next month's market return, starting the forecasts in 1980 instead of 1950,
+and wrote at most three sentences: would you trade D/P on this evidence, and why or why not?
+
+GROUND TRUTH:
+- With forecasts from 1980 the out-of-sample R2 is about -1.6%: worse than the historical average.
+  From 1950 it was -0.5%, and positive only in 1950-1979. Starting later drops the good years.
+- The natural answer is no: the in-sample fit does not survive out of sample, and the 1980s-1990s
+  fall in D/P (buybacks, possibly a lower premium) made the regression say "sell" through a boom.
+- A good answer may also say a monthly R2 of 1% would be valuable IF real (Campbell-Thompson),
+  so the problem is not the size of R2 but whether it is real; or that the result depends on the
+  start date, which is itself a warning.
+- "Yes, trade it" can earn credit only with a real argument (for example, combine it with other
+  signals, or only at extreme values) that engages with the negative R2.
+
+GRADE GENEROUSLY. This is an attendance check. Any sensible reading earns 4 or 5.
+
+Grade 0-5:
+  5 = Reads the negative R2 correctly (worse than the historical average) and gives a reason:
+      instability over time, a shift in D/P's average, or overlap and overfitting in sample.
+  4 = Reads it correctly with a vague reason.
+  3 = Reports the number with no interpretation.
+  2 = Reads a negative R2 as "it predicts the opposite", or as a small positive effect.
+  1 = Restates the question.
+  0 = Empty or off-topic.
+
+For picked_fund return "neither".
+For cited_appraisal_or_alpha return False.
 
 Output via the `grade_memo` tool.
 """,

@@ -1,0 +1,471 @@
+% Conditional Strategies II -- timing expected returns: the dividend yield, why in-sample evidence misleads, and 24 factor signals.
+% Figures and every number quoted here come from conditional_strategies_figures.py
+% Companion notebook: chapters/Finance/L15_ConditionalStrategiesII_AI.ipynb (sections 1-5 in class, the challenge is homework)
+% The challenge answer (the out-of-sample R2 with forecasts from 1980) must not appear here: this PDF is public.
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme{default}
+\usecolortheme{default}
+
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathreplacing}
+\usepackage{appendixnumberbeamer}  % Exclude appendix from slide count
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{items}[circle]
+
+% Footline: Author, Event (Year) on left; page/total on right
+\setbeamertemplate{footline}{
+  \hbox{%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,left]{author in head/foot}%
+      \hspace*{2ex}\insertshortauthor, \insertshortinstitute\ (\insertdate)
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,right]{date in head/foot}%
+      \insertframenumber/\inserttotalframenumber\hspace*{2ex}
+    \end{beamercolorbox}%
+  }
+}
+
+% Highlight boxes
+\setbeamercolor{box1}{bg=red!12,fg=black}
+
+% A poll option: {colour}{letter and choice}
+\newcommand{\pollbox}[2]{\tikz\node[draw=#1!65!black, fill=#1!10, rounded corners=4pt, minimum width=3.7cm,
+                                   minimum height=1.0cm, align=center, font=\normalsize]{#2};}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{Conditional Strategies II}
+\subtitle{Timing expected returns}
+\author[A. Moreira]{Alan Moreira}
+\institute[Data-Driven Investing]{NYU Stern --- Data-Driven Investing}
+\date{Fall 2026}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Today}
+\vskip 6pt
+\begin{columns}[t]
+\begin{column}{0.46\textwidth}
+\textbf{In the slides}
+\vskip 6pt
+\begin{itemize}
+\item The classic signal: prices against dividends
+\vskip 6pt
+\item Why the in-sample evidence looks better than it is
+\vskip 6pt
+\item What survives out of sample, for the market and for factors
+\end{itemize}
+\end{column}
+\begin{column}{0.50\textwidth}
+\textbf{In the notebook, you will}
+\vskip 6pt
+\begin{itemize}
+\item Run the forecasting regression at three horizons
+\vskip 6pt
+\item Test it out of sample, month by month
+\vskip 6pt
+\item Trade it, then try 24 timing signals on the six factors
+\end{itemize}
+\end{column}
+\end{columns}
+\vskip 16pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+\textbf{Homework:} one number and three sentences
+\end{beamercolorbox}
+\end{frame}
+
+%================================================================== THE SIGNAL
+\begin{frame}{Last class we timed $\sigma$. Today, $\mu$.}
+\[ x_{t} \;=\; \frac{1}{\gamma}\,\frac{\mu_{t}}{\sigma_{t}^{2}} \]
+\vskip 4pt
+\begin{itemize}
+\item Volatility forecast itself: last month explained half of this month
+\vskip 8pt
+\item Expected returns are the hard half. A mean needs decades to learn (\emph{Backtesting}), and the optimizer magnifies its errors (\emph{Capital Allocation III})
+\vskip 8pt
+\item Now we ask the mean to move every month, and to forecast it
+\end{itemize}
+\vskip 14pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+Is there a signal that tells you when the market will pay more?
+\end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{The classic signal: prices against dividends}
+\begin{columns}[c]
+\begin{column}{0.60\textwidth}
+\adjustbox{max width=\textwidth, max height=0.70\textheight}{\includegraphics{figures/cs_dp.pdf}}
+\end{column}
+\begin{column}{0.38\textwidth}
+From the Gordon model, $P = D/(r-g)$:
+\[ \frac{D}{P} \;=\; r - g \]
+\begin{itemize}
+\item Low prices against dividends mean high future returns, or low future growth
+\vskip 6pt
+\item Correlation with the next five years' return: \textcolor{red}{0.35}
+\vskip 6pt
+\item Shiller's Nobel was for this pattern
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[label=reg]{The regression, at three horizons}
+\[ r_{t \to t+h} \;=\; a \;+\; b\cdot \frac{D}{P}\Big|_{t} \;+\; u_{t+h} \]
+{\small $r_{t\to t+h}$: the market's return over the next $h$ months, a year, over T-bills. D/P: last 12 months of dividends over today's price.}
+\vskip 6pt
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lccc}
+\toprule
+1927--2024 & next month & next year & next five years \\
+\midrule
+$b$ & 2.3 & 2.4 & 1.8 \\
+$t$, as usually computed & 1.8 & 6.2 & \textcolor{red}{12.3} \\
+$R^{2}$ & 0.3\% & 3.2\% & \textcolor{red}{12.1\%} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip 8pt
+\begin{itemize}
+\item The longer the horizon, the better it looks. A 12\% $R^{2}$ for stock returns would be remarkable.
+\vskip 4pt
+\item So remarkable that you should ask what is wrong
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Overlap fakes significance}
+\vskip 4pt
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lccc}
+\toprule
+ & next month & next year & next five years \\
+\midrule
+observations & 1,170 & 1,159 & 1,111 \\
+of which do not overlap & 1,170 & 96 & \textcolor{red}{18} \\
+\midrule
+$t$, as usually computed & 1.8 & 6.2 & 12.3 \\
+$t$, allowing for overlap (HAC) & 1.3 & 2.2 & \textcolor{red}{2.8} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip 8pt
+\begin{itemize}
+\item Two five-year returns a month apart share 59 of their 60 months. They are almost the same observation.
+\vskip 4pt
+\item Using only five-year periods that do not overlap: 19 observations, $t = 1.5$
+\end{itemize}
+\vskip 8pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+A century of data is about 20 independent five-year returns
+\end{beamercolorbox}
+\vskip 2pt
+\hfill \hyperlink{appendix_hac}{\beamerbutton{HAC, in a picture}}
+\end{frame}
+
+\begin{frame}{Poll}
+\vskip 14pt
+\begin{center}
+{\large D/P explains 0.3\% of next month's return.\\[4pt] Suppose that is real, and you trade on it.}
+\vskip 18pt
+How much better is your Sharpe ratio than 0.40?
+\vskip 18pt
+\pollbox{gray}{\textbf{A}\ \ no better} \hfill
+\pollbox{red}{\textbf{B}\ \ about 0.44} \hfill
+\pollbox{blue}{\textbf{C}\ \ about 0.80}
+\end{center}
+\end{frame}
+
+\begin{frame}[label=ct]{A small $R^{2}$ can be worth a lot}
+Campbell and Thompson (2008): if the signal is real, with monthly $R^{2}$,
+\[ SR^{2}_{\text{timed}} \;\approx\; \frac{SR^{2} + R^{2}}{1 - R^{2}} \qquad \text{(monthly units)} \]
+\vskip 2pt
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{lccc}
+\toprule
+monthly $R^{2}$ & 0.3\% & 1\% & 2\% \\
+\midrule
+Sharpe ratio a year, from 0.40 & \textcolor{red}{0.44} & 0.53 & 0.64 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip 8pt
+\begin{itemize}
+\item The poll's answer is B. A monthly $R^{2}$ of 1\% is worth a third more Sharpe ratio.
+\vskip 4pt
+\item So small $R^{2}$s are not the problem. Whether they are real is.
+\end{itemize}
+\hfill \hyperlink{appendix_ct}{\beamerbutton{Where it comes from}}
+\end{frame}
+
+\begin{frame}{Now: the notebook}
+\vskip 2pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+\textbf{Notebook: Conditional Strategies II} \ --- \ timing expected returns
+\end{beamercolorbox}
+\vskip 10pt
+\begin{enumerate}
+\item \textbf{The regression} at three horizons, both $t$-statistics
+\vskip 4pt
+\item \textbf{Out of sample}: each month from 1950, using only what you knew then
+\vskip 4pt
+\item \textbf{The timing strategy} against buy and hold
+\vskip 4pt
+\item \textbf{Timing the six factors}: 24 signals, 1980--2002 against 2003--2026
+\end{enumerate}
+\vskip 8pt
+{\small \textbf{Bring back:} the out-of-sample $R^{2}$, when the plot turns, and how many of the 24 survive. \\[2pt]
+Stop at \textbf{Back to the slides}; the challenge after it is homework.}
+\end{frame}
+
+%================================================================== OUT OF SAMPLE
+\begin{frame}{Out of sample, the edge is gone}
+\begin{center}
+\adjustbox{max width=\textwidth, max height=0.52\textheight}{\includegraphics{figures/cs_gw.pdf}}
+\end{center}
+\begin{itemize}
+\item Each month from 1950, fit on the past, forecast next month, compare with the historical average
+\vskip 4pt
+\item Out-of-sample $R^{2}$: \textcolor{red}{$-0.5\%$}. 1950--1979: $+1.6\%$. 1980--1999: $-3.3\%$. 2000--2024: $-0.2\%$
+\vskip 4pt
+\item Goyal and Welch (2008): the same for almost every signal in the literature
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Trading it: great until 1990, then not}
+\vskip 4pt
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{lcc}
+\toprule
+out of sample, Sharpe ratio & timing on D/P & buy and hold \\
+\midrule
+1950--1979 & \textcolor{red}{0.70} & 0.53 \\
+1980--1999 & \textcolor{red}{0.13} & 0.63 \\
+2000--2024 & 0.53 & 0.43 \\
+\midrule
+1950--2024 & 0.46 & 0.52 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip 10pt
+\begin{itemize}
+\item The weight is the forecast over $\gamma\sigma^{2}$. It was short the market in 36\% of months.
+\vskip 6pt
+\item D/P fell from about 4\% in the 1980s to about 1\% by 2000, and the regression read every year of it as \emph{sell}
+\vskip 6pt
+\item Through one of the best two decades for stocks in the sample
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What broke}
+\vskip 8pt
+\begin{itemize}
+\item \textbf{Firms pay out differently.} Since the 1980s, buybacks have replaced dividends. The same payout now shows up as a lower D/P.
+\vskip 10pt
+\item \textbf{The premium may have fallen.} If investors now accept less, D/P settles at a lower level, and a regression fit on the past reads it as a permanent signal to sell.
+\vskip 10pt
+\item \textbf{Either way, the signal's average moved.} A forecasting regression assumes it does not.
+\end{itemize}
+\vskip 14pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+The relationship was never estimated precisely enough to survive a change in its average
+\end{beamercolorbox}
+\end{frame}
+
+%================================================================== FACTORS
+\begin{frame}{Now time the factors: 24 tries}
+\vskip 4pt
+Six factors, 1980--2026. Four simple signals for each, its own:
+\vskip 8pt
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{ll}
+\toprule
+signal & the idea \\
+\midrule
+return last month & factor momentum, short run \\
+return over the last 12 months & factor momentum \\
+return three to five years ago & reversal: what did well long ago does badly \\
+volatility last month & last class: does risk forecast the return? \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip 10pt
+\begin{itemize}
+\item Forecasting regression for each: next month's return on this month's signal
+\vskip 4pt
+\item Run it on 1980--2002, then again on 2003--2026. A real signal should work in both.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Searching finds things. Some of them are real.}
+\begin{columns}[c]
+\begin{column}{0.56\textwidth}
+\adjustbox{max width=\textwidth, max height=0.76\textheight}{\includegraphics{figures/cs_tstats.pdf}}
+\end{column}
+\begin{column}{0.42\textwidth}
+\begin{itemize}
+\item In the first half, 5 of the 24 have $|t| > 2$. Luck alone gives about one.
+\vskip 8pt
+\item Of the best five (red), \textcolor{red}{two} still work in the second half
+\vskip 8pt
+\item The other three were the first half's luck
+\vskip 8pt
+\item With 24 tries you would have bet on all five
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{What holds up: factor momentum}
+\vskip 2pt
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{lccc}
+\toprule
+signal: last month's return & $t$, 1980--2002 & $t$, 2003--2026 & \\
+\midrule
+HML & 2.3 & 2.8 & \textcolor{red}{both} \\
+RMW & 2.0 & 3.9 & \textcolor{red}{both} \\
+CMA & 1.7 & 2.0 & \\
+UMD & $-0.7$ & 1.9 & \\
+Market & 0.8 & 0.3 & \\
+SMB & 0.1 & $-0.9$ & \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip 8pt
+\begin{itemize}
+\item Factors that did well last month tend to do well this month. Gupta and Kelly (2019); Ehsani and Linnainmaa (2022)
+\vskip 4pt
+\item Hold a factor only after a positive year: a higher Sharpe ratio for five of the six, 1981--2026. Not for UMD.
+\vskip 4pt
+\item One signal, several factors, both halves: that is what a real one looks like
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Why timing risk is easier than timing returns}
+\vskip 4pt
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\adjustbox{max width=\textwidth}{\begin{tabular}{lcc}
+\toprule
+ & timing risk & timing returns \\
+\midrule
+what you forecast & next month's volatility & next month's return \\
+how well, $R^{2}$ & \textcolor{red}{50\%} & \textcolor{red}{0.3\%}, in sample \\
+what you need to be true & the return does not rise with risk & the signal's average stays put \\
+how often it broke here & by factor & by decade \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\vskip 10pt
+\begin{itemize}
+\item The race from \emph{Capital Allocation III} again: a signal against the noise in estimating it
+\vskip 6pt
+\item Volatility forecasts win that race easily. Return forecasts barely enter it.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{How to test a timing idea}
+\vskip 6pt
+\begin{enumerate}
+\item \textbf{The signal is known at $t$.} Last year's dividends, last month's volatility. Check the index, as in \emph{Capital Allocation III}.
+\vskip 6pt
+\item \textbf{Out of sample, month by month.} Fit on the past only. Compare with the historical average, not with zero.
+\vskip 6pt
+\item \textbf{Count the overlap.} Long-horizon returns: HAC $t$-statistics, or count the independent periods.
+\vskip 6pt
+\item \textbf{Count your tries.} 24 tries give about one $|t| > 2$ for free.
+\vskip 6pt
+\item \textbf{Same risk, then compare.} Against buy and hold at the same average risk, after costs.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Takeaways}
+\begin{enumerate}
+\item Timing returns needs a forecast of the mean, the input data teaches you least about.
+\vskip 4pt
+\item The dividend yield looks strong at long horizons because the observations overlap. Allow for it and the evidence is thin.
+\vskip 4pt
+\item A real monthly $R^{2}$ of 1\% would be worth a lot. Out of sample, D/P's is negative.
+\vskip 4pt
+\item Search across signals and factors finds things. Check them on data they were not found in.
+\vskip 4pt
+\item Factor momentum survives that check here. Volatility timing survives it for some factors.
+\end{enumerate}
+\vskip 10pt
+\begin{beamercolorbox}[rounded=true,sep=7pt]{box1}
+\textbf{Homework: start later.} Rerun the out-of-sample test with forecasts from 1980. One number, three sentences.
+\end{beamercolorbox}
+\end{frame}
+
+%================================================================== APPENDIX
+\appendix
+\begin{frame}
+\begin{center}
+{\Large Appendix}
+\end{center}
+\end{frame}
+
+\begin{frame}[label=appendix_hac]{A1: Why overlapping returns inflate $t$}
+\begin{center}
+\adjustbox{max width=\textwidth}{\begin{tikzpicture}[x=0.42cm, y=0.5cm]
+\foreach \i in {0,...,23} \draw[gray!60] (\i,0) rectangle (\i+1,1);
+\node[anchor=east, font=\small] at (-0.3,0.5) {months};
+\draw[red!70!black, line width=2pt] (0,1.6) -- (12,1.6); \node[anchor=west, font=\small, red!70!black] at (24.4,1.6) {a year's return from month 1};
+\draw[red!70!black, line width=2pt] (1,2.4) -- (13,2.4); \node[anchor=west, font=\small, red!70!black] at (24.4,2.4) {from month 2: shares 11 of its 12 months};
+\draw[blue!60!black, line width=2pt] (12,3.2) -- (24,3.2); \node[anchor=west, font=\small, blue!60!black] at (24.4,3.2) {from month 13: shares nothing};
+\end{tikzpicture}}
+\end{center}
+\vskip 6pt
+\begin{itemize}
+\item Neighbouring long-horizon returns are mostly the same months, so their errors move together
+\vskip 4pt
+\item The usual formula treats them as new information each month, and overstates $t$
+\vskip 4pt
+\item HAC (Newey--West) standard errors allow the errors to be correlated over the overlap. Here, \texttt{cov\_type='HAC'} with \texttt{maxlags} equal to the horizon.
+\end{itemize}
+\hfill \hyperlink{reg}{\beamerreturnbutton{Back}}
+\end{frame}
+
+\begin{frame}[label=appendix_ct]{A2: Where the small-$R^{2}$ formula comes from}
+Let next month's excess return be $r = \mu_{t} + \varepsilon$, with the forecast $\mu_{t}$ varying around $\bar\mu$, and $\sigma$ the return's volatility.
+\vskip 6pt
+\begin{itemize}
+\item $R^{2}$ is the share of the return's variance that the forecast explains: $\operatorname{Var}(\mu_{t}) = R^{2}\sigma^{2}$
+\vskip 4pt
+\item The timer holds $x_{t} \propto \mu_{t}$. Its squared Sharpe ratio is the buy-and-hold one, $\bar\mu^{2}/\sigma^{2}$, plus what the forecast adds, $R^{2}$, over the risk left, $1 - R^{2}$
+\vskip 4pt
+\item A monthly $R^{2}$ of 1\% and a monthly Sharpe ratio of $0.40/\sqrt{12} = 0.12$: $\;(0.0133 + 0.01)/0.99 = 0.024$, a year $\sqrt{12 \times 0.024} = 0.53$
+\end{itemize}
+\vskip 6pt
+{\small An approximation: it assumes the forecast is right on average, and ignores the error in estimating it, which is the whole problem out of sample.}
+\hfill \hyperlink{ct}{\beamerreturnbutton{Back}}
+\end{frame}
+
+\begin{frame}{A3: Data, and what to be careful about}
+\begin{itemize}
+\item \textbf{Market, 1926--2024.} CRSP value-weighted index with and without dividends, which gives the dividend yield. T-bills from Ken French.
+\vskip 8pt
+\item \textbf{The out-of-sample test.} Each month uses only pairs of (D/P, next month's return) that were complete by then. The benchmark is the historical average up to that month.
+\vskip 8pt
+\item \textbf{The strategy} holds $\sigma$ fixed at its pre-1950 value, so all of the timing comes from the forecast. No costs, and it is short a third of the time.
+\vskip 8pt
+\item \textbf{The 24 signals} are not the only 24 one could try, and the halves were chosen by date, not by looking.
+\end{itemize}
+\end{frame}
+
+\end{document}

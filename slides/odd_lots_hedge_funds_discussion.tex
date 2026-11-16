@@ -1,0 +1,359 @@
+% Class discussion: Odd Lots, "The Perfect Storm That Clobbered Hedge Funds" (Bloomberg, Nov 11 2026, recorded Nov 10).
+% Hosts Joe Weisenthal and Tracy Alloway; guests Nishant Kumar (hedge funds) and Michael Ball (macro), Bloomberg News.
+% One discussion question per slide. Timestamps refer to the episode.
+% Source text: the AI-generated transcript on the Omny episode page. It garbles names ("Ballyasney" = Balyasny,
+% "0.72" = Point72); fund figures are as stated on the show and were not checked against another source.
+% Everything is paraphrased except one short quote (slide 4 title).
+% Appendix numbers are back-of-envelope: A1 assumes 4% annual volatility and A3 assumes 6% PM volatility
+% (assumptions, not from the episode). A3 uses the Brownian first-passage formula; a daily simulation gives 13% / 38%.
+% The 0.45 vs 0.05 holding-period numbers come from conditional_strategies_figures.py.
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme{default}
+\usecolortheme{default}
+
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{appendixnumberbeamer}  % Exclude appendix from slide count
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{items}[circle]
+
+% Footline: Author, Event (Year) on left; page/total on right
+\setbeamertemplate{footline}{
+  \hbox{%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,left]{author in head/foot}%
+      \hspace*{2ex}\insertshortauthor, \insertshortinstitute\ (\insertdate)
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,right]{date in head/foot}%
+      \insertframenumber/\inserttotalframenumber\hspace*{2ex}
+    \end{beamercolorbox}%
+  }
+}
+
+% Highlight boxes: the discussion question
+\setbeamercolor{box1}{bg=red!12,fg=black}
+
+% Where in the episode, and who said it
+\newcommand{\src}[1]{{\footnotesize\textcolor{gray}{Episode #1}}\par\vskip 6pt}
+% Which part of the course it connects to
+\newcommand{\course}[1]{{\footnotesize\textcolor{gray}{Course link: #1}}}
+% The discussion box
+\newenvironment{discuss}{\begin{beamercolorbox}[rounded=true,sep=8pt]{box1}\textbf{Discuss}\par\vskip 3pt}{\end{beamercolorbox}}
+
+\title{When Everyone Lost Together}
+\subtitle{Class discussion: Odd Lots, ``The Perfect Storm That Clobbered Hedge Funds'' (Nov 11, 2026)}
+\author[A. Moreira]{Alan Moreira}
+\institute[Data-Driven Investing]{NYU Stern --- Data-Driven Investing}
+\date{Fall 2026}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+%================================================================== CONTEXT
+\begin{frame}{October 2026: almost every hedge fund lost at the same time}
+\vskip 4pt
+\begin{itemize}
+\item The big multi-strategy ``pod shops'' (Millennium, Balyasny, Point72, ExodusPoint) all lost money in the same month
+\vskip 7pt
+\item Funds concentrated in AI stocks lost up to a third; large macro funds had some of their worst months ever
+\vskip 7pt
+\item Then, two days after the midterms, the biggest single-stock selloff since Covid
+\end{itemize}
+\vskip 12pt
+\begin{beamercolorbox}[rounded=true,sep=8pt,center]{box1}
+Strategies that were supposed to be different all failed together. Why?
+\end{beamercolorbox}
+\vfill
+{\footnotesize\textcolor{gray}{Odd Lots (Bloomberg), hosts Joe Weisenthal and Tracy Alloway, with Nishant Kumar (hedge funds) and Michael Ball (macro strategy), Bloomberg News. Recorded November 10, 2026.}}
+\end{frame}
+
+%================================================================== 1
+\begin{frame}[label=q1]{Is down 2.3\% a bad month?}
+\src{5:20 \textbullet\ Nishant Kumar}
+\begin{itemize}
+\item Millennium lost \textcolor{red}{2.3\%} in October. It averages about 14\% a year
+\vskip 6pt
+\item In the same month, Citadel and D.E.\ Shaw made money
+\end{itemize}
+\vskip 12pt
+\begin{discuss}
+\begin{itemize}
+\item What do you need to know before calling a month extreme?
+\item Does Citadel's positive month tell you anything about skill?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Performance Evaluation; Hiring and Firing} \hfill \hyperlink{appendix_z}{\beamerbutton{A number}}
+\end{frame}
+
+%================================================================== 2
+\begin{frame}[label=q2]{``They paid for the hedge. They didn't get the hedge.''}
+\src{6:00 \textbullet\ Nishant Kumar; 50:06 \textbullet\ Tracy Alloway}
+\begin{itemize}
+\item Pensions and sovereign funds do not hold hedge funds to match the S\&P 500 in good years
+\vskip 6pt
+\item They hold them to soften the blow when markets fall. In October they did not
+\end{itemize}
+\vskip 12pt
+\begin{discuss}
+\begin{itemize}
+\item Is alpha against the market enough to judge such a fund, or do you need its beta in down months?
+\item What is the fund's alpha relative to the portfolio the pension already holds?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Performance Evaluation; Capital Allocation II (factor bets and alpha bets)}
+\end{frame}
+
+%================================================================== 3
+\begin{frame}[label=q3]{Was everyone implicitly long AI?}
+\src{1:49, 10:27, 17:17 \textbullet\ Joe Weisenthal}
+\begin{itemize}
+\item Could you have made money in the last two years without being long AI?
+\vskip 6pt
+\item Torsten Slok (Apollo): the market has split into an AI factor and an anti-AI factor
+\vskip 6pt
+\item One PM is long chips; another is short Treasuries, betting AI capex drives inflation. Two trades, one bet
+\end{itemize}
+\vskip 10pt
+\begin{discuss}
+\begin{itemize}
+\item How would you build an AI factor from stock data? If a fund's AI loading explains its returns, was that alpha?
+\item A risk manager sees only each pod's returns. How would they find the common bet?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Sorts; Multi-Factor Models; Decomposing a Portfolio; PCA (coming)}
+\end{frame}
+
+%================================================================== 4
+\begin{frame}[label=q4]{Correlations are low, until they are not}
+\src{13:00, 18:25 \textbullet\ Nishant Kumar}
+\begin{itemize}
+\item Goldman: correlations between multi-strategy funds sat around \textcolor{red}{0.2--0.3} for years
+\vskip 6pt
+\item Kumar: correlation is not always visible. It jumps in months like October
+\end{itemize}
+\vskip 12pt
+\begin{discuss}
+\begin{itemize}
+\item What diversification did investors think they were buying, and what did they get in October?
+\item If you estimated the covariance matrix in calm years, what would your optimizer have done?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Portfolio Mathematics; Capital Allocation III (estimation error)} \hfill \hyperlink{appendix_div}{\beamerbutton{A number}}
+\end{frame}
+
+%================================================================== 5
+\begin{frame}[label=q5]{Crowding, or momentum?}
+\src{2:35, 12:29 \textbullet\ Tracy Alloway, Nishant Kumar}
+\begin{itemize}
+\item Alloway: are multi-strategy funds just momentum in disguise?
+\vskip 6pt
+\item Kumar: not quite. Ten funds can each like the same liquid stock for their own reasons. That is crowding, not chasing past returns
+\vskip 6pt
+\item But if they all change their minds at once, the crash looks the same
+\end{itemize}
+\vskip 10pt
+\begin{discuss}
+\begin{itemize}
+\item What in the data would separate the two stories?
+\item Does it matter to the investor which one is true?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Momentum (crashes)}
+\end{frame}
+
+%================================================================== 6
+\begin{frame}[label=q6]{Lose 5\%, lose half your capital}
+\src{14:55 \textbullet\ Nishant Kumar}
+\begin{itemize}
+\item At many pod shops: lose \textcolor{red}{5\%} and your capital is cut in half. Lose 7.5\% and you are out
+\vskip 6pt
+\item The ruthlessness is the point: no single PM can sink the firm
+\end{itemize}
+\vskip 12pt
+\begin{discuss}
+\begin{itemize}
+\item Is this a test of a PM's skill? If not, what is it doing?
+\item What happens when every firm's rule fires in the same week?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Hiring and Firing; Conditional Strategies I} \hfill \hyperlink{appendix_stop}{\beamerbutton{A number}}
+\end{frame}
+
+%================================================================== 7
+\begin{frame}[label=q7]{\$2.2 trillion of positions on \$300 billion of capital}
+\src{13:00 \textbullet\ Nishant Kumar, citing PivotalPath}
+\begin{itemize}
+\item The ten largest firms run about \$2.2 trillion of positions, including borrowed money
+\vskip 6pt
+\item The capital behind them is \$300--350 billion: roughly \textcolor{red}{6--7 times} leverage
+\end{itemize}
+\vskip 12pt
+\begin{discuss}
+\begin{itemize}
+\item For a long-short book, what does gross leverage tell you about risk, and what does it hide?
+\item What makes a hedged book lose on its longs and its shorts at the same time?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Leverage and Shorting (coming)} \hfill \hyperlink{appendix_lev}{\beamerbutton{A number}}
+\end{frame}
+
+%================================================================== 8
+\begin{frame}[label=q8]{Why give money back?}
+\src{23:32 \textbullet\ Nishant Kumar}
+\begin{itemize}
+\item Millennium sought \$20 billion, saw over \$30 billion of demand, and took \$22 billion
+\vskip 6pt
+\item Citadel, D.E.\ Shaw and Point72 have returned \textcolor{red}{\$35--40 billion} to investors
+\vskip 6pt
+\item How much do five more equity PMs add at a firm that already has dozens?
+\end{itemize}
+\vskip 10pt
+\begin{discuss}
+\begin{itemize}
+\item Why would a fund with excess demand turn money away?
+\item What does that say about how alpha scales with fund size?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Why Should This Work?; Capital Allocation I} \hfill \hyperlink{appendix_div}{\beamerbutton{A number}}
+\end{frame}
+
+%================================================================== 9
+\begin{frame}[label=q9]{Did volatility control make the selloff worse?}
+\src{30:14 \textbullet\ Michael Ball}
+Who sold on the Thursday after the election:
+\begin{itemize}
+\item Dealers who had sold puts, selling stock as the market fell to stay hedged
+\item Leveraged ETFs, which must sell more as prices fall
+\item Volatility-control funds, forced to cut as volatility rose
+\item Trend-following CTAs
+\end{itemize}
+\vskip 8pt
+\begin{discuss}
+\begin{itemize}
+\item Volatility-control funds run the strategy from Conditional Strategies I. If enough money runs it, who is on the other side?
+\item Does that explain why the strategy pays, or does it threaten the premium?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Conditional Strategies I (why would risk be paid less?)}
+\end{frame}
+
+%================================================================== 10
+\begin{frame}[label=q10]{Reacting to every move}
+\src{19:44, 41:01 \textbullet\ Tracy Alloway, Michael Ball}
+\begin{itemize}
+\item Funds cut AI exposure before the midterms, bought back on Wednesday, and were hit on Thursday. On Monday the rebound squeezed the shorts
+\vskip 6pt
+\item Our holding-period table: reacting daily to the last five days of volatility drops the market's managed Sharpe ratio to \textcolor{red}{0.05}, against 0.45 rebalancing monthly
+\end{itemize}
+\vskip 10pt
+\begin{discuss}
+\begin{itemize}
+\item How fast should a risk rule react?
+\item What do trading costs add to the answer?
+\end{itemize}
+\end{discuss}
+\vfill
+\course{Conditional Strategies I (holding periods); Transaction Costs (coming)}
+\end{frame}
+
+%================================================================== APPENDIX
+\appendix
+\begin{frame}
+\begin{center}
+{\Large Appendix: numbers for the discussion}
+\end{center}
+\end{frame}
+
+\begin{frame}[label=appendix_z]{A1: How extreme is down 2.3\%?}
+\begin{itemize}
+\item Average month: $14\% / 12 \approx 1.2\%$
+\vskip 6pt
+\item Suppose annual volatility is 4\% (an assumption; the episode does not give it). A month's volatility is $4\% / \sqrt{12} \approx 1.15\%$
+\vskip 6pt
+\item Distance from the average: $\dfrac{-2.3\% - 1.2\%}{1.15\%} \approx \textcolor{red}{-3}$ standard deviations
+\vskip 6pt
+\item If returns were normal: about once every 60 years. Fat tails make it more frequent, but still rare
+\end{itemize}
+\vskip 10pt
+\begin{beamercolorbox}[rounded=true,sep=8pt,center]{box1}
+One month says a lot about risk and almost nothing about alpha.
+\end{beamercolorbox}
+\vskip 5pt
+\hfill \hyperlink{q1}{\beamerreturnbutton{Back}}
+\end{frame}
+
+\begin{frame}[label=appendix_div]{A2: What more pods buy you}
+Equal weights on $N$ pods, each with volatility $\sigma$ and pairwise correlation $\rho$:
+\[ \sigma_{p} \;=\; \sigma\,\sqrt{\rho + \frac{1-\rho}{N}} \]
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+ & $\rho = 0.25$ (calm years) & $\rho = 0.8$ (October) \\
+\midrule
+10 pods & 0.57 $\sigma$ & 0.91 $\sigma$ \\
+Infinitely many pods & \textcolor{red}{0.50 $\sigma$} & \textcolor{red}{0.89 $\sigma$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip 6pt
+\begin{itemize}
+\item Past about ten pods, more pods barely help. The floor is $\sqrt{\rho}$
+\item The 0.8 is illustrative: the episode says correlations jumped, not by how much
+\end{itemize}
+\vskip 5pt
+\hfill \hyperlink{q4}{\beamerreturnbutton{Back to correlations}} \quad \hyperlink{q8}{\beamerreturnbutton{Back to capacity}}
+\end{frame}
+
+\begin{frame}[label=appendix_stop]{A3: How often does the 5\% rule fire?}
+A PM running 6\% annual volatility (an assumption). Chance of being down 5\% of starting capital at some point within a year:
+\begin{center}
+\begin{tabular}{lc}
+\toprule
+PM's true Sharpe ratio & Chance the rule fires within a year \\
+\midrule
+1 (skilled) & \textcolor{red}{14\%} \\
+0 (no skill) & \textcolor{red}{40\%} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip 6pt
+\begin{itemize}
+\item The rule fires on a skilled PM about a third as often as on an unskilled one: a cheap filter, not a skill test
+\item Telling a Sharpe of 1 from 0 with a $t$-stat of 2 takes about 4 years: $t \approx \text{SR}\sqrt{T}$
+\end{itemize}
+\vskip 4pt
+{\footnotesize Computed for a random walk with drift: $P\!\left(\min_{t\le T} X_t \le -a\right) = \Phi\!\left(\tfrac{-a-\mu T}{\sigma\sqrt{T}}\right) + e^{-2\mu a/\sigma^{2}}\,\Phi\!\left(\tfrac{-a+\mu T}{\sigma\sqrt{T}}\right)$, with $a = 5\%$, $\sigma = 6\%$, $\mu = \text{SR}\times\sigma$.}
+\vskip 4pt
+\hfill \hyperlink{q6}{\beamerreturnbutton{Back}}
+\end{frame}
+
+\begin{frame}[label=appendix_lev]{A4: Leverage arithmetic}
+\begin{itemize}
+\item Positions over capital: $2.2 / 0.35 \approx 6.3$ \quad to \quad $2.2 / 0.30 \approx 7.3$
+\vskip 6pt
+\item A long-short book that is half longs, half shorts loses nothing when the whole market falls
+\vskip 6pt
+\item It loses when the two sides move apart. If the longs fall 1\% and the shorts rise 1\%, the loss is 1\% of all positions: \textcolor{red}{6--7\% of capital}
+\vskip 6pt
+\item That is the crowded case: everyone sells the same longs and buys back the same shorts at once
+\end{itemize}
+\vskip 5pt
+\hfill \hyperlink{q7}{\beamerreturnbutton{Back}}
+\end{frame}
+
+\end{document}
