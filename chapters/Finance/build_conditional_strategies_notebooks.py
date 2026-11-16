@@ -102,11 +102,13 @@ import warnings; warnings.filterwarnings('ignore')
 
 BASE = "https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data"
 
-D = pd.read_parquet(f"{BASE}/ff6_daily_1963.parquet")      # daily excess returns on the six factors, Ken French
+mkt = pd.read_parquet(f"{BASE}/factors_daily_1926.parquet")['Mkt-RF']   # daily market excess return, from 1926
+D   = pd.read_parquet(f"{BASE}/ff6_daily_1963.parquet")      # daily excess returns on the six factors, from 1963
 
 sharpe = lambda x: x.mean() / x.std() * np.sqrt(12)        # annualized Sharpe ratio of a monthly series
 
-print(f"daily data {D.index[0]:%Y-%m-%d} to {D.index[-1]:%Y-%m-%d}, {len(D):,} days")
+print(f"market:      {mkt.index[0]:%Y-%m-%d} to {mkt.index[-1]:%Y-%m-%d}, {len(mkt):,} days")
+print(f"six factors: {D.index[0]:%Y-%m-%d} to {D.index[-1]:%Y-%m-%d}, {len(D):,} days")
 print(D.columns.tolist())
 """),
 ('markdown', """
@@ -121,7 +123,7 @@ volatility a year.
 We need two things for each month: its return, and last month's realized variance, which you know before the month starts.
 """),
 ('code', """
-daily = D['Mkt-RF']                                         # start with the market
+daily = mkt                                                 # start with the market, 1926-2026
 
 month = daily.index + pd.offsets.MonthEnd(0)                # label each day with the last day of its month
 rv = daily.groupby(month).apply(lambda x: ((x - x.mean()) ** 2).sum())   # realized variance of each month
@@ -149,6 +151,7 @@ print(f"correlation of this month's RETURN with last month's volatility: {np.cor
 ## 2. 🎯 Sort the months by last month's volatility
 
 Put the months in five groups, from the calmest last month to the most volatile, and look at what happened *next*.
+The full sample, 1926–2026: the same months as the slides.
 """),
 ('code', """
 group = pd.qcut(M['rv_lag'], 5, labels=['1 calm', '2', '3', '4', '5 volatile'])   # five equal groups of months
@@ -165,7 +168,7 @@ table.plot.bar(subplots=True, layout=(1, 3), figsize=(13, 3.5), legend=False, ro
 ('markdown', """
 - After a volatile month, is the next month riskier? Is it more rewarding?
 - If the return rose one for one with the variance, what would the Sharpe ratio column look like? What does it look like?
-- The slides sort 1926–2026. This is 1963–2026. Is the pattern as clear here?
+- Rerun the sort on `M.loc['1963':]`, the years of the next sections. Is the pattern as clear?
 """),
 ('markdown', """
 ---
@@ -175,24 +178,29 @@ table.plot.bar(subplots=True, layout=(1, 3), figsize=(13, 3.5), legend=False, ro
 Hold less after a volatile month: the weight is $c / \\text{RV}_{t-1}$. The constant $c$ only sets the scale. We pick it so
 the managed strategy is exactly as volatile as the market, so the two can be compared directly.
 
+From here on we use **1963–2026**, the years we have for all six factors, so the market can be compared with the others
+in sections 4 and 5. `M63` is `M` from August 1963, the same months as those sections.
+
 Three steps. The first is done for you.
 
-1. `w_raw = 1 / M['rv_lag']`
-2. `c`: the market's volatility divided by the volatility of `w_raw * M['r']`. Use `.std()` on each
-3. `managed`: this month's return on the position, `c * w_raw * M['r']`
+1. `w_raw = 1 / M63['rv_lag']`
+2. `c`: the market's volatility divided by the volatility of `w_raw * M63['r']`. Use `.std()` on each
+3. `managed`: this month's return on the position, `c * w_raw * M63['r']`
 """),
 ('code', """
 # === YOUR TURN ===
-w_raw = 1 / M['rv_lag']           # step 1: less weight after a volatile month
+M63 = M.loc['1963-08':]           # the same months as sections 4-5: their data start July 1963, and July has no last month
+
+w_raw = 1 / M63['rv_lag']         # step 1: less weight after a volatile month
 
 c       = ____                    # step 2
 managed = ____                    # step 3
 """),
 ('code', """
 #@title 🔒 Check: the volatility-managed market
-w_ref = 1 / M['rv_lag']
-c_ref = M['r'].std() / (w_ref * M['r']).std()
-mgd   = c_ref * w_ref * M['r']
+w_ref = 1 / M63['rv_lag']
+c_ref = M63['r'].std() / (w_ref * M63['r']).std()
+mgd   = c_ref * w_ref * M63['r']
 weight = c_ref * w_ref                                      # the weight on the market each month
 
 try:
@@ -200,13 +208,13 @@ try:
 except Exception as e:
     print("yours: not built yet:", type(e).__name__, "\\n")
 
-fit = sm.OLS(mgd, sm.add_constant(M['r'])).fit()           # managed return on the market's
-print(f"market            Sharpe {sharpe(M['r']):.2f}   volatility {M['r'].std() * np.sqrt(12):.1%}")
+fit = sm.OLS(mgd, sm.add_constant(M63['r'])).fit()         # managed return on the market's
+print(f"market            Sharpe {sharpe(M63['r']):.2f}   volatility {M63['r'].std() * np.sqrt(12):.1%}")
 print(f"managed           Sharpe {sharpe(mgd):.2f}   volatility {mgd.std() * np.sqrt(12):.1%}")
 print(f"alpha on the market {fit.params['const'] * 12:.1%} a year, t = {fit.tvalues['const']:.1f}\\n")
 
 for a, b in [('1963', '1979'), ('1980', '2014'), ('2015', '2026')]:
-    print(f"{a}-{b}: market {sharpe(M['r'].loc[a:b]):.2f}, managed {sharpe(mgd.loc[a:b]):.2f}")
+    print(f"{a}-{b}: market {sharpe(M63['r'].loc[a:b]):.2f}, managed {sharpe(mgd.loc[a:b]):.2f}")
 
 print(f"\\nweight: median {weight.median():.2f}, largest {weight.max():.1f} in {weight.idxmax():%Y-%m}, above 2 in {np.mean(weight > 2):.0%} of months")
 weight.plot(logy=True, title='weight on the market'); plt.axhline(1, color='k', lw=0.5); plt.show()
