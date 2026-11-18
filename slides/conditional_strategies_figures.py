@@ -10,6 +10,9 @@ Data:
   assets/data/factors_monthly_1926.parquet monthly RF
   assets/data/ff_monthly.csv               monthly six factors, 1980-2026
   assets/data/value_spreads_monthly_1926.parquet  HML, SMB, RMW, CMA and the book-to-market of their legs (build_value_spread_data.py)
+  assets/data/goyal_welch_monthly_2025.csv the Monthly sheet of Amit Goyal's updated Goyal-Welch predictor file, 1871-2025
+                                           (sites.google.com/view/agoyal145, "Updated data (up to 2025)"), saved as csv
+  assets/data/vix_monthly_fred.csv         VIX at each month's last close, 1990-2025 (FRED series VIXCLS)
 The appendix's value spread at today's prices comes from the check printed by chapters/Finance/build_value_spread_data.py.
 Realized variance is the sum of squared deviations of daily returns within the month, as in the momentum deck,
 so the momentum numbers here match it. Figures go to slides/figures/; every number the slides quote is printed.
@@ -373,6 +376,37 @@ for f in FOUR:
 VT = pd.DataFrame(rows).set_index("factor")
 print("value spreads: next month's factor return on this month's spread (in sample, HAC t); out of sample from 1980, gamma 3")
 print(VT.round(3).to_string())
+
+# the other signals (slide after "What broke"): our D/P test, run on each. Same market excess return, same HAC t,
+# same out-of-sample forecasts from 1950 fit on everything since 1927, same timing rule (forecast over 3 sigma^2).
+# Signals from Goyal's updated Goyal-Welch file (S&P 500 earnings, Dow Jones book-to-market, rates, NTIS, S&P daily variance).
+# Caveats: S&P earnings are dated at the quarter's end but released one to two months later (a small look-ahead that
+# helps E/P and CAPE); CAPE uses CPI without the release lag; valuation ratios are entered as yields, like D/P,
+# so CAPE enters as 1/CAPE (10-year average real earnings over real price). Forward P/E needs I/B/E/S: not run.
+g = pd.read_csv(DATA / "goyal_welch_monthly_2025.csv", parse_dates=["date"], index_col="date")
+cpi = (1 + g.infl).cumprod()
+e10 = (g.E12 / cpi).rolling(120).mean()
+SIG = {"D/P": c.dp, "E/P": g.E12 / g.Index, "CAPE": e10 / (g.Index / cpi), "book-to-market": g["b/m"],
+       "short rate": g.tbl, "term spread": g.lty - g.tbl, "default spread": g.BAA - g.AAA,
+       "VIX": pd.read_csv(DATA / "vix_monthly_fred.csv", parse_dates=[0], index_col=0).vix,
+       "realized variance": g.svar, "net issuance": g.ntis}
+print(f"CAPE at the end of 2024: {(1 / SIG['CAPE']).loc['2024-12-31']:.1f}")
+rows = []
+for k, s_ in SIG.items():
+    x = s_.reindex(c.index).loc["1927":]
+    dd = pd.DataFrame({"y": lx.shift(-1), "x": x}).dropna()  # log excess return, as in the horizon table, so D/P's t matches it
+    hac = sm.OLS(dd.y, sm.add_constant(dd.x)).fit(cov_type="HAC", cov_kwds={"maxlags": 1})
+    start = "2000" if k == "VIX" else "1950"                  # VIX starts in 1990: ten years to fit, forecasts from 2000
+    Pk = oos_vs(c.ex, x, start)
+    wk = Pk.forecast / (3 * sig2)
+    rows.append(dict(signal=k, since=f"{dd.index[0]:%Y}", t=hac.tvalues.x, oos_from=start, oos=r2_oos(Pk),
+                     oos_00_24=r2_oos(Pk.loc["2000":]), SR_timed=sharpe(wk * Pk.r), SR_hold=sharpe(Pk.r)))
+GW = pd.DataFrame(rows).set_index("signal")
+print("other signals: next month's market excess return on this month's signal; in sample HAC t, 1927-2024; "
+      "out of sample R2 (%) and timed Sharpe from 1950 (VIX from 2000)")
+print(GW.assign(oos=100 * GW.oos, oos_00_24=100 * GW.oos_00_24).round(2).to_string())
+print(f"  |t| > 1.64 in sample: {np.sum(GW.t.abs() > 1.64)} of {len(GW)}; beat the historical average from 1950: "
+      f"{np.sum(GW.oos > 0)}; timed Sharpe above buy and hold: {np.sum(GW.SR_timed > GW.SR_hold)}")
 
 # timing the factors: 6 factors x 4 signals, first half against second half
 ff = pd.read_csv(DATA / "ff_monthly.csv", index_col=0, parse_dates=True)
