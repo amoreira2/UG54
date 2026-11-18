@@ -512,10 +512,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dividend-yield">1. The dividend yield</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forecasting-regression-at-three-horizons">2. 🎯 The forecasting regression at three horizons</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample">3. 🎯 Out of sample</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-timing-strategy">4. The timing strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dividend-yield-at-three-horizons">1. The dividend yield, at three horizons</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample">2. 🎯 Out of sample</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-timing-strategy">3. The timing strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#each-factor-s-value-spread">4. 🎯 Each factor’s value spread</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-the-six-factors-24-tries">5. Timing the six factors: 24 tries</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#back-to-the-slides">⏸ Back to the slides</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-start-later">🎯 Challenge: start later</a></li>
@@ -533,14 +533,15 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="conditional-strategies-ii-timing-expected-returns">
 <h1>Conditional Strategies II: Timing Expected Returns<a class="headerlink" href="#conditional-strategies-ii-timing-expected-returns" title="Link to this heading">#</a></h1>
-<p>The ideas are in the slides. Here you test the most famous timing signal, the dividend yield: in sample, then the honest
-way, out of sample. Then you try 24 timing signals on the six factors and see how many survive.</p>
-<p><strong>The plan</strong></p>
+<p>The ideas are in the slides. Here you test the most famous timing signal for the market, the dividend yield: in sample,
+then the honest way, out of sample. Then the same test for four factors, each with its own price signal, the value
+spread. Last, a search over 24 more signals, and how many survive.</p>
+<p><strong>The plan</strong>, one section per exercise in the slides</p>
 <ol class="arabic simple">
-<li><p>The dividend yield</p></li>
-<li><p>🎯 The forecasting regression at three horizons</p></li>
+<li><p>The dividend yield, at three horizons</p></li>
 <li><p>🎯 Out of sample: your turn</p></li>
 <li><p>The timing strategy</p></li>
+<li><p>🎯 Each factor’s value spread: your turn</p></li>
 <li><p>Timing the six factors: 24 tries. Then back to the slides</p></li>
 <li><p>🎯 Challenge (homework): one number and three sentences</p></li>
 </ol>
@@ -561,6 +562,7 @@ way, out of sample. Then you try 24 timing signals on the six factors and see ho
 <span class="n">crsp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/Markettiming_data1.csv"</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="p">[</span><span class="s1">'date'</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="s1">'date'</span><span class="p">)</span>   <span class="c1"># CRSP market, with dividends</span>
 <span class="n">crsp</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">crsp</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">MonthEnd</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">rf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/factors_monthly_1926.parquet"</span><span class="p">)[</span><span class="s1">'RF'</span><span class="p">]</span>                              <span class="c1"># T-bill rate</span>
+<span class="n">V</span>  <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/value_spreads_monthly_1926.parquet"</span><span class="p">)</span>    <span class="c1"># four factors, and the book-to-market of their legs</span>
 <span class="n">ff</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE</span><span class="si">}</span><span class="s2">/ff_monthly.csv"</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">parse_dates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>                       <span class="c1"># the six factors, 1980-2026</span>
 <span class="n">F</span>  <span class="o">=</span> <span class="n">ff</span><span class="p">[[</span><span class="s1">'Mkt-RF'</span><span class="p">,</span> <span class="s1">'SMB'</span><span class="p">,</span> <span class="s1">'HML'</span><span class="p">,</span> <span class="s1">'RMW'</span><span class="p">,</span> <span class="s1">'CMA'</span><span class="p">,</span> <span class="s1">'UMD'</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
@@ -571,16 +573,17 @@ way, out of sample. Then you try 24 timing signals on the six factors and see ho
 
 <span class="n">sharpe</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"market </span><span class="si">{</span><span class="n">C</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">C</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">; six factors </span><span class="si">{</span><span class="n">F</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">F</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"market </span><span class="si">{</span><span class="n">C</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">C</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">; value spreads </span><span class="si">{</span><span class="n">V</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">V</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">; "</span>
+      <span class="sa">f</span><span class="s2">"six factors </span><span class="si">{</span><span class="n">F</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">F</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <hr class="docutils" />
-<section id="the-dividend-yield">
-<h2>1. The dividend yield<a class="headerlink" href="#the-dividend-yield" title="Link to this heading">#</a></h2>
-<p>When prices are low relative to dividends, either dividends are about to fall, or future returns are high. Compare the
-dividend yield with the return over the <em>next</em> five years.</p>
+<section id="the-dividend-yield-at-three-horizons">
+<h2>1. The dividend yield, at three horizons<a class="headerlink" href="#the-dividend-yield-at-three-horizons" title="Link to this heading">#</a></h2>
+<p>When prices are low relative to dividends, either dividends are about to fall, or future returns are high. First compare
+the dividend yield with the return over the <em>next</em> five years.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">next5</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="s1">'lx'</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">60</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span>            <span class="c1"># return over the next 60 months, a year</span>
@@ -594,18 +597,11 @@ dividend yield with the return over the <em>next</em> five years.</p>
 </div>
 </div>
 </div>
-<ul class="simple">
-<li><p>When was the dividend yield highest? What came next?</p></li>
-<li><p>The yield fell from about 4% in the 1980s to about 1% by 2000. Name two reasons that could happen.</p></li>
-</ul>
-</section>
-<hr class="docutils" />
-<section id="the-forecasting-regression-at-three-horizons">
-<h2>2. 🎯 The forecasting regression at three horizons<a class="headerlink" href="#the-forecasting-regression-at-three-horizons" title="Link to this heading">#</a></h2>
+<p>Now the forecasting regression,</p>
 <div class="math notranslate nohighlight">
-\[r_{t \to t+h} = a + b \cdot \text{D/P}_t + u\]</div>
-<p>The same regression, run for the next month, the next year and the next five years. Two sets of <span class="math notranslate nohighlight">\(t\)</span>-statistics: the naive
-ones, and HAC ones that allow for the overlap.</p>
+\[r_{t \to t+h} = a + b \cdot \text{D/P}_t + u,\]</div>
+<p>run for the next month, the next year and the next five years. Two sets of <span class="math notranslate nohighlight">\(t\)</span>-statistics: the naive ones, and HAC ones
+that allow for the overlap.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rows</span> <span class="o">=</span> <span class="p">{}</span>
@@ -625,14 +621,15 @@ ones, and HAC ones that allow for the overlap.</p>
 </div>
 </div>
 <ul class="simple">
+<li><p>When was the dividend yield highest? What came next?</p></li>
 <li><p>The <span class="math notranslate nohighlight">\(R^2\)</span> and the naive <span class="math notranslate nohighlight">\(t\)</span> both grow with the horizon. Should you believe the five-year regression most?</p></li>
-<li><p>Two consecutive five-year returns share 59 of their 60 months. How many truly separate five-year periods are there?</p></li>
-<li><p>Which <span class="math notranslate nohighlight">\(t\)</span>-statistic would you report?</p></li>
+<li><p>Two consecutive five-year returns share 59 of their 60 months. How many truly separate five-year periods are there?
+Which <span class="math notranslate nohighlight">\(t\)</span>-statistic would you report?</p></li>
 </ul>
 </section>
 <hr class="docutils" />
 <section id="out-of-sample">
-<h2>3. 🎯 Out of sample<a class="headerlink" href="#out-of-sample" title="Link to this heading">#</a></h2>
+<h2>2. 🎯 Out of sample<a class="headerlink" href="#out-of-sample" title="Link to this heading">#</a></h2>
 <p>The honest test: stand in each month <span class="math notranslate nohighlight">\(t\)</span>, using only what you knew then.</p>
 <ul class="simple">
 <li><p>fit the regression of next month’s return on D/P, using only months whose next return you have already seen</p></li>
@@ -693,12 +690,11 @@ ones, and HAC ones that allow for the overlap.</p>
 <ul class="simple">
 <li><p>When did D/P stop working? Look at the plot.</p></li>
 <li><p>In sample, D/P explained 0.3% of next month’s return. Out of sample it explains less than nothing. How can both be true?</p></li>
-<li><p><strong>Bring back to the slides:</strong> the out-of-sample <span class="math notranslate nohighlight">\(R^2\)</span>, and when the plot turns.</p></li>
 </ul>
 </section>
 <hr class="docutils" />
 <section id="the-timing-strategy">
-<h2>4. The timing strategy<a class="headerlink" href="#the-timing-strategy" title="Link to this heading">#</a></h2>
+<h2>3. The timing strategy<a class="headerlink" href="#the-timing-strategy" title="Link to this heading">#</a></h2>
 <p>The formula from <em>Capital Allocation I</em> with a forecast in it: weight <span class="math notranslate nohighlight">\(= \text{forecast} / (\gamma \sigma^{2})\)</span>. We hold
 <span class="math notranslate nohighlight">\(\sigma\)</span> fixed at its value before 1950, so all the timing comes from the forecast.</p>
 <div class="cell docutils container">
@@ -721,6 +717,88 @@ ones, and HAC ones that allow for the overlap.</p>
 <ul class="simple">
 <li><p>Would changing <code class="docutils literal notranslate"><span class="pre">gamma</span></code> change the Sharpe ratio? Try it.</p></li>
 <li><p>In which period did timing win, and in which did it lose badly? Why then?</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="each-factor-s-value-spread">
+<h2>4. 🎯 Each factor’s value spread<a class="headerlink" href="#each-factor-s-value-spread" title="Link to this heading">#</a></h2>
+<p>D/P is the market’s price against its fundamentals. A long-short factor has one too: how cheap the stocks it buys are
+against the stocks it sells,</p>
+<div class="math notranslate nohighlight">
+\[\text{VS}_t = \log \frac{B}{M}\Big|_{\text{long},\,t} - \log \frac{B}{M}\Big|_{\text{short},\,t}.\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">V</span></code> has four factors from Ken French’s 2×3 sorts: each one’s monthly return (<code class="docutils literal notranslate"><span class="pre">HML</span></code>, <code class="docutils literal notranslate"><span class="pre">SMB</span></code>, <code class="docutils literal notranslate"><span class="pre">RMW</span></code>, <code class="docutils literal notranslate"><span class="pre">CMA</span></code>) and the
+book-to-market of its long and short legs (<code class="docutils literal notranslate"><span class="pre">HML_bm_long</span></code>, <code class="docutils literal notranslate"><span class="pre">HML_bm_short</span></code>, and so on). HML and SMB start in 1926, RMW and
+CMA in 1963. Book is from the last fiscal year; the price is from last December.</p>
+<p><strong>Your turn.</strong> Build HML’s value spread and call it <code class="docutils literal notranslate"><span class="pre">vs_hml</span></code>. <code class="docutils literal notranslate"><span class="pre">np.log</span></code> takes logs.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># === YOUR TURN ===</span>
+
+<span class="n">vs_hml</span> <span class="o">=</span> <span class="n">____</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#@title 🔒 Check: HML's value spread</span>
+<span class="n">vs_ref</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="s1">'HML_bm_long'</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="s1">'HML_bm_short'</span><span class="p">])</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"yours matches"</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">vs_hml</span><span class="p">,</span> <span class="n">vs_ref</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"yours differs: compare with the plot below"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"yours: not built yet:"</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">next5_hml</span> <span class="o">=</span> <span class="n">V</span><span class="p">[</span><span class="s1">'HML'</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">60</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span>       <span class="c1"># HML's return over the next five years, a year</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">vs_ref</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">"HML's value spread"</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">next5_hml</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">secondary_y</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'HML over the next five years, a year'</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"median </span><span class="si">{</span><span class="n">vs_ref</span><span class="o">.</span><span class="n">median</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, now </span><span class="si">{</span><span class="n">vs_ref</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">vs_ref</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">%Y-%m</span><span class="si">}</span><span class="s2">); "</span>
+      <span class="sa">f</span><span class="s2">"correlation with the next five years: </span><span class="si">{</span><span class="n">vs_ref</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">next5_hml</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now sections 1 to 3 again, in a loop over the four factors: the in-sample regression on next month’s return, the
+out-of-sample loop with forecasts from 1980, and the timing strategy with <span class="math notranslate nohighlight">\(\sigma\)</span> fixed at its value before 1980.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rows</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'HML'</span><span class="p">,</span> <span class="s1">'SMB'</span><span class="p">,</span> <span class="s1">'RMW'</span><span class="p">,</span> <span class="s1">'CMA'</span><span class="p">]:</span>
+    <span class="n">vs</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1">_bm_long'</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1">_bm_short'</span><span class="p">]))</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>   <span class="c1"># this factor's value spread</span>
+    <span class="n">ret_next</span> <span class="o">=</span> <span class="n">V</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>                              <span class="c1"># next month's return, lined up with this month's spread</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">'y'</span><span class="p">:</span> <span class="n">ret_next</span><span class="p">,</span> <span class="s1">'vs'</span><span class="p">:</span> <span class="n">vs</span><span class="p">})</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+    <span class="c1"># in sample, as in section 1</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'y'</span><span class="p">],</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'vs'</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">cov_type</span><span class="o">=</span><span class="s1">'HAC'</span><span class="p">,</span> <span class="n">cov_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">'maxlags'</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+
+    <span class="c1"># out of sample from 1980, as in section 2</span>
+    <span class="n">oos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">vs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1980'</span><span class="p">:]</span><span class="o">.</span><span class="n">index</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">known</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>                     <span class="c1"># pairs whose return is known at t</span>
+        <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">known</span><span class="p">[</span><span class="s1">'vs'</span><span class="p">],</span> <span class="n">known</span><span class="p">[</span><span class="s1">'y'</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">oos</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">'date'</span><span class="p">:</span> <span class="n">t</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">:</span> <span class="n">ret_next</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="s1">'forecast'</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">vs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="s1">'average'</span><span class="p">:</span> <span class="n">known</span><span class="p">[</span><span class="s1">'y'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()})</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">oos</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'date'</span><span class="p">)</span>
+
+    <span class="c1"># the timing strategy, as in section 3</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="s1">'forecast'</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[:</span><span class="s1">'1979'</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">())</span>
+    <span class="n">timed</span>  <span class="o">=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">Q</span><span class="p">[</span><span class="s1">'r'</span><span class="p">]</span>
+
+    <span class="n">rows</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'from'</span><span class="p">:</span> <span class="n">vs</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="s1">'HAC t'</span><span class="p">:</span> <span class="n">fit</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'vs'</span><span class="p">],</span> <span class="s1">'R2 in sample'</span><span class="p">:</span> <span class="n">fit</span><span class="o">.</span><span class="n">rsquared</span><span class="p">,</span>
+               <span class="s1">'R2 out of sample'</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="n">Q</span><span class="p">[</span><span class="s1">'r'</span><span class="p">]</span> <span class="o">-</span> <span class="n">Q</span><span class="p">[</span><span class="s1">'forecast'</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="p">((</span><span class="n">Q</span><span class="p">[</span><span class="s1">'r'</span><span class="p">]</span> <span class="o">-</span> <span class="n">Q</span><span class="p">[</span><span class="s1">'average'</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+               <span class="s1">'Sharpe, buy and hold'</span><span class="p">:</span> <span class="n">sharpe</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="s1">'r'</span><span class="p">]),</span> <span class="s1">'Sharpe, timed'</span><span class="p">:</span> <span class="n">sharpe</span><span class="p">(</span><span class="n">timed</span><span class="p">),</span> <span class="s1">'months short'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">weight</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Which factors beat the historical average out of sample? Set them against D/P’s <span class="math notranslate nohighlight">\(R^2\)</span> in section 2.</p></li>
+<li><p>Where is the gain largest? How often is that strategy short, and would you run it?</p></li>
+<li><p>The price in the book-to-market is last December’s, not today’s. What has the factor done since December, and why
+might that help the forecast?</p></li>
 </ul>
 </section>
 <hr class="docutils" />
@@ -761,21 +839,21 @@ own volatility. Run the forecasting regression on 1980–2002 and again on 2003�
 <li><p>How many of the 24 have <span class="math notranslate nohighlight">\(|t| &gt; 2\)</span> in the first half? How many would you expect by luck alone?</p></li>
 <li><p>Take the five best from the first half. How many still work in the second?</p></li>
 <li><p>Which signal works for several factors in both halves? It has a name: factor momentum.</p></li>
-<li><p><strong>Bring back to the slides.</strong></p></li>
 </ul>
 </section>
 <hr class="docutils" />
 <section id="back-to-the-slides">
 <h2>⏸ Back to the slides<a class="headerlink" href="#back-to-the-slides" title="Link to this heading">#</a></h2>
-<p>The challenge below is homework.</p>
+<p>For the takeaways. The challenge below is homework.</p>
 </section>
 <hr class="docutils" />
 <section id="challenge-start-later">
 <h2>🎯 Challenge: start later<a class="headerlink" href="#challenge-start-later" title="Link to this heading">#</a></h2>
 <p><em>Homework — due before the next class. It should take ten minutes.</em></p>
-<p>Section 3 started forecasting in 1950. Suppose you had only started in <strong>1980</strong>. Rerun the loop from section 3 with
-<code class="docutils literal notranslate"><span class="pre">C.loc['1980':]</span></code> instead of <code class="docutils literal notranslate"><span class="pre">C.loc['1950':]</span></code>, and everything else the same. Report the out-of-sample <span class="math notranslate nohighlight">\(R^2\)</span>.</p>
-<p>Then, in at most three sentences: would you trade D/P on this evidence? Why or why not?</p>
+<p>Section 2 started forecasting in 1950. Suppose you had only started in <strong>1980</strong>, the year the value spreads in section 4
+start. Rerun the loop from section 2 with <code class="docutils literal notranslate"><span class="pre">C.loc['1980':]</span></code> instead of <code class="docutils literal notranslate"><span class="pre">C.loc['1950':]</span></code>, and everything else the same.
+Report the out-of-sample <span class="math notranslate nohighlight">\(R^2\)</span>.</p>
+<p>Then, in at most three sentences: would you trade D/P on this evidence? Set it against the value spreads in section 4.</p>
 <blockquote>
 <div><p><strong>📌 Required variable names:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">oos_r2_1980</span> <span class="o">=</span> <span class="n">____</span>   <span class="c1"># out-of-sample R2 with forecasts from 1980, a decimal (-0.01 means -1%)</span>
@@ -888,10 +966,10 @@ own volatility. Run the forecasting regression on 1980–2002 and again on 2003�
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dividend-yield">1. The dividend yield</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forecasting-regression-at-three-horizons">2. 🎯 The forecasting regression at three horizons</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample">3. 🎯 Out of sample</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-timing-strategy">4. The timing strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dividend-yield-at-three-horizons">1. The dividend yield, at three horizons</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-sample">2. 🎯 Out of sample</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-timing-strategy">3. The timing strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#each-factor-s-value-spread">4. 🎯 Each factor’s value spread</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-the-six-factors-24-tries">5. Timing the six factors: 24 tries</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#back-to-the-slides">⏸ Back to the slides</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#challenge-start-later">🎯 Challenge: start later</a></li>
