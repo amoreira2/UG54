@@ -354,15 +354,16 @@ cs2 = [
 ('markdown', """
 # Conditional Strategies II: Timing Expected Returns
 
-The ideas are in the slides. Here you test the most famous timing signal, the dividend yield: in sample, then the honest
-way, out of sample. Then you try 24 timing signals on the six factors and see how many survive.
+The ideas are in the slides. Here you test the most famous timing signal for the market, the dividend yield: in sample,
+then the honest way, out of sample. Then the same test for four factors, each with its own price signal, the value
+spread. Last, a search over 24 more signals, and how many survive.
 
-**The plan**
+**The plan**, one section per exercise in the slides
 
-1. The dividend yield
-2. 🎯 The forecasting regression at three horizons
-3. 🎯 Out of sample: your turn
-4. The timing strategy
+1. The dividend yield, at three horizons
+2. 🎯 Out of sample: your turn
+3. The timing strategy
+4. 🎯 Each factor's value spread: your turn
 5. Timing the six factors: 24 tries. Then back to the slides
 6. 🎯 Challenge (homework): one number and three sentences
 """),
@@ -382,6 +383,7 @@ BASE = "https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/
 crsp = pd.read_csv(f"{BASE}/Markettiming_data1.csv", parse_dates=['date'], index_col='date')   # CRSP market, with dividends
 crsp.index = crsp.index + pd.offsets.MonthEnd(0)
 rf = pd.read_parquet(f"{BASE}/factors_monthly_1926.parquet")['RF']                              # T-bill rate
+V  = pd.read_parquet(f"{BASE}/value_spreads_monthly_1926.parquet")    # four factors, and the book-to-market of their legs
 ff = pd.read_csv(f"{BASE}/ff_monthly.csv", index_col=0, parse_dates=True)                       # the six factors, 1980-2026
 F  = ff[['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA', 'UMD']].dropna()
 
@@ -392,15 +394,16 @@ C['lx'] = np.log1p(C['vwretd']) - np.log1p(C['RF'])         # log excess return:
 
 sharpe = lambda x: x.mean() / x.std() * np.sqrt(12)
 
-print(f"market {C.index[0]:%Y-%m} to {C.index[-1]:%Y-%m}; six factors {F.index[0]:%Y-%m} to {F.index[-1]:%Y-%m}")
+print(f"market {C.index[0]:%Y-%m} to {C.index[-1]:%Y-%m}; value spreads {V.index[0]:%Y-%m} to {V.index[-1]:%Y-%m}; "
+      f"six factors {F.index[0]:%Y-%m} to {F.index[-1]:%Y-%m}")
 """),
 ('markdown', """
 ---
 
-## 1. The dividend yield
+## 1. The dividend yield, at three horizons
 
-When prices are low relative to dividends, either dividends are about to fall, or future returns are high. Compare the
-dividend yield with the return over the *next* five years.
+When prices are low relative to dividends, either dividends are about to fall, or future returns are high. First compare
+the dividend yield with the return over the *next* five years.
 """),
 ('code', """
 next5 = C['lx'].rolling(60).sum().shift(-60) / 5            # return over the next 60 months, a year
@@ -412,18 +415,12 @@ plt.show()
 print(f"correlation: {C['dp'].corr(next5):.2f}")
 """),
 ('markdown', """
-- When was the dividend yield highest? What came next?
-- The yield fell from about 4% in the 1980s to about 1% by 2000. Name two reasons that could happen.
-"""),
-('markdown', """
----
+Now the forecasting regression,
 
-## 2. 🎯 The forecasting regression at three horizons
+$$r_{t \\to t+h} = a + b \\cdot \\text{D/P}_t + u,$$
 
-$$r_{t \\to t+h} = a + b \\cdot \\text{D/P}_t + u$$
-
-The same regression, run for the next month, the next year and the next five years. Two sets of $t$-statistics: the naive
-ones, and HAC ones that allow for the overlap.
+run for the next month, the next year and the next five years. Two sets of $t$-statistics: the naive ones, and HAC ones
+that allow for the overlap.
 """),
 ('code', """
 rows = {}
@@ -440,14 +437,15 @@ for h in [1, 12, 60]:
 print(pd.DataFrame(rows).T.round(3).to_string())
 """),
 ('markdown', """
+- When was the dividend yield highest? What came next?
 - The $R^2$ and the naive $t$ both grow with the horizon. Should you believe the five-year regression most?
 - Two consecutive five-year returns share 59 of their 60 months. How many truly separate five-year periods are there?
-- Which $t$-statistic would you report?
+  Which $t$-statistic would you report?
 """),
 ('markdown', """
 ---
 
-## 3. 🎯 Out of sample
+## 2. 🎯 Out of sample
 
 The honest test: stand in each month $t$, using only what you knew then.
 
@@ -501,12 +499,11 @@ gain.plot(title='cumulative gain from D/P over the historical average'); plt.axh
 ('markdown', """
 - When did D/P stop working? Look at the plot.
 - In sample, D/P explained 0.3% of next month's return. Out of sample it explains less than nothing. How can both be true?
-- **Bring back to the slides:** the out-of-sample $R^2$, and when the plot turns.
 """),
 ('markdown', """
 ---
 
-## 4. The timing strategy
+## 3. The timing strategy
 
 The formula from *Capital Allocation I* with a forecast in it: weight $= \\text{forecast} / (\\gamma \\sigma^{2})$. We hold
 $\\sigma$ fixed at its value before 1950, so all the timing comes from the forecast.
@@ -527,6 +524,82 @@ weight.plot(title='weight on the market'); plt.axhline(0, color='k', lw=0.5); pl
 ('markdown', """
 - Would changing `gamma` change the Sharpe ratio? Try it.
 - In which period did timing win, and in which did it lose badly? Why then?
+"""),
+('markdown', """
+---
+
+## 4. 🎯 Each factor's value spread
+
+D/P is the market's price against its fundamentals. A long-short factor has one too: how cheap the stocks it buys are
+against the stocks it sells,
+
+$$\\text{VS}_t = \\log \\frac{B}{M}\\Big|_{\\text{long},\\,t} - \\log \\frac{B}{M}\\Big|_{\\text{short},\\,t}.$$
+
+`V` has four factors from Ken French's 2×3 sorts: each one's monthly return (`HML`, `SMB`, `RMW`, `CMA`) and the
+book-to-market of its long and short legs (`HML_bm_long`, `HML_bm_short`, and so on). HML and SMB start in 1926, RMW and
+CMA in 1963. Book is from the last fiscal year; the price is from last December.
+
+**Your turn.** Build HML's value spread and call it `vs_hml`. `np.log` takes logs.
+"""),
+('code', """
+# === YOUR TURN ===
+
+vs_hml = ____
+"""),
+('code', """
+#@title 🔒 Check: HML's value spread
+vs_ref = np.log(V['HML_bm_long']) - np.log(V['HML_bm_short'])
+
+try:
+    print("yours matches" if np.allclose(vs_hml, vs_ref) else "yours differs: compare with the plot below", "\\n")
+except Exception as e:
+    print("yours: not built yet:", type(e).__name__, "\\n")
+
+next5_hml = V['HML'].rolling(60).sum().shift(-60) / 5       # HML's return over the next five years, a year
+ax = vs_ref.plot(label="HML's value spread", legend=True)
+next5_hml.plot(ax=ax, secondary_y=True, label='HML over the next five years, a year', legend=True)
+plt.show()
+
+print(f"median {vs_ref.median():.2f}, now {vs_ref.iloc[-1]:.2f} ({vs_ref.index[-1]:%Y-%m}); "
+      f"correlation with the next five years: {vs_ref.corr(next5_hml):.2f}")
+"""),
+('markdown', """
+Now sections 1 to 3 again, in a loop over the four factors: the in-sample regression on next month's return, the
+out-of-sample loop with forecasts from 1980, and the timing strategy with $\\sigma$ fixed at its value before 1980.
+"""),
+('code', """
+rows = {}
+for f in ['HML', 'SMB', 'RMW', 'CMA']:
+    vs = (np.log(V[f'{f}_bm_long']) - np.log(V[f'{f}_bm_short'])).dropna()   # this factor's value spread
+    ret_next = V[f].shift(-1)                              # next month's return, lined up with this month's spread
+    data = pd.DataFrame({'y': ret_next, 'vs': vs}).dropna()
+
+    # in sample, as in section 1
+    fit = sm.OLS(data['y'], sm.add_constant(data['vs'])).fit(cov_type='HAC', cov_kwds={'maxlags': 1})
+
+    # out of sample from 1980, as in section 2
+    oos = []
+    for t in vs.loc['1980':].index[:-1]:
+        known = data.loc[:t].iloc[:-1]                     # pairs whose return is known at t
+        b, a = np.polyfit(known['vs'], known['y'], 1)
+        oos.append({'date': t, 'r': ret_next.loc[t], 'forecast': a + b * vs.loc[t], 'average': known['y'].mean()})
+    Q = pd.DataFrame(oos).set_index('date')
+
+    # the timing strategy, as in section 3
+    weight = Q['forecast'] / (3 * V[f].loc[:'1979'].var())
+    timed  = weight * Q['r']
+
+    rows[f] = {'from': vs.index[0].year, 'HAC t': fit.tvalues['vs'], 'R2 in sample': fit.rsquared,
+               'R2 out of sample': 1 - ((Q['r'] - Q['forecast']) ** 2).sum() / ((Q['r'] - Q['average']) ** 2).sum(),
+               'Sharpe, buy and hold': sharpe(Q['r']), 'Sharpe, timed': sharpe(timed), 'months short': np.mean(weight < 0)}
+
+print(pd.DataFrame(rows).T.round(3).to_string())
+"""),
+('markdown', """
+- Which factors beat the historical average out of sample? Set them against D/P's $R^2$ in section 2.
+- Where is the gain largest? How often is that strategy short, and would you run it?
+- The price in the book-to-market is last December's, not today's. What has the factor done since December, and why
+  might that help the forecast?
 """),
 ('markdown', """
 ---
@@ -565,14 +638,13 @@ plt.xlabel('t, 1980-2002'); plt.ylabel('t, 2003-2026'); plt.show()
 - How many of the 24 have $|t| > 2$ in the first half? How many would you expect by luck alone?
 - Take the five best from the first half. How many still work in the second?
 - Which signal works for several factors in both halves? It has a name: factor momentum.
-- **Bring back to the slides.**
 """),
 ('markdown', """
 ---
 
 ## ⏸ Back to the slides
 
-The challenge below is homework.
+For the takeaways. The challenge below is homework.
 """),
 ('markdown', """
 ---
@@ -581,10 +653,11 @@ The challenge below is homework.
 
 *Homework — due before the next class. It should take ten minutes.*
 
-Section 3 started forecasting in 1950. Suppose you had only started in **1980**. Rerun the loop from section 3 with
-`C.loc['1980':]` instead of `C.loc['1950':]`, and everything else the same. Report the out-of-sample $R^2$.
+Section 2 started forecasting in 1950. Suppose you had only started in **1980**, the year the value spreads in section 4
+start. Rerun the loop from section 2 with `C.loc['1980':]` instead of `C.loc['1950':]`, and everything else the same.
+Report the out-of-sample $R^2$.
 
-Then, in at most three sentences: would you trade D/P on this evidence? Why or why not?
+Then, in at most three sentences: would you trade D/P on this evidence? Set it against the value spreads in section 4.
 
 > **📌 Required variable names:**
 > ```python

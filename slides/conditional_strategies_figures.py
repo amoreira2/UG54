@@ -9,6 +9,8 @@ Data:
   assets/data/Markettiming_data1.csv       CRSP value-weighted market with dividend yield, 1926-2024
   assets/data/factors_monthly_1926.parquet monthly RF
   assets/data/ff_monthly.csv               monthly six factors, 1980-2026
+  assets/data/value_spreads_monthly_1926.parquet  HML, SMB, RMW, CMA and the book-to-market of their legs (build_value_spread_data.py)
+The appendix's value spread at today's prices comes from the check printed by chapters/Finance/build_value_spread_data.py.
 Realized variance is the sum of squared deviations of daily returns within the month, as in the momentum deck,
 so the momentum numbers here match it. Figures go to slides/figures/; every number the slides quote is printed.
 """
@@ -322,6 +324,55 @@ print(f"timing strategy from 1950 (gamma 3): Sharpe {sharpe(tim):.2f} vs buy and
 for a_, b_ in [("1950", "1979"), ("1980", "1999"), ("2000", "2024")]:
     print(f"  {a_}-{b_}: timing {sharpe(tim.loc[a_:b_]):.2f}, buy and hold {sharpe(P.r.loc[a_:b_]):.2f}, average weight {w_.loc[a_:b_].mean():.2f}")
 print(f"CHALLENGE II, forecasts from 1980: R2 {r2_oos(out_of_sample('1980')):.4%}")
+print(f"the hook: D/P at the end of {c.index[-1]:%Y} {c.dp.iloc[-1]:.1%}, lower than in {np.mean(c.dp > c.dp.iloc[-1]):.0%} of months")
+
+# each factor's own value spread: log book-to-market of the long leg minus the short leg's, as French publishes them
+V = pd.read_parquet(DATA / "value_spreads_monthly_1926.parquet")
+FOUR = ["HML", "SMB", "RMW", "CMA"]
+VS = {f: (np.log(V[f"{f}_bm_long"]) - np.log(V[f"{f}_bm_short"])).dropna() for f in FOUR}
+x = VS["HML"]
+print(f"HML value spread: last {x.iloc[-1]:.2f} ({x.index[-1]:%Y-%m}), median {x.median():.2f}, "
+      f"highest since 1950 {x.loc['1950':].max():.2f} in {x.loc['1950':].idxmax():%Y-%m}; "
+      f"before 2021 last as high in {x.loc[:'2020'][x.loc[:'2020'] >= x.loc['1950':].max()].index[-1]:%Y-%m}")
+print(f"  as a ratio: value book-to-market {np.exp(x.loc['1950':].max()):.1f} times growth's, usually {np.exp(x.median()):.1f}")
+
+fut5_hml = V.HML.rolling(60).sum().shift(-60) / 5
+fig, ax = plt.subplots(figsize=(10, 3.8))
+ax.plot(x, color=BLUE, lw=1.6)
+ax2 = ax.twinx()
+ax2.plot(fut5_hml, color=RED, lw=1.2)
+ax2.axhline(0, color="k", lw=0.5)
+ax.set_ylabel("value spread of HML", color=BLUE); ax2.set_ylabel("HML, next five years, a year", color=RED)
+ax2.yaxis.set_major_formatter(lambda v, _: f"{v:.0%}")
+ax2.spines["right"].set_visible(True)
+fig.savefig(OUT / "cs_value_spread.pdf"); plt.close(fig)
+
+
+def oos_vs(y, x, start):
+    """As out_of_sample() above, for factor return y and signal x: fit on every complete pair known at t."""
+    yy = y.shift(-1)
+    rows_ = []
+    for t in x.loc[start:].index[:-1]:
+        tr = pd.DataFrame({"y": yy, "x": x}).loc[:t].iloc[:-1].dropna()
+        b, a = np.polyfit(tr.x, tr.y, 1)
+        rows_.append((t, yy.loc[t], a + b * x.loc[t], tr.y.mean()))
+    return pd.DataFrame(rows_, columns=["date", "r", "forecast", "average"]).set_index("date").dropna()
+
+
+rows = []
+for f in FOUR:
+    y, s_ = V[f], VS[f]
+    dd = pd.DataFrame({"y": y.shift(-1), "x": s_}).dropna()
+    hac = sm.OLS(dd.y, sm.add_constant(dd.x)).fit(cov_type="HAC", cov_kwds={"maxlags": 1})
+    Pf = oos_vs(y, s_, "1980")
+    wf = Pf.forecast / (3 * y.loc[:"1979"].var())
+    tf = wf * Pf.r
+    rows.append(dict(factor=f, since=f"{s_.index[0]:%Y}", b=hac.params.x, t=hac.tvalues.x, R2=hac.rsquared, corr5=s_.corr(y.rolling(60).sum().shift(-60) / 5),
+                     oos=r2_oos(Pf), oos_80_02=r2_oos(Pf.loc[:"2002"]), oos_03_26=r2_oos(Pf.loc["2003":]),
+                     SR_hold=sharpe(Pf.r), SR_timed=sharpe(tf), short=np.mean(wf < 0)))
+VT = pd.DataFrame(rows).set_index("factor")
+print("value spreads: next month's factor return on this month's spread (in sample, HAC t); out of sample from 1980, gamma 3")
+print(VT.round(3).to_string())
 
 # timing the factors: 6 factors x 4 signals, first half against second half
 ff = pd.read_csv(DATA / "ff_monthly.csv", index_col=0, parse_dates=True)

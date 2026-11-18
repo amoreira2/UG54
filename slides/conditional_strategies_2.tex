@@ -1,7 +1,10 @@
-% Conditional Strategies II -- timing expected returns: the dividend yield, why in-sample evidence misleads, and 24 factor signals.
-% Figures and every number quoted here come from conditional_strategies_figures.py
-% Companion notebook: chapters/Finance/L15_ConditionalStrategiesII_AI.ipynb (sections 1-5 in class, the challenge is homework)
-% The challenge answer (the out-of-sample R2 with forecasts from 1980) must not appear here: this PDF is public.
+% Conditional Strategies II -- timing expected returns: the dividend yield for the market, the value spread for factors,
+% why in-sample evidence misleads, and 24 factor signals.
+% Figures and every number quoted here come from conditional_strategies_figures.py, except appendix A3 (the value spread at
+% today's prices), which comes from the check at the end of chapters/Finance/build_value_spread_data.py
+% Companion notebook: chapters/Finance/L15_ConditionalStrategiesII_AI.ipynb (exercises 1-5 in class, the challenge is homework)
+% Structure: content first, then one slide per notebook exercise, then takeaways.
+% The challenge answer (the out-of-sample R2 for D/P with forecasts from 1980) must not appear here: this PDF is public.
 \documentclass[aspectratio=169,10pt]{beamer}
 \usetheme{default}
 \usecolortheme{default}
@@ -51,39 +54,24 @@
 \titlepage
 \end{frame}
 
-\begin{frame}{Today}
-\vskip 6pt
-\begin{columns}[t]
-\begin{column}{0.46\textwidth}
-\textbf{In the slides}
+%================================================================== INTRODUCTION
+\begin{frame}{Value is cheap. The market is not.}
 \vskip 6pt
 \begin{itemize}
-\item The classic signal: prices against dividends
-\vskip 6pt
-\item Why the in-sample evidence looks better than it is
-\vskip 6pt
-\item What survives out of sample, for the market and for factors
+\item June 2026: value stocks' book-to-market was \textcolor{red}{9.5} times growth stocks'. Usually it is 5. The last time the gap was this wide: 1943.
+\vskip 8pt
+\item The market: dividends were 1.6\% of its price at the end of 2024, lower than in 93\% of months since 1926
+\vskip 8pt
+\item If a low price means a high future return, you would hold more value and less of the market. Should you?
+\vskip 8pt
+\item Today: do prices forecast returns, for the market and for factors, and how to check before you bet
 \end{itemize}
-\end{column}
-\begin{column}{0.50\textwidth}
-\textbf{In the notebook, you will}
-\vskip 6pt
-\begin{itemize}
-\item Run the forecasting regression at three horizons
-\vskip 6pt
-\item Test it out of sample, month by month
-\vskip 6pt
-\item Trade it, then try 24 timing signals on the six factors
-\end{itemize}
-\end{column}
-\end{columns}
-\vskip 16pt
+\vskip 14pt
 \begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
-\textbf{Homework:} one number and three sentences
+Last class you forecast risk. Today you forecast the return itself: the hard part.
 \end{beamercolorbox}
 \end{frame}
 
-%================================================================== THE SIGNAL
 \begin{frame}{Last class we timed $\sigma$. Today, $\mu$.}
 \[ x_{t} \;=\; \frac{1}{\gamma}\,\frac{\mu_{t}}{\sigma_{t}^{2}} \]
 \vskip 4pt
@@ -92,14 +80,15 @@
 \vskip 8pt
 \item Expected returns are the hard half. A mean needs decades to learn (\emph{Backtesting}), and the optimizer magnifies its errors (\emph{Capital Allocation III})
 \vskip 8pt
-\item Now we ask the mean to move every month, and to forecast it
+\item The natural candidates: prices against fundamentals. For the market, its dividends. For a factor, the book values of what it buys and what it sells.
 \end{itemize}
 \vskip 14pt
 \begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
-Is there a signal that tells you when the market will pay more?
+Is there a signal that tells you when an asset will pay more?
 \end{beamercolorbox}
 \end{frame}
 
+%================================================================== THE MARKET: D/P
 \begin{frame}{The classic signal: prices against dividends}
 \begin{columns}[c]
 \begin{column}{0.60\textwidth}
@@ -209,27 +198,6 @@ Sharpe ratio a year, from 0.40 & \textcolor{red}{0.44} & 0.53 & 0.64 \\
 \hfill \hyperlink{appendix_ct}{\beamerbutton{Where it comes from}}
 \end{frame}
 
-\begin{frame}{Now: the notebook}
-\vskip 2pt
-\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
-\textbf{Notebook: Conditional Strategies II} \ --- \ timing expected returns
-\end{beamercolorbox}
-\vskip 10pt
-\begin{enumerate}
-\item \textbf{The regression} at three horizons, both $t$-statistics
-\vskip 4pt
-\item \textbf{Out of sample}: each month from 1950, using only what you knew then
-\vskip 4pt
-\item \textbf{The timing strategy} against buy and hold
-\vskip 4pt
-\item \textbf{Timing the six factors}: 24 signals, 1980--2002 against 2003--2026
-\end{enumerate}
-\vskip 8pt
-{\small \textbf{Bring back:} the out-of-sample $R^{2}$, when the plot turns, and how many of the 24 survive. \\[2pt]
-Stop at \textbf{Back to the slides}; the challenge after it is homework.}
-\end{frame}
-
-%================================================================== OUT OF SAMPLE
 \begin{frame}{Out of sample, the edge is gone}
 \begin{center}
 \adjustbox{max width=\textwidth, max height=0.52\textheight}{\includegraphics{figures/cs_gw.pdf}}
@@ -284,8 +252,97 @@ The relationship was never estimated precisely enough to survive a change in its
 \end{beamercolorbox}
 \end{frame}
 
-%================================================================== FACTORS
-\begin{frame}{Now time the factors: 24 tries}
+\begin{frame}{D/P is one candidate among many}
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.1}
+\begin{tabular}{@{}p{2.0cm}p{3.2cm}p{7.9cm}@{}}
+\toprule
+ & signal & why it might forecast the market \\
+\midrule
+\textbf{valuation} & dividend yield, D/P & Gordon: a low price means low growth, or high returns ahead \\
+ & earnings yield, E/P & the same, with the last 12 months' earnings \\
+ & CAPE (Shiller's P/E) & price over 10 years of real earnings: smooths the cycle \\
+ & forward P/E & price over analysts' (``street'') forecast of next year's earnings \\
+ & index book-to-market & the value logic, applied to the whole market \\
+\midrule
+\textbf{rates} & short rate & 3-month T-bill: tight money, higher discount rates \\
+ & term spread & 10-year yield minus the T-bill: low before recessions \\
+ & default spread & Baa minus Aaa yields: the price of credit risk \\
+\midrule
+\textbf{risk and flows} & VIX & option-implied volatility: is more fear paid more? \\
+ & realized variance & risk forecasts risk; does it forecast return? \\
+ & net equity issuance & firms sell shares when their stock is dear \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip -2pt
+\begin{itemize}
+\item Goyal and Welch (2008) run our D/P test on most of these. In sample many look good; out of sample almost none beats the historical average.
+\end{itemize}
+\end{frame}
+
+%================================================================== FACTORS: THE VALUE SPREAD
+\begin{frame}{A factor has a price too: its value spread}
+\[ \text{VS}_{t} \;=\; \log \frac{B}{M}\Big|_{\text{long},\,t} \;-\; \log \frac{B}{M}\Big|_{\text{short},\,t} \]
+{\small $B/M$: book equity over market value, of the stocks the factor buys (long) and the stocks it sells (short)}
+\begin{center}
+\adjustbox{max width=\textwidth, max height=0.40\textheight}{\includegraphics{figures/cs_value_spread.pdf}}
+\end{center}
+\begin{itemize}
+\item High: what the factor buys is unusually cheap against what it sells. The Gordon logic again: a high return ahead, or low relative growth.
+\vskip 4pt
+\item HML, 1926--2026: correlation with the next five years' return \textcolor{red}{0.26}. D/P's was 0.35.
+\vskip 4pt
+\item Cohen, Polk and Vuolteenaho (2003); Haddad, Kozak and Santosh (2020)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[label=vstable]{Value spreads beat the historical average, out of sample}
+\vskip 2pt
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{lcccccc}
+\toprule
+ & & in sample & \multicolumn{3}{c}{out of sample, from 1980} \\
+\cmidrule(lr){3-3} \cmidrule(lr){4-6}
+factor & from & $t$, HAC & $R^{2}$ & Sharpe, buy and hold & Sharpe, timed \\
+\midrule
+HML & 1926 & 1.2 & 0.6\% & 0.25 & 0.28 \\
+SMB & 1926 & 1.3 & 0.4\% & 0.03 & 0.04 \\
+RMW & 1963 & 2.4 & 0.7\% & 0.46 & 0.44 \\
+CMA & 1963 & 3.8 & \textcolor{red}{1.1\%} & 0.38 & \textcolor{red}{0.49} \\
+\bottomrule
+\end{tabular}
+\end{center}
+{\small Next month's factor return on this month's value spread. Out of sample exactly as for D/P: each month, fit on the past only. Timed: forecast over $\gamma\sigma^{2}$.}
+\vskip 6pt
+\begin{itemize}
+\item All four beat the historical average out of sample. D/P did not: you will measure it from 1980 for homework.
+\vskip 4pt
+\item Small $R^{2}$s and small gains, except CMA. But four tries, each with a reason, not a search.
+\vskip 4pt
+\item Careful: the book-to-market here uses last December's price. At today's price the $R^{2}$ is about zero. \hfill \hyperlink{appendix_vs}{\beamerbutton{Which price?}}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What could break it}
+\vskip 8pt
+\begin{itemize}
+\item \textbf{Book value misses what growth firms own.} Spending on R\&D, software and brands is expensed, so their book equity is too low and they look expensive for reasons that say nothing about future returns.
+\vskip 10pt
+\item \textbf{If that grows over time, the spread drifts up and stays up.} The same failure as buybacks for D/P: the signal's average moves.
+\vskip 10pt
+\item \textbf{The spread is near its widest since the 1940s.} Cheap value, or mismeasured book? The regression cannot tell you.
+\end{itemize}
+\vskip 14pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+A price ratio is a good signal only if what is in the denominator means the same thing over time
+\end{beamercolorbox}
+\end{frame}
+
+%================================================================== SEARCHING
+\begin{frame}{Beyond prices: 24 tries}
 \vskip 4pt
 Six factors, 1980--2026. Four simple signals for each, its own:
 \vskip 8pt
@@ -356,6 +413,7 @@ SMB & 0.1 & $-0.9$ & \\
 \end{itemize}
 \end{frame}
 
+%================================================================== WHAT TO TAKE AWAY
 \begin{frame}{Why timing risk is easier than timing returns}
 \vskip 4pt
 \begin{center}
@@ -382,16 +440,94 @@ how often it broke here & by factor & by decade \\
 \begin{frame}{How to test a timing idea}
 \vskip 6pt
 \begin{enumerate}
-\item \textbf{The signal is known at $t$.} Last year's dividends, last month's volatility. Check the index, as in \emph{Capital Allocation III}.
+\item \textbf{The signal is known at $t$.} Last year's dividends, last December's book value, last month's volatility. Check the index, as in \emph{Capital Allocation III}.
 \vskip 6pt
 \item \textbf{Out of sample, month by month.} Fit on the past only. Compare with the historical average, not with zero.
 \vskip 6pt
 \item \textbf{Count the overlap.} Long-horizon returns: HAC $t$-statistics, or count the independent periods.
 \vskip 6pt
-\item \textbf{Count your tries.} 24 tries give about one $|t| > 2$ for free.
+\item \textbf{Count your tries, and prefer a reason.} 24 tries give about one $|t| > 2$ for free.
 \vskip 6pt
 \item \textbf{Same risk, then compare.} Against buy and hold at the same average risk, after costs.
 \end{enumerate}
+\end{frame}
+
+%================================================================== THE NOTEBOOK
+\begin{frame}{Notebook, exercise 1: the dividend yield, at three horizons}
+\[ r_{t \to t+h} \;=\; a \;+\; b\cdot \frac{D}{P}\Big|_{t} \;+\; u_{t+h} \]
+\vskip 2pt
+\begin{itemize}
+\item The market, 1926--2024. Plot D/P against the return over the next five years
+\vskip 6pt
+\item Run the regression for the next month, the next year and the next five years
+\vskip 6pt
+\item Two $t$-statistics for each: as usually computed, and HAC with \texttt{maxlags} equal to the horizon
+\end{itemize}
+\vskip 12pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+Look for: which $t$ would you report? How many five-year periods do not overlap?
+\end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{Notebook, exercise 2: out of sample}
+\[ R^{2}_{\text{OOS}} \;=\; 1 - \frac{\sum \left(r - \text{forecast}\right)^{2}}{\sum \left(r - \text{average}\right)^{2}} \]
+\vskip 2pt
+\begin{itemize}
+\item The loop is written for you: each month from 1950, fit on the past, forecast next month, keep the historical average
+\vskip 6pt
+\item Yours: the out-of-sample $R^{2}$. Positive means D/P beat the average.
+\vskip 6pt
+\item Then the cumulative gain from D/P over the average, month by month
+\end{itemize}
+\vskip 12pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+Look for: when the cumulative gain turns, and what happened to D/P then
+\end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{Notebook, exercise 3: trade it}
+\[ x_{t} \;=\; \frac{\text{forecast}_{t}}{\gamma\,\sigma^{2}} \qquad \sigma^{2}\text{: the market's variance before 1950, held fixed} \]
+\vskip 2pt
+\begin{itemize}
+\item The weight on the market each month, from exercise 2's forecasts. Negative means short.
+\vskip 6pt
+\item Sharpe ratio against buy and hold, over the whole period and by period
+\vskip 6pt
+\item How often the strategy is short
+\end{itemize}
+\vskip 12pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+Look for: does $\gamma$ change the Sharpe ratio? When did timing win, and when did it lose?
+\end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{Notebook, exercise 4: each factor's value spread}
+\[ \text{VS}_{t} \;=\; \log \frac{B}{M}\Big|_{\text{long},\,t} \;-\; \log \frac{B}{M}\Big|_{\text{short},\,t} \]
+\vskip 2pt
+\begin{itemize}
+\item Yours: the value spread of HML, from its two book-to-market columns
+\vskip 6pt
+\item Then exercises 1 to 3 again, in a loop over HML, SMB, RMW and CMA: the in-sample $t$, the out-of-sample $R^{2}$ from 1980, and the timed Sharpe ratio
+\end{itemize}
+\vskip 12pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+Look for: which factors beat the historical average, and by how much. Compare with D/P.
+\end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{Notebook, exercise 5: 24 tries}
+\vskip 4pt
+\begin{itemize}
+\item Four signals for each of the six factors: last month, last 12 months, three to five years ago, own volatility
+\vskip 6pt
+\item The forecasting regression on 1980--2002, then on 2003--2026
+\vskip 6pt
+\item Count the $|t| > 2$ in the first half. Follow the best five into the second.
+\end{itemize}
+\vskip 14pt
+\begin{beamercolorbox}[rounded=true,sep=7pt,center]{box1}
+Look for: how many survive, and which signal works for several factors in both halves
+\end{beamercolorbox}
 \end{frame}
 
 \begin{frame}{Takeaways}
@@ -402,13 +538,13 @@ how often it broke here & by factor & by decade \\
 \vskip 4pt
 \item A real monthly $R^{2}$ of 1\% would be worth a lot. Out of sample, D/P's is negative.
 \vskip 4pt
-\item Search across signals and factors finds things. Check them on data they were not found in.
+\item Factors' value spreads do better out of sample, but the gains are small and depend on how book-to-market is measured.
 \vskip 4pt
-\item Factor momentum survives that check here. Volatility timing survives it for some factors.
+\item Search finds things. Factor momentum survives the check on data it was not found in.
 \end{enumerate}
 \vskip 10pt
 \begin{beamercolorbox}[rounded=true,sep=7pt]{box1}
-\textbf{Homework: start later.} Rerun the out-of-sample test with forecasts from 1980. One number, three sentences.
+\textbf{Homework: start later.} Rerun the out-of-sample test for D/P with forecasts from 1980, and set it against the value spreads. One number, three sentences.
 \end{beamercolorbox}
 \end{frame}
 
@@ -456,14 +592,45 @@ Let next month's excess return be $r = \mu_{t} + \varepsilon$, with the forecast
 \hfill \hyperlink{ct}{\beamerreturnbutton{Back}}
 \end{frame}
 
-\begin{frame}{A3: Data, and what to be careful about}
+\begin{frame}[label=appendix_vs]{A3: The value spread: which price?}
+\begin{itemize}
+\item Ken French's book-to-market divides book equity by market value \emph{last December}. The portfolios form each June, so in June 2026 the price in the ratio is from December 2025.
+\vskip 4pt
+\item Rebuilt at today's price: book over June's price, then rolled forward each month with the leg's own return
+\end{itemize}
+\vskip 2pt
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{last December's price} & \multicolumn{2}{c}{today's price} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+factor & $t$, HAC & $R^{2}$ from 1980 & $t$, HAC & $R^{2}$ from 1980 \\
+\midrule
+HML & 1.2 & 0.6\% & 0.8 & 0.0\% \\
+SMB & 1.3 & 0.4\% & $-0.3$ & $-0.4\%$ \\
+RMW & 2.4 & 0.7\% & 1.6 & 0.3\% \\
+CMA & 3.8 & 1.1\% & 1.3 & \textcolor{red}{$-0.5\%$} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\vskip 2pt
+\begin{itemize}
+\item The gap between the two moves with the factor's return over the past year (correlation about 0.75). A stale price builds in factor momentum, and that is much of what forecasts.
+\end{itemize}
+\hfill \hyperlink{vstable}{\beamerreturnbutton{Back}}
+\end{frame}
+
+\begin{frame}{A4: Data, and what to be careful about}
 \begin{itemize}
 \item \textbf{Market, 1926--2024.} CRSP value-weighted index with and without dividends, which gives the dividend yield. T-bills from Ken French.
-\vskip 8pt
-\item \textbf{The out-of-sample test.} Each month uses only pairs of (D/P, next month's return) that were complete by then. The benchmark is the historical average up to that month.
-\vskip 8pt
-\item \textbf{The strategy} holds $\sigma$ fixed at its pre-1950 value, so all of the timing comes from the forecast. No costs, and it is short a third of the time.
-\vskip 8pt
+\vskip 5pt
+\item \textbf{Value spreads.} Ken French's 2$\times$3 sorts, the ones behind the factors: HML and SMB from 1926, RMW and CMA from 1963. Each leg's book-to-market is the average over its portfolios. None for momentum: French does not publish it.
+\vskip 5pt
+\item \textbf{The out-of-sample tests.} Each month uses only pairs of (signal, next month's return) that were complete by then. The benchmark is the historical average up to that month.
+\vskip 5pt
+\item \textbf{The strategies} hold $\sigma$ fixed at its value before the test starts, so all of the timing comes from the forecast. No costs; the market strategy is short a third of the time.
+\vskip 5pt
 \item \textbf{The 24 signals} are not the only 24 one could try, and the halves were chosen by date, not by looking.
 \end{itemize}
 \end{frame}
