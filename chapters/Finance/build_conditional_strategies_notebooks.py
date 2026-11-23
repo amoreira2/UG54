@@ -351,24 +351,29 @@ print(f"capped at 2: Sharpe {umd_cap2_sharpe:.2f}")
 
 # ═══════════════════════════════════════════════════════════════════ CONDITIONAL STRATEGIES II: TIMING EXPECTED RETURNS
 cs2 = [
-('markdown', """
+('markdown', r"""
 # Conditional Strategies II: Timing Expected Returns
 
 The ideas are in the slides. Here you test the most famous timing signal for the market, the dividend yield: in sample,
-then the honest way, out of sample. Then the same test for four factors, each with its own price signal, the value
-spread. Last, a search over 24 more signals, and how many survive.
+then the honest way, out of sample, and then as a strategy against buy and hold. Then the same three steps for four
+factors, each with its own price signal, the value spread. Then a search over 24 more signals, and how many survive.
+Last, the other market signals from the slides, one at a time.
 
 **The plan**, one section per exercise in the slides
 
 1. The dividend yield, at three horizons
-2. 🎯 Out of sample: your turn
-3. The timing strategy
+2. Out of sample
+3. The timing strategy, against buy and hold
 4. 🎯 Each factor's value spread: your turn
-5. Timing the six factors: 24 tries. Then back to the slides
-6. 🎯 Challenge (homework): one number and three sentences
+5. Timing the six factors: 24 tries
+6. Pick a predictor: any of the signals from the slides. Then back to the slides
+7. 🎯 Challenge (homework): one number and three sentences
+
+> 🧩 **Every section stands alone.** Run the Setup cell once, then jump to any section, in any order. Within a section,
+> run the cells from the top.
 """),
 ('markdown', slides(2, "Conditional Strategies II")),
-('code', """
+('code', r"""
 #@title Setup — run this first
 import numpy as np
 import pandas as pd
@@ -380,72 +385,149 @@ import warnings; warnings.filterwarnings('ignore')
 
 BASE = "https://raw.githubusercontent.com/amoreira2/UG54/refs/heads/main/assets/data"
 
-crsp = pd.read_csv(f"{BASE}/Markettiming_data1.csv", parse_dates=['date'], index_col='date')   # CRSP market, with dividends
+# ── the market: its return, the T-bill rate and the dividend yield, 1926-2024
+crsp  = pd.read_csv(f"{BASE}/Markettiming_data1.csv", parse_dates=['date'], index_col='date')
 crsp.index = crsp.index + pd.offsets.MonthEnd(0)
-rf = pd.read_parquet(f"{BASE}/factors_monthly_1926.parquet")['RF']                              # T-bill rate
-V  = pd.read_parquet(f"{BASE}/value_spreads_monthly_1926.parquet")    # four factors, and the book-to-market of their legs
-ff = pd.read_csv(f"{BASE}/ff_monthly.csv", index_col=0, parse_dates=True)                       # the six factors, 1980-2026
-F  = ff[['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA', 'UMD']].dropna()
+tbill = pd.read_parquet(f"{BASE}/factors_monthly_1926.parquet")[['RF']]
 
-C = crsp.join(rf, how='inner').dropna()
-C['ex'] = C['vwretd'] - C['RF']                             # the market's excess return
-C['dp'] = C['dp'].rolling(12).sum()                         # dividend yield: last 12 months of dividends over today's price
-C['lx'] = np.log1p(C['vwretd']) - np.log1p(C['RF'])         # log excess return: these add up across months
+market = crsp.merge(tbill, on='date').dropna()
+market['ret']          = market['vwretd'] - market['RF']                        # the market's excess return
+market['log_ret']      = np.log1p(market['vwretd']) - np.log1p(market['RF'])    # the same in logs: these add up across months
+market['dp']           = market['dp'].rolling(12).sum()                         # dividend yield: last 12 months of dividends over today's price
+market['next_ret']     = market['ret'].shift(-1)                                # NEXT month's return, on this month's row
+market['next_log_ret'] = market['log_ret'].shift(-1)
+market = market[['dp', 'ret', 'log_ret', 'next_ret', 'next_log_ret']]
 
-sharpe = lambda x: x.mean() / x.std() * np.sqrt(12)
+# ── the factors
+four_factors = pd.read_parquet(f"{BASE}/value_spreads_monthly_1926.parquet")    # HML, SMB, RMW, CMA, and the book-to-market of their legs
+six_factors  = pd.read_csv(f"{BASE}/ff_monthly.csv", parse_dates=['date'], index_col='date')
+six_factors  = six_factors[['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA', 'UMD']].dropna()   # monthly returns, 1980-2026
 
-print(f"market {C.index[0]:%Y-%m} to {C.index[-1]:%Y-%m}; value spreads {V.index[0]:%Y-%m} to {V.index[-1]:%Y-%m}; "
-      f"six factors {F.index[0]:%Y-%m} to {F.index[-1]:%Y-%m}")
+# ── the other market signals from the slides, for section 6: Goyal and Welch's data, updated to 2025, and VIX
+goyal = pd.read_csv(f"{BASE}/goyal_welch_monthly_2025.csv", parse_dates=['date'], index_col='date')
+vix   = pd.read_csv(f"{BASE}/vix_monthly_fred.csv", parse_dates=['date'], index_col='date')   # last close of each month
+
+price_level       = (1 + goyal['infl']).cumprod()                               # consumer prices, from monthly inflation
+real_earnings_10y = (goyal['E12'] / price_level).rolling(120).mean()            # ten years of S&P 500 earnings, in constant dollars
+
+goyal['E/P']               = goyal['E12'] / goyal['Index']                      # S&P 500 earnings over the last 12 months, over price
+goyal['1/CAPE']            = real_earnings_10y / (goyal['Index'] / price_level) # Shiller's CAPE, turned into a yield like D/P
+goyal['book-to-market']    = goyal['b/m']                                       # Dow Jones Industrials: book value over market value
+goyal['short rate']        = goyal['tbl']                                       # 3-month T-bill yield
+goyal['term spread']       = goyal['lty'] - goyal['tbl']                        # long-term government bond yield minus the T-bill
+goyal['default spread']    = goyal['BAA'] - goyal['AAA']                        # Baa minus Aaa corporate bond yields
+goyal['realized variance'] = goyal['svar']                                      # sum of squared daily S&P 500 returns in the month
+goyal['net issuance']      = goyal['ntis']                                      # net equity issued by NYSE firms over 12 months, over their value
+goyal = goyal[['E/P', '1/CAPE', 'book-to-market', 'short rate', 'term spread', 'default spread',
+               'realized variance', 'net issuance']]
+
+predictors = market[['dp']].rename(columns={'dp': 'D/P'})                       # one row per month of the market
+predictors = predictors.merge(goyal, on='date', how='left')
+predictors = predictors.merge(vix.rename(columns={'vix': 'VIX'}), on='date', how='left')
+predictors = predictors.loc['1927':]
+
+
+def sharpe(ret):
+    # Sharpe ratio a year, from monthly excess returns
+    return ret.mean() / ret.std() * np.sqrt(12)
+
+
+def out_of_sample(data, signal, start):
+    # The loop of section 2, for any signal. `data` has the signal and `next_ret`, next month's return, on the same row.
+    # Each month from `start`: fit next month's return on the signal using the past only, then forecast.
+    data = data[[signal, 'next_ret']].dropna()
+    rows = []
+    for t in data.loc[start:].index:
+        past = data.loc[:t].iloc[:-1]                         # the months whose next return was already known at t
+        fit  = sm.OLS(past['next_ret'], sm.add_constant(past[signal])).fit()
+        rows.append({'date':     t,
+                     'ret':      data.loc[t, 'next_ret'],                                          # what happened next month
+                     'forecast': fit.params['const'] + fit.params[signal] * data.loc[t, signal],   # what the signal said
+                     'average':  past['next_ret'].mean()})                                         # what the historical average said
+    return pd.DataFrame(rows).set_index('date')
+
+
+def r2_out_of_sample(forecasts):
+    # 1 - (squared errors of the signal's forecast) / (squared errors of the historical average)
+    error_signal  = forecasts['ret'] - forecasts['forecast']
+    error_average = forecasts['ret'] - forecasts['average']
+    return 1 - (error_signal ** 2).sum() / (error_average ** 2).sum()
+
+
+print(f"market {market.index[0]:%Y-%m} to {market.index[-1]:%Y-%m}; four factors {four_factors.index[0]:%Y-%m} to "
+      f"{four_factors.index[-1]:%Y-%m}; six factors {six_factors.index[0]:%Y-%m} to {six_factors.index[-1]:%Y-%m}; "
+      f"{predictors.shape[1]} market signals to {predictors.index[-1]:%Y-%m}")
 """),
-('markdown', """
+('markdown', r"""
+**What Setup gives you.** Every table has one row per month, and every return is over T-bills.
+
+| name | what is in it |
+|---|---|
+| `market` | `dp`: the dividend yield. `ret`: the market's return this month. `next_ret`: the market's return **next** month, on this month's row. `log_ret`, `next_log_ret`: the same two in logs |
+| `four_factors` | the returns of `HML`, `SMB`, `RMW` and `CMA`, and the book-to-market of each one's long and short legs |
+| `six_factors` | the returns of the six factors, 1980–2026 |
+| `predictors` | ten market signals, one column each, on the same months as `market` |
+| `out_of_sample(data, signal, start)` | the loop of section 2: one forecast a month, each fitted on the past only |
+| `r2_out_of_sample(forecasts)` | the out-of-sample $R^2$ of those forecasts |
+| `sharpe(ret)` | the Sharpe ratio a year of a monthly return |
+
+A signal known this month has to forecast the return of next month. So every regression below puts this month's signal
+and `next_ret` on the same row.
+"""),
+('markdown', r"""
 ---
 
 ## 1. The dividend yield, at three horizons
 
+> 🧩 **Stands alone.** Needs only the Setup cell: you can start here.
+
 When prices are low relative to dividends, either dividends are about to fall, or future returns are high. First compare
 the dividend yield with the return over the *next* five years.
 """),
-('code', """
-next5 = C['lx'].rolling(60).sum().shift(-60) / 5            # return over the next 60 months, a year
+('code', r"""
+next_5_years = market['log_ret'].rolling(60).sum().shift(-60) / 5      # the return over the next 60 months, a year
 
-ax = C['dp'].plot(label='dividend yield', legend=True)
-next5.plot(ax=ax, secondary_y=True, label='return over the next five years, a year', legend=True)
+ax = market['dp'].plot(label='dividend yield', legend=True)
+next_5_years.plot(ax=ax, secondary_y=True, label='return over the next five years, a year', legend=True)
 plt.show()
 
-print(f"correlation: {C['dp'].corr(next5):.2f}")
+print(f"correlation: {market['dp'].corr(next_5_years):.2f}")
 """),
-('markdown', """
+('markdown', r"""
 Now the forecasting regression,
 
-$$r_{t \\to t+h} = a + b \\cdot \\text{D/P}_t + u,$$
+$$r_{t \to t+h} = a + b \cdot \text{D/P}_t + u,$$
 
-run for the next month, the next year and the next five years. Two sets of $t$-statistics: the naive ones, and HAC ones
+run for the next month, the next year and the next five years. Two sets of $t$-statistics: the usual ones, and HAC ones
 that allow for the overlap.
 """),
-('code', """
-rows = {}
-for h in [1, 12, 60]:
-    y = C['lx'].rolling(h).sum().shift(-h) * 12 / h        # return over the next h months, a year
-    data = pd.DataFrame({'y': y, 'dp': C['dp']}).loc['1927':].dropna()
+('code', r"""
+table = {}
+for months in [1, 12, 60]:
+    data = market[['dp']].copy()
+    data['next_ret'] = market['log_ret'].rolling(months).sum().shift(-months) * 12 / months   # the return over the next `months` months, a year
+    data = data.dropna()
+
     X = sm.add_constant(data['dp'])
+    usual = sm.OLS(data['next_ret'], X).fit()                                                 # as if every month were new
+    hac   = sm.OLS(data['next_ret'], X).fit(cov_type='HAC', cov_kwds={'maxlags': months})     # allows for the overlap
 
-    naive = sm.OLS(data['y'], X).fit()                                                  # as if every month were new
-    hac   = sm.OLS(data['y'], X).fit(cov_type='HAC', cov_kwds={'maxlags': max(h, 1)})  # allows for the overlap
-
-    rows[f"{h} months"] = {'b': naive.params['dp'], 'naive t': naive.tvalues['dp'], 'HAC t': hac.tvalues['dp'],
-                           'R2': naive.rsquared, 'observations': len(data), 'do not overlap': len(data) // h}
-print(pd.DataFrame(rows).T.round(3).to_string())
+    table[f"next {months} months"] = {'b': usual.params['dp'], 'usual t': usual.tvalues['dp'], 'HAC t': hac.tvalues['dp'],
+                                      'R2': usual.rsquared, 'observations': len(data), 'do not overlap': len(data) // months}
+print(pd.DataFrame.from_dict(table, orient='index').round(3).to_string())
 """),
-('markdown', """
+('markdown', r"""
 - When was the dividend yield highest? What came next?
-- The $R^2$ and the naive $t$ both grow with the horizon. Should you believe the five-year regression most?
+- The $R^2$ and the usual $t$ both grow with the horizon. Should you believe the five-year regression most?
 - Two consecutive five-year returns share 59 of their 60 months. How many truly separate five-year periods are there?
   Which $t$-statistic would you report?
 """),
-('markdown', """
+('markdown', r"""
 ---
 
-## 2. 🎯 Out of sample
+## 2. Out of sample
+
+> 🧩 **Stands alone.** Needs only the Setup cell: you can start here.
 
 The honest test: stand in each month $t$, using only what you knew then.
 
@@ -455,217 +537,327 @@ The honest test: stand in each month $t$, using only what you knew then.
 
 The loop below does this every month from 1950. Read it before you run it.
 """),
-('code', """
-y = C['ex'].shift(-1)                      # next month's excess return, lined up with this month's D/P
+('code', r"""
+data = market[['dp', 'next_ret']].dropna()                # this month's D/P and next month's return, on the same row
+
 rows = []
-for t in C.loc['1950':].index[:-1]:
-    known = pd.DataFrame({'y': y, 'dp': C['dp']}).loc['1927':t].iloc[:-1].dropna()   # pairs whose return is known at t
-    b, a = np.polyfit(known['dp'], known['y'], 1)          # slope and intercept, from the past only
-    rows.append({'date': t,
-                 'r':        y.loc[t],                     # what happened next month
-                 'forecast': a + b * C['dp'].loc[t],       # what D/P said
-                 'average':  known['y'].mean()})           # what the historical average said
-P = pd.DataFrame(rows).set_index('date')
-P.head()
+for t in data.loc['1950':].index:
+    past = data.loc[:t].iloc[:-1]                         # the months whose next return was already known at t
+    fit  = sm.OLS(past['next_ret'], sm.add_constant(past['dp'])).fit()
+    rows.append({'date':     t,
+                 'ret':      data.loc[t, 'next_ret'],                                       # what happened next month
+                 'forecast': fit.params['const'] + fit.params['dp'] * data.loc[t, 'dp'],    # what D/P said
+                 'average':  past['next_ret'].mean()})                                      # what the historical average said
+forecasts = pd.DataFrame(rows).set_index('date')
+forecasts.head()
 """),
-('markdown', """
-**Your turn.** The out-of-sample $R^2$ compares the two forecasts' squared errors:
+('markdown', r"""
+The out-of-sample $R^2$ compares the squared errors of the two forecasts:
 
-$$R^2_{\\text{OOS}} = 1 - \\frac{\\sum (r - \\text{forecast})^2}{\\sum (r - \\text{average})^2}$$
+$$R^2_{\text{OOS}} = 1 - \frac{\sum (r - \text{forecast})^2}{\sum (r - \text{average})^2}$$
 
-Positive: D/P beat the historical average. Negative: you would have done better without it. Call it `r2_oos`.
+Positive: D/P beat the historical average. Negative: you would have done better without it.
 """),
-('code', """
-# === YOUR TURN ===
+('code', r"""
+error_dp      = forecasts['ret'] - forecasts['forecast']      # how far off D/P's forecast was
+error_average = forecasts['ret'] - forecasts['average']       # how far off the historical average was
 
-r2_oos = ____
+r2_oos = 1 - (error_dp ** 2).sum() / (error_average ** 2).sum()
+print(f"out-of-sample R2, 1950-2024: {r2_oos:.2%}")
+
+for first, last in [('1950', '1979'), ('1980', '1999'), ('2000', '2024')]:
+    r2_period = 1 - (error_dp.loc[first:last] ** 2).sum() / (error_average.loc[first:last] ** 2).sum()
+    print(f"   {first}-{last}: {r2_period:.2%}")
 """),
-('code', """
-#@title 🔒 Check: out of sample
-r2 = lambda Q: 1 - ((Q['r'] - Q['forecast']) ** 2).sum() / ((Q['r'] - Q['average']) ** 2).sum()
-
-try:
-    print(f"yours: {r2_oos:.2%}")
-except Exception as e:
-    print("yours: not built yet:", type(e).__name__)
-
-print(f"out of sample R2, 1950-2024: {r2(P):.2%}")
-for a, b in [('1950', '1979'), ('1980', '1999'), ('2000', '2024')]:
-    print(f"   {a}-{b}: {r2(P.loc[a:b]):.2%}")
-
-gain = ((P['r'] - P['average']) ** 2 - (P['r'] - P['forecast']) ** 2).cumsum()   # rising when D/P forecasts better
-gain.plot(title='cumulative gain from D/P over the historical average'); plt.axhline(0, color='k', lw=0.5); plt.show()
-"""),
-('markdown', """
-- When did D/P stop working? Look at the plot.
+('markdown', r"""
+- In which of the three periods did D/P beat the historical average?
 - In sample, D/P explained 0.3% of next month's return. Out of sample it explains less than nothing. How can both be true?
+- Why is the benchmark the historical average, and not a forecast of zero?
+
+Setup has these two steps as functions, `out_of_sample()` and `r2_out_of_sample()`. They are the same lines, and the
+sections below use them.
 """),
-('markdown', """
+('markdown', r"""
 ---
 
-## 3. The timing strategy
+## 3. The timing strategy, against buy and hold
 
-The formula from *Capital Allocation I* with a forecast in it: weight $= \\text{forecast} / (\\gamma \\sigma^{2})$. We hold
-$\\sigma$ fixed at its value before 1950, so all the timing comes from the forecast.
+> 🧩 **Stands alone.** Needs only the Setup cell: you can start here.
+
+The formula from *Capital Allocation I* with a forecast in it: weight $= \text{forecast} / (\gamma \sigma^{2})$. We hold
+$\sigma$ fixed at its value before 1950, so all the timing comes from the forecast.
+
+What do you compare it with? Buy and hold **with the same average weight**. Then the two strategies hold the same amount
+of the market on average, and the only difference is *when*.
 """),
-('code', """
-sigma2 = C['ex'].loc[:'1949'].var()        # the market's monthly variance before 1950, held fixed
-gamma  = 3
-weight = P['forecast'] / (gamma * sigma2)  # the weight on the market each month: negative means short
-timed  = weight * P['r']                   # this month's excess return on that weight
+('code', r"""
+forecasts = out_of_sample(market, 'dp', '1950')           # section 2's forecasts
 
-print(f"timing: Sharpe {sharpe(timed):.2f}    buy and hold: Sharpe {sharpe(P['r']):.2f}")
-print(f"average weight {weight.mean():.2f}, short in {np.mean(weight < 0):.0%} of months\\n")
-for a, b in [('1950', '1979'), ('1980', '1999'), ('2000', '2024')]:
-    print(f"{a}-{b}: timing {sharpe(timed.loc[a:b]):.2f}, buy and hold {sharpe(P['r'].loc[a:b]):.2f}")
+gamma    = 3
+variance = market.loc[:'1949', 'ret'].var()               # the market's monthly variance before 1950, held fixed
 
-weight.plot(title='weight on the market'); plt.axhline(0, color='k', lw=0.5); plt.show()
+forecasts['weight']       = forecasts['forecast'] / (gamma * variance)       # the weight on the market: negative means short
+forecasts['timing']       = forecasts['weight'] * forecasts['ret']           # next month's return on that weight
+forecasts['buy and hold'] = forecasts['weight'].mean() * forecasts['ret']    # the same average weight, never changed
+
+print(f"Sharpe ratio:      timing {sharpe(forecasts['timing']):.2f}, buy and hold {sharpe(forecasts['buy and hold']):.2f}")
+print(f"volatility a year: timing {forecasts['timing'].std() * np.sqrt(12):.1%}, buy and hold {forecasts['buy and hold'].std() * np.sqrt(12):.1%}")
+print(f"average weight {forecasts['weight'].mean():.2f}, short in {np.mean(forecasts['weight'] < 0):.0%} of months\n")
+for first, last in [('1950', '1979'), ('1980', '1999'), ('2000', '2024')]:
+    period = forecasts.loc[first:last]
+    print(f"{first}-{last}: timing {sharpe(period['timing']):.2f}, buy and hold {sharpe(period['buy and hold']):.2f}")
+
+(1 + forecasts[['timing', 'buy and hold']]).cumprod().plot(logy=True, title='cumulative return: timing on D/P, and buy and hold with the same average weight')
+plt.show()
+forecasts['weight'].plot(title='weight on the market'); plt.axhline(0, color='k', lw=0.5); plt.show()
 """),
-('markdown', """
+('markdown', r"""
+- When does timing lose ground to buy and hold? What was D/P doing then?
+- Timing ends above buy and hold, yet its Sharpe ratio is lower. How can both be true? Look at the two volatilities.
+- In which period did timing win, and in which did it lose badly?
 - Would changing `gamma` change the Sharpe ratio? Try it.
-- In which period did timing win, and in which did it lose badly? Why then?
+- Why compare with buy and hold at the same average weight, and not with one dollar in the market?
 """),
-('markdown', """
+('markdown', r"""
 ---
 
 ## 4. 🎯 Each factor's value spread
 
+> 🧩 **Stands alone.** Needs only the Setup cell: you can start here.
+
 D/P is the market's price against its fundamentals. A long-short factor has one too: how cheap the stocks it buys are
 against the stocks it sells,
 
-$$\\text{VS}_t = \\log \\frac{B}{M}\\Big|_{\\text{long},\\,t} - \\log \\frac{B}{M}\\Big|_{\\text{short},\\,t}.$$
+$$\text{VS}_t = \log \frac{B}{M}\Big|_{\text{long},\,t} - \log \frac{B}{M}\Big|_{\text{short},\,t}.$$
 
-`V` has four factors from Ken French's 2×3 sorts: each one's monthly return (`HML`, `SMB`, `RMW`, `CMA`) and the
-book-to-market of its long and short legs (`HML_bm_long`, `HML_bm_short`, and so on). HML and SMB start in 1926, RMW and
-CMA in 1963. Book is from the last fiscal year; the price is from last December.
+`four_factors` has four factors from Ken French's 2×3 sorts: each one's monthly return (`HML`, `SMB`, `RMW`, `CMA`) and
+the book-to-market of its long and short legs (`HML_bm_long`, `HML_bm_short`, and so on). HML and SMB start in 1926, RMW
+and CMA in 1963. Book is from the last fiscal year; the price is from last December.
 
 **Your turn.** Build HML's value spread and call it `vs_hml`. `np.log` takes logs.
 """),
-('code', """
+('code', r"""
 # === YOUR TURN ===
 
 vs_hml = ____
 """),
-('code', """
+('code', r"""
 #@title 🔒 Check: HML's value spread
-vs_ref = np.log(V['HML_bm_long']) - np.log(V['HML_bm_short'])
+hml_spread = np.log(four_factors['HML_bm_long']) - np.log(four_factors['HML_bm_short'])
 
 try:
-    print("yours matches" if np.allclose(vs_hml, vs_ref) else "yours differs: compare with the plot below", "\\n")
+    print("yours matches" if np.allclose(vs_hml, hml_spread) else "yours differs: compare with the plot below", "\n")
 except Exception as e:
-    print("yours: not built yet:", type(e).__name__, "\\n")
+    print("yours: not built yet:", type(e).__name__, "\n")
 
-next5_hml = V['HML'].rolling(60).sum().shift(-60) / 5       # HML's return over the next five years, a year
-ax = vs_ref.plot(label="HML's value spread", legend=True)
-next5_hml.plot(ax=ax, secondary_y=True, label='HML over the next five years, a year', legend=True)
+hml_next_5_years = four_factors['HML'].rolling(60).sum().shift(-60) / 5     # HML's return over the next five years, a year
+ax = hml_spread.plot(label="HML's value spread", legend=True)
+hml_next_5_years.plot(ax=ax, secondary_y=True, label='HML over the next five years, a year', legend=True)
 plt.show()
 
-print(f"median {vs_ref.median():.2f}, now {vs_ref.iloc[-1]:.2f} ({vs_ref.index[-1]:%Y-%m}); "
-      f"correlation with the next five years: {vs_ref.corr(next5_hml):.2f}")
+print(f"median {hml_spread.median():.2f}, now {hml_spread.iloc[-1]:.2f} ({hml_spread.index[-1]:%Y-%m}); "
+      f"correlation with the next five years: {hml_spread.corr(hml_next_5_years):.2f}")
 """),
-('markdown', """
+('markdown', r"""
 Now sections 1 to 3 again, in a loop over the four factors: the in-sample regression on next month's return, the
-out-of-sample loop with forecasts from 1980, and the timing strategy with $\\sigma$ fixed at its value before 1980.
+out-of-sample forecasts from 1980, and the timing strategy against buy and hold with the same average weight. The
+variance is held at its value before 1980.
 """),
-('code', """
-rows = {}
-for f in ['HML', 'SMB', 'RMW', 'CMA']:
-    vs = (np.log(V[f'{f}_bm_long']) - np.log(V[f'{f}_bm_short'])).dropna()   # this factor's value spread
-    ret_next = V[f].shift(-1)                              # next month's return, lined up with this month's spread
-    data = pd.DataFrame({'y': ret_next, 'vs': vs}).dropna()
+('code', r"""
+table = {}
+fig, axes = plt.subplots(2, 2, figsize=(13, 7))
+for factor, ax in zip(['HML', 'SMB', 'RMW', 'CMA'], axes.flat):
+    data = four_factors[[factor]].copy()
+    data['spread']   = np.log(four_factors[f'{factor}_bm_long']) - np.log(four_factors[f'{factor}_bm_short'])   # this factor's value spread
+    data['next_ret'] = data[factor].shift(-1)                 # next month's return, on this month's row
+    data = data.dropna()
 
     # in sample, as in section 1
-    fit = sm.OLS(data['y'], sm.add_constant(data['vs'])).fit(cov_type='HAC', cov_kwds={'maxlags': 1})
+    fit = sm.OLS(data['next_ret'], sm.add_constant(data['spread'])).fit(cov_type='HAC', cov_kwds={'maxlags': 1})
 
     # out of sample from 1980, as in section 2
-    oos = []
-    for t in vs.loc['1980':].index[:-1]:
-        known = data.loc[:t].iloc[:-1]                     # pairs whose return is known at t
-        b, a = np.polyfit(known['vs'], known['y'], 1)
-        oos.append({'date': t, 'r': ret_next.loc[t], 'forecast': a + b * vs.loc[t], 'average': known['y'].mean()})
-    Q = pd.DataFrame(oos).set_index('date')
+    forecasts = out_of_sample(data, 'spread', '1980')
 
-    # the timing strategy, as in section 3
-    weight = Q['forecast'] / (3 * V[f].loc[:'1979'].var())
-    timed  = weight * Q['r']
+    # the timing strategy against buy and hold, as in section 3
+    variance = four_factors.loc[:'1979', factor].var()
+    forecasts['weight']       = forecasts['forecast'] / (3 * variance)
+    forecasts['timing']       = forecasts['weight'] * forecasts['ret']
+    forecasts['buy and hold'] = forecasts['weight'].mean() * forecasts['ret']
+    (1 + forecasts[['timing', 'buy and hold']]).cumprod().plot(ax=ax, logy=True, title=factor)
 
-    rows[f] = {'from': vs.index[0].year, 'HAC t': fit.tvalues['vs'], 'R2 in sample': fit.rsquared,
-               'R2 out of sample': 1 - ((Q['r'] - Q['forecast']) ** 2).sum() / ((Q['r'] - Q['average']) ** 2).sum(),
-               'Sharpe, buy and hold': sharpe(Q['r']), 'Sharpe, timed': sharpe(timed), 'months short': np.mean(weight < 0)}
+    table[factor] = {'from': data.index[0].year, 'HAC t': fit.tvalues['spread'], 'R2 in sample': fit.rsquared,
+                     'R2 out of sample': r2_out_of_sample(forecasts),
+                     'Sharpe, timing': sharpe(forecasts['timing']), 'Sharpe, buy and hold': sharpe(forecasts['buy and hold']),
+                     'average weight': forecasts['weight'].mean(), 'months short': np.mean(forecasts['weight'] < 0)}
+plt.suptitle('cumulative return: timing on the value spread, and buy and hold with the same average weight')
+plt.tight_layout(); plt.show()
 
-print(pd.DataFrame(rows).T.round(3).to_string())
+print(pd.DataFrame.from_dict(table, orient='index').round(3).to_string())
 """),
-('markdown', """
+('markdown', r"""
 - Which factors beat the historical average out of sample? Set them against D/P's $R^2$ in section 2.
-- Where is the gain largest? How often is that strategy short, and would you run it?
+- Where does timing pull ahead of buy and hold, and when? How often is that strategy short, and would you run it?
 - The price in the book-to-market is last December's, not today's. What has the factor done since December, and why
   might that help the forecast?
 """),
-('markdown', """
+('markdown', r"""
 ---
 
 ## 5. Timing the six factors: 24 tries
 
+> 🧩 **Stands alone.** Needs only the Setup cell: you can start here.
+
 Four simple signals for each factor: its own return last month, over the last 12 months, three to five years ago, and its
 own volatility. Run the forecasting regression on 1980–2002 and again on 2003–2026. A real signal should work in both.
 """),
-('code', """
-d   = pd.read_parquet(f"{BASE}/ff6_daily_1963.parquet")                 # daily factors, for each factor's volatility
-own_vol = d[F.columns].groupby(d.index + pd.offsets.MonthEnd(0)).apply(lambda x: np.sqrt(((x - x.mean()) ** 2).sum()))  # each month's volatility
+('code', r"""
+daily = pd.read_parquet(f"{BASE}/ff6_daily_1963.parquet")[six_factors.columns]   # the six factors, daily
+month = daily.index + pd.offsets.MonthEnd(0)                                     # the month each day belongs to
+volatility = daily.groupby(month).apply(lambda days: np.sqrt(((days - days.mean()) ** 2).sum()))   # each factor's volatility, month by month
+volatility.index.name = 'date'
 
 rows = []
-for f in F.columns:
-    r = F[f]
-    signals = {'last month':     r,
-               'last 12 months': r.rolling(12).sum(),
-               '3-5 years ago':  r.shift(12).rolling(48).sum(),
-               'own volatility': own_vol[f].reindex(r.index)}
-    for name, s in signals.items():
-        data = pd.DataFrame({'y': r.shift(-1), 'x': s}).dropna()       # next month's return on this month's signal
-        row = {'factor': f, 'signal': name}
-        for half, sl in [('t, 1980-2002', slice('1980', '2002')), ('t, 2003-2026', slice('2003', '2026'))]:
-            q = data.loc[sl]
-            row[half] = sm.OLS(q['y'], sm.add_constant(q['x'])).fit().tvalues['x']
-        rows.append(row)
-T = pd.DataFrame(rows)
-print(T.round(2).sort_values('t, 1980-2002', ascending=False).to_string(index=False))
+for factor in six_factors.columns:
+    data = six_factors[[factor]].rename(columns={factor: 'ret'})
+    data = data.merge(volatility[[factor]].rename(columns={factor: 'own volatility'}), on='date', how='left')
+    data['last month']     = data['ret']
+    data['last 12 months'] = data['ret'].rolling(12).sum()
+    data['3-5 years ago']  = data['ret'].shift(12).rolling(48).sum()
+    data['next_ret']       = data['ret'].shift(-1)            # next month's return, on this month's row
 
-plt.scatter(T['t, 1980-2002'], T['t, 2003-2026'])
+    for signal in ['last month', 'last 12 months', '3-5 years ago', 'own volatility']:
+        row = {'factor': factor, 'signal': signal}
+        for half, first, last in [('t, 1980-2002', '1980', '2002'), ('t, 2003-2026', '2003', '2026')]:
+            period = data.loc[first:last, [signal, 'next_ret']].dropna()
+            row[half] = sm.OLS(period['next_ret'], sm.add_constant(period[signal])).fit().tvalues[signal]
+        rows.append(row)
+tstats = pd.DataFrame(rows)
+print(tstats.round(2).sort_values('t, 1980-2002', ascending=False).to_string(index=False))
+
+plt.scatter(tstats['t, 1980-2002'], tstats['t, 2003-2026'])
 plt.axhline(0, color='k', lw=0.5); plt.axvline(0, color='k', lw=0.5)
 plt.xlabel('t, 1980-2002'); plt.ylabel('t, 2003-2026'); plt.show()
 """),
-('markdown', """
+('markdown', r"""
 - How many of the 24 have $|t| > 2$ in the first half? How many would you expect by luck alone?
 - Take the five best from the first half. How many still work in the second?
 - Which signal works for several factors in both halves? It has a name: factor momentum.
 """),
-('markdown', """
+('markdown', r"""
+---
+
+## 6. Pick a predictor
+
+> 🧩 **Stands alone.** Needs only the Setup cell: you can start here.
+
+The slides list eleven signals people use to forecast the market. `predictors` has ten of them, one column each, on the
+same months as `market`. Forward P/E is missing: it needs analysts' forecasts, which we do not have.
+
+| column | what it is | from |
+|---|---|---|
+| `D/P` | dividends over the last 12 months, over price | 1927 |
+| `E/P` | S&P 500 earnings over the last 12 months, over price | 1927 |
+| `1/CAPE` | ten years of real earnings over the real price: Shiller's CAPE, as a yield | 1927 |
+| `book-to-market` | book value over market value, Dow Jones Industrials | 1927 |
+| `short rate` | 3-month T-bill yield | 1927 |
+| `term spread` | long-term government bond yield minus the T-bill | 1927 |
+| `default spread` | Baa minus Aaa corporate bond yields | 1927 |
+| `realized variance` | sum of squared daily S&P 500 returns in the month | 1927 |
+| `net issuance` | net equity issued over the last 12 months, over market value | 1927 |
+| `VIX` | option-implied volatility of the S&P 500 | 1990 |
+
+The valuation ratios are all yields, like D/P: a high value means a cheap market.
+
+Set `PREDICTOR` to a column name and run the cell. It does sections 1 to 3 on that signal: the in-sample regression, the
+out-of-sample forecasts from `START`, and the timing strategy against buy and hold.
+"""),
+('code', r"""
+PREDICTOR = 'E/P'      # one of: 'D/P', 'E/P', '1/CAPE', 'book-to-market', 'short rate', 'term spread', 'default spread',
+                       #         'realized variance', 'net issuance', 'VIX'
+START     = '1950'     # the first month to forecast
+
+data  = predictors[[PREDICTOR]].merge(market[['next_ret', 'next_log_ret']], on='date').dropna()   # this month's signal, next month's return
+start = max(pd.Timestamp(START), data.index[0] + pd.DateOffset(years=10))      # at least ten years of data before the first forecast
+
+# in sample, as in section 1
+fit = sm.OLS(data['next_log_ret'], sm.add_constant(data[PREDICTOR])).fit(cov_type='HAC', cov_kwds={'maxlags': 1})
+
+# out of sample, as in section 2
+forecasts = out_of_sample(data, PREDICTOR, start)
+
+# the timing strategy against buy and hold, as in section 3, with the variance held at its value before the first forecast
+variance = market.loc[market.index < start, 'ret'].var()
+forecasts['weight']       = forecasts['forecast'] / (3 * variance)
+forecasts['timing']       = forecasts['weight'] * forecasts['ret']
+forecasts['buy and hold'] = forecasts['weight'].mean() * forecasts['ret']
+
+print(f"{PREDICTOR}, {data.index[0]:%Y-%m} to {data.index[-1]:%Y-%m}")
+print(f"in sample:     b {fit.params[PREDICTOR]:.3f}, HAC t {fit.tvalues[PREDICTOR]:.2f}, R2 {fit.rsquared:.2%}")
+print(f"out of sample: R2 {r2_out_of_sample(forecasts):.2%}, with forecasts from {start:%Y-%m}")
+print(f"Sharpe ratio:  timing {sharpe(forecasts['timing']):.2f}, buy and hold {sharpe(forecasts['buy and hold']):.2f}; "
+      f"average weight {forecasts['weight'].mean():.2f}, short in {np.mean(forecasts['weight'] < 0):.0%} of months")
+
+fig, axes = plt.subplots(1, 2, figsize=(13, 3.6))
+data[PREDICTOR].plot(ax=axes[0], title=PREDICTOR)
+(1 + forecasts[['timing', 'buy and hold']]).cumprod().plot(ax=axes[1], logy=True, title='cumulative return: timing, and buy and hold with the same average weight')
+plt.show()
+"""),
+('markdown', r"""
+- Try `E/P`, the strongest in sample, then `short rate`. Which beats the historical average out of sample?
+- Does it beat buy and hold: on the plot, and on the Sharpe ratio? If the two disagree, which do you believe?
+- Try `VIX`. Its forecasts start in 2000, after ten years of data. Is that enough to estimate a slope?
+- Pick a signal and set `START = '1980'`. Does the verdict change?
+- Every one of these signals was published because it forecast well in some sample. Why might that make it look
+  better in sample than it will do from here on?
+
+The cell below runs the same three steps on all ten at once: the table in the slides.
+"""),
+('code', r"""
+#@title All ten at once: the table in the slides
+table = {}
+for name in predictors.columns:
+    data  = predictors[[name]].merge(market[['next_ret', 'next_log_ret']], on='date').dropna()
+    start = max(pd.Timestamp('1950'), data.index[0] + pd.DateOffset(years=10))
+
+    fit       = sm.OLS(data['next_log_ret'], sm.add_constant(data[name])).fit(cov_type='HAC', cov_kwds={'maxlags': 1})
+    forecasts = out_of_sample(data, name, start)
+    forecasts['timing'] = forecasts['forecast'] / (3 * market.loc[:'1949', 'ret'].var()) * forecasts['ret']
+
+    table[name] = {'from': data.index[0].year, 'HAC t': fit.tvalues[name], 'forecasts from': start.year,
+                   'R2 out of sample': r2_out_of_sample(forecasts), 'R2, 2000-2024': r2_out_of_sample(forecasts.loc['2000':]),
+                   'Sharpe, timing': sharpe(forecasts['timing']), 'Sharpe, buy and hold': sharpe(forecasts['ret'])}
+
+print(pd.DataFrame.from_dict(table, orient='index').round(4).to_string())
+"""),
+('markdown', r"""
 ---
 
 ## ⏸ Back to the slides
 
 For the takeaways. The challenge below is homework.
 """),
-('markdown', """
+('markdown', r'''
 ---
 
 ## 🎯 Challenge: start later
 
+> 🧩 **Stands alone.** Needs only the Setup cell.
+
 *Homework — due before the next class. It should take ten minutes.*
 
 Section 2 started forecasting in 1950. Suppose you had only started in **1980**, the year the value spreads in section 4
-start. Rerun the loop from section 2 with `C.loc['1980':]` instead of `C.loc['1950':]`, and everything else the same.
-Report the out-of-sample $R^2$.
+start. Redo section 2 with forecasts from 1980 and everything else the same: change `'1950'` to `'1980'` in the loop, or
+use `out_of_sample()` and `r2_out_of_sample()` from Setup. Report the out-of-sample $R^2$.
 
 Then, in at most three sentences: would you trade D/P on this evidence? Set it against the value spreads in section 4.
 
 > **📌 Required variable names:**
 > ```python
 > oos_r2_1980 = ____   # out-of-sample R2 with forecasts from 1980, a decimal (-0.01 means -1%)
-> MEMO = \"\"\"...\"\"\" # at most three sentences
+> MEMO = """...""" # at most three sentences
 > ```
-"""),
-('code', """
+'''),
+('code', r"""
 # Your work here
 
 
@@ -674,7 +866,7 @@ oos_r2_1980 = ____
 print(f"out of sample R2 from 1980: {oos_r2_1980:.2%}")
 """),
 ('code', MEMO_CELL),
-('markdown', """
+('markdown', r"""
 ---
 
 ## 📤 Submission
