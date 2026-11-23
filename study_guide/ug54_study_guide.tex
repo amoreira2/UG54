@@ -1,0 +1,2232 @@
+% UG54 study guide: the conceptual core, The Panel and Portfolio Mathematics through Conditional Strategies II.
+% Compile with pdflatex (twice, for the references).
+% To hand out the exercises without answers, change \solutionstrue to \solutionsfalse below.
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+
+\newif\ifsolutions
+\solutionstrue          % \solutionsfalse hides the Solutions section
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlist{itemsep=2pt,topsep=3pt,leftmargin=1.4em}
+\pagestyle{fancy}\fancyhf{}
+\lhead{\small UG54 Data-Driven Investing}\rhead{\small Study guide: the conceptual core}
+\cfoot{\small\thepage}
+
+% the formula box
+\newtcolorbox{keybox}[1][Formulas]{colback=gray!7,colframe=gray!55,boxrule=0.4pt,arc=2pt,
+  left=6pt,right=6pt,top=3pt,bottom=3pt,title={#1},fonttitle=\bfseries\small,coltitle=black,colbacktitle=gray!22}
+
+% exercises, numbered by section; \sol{label} starts the matching solution
+\newcounter{ex}[section]
+\renewcommand{\theex}{\thesection.\arabic{ex}}
+\newenvironment{ex}[1][calculation]{\refstepcounter{ex}\par\medskip\textbf{\theex}\ \ {\small\textsc{[#1]}}\ \ }{\par}
+\newcommand{\sol}[1]{\par\smallskip\textbf{\ref{#1}}\ \ }
+\newcommand{\tfd}{\emph{True, False or Depends?}\ }
+\newcommand{\head}[1]{\par\medskip\textbf{#1}\par}
+\newcommand{\re}{r^{e}}
+\newcommand{\SR}{\mathit{SR}}
+\newcommand{\AR}{\mathit{AR}}
+\newcommand{\IR}{\mathit{IR}}
+\newcommand{\RV}{\mathit{RV}}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries UG54 Data-Driven Investing with Python}\\[4pt]
+{\Large Study guide: the conceptual core}\\[4pt]
+{\normalsize From \emph{The Panel and Portfolio Mathematics} to \emph{Conditional Strategies II}}\\[2pt]
+{\small Prof.\ Alan Moreira \quad Fall 2026}
+\end{center}
+
+\head{What this is}
+The course has two halves that run together: building things in Python with an AI, and the ideas that tell you what to
+build and whether to believe the result. This guide covers the second half only: the formulas, the calculations and
+the arguments you should be able to do with a pencil. It is not the whole course. The coding and the implementation are
+in the notebooks.
+
+\head{How to use it}
+Each section has the same four parts: the ideas, the formulas, a worked example, and exercises. The exercises are of
+three kinds. \textsc{[calculation]} asks for a number. \textsc{[concept]} asks for one or two sentences; many are
+``True, False or Depends'', and as on the exams the explanation is what counts. \textsc{[code]} shows a few lines and asks
+you to read or fix them, or asks you to give instructions to an AI. You will not be asked to write code.
+
+Do the exercises before you read the solutions at the end. If the arithmetic is ugly, write down the calculation and
+leave it. A formula sheet is on pages \pageref{sec:sheet}--\pageref{sec:sheetend}.
+
+\head{Ten ideas that run through everything}
+\begin{enumerate}[itemsep=1pt]
+\item \textbf{Timing.} Use what you knew at the end of month $t-1$. Earn the return of month $t$. Most backtests that look
+too good break this rule somewhere.
+\item \textbf{A return has three parts:} $\re = \alpha + \beta f + \varepsilon$. Beta is cheap to buy, alpha is scarce, and
+$\varepsilon$ is noise you should diversify.
+\item \textbf{Variances add, volatilities do not:} $\sigma^{2} = \beta^{2}\sigma_{f}^{2} + \sigma_{\varepsilon}^{2}$.
+\item \textbf{Squared Sharpe ratios add} when bets are uncorrelated: $\SR^{2}_{\max} = \SR_{m}^{2} + \AR^{2}$.
+\item \textbf{Size a bet by mean over variance:} $x = \mu/(\gamma\sigma^{2})$. So the volatility you give a bet is proportional to its
+Sharpe (or appraisal) ratio.
+\item \textbf{Risk is learned fast, means slowly.} A ratio measured over $T$ years has a standard error of about
+$1/\sqrt{T}$, so $t \approx \text{ratio}\times\sqrt{T}$.
+\item \textbf{An in-sample maximum is algebra, not evidence.} The best of many backtests, the tangency portfolio, the published
+anomaly: each was chosen because it looked good.
+\item \textbf{A high expected return is a low price.} Ask who is selling to you, and why they are willing.
+\item \textbf{Estimate the risk, supply the alpha, and shrink what you are unsure of.}
+\item \textbf{Say exactly what you want, then check what you got.} The AI will not ask which price, which lag or which
+denominator you meant.
+\end{enumerate}
+
+\tableofcontents
+\newpage
+
+% =====================================================================================================
+\section{Returns, portfolios and weights}
+{\small\emph{From: The Panel and Portfolio Mathematics}}
+
+\head{The ideas}
+\begin{itemize}
+\item A portfolio is a list of weights. Its return is the weighted average of the returns of what it holds.
+\item Weights that add to one: you invested all your money. Weights that add to zero: a long-short position that finances
+itself. The excess return $r - r_{f}$ is the simplest one: $+1$ in the asset, $-1$ in T-bills.
+\item Value weights \emph{are} the market: the only portfolio every investor can hold at the same time. They rebalance
+themselves when prices move. Equal weights put the same dollars in a tiny firm as in a giant, so an equal-weighted
+portfolio is mostly a bet on small stocks, and it must be traded back to equal every month.
+\item Diversification shrinks volatility, not the tail. The average stock has a volatility of about 52\% a year; the
+market, about 15.5\%. It does not go to zero because stocks move together.
+\item Individual stocks have fat tails and are skewed to the right. The market is skewed to the left: crashes happen to
+everything at once. The Sharpe ratio sees none of this.
+\end{itemize}
+
+\begin{keybox}
+\[ r_{p,t} = \sum_{i} w_{i,t-1}\, r_{i,t}
+\qquad\text{value weights: } w_{i,t-1} = \frac{ME_{i,t-1}}{\sum_{j} ME_{j,t-1}}
+\qquad\text{equal weights: } w_{i} = \frac{1}{N} \]
+\[ \text{compounding: } 1 + r_{1\to T} = (1+r_{1})(1+r_{2})\cdots(1+r_{T}) \]
+\[ \text{monthly to yearly: mean} \times 12, \quad \text{volatility} \times \sqrt{12}, \quad \text{Sharpe ratio} \times \sqrt{12}
+   \quad(\text{daily: } 252,\ \sqrt{252}) \]
+Equal weights, $N$ assets, each with volatility $\sigma$, average correlation $\bar\rho$:
+\[ \sigma_{p}^{2} = \frac{\sigma^{2}}{N}\big(1 + (N-1)\bar\rho\big) \;\longrightarrow\; \sigma^{2}\bar\rho \quad\text{as } N \text{ grows} \]
+\end{keybox}
+
+\head{Worked example}
+Three stocks. Market values at the end of last month: \$500, \$300 and \$200 billion. Returns this month: $+4\%$, $-2\%$
+and $+10\%$.
+
+Value weights are $0.5$, $0.3$, $0.2$, so $r_{VW} = 0.5(4) + 0.3(-2) + 0.2(10) = 3.4\%$. Equal weights give
+$r_{EW} = (4 - 2 + 10)/3 = 4\%$. A long-short that buys stock 3 and shorts stock 2 has weights $(0, -1, +1)$ and returns
+$10 - (-2) = 12\%$ on each dollar of the long leg.
+
+\head{Traps}
+\begin{itemize}
+\item Weighting by this month's market value. A stock that rose this month has a higher market value at the end of the
+month, so you give more weight to the winners after the fact. In class this turned 15.7\% a year into 25.5\%.
+\item Lagging a stacked panel without grouping by stock: the lag reaches into the previous company.
+\item Dropping missing values \emph{after} forming the weights: the weights no longer add to one.
+\item Adding returns over time instead of compounding. Multiplying a mean by $\sqrt{12}$.
+\end{itemize}
+
+\head{Exercises}
+
+\begin{ex}\label{ex:1.1}
+Four stocks have market values of \$600, \$250, \$100 and \$50 billion at the end of last month. This month they return
+$+2\%$, $-4\%$, $+10\%$ and $+20\%$. (a) Compute the value-weighted and the equal-weighted return. (b) Why is the gap
+so large? (c) If you hold the value-weighted portfolio and trade nothing, what are your weights at the end of the
+month? Are they still value weights? What would the equal-weighted investor have to do?
+\end{ex}
+
+\begin{ex}\label{ex:1.2}
+(a) A stock returns $+50\%$ and then $-50\%$. What did \$1 become? What would you have said if you had added the two
+returns? (b) A strategy has a monthly average return of 1\% and a monthly standard deviation of 5\%. T-bills pay
+0.25\% a month. Give the yearly mean, the yearly volatility and the yearly Sharpe ratio.
+\end{ex}
+
+\begin{ex}\label{ex:1.3}
+There are 5{,}000 stocks, each with a volatility of 52\% a year. (a) If they moved independently, what would the
+volatility of the equal-weighted portfolio be? (b) The actual portfolio has a volatility of 15.5\%. What average
+correlation between stocks does that imply? (c) What does (b) tell you about how much risk a 10{,}000-stock portfolio
+could remove?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:1.4}
+\tfd ``Individual stocks are skewed to the right, so a portfolio of many stocks is skewed to the right too.''
+\end{ex}
+
+\begin{ex}[concept]\label{ex:1.5}
+Give two reasons the value-weighted portfolio, and not the equal-weighted one, deserves to be called ``the market''.
+Then give one reason the measured return of the equal-weighted portfolio overstates what an investor could earn.
+\end{ex}
+
+\begin{ex}[code]\label{ex:1.6}
+\texttt{df} has one row per stock and month, with columns \texttt{permno}, \texttt{date}, \texttt{ret} (the return during
+the month) and \texttt{me} (market value at the end of the month). An AI wrote:
+\begin{verbatim}
+1  df['w'] = df['me'].shift(1)
+2  vw = df.groupby('date').apply(lambda g: np.average(g['ret'], weights=g['me']))
+\end{verbatim}
+Line 1 was meant to give last month's market value. Line 2 was meant to give the value-weighted market return.
+(a) What is wrong with line 1? (b) What is wrong with line 2, and in which direction is the answer biased? (c) Neither
+line gives an error. How would you catch each mistake?
+\end{ex}
+
+% =====================================================================================================
+\section{Sorts and long-short portfolios}
+{\small\emph{From: Sorts, Breakpoints, and Long-Short Portfolios}}
+
+\head{The ideas}
+\begin{itemize}
+\item The recipe never changes: \textbf{rank} every stock within the month on last month's signal, \textbf{bucket}
+them, \textbf{weight} inside each bucket, \textbf{average} to get each bucket's return, and take the \textbf{spread}:
+top bucket minus bottom bucket.
+\item You are betting on a property, not on names. Membership turns over as firms change.
+\item Each leg's weights add to one, so the long-short's weights add to zero. A book of \$100 means \$100 long and \$100
+short. There is no T-bill rate to subtract.
+\item Read all the buckets. Returns that rise step by step are stronger evidence than two odd extremes. Look at each
+leg separately: a spread that comes only from the short leg may be one you cannot trade.
+\item More buckets give a wider spread and fewer stocks in each bucket, so more noise. The $t$-statistic rises and then
+falls.
+\item Most stocks are small. An equal-weighted sort is mostly a sort of small stocks. The research convention is
+breakpoints from NYSE stocks and value weights inside each bucket.
+\end{itemize}
+
+\head{Worked example}
+Six stocks, sorted on a signal known last month. Use the top two and the bottom two.
+\begin{center}
+\begin{tabular}{lcccccc}
+\toprule
+stock & A & B & C & D & E & F \\
+\midrule
+signal (last month) & 0.10 & 0.15 & 0.20 & 0.30 & 0.40 & 0.50 \\
+market value last month (\$bn) & 10 & 40 & 200 & 100 & 150 & 50 \\
+return this month & $-3\%$ & $-1\%$ & $0\%$ & $1\%$ & $2\%$ & $4\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Long leg (E, F), value-weighted: $(150\times 2 + 50\times 4)/200 = 2.5\%$. Short leg (A, B):
+$(10\times(-3) + 40\times(-1))/50 = -1.4\%$. The long-short earns $2.5 - (-1.4) = 3.9\%$. Equal-weighted it is
+$3 - (-2) = 5\%$: the small stocks A and F had the most extreme returns, and equal weights give them more say.
+A \$100 book holds \$75 of E and \$25 of F, and is short \$20 of A and \$80 of B.
+
+\head{Exercises}
+
+\begin{ex}\label{ex:2.1}
+Use the table in the worked example, but now sort into three groups of two and report all three value-weighted returns.
+(a) Is the pattern monotone? (b) The middle group holds C and D, which are more than half of the market's value. What
+does that tell you about how much of the market your long-short actually trades?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:2.2}
+You sort stocks into ten portfolios on a signal. Portfolios 2 to 10 all earn between 7\% and 8\% a year. Portfolio 1
+earns $-6\%$. The long-short, 10 minus 1, earns 14\% a year with a $t$-statistic of 4. Name two things you would check
+before calling this a strategy.
+\end{ex}
+
+\begin{ex}[concept]\label{ex:2.3}
+Going from 5 to 10 to 20 to 50 buckets, the spread between the top and bottom bucket keeps growing. The $t$-statistic
+rises up to 20 buckets and then falls. Explain both facts.
+\end{ex}
+
+\begin{ex}[concept]\label{ex:2.4}
+\tfd ``To get the Sharpe ratio of a long-short portfolio, first subtract the T-bill rate from its return.''
+\end{ex}
+
+\begin{ex}[code]\label{ex:2.5}
+You ask an AI: ``Sort stocks into deciles on book-to-market and give me the return of high minus low.'' List five
+things this instruction leaves open, each of which changes the answer.
+\end{ex}
+
+% =====================================================================================================
+\section{Performance evaluation with one factor}
+{\small\emph{From: Performance Evaluation, and Factor Models}}
+
+\head{The ideas}
+\begin{itemize}
+\item Three ratios, one formula: average active return over tracking error. What changes is the benchmark. Against cash
+it is the \textbf{Sharpe ratio}. Against a mandate it is the \textbf{information ratio}. Against the best copy of the
+fund you can build from the factors it is the \textbf{appraisal ratio}.
+\item The regression $\re_{t} = \alpha + \beta\,\re_{m,t} + \varepsilon_{t}$ is always valid; it is only statistics. The
+content is in the reading: $\beta\,\re_{m}$ is what you could have bought for almost nothing, $\alpha$ is what you could not,
+and $\varepsilon$ is risk nobody pays you for.
+\item The same equation does two jobs. As a \emph{risk model} it uses $\beta$ and $\sigma_{\varepsilon}$. As an
+\emph{expected-return model} it uses $\alpha$. A high $R^{2}$ is good news for the first job and leaves less room for the
+second.
+\item A significant $\alpha$ means one of two things: skill or mispricing, or a factor missing from your model.
+\item Hedging removes the market: hold the fund and short $\beta$ dollars of the market for each dollar of the fund. What
+is left has mean $\alpha$ and volatility $\sigma_{\varepsilon}$. It frees risk budget for the part you have a view on. It does
+not always raise the Sharpe ratio, because it also removes $\beta E[\re_{m}]$ from the return.
+\item If you already hold the market, what a fund adds depends on its appraisal ratio only. Its own Sharpe ratio does not
+enter.
+\end{itemize}
+
+\begin{keybox}
+\[ \SR = \frac{E[\re]}{\sigma(\re)} \qquad \IR = \frac{E[r_{p} - r_{b}]}{\sigma(r_{p} - r_{b})} \qquad
+   \AR = \frac{\alpha}{\sigma_{\varepsilon}} \]
+\[ E[\re] = \alpha + \beta\,E[\re_{m}] \qquad
+   \sigma^{2} = \underbrace{\beta^{2}\sigma_{m}^{2}}_{\text{systematic}} + \underbrace{\sigma_{\varepsilon}^{2}}_{\text{its own}}
+   \qquad R^{2} = \frac{\beta^{2}\sigma_{m}^{2}}{\sigma^{2}} \]
+\[ \text{hedged: } \re - \beta\,\re_{m} = \alpha + \varepsilon
+   \qquad \SR^{2}_{\max} = \SR_{m}^{2} + \AR^{2}
+   \qquad t(\alpha) \approx \AR \times \sqrt{\text{years}} \]
+\[ \text{risk budget: dollars you can hold} = \frac{\text{budget in dollars of volatility}}{\text{volatility per dollar}} \]
+\end{keybox}
+
+\head{Worked example}
+A fund has an average excess return of 12\%, a volatility of 24\% and a market beta of 1.2. The market has an average
+excess return of 8\% and a volatility of 16\%.
+\begin{itemize}
+\item $\alpha = 12 - 1.2 \times 8 = 2.4\%$.
+\item Systematic volatility: $1.2 \times 16 = 19.2\%$. Its own: $\sigma_{\varepsilon} = \sqrt{24^{2} - 19.2^{2}} = 14.4\%$.
+$R^{2} = 19.2^{2}/24^{2} = 0.64$.
+\item $\SR = 12/24 = 0.50$, the same as the market's $8/16$. $\AR = 2.4/14.4 = 0.17$.
+\item Added to the market in the best proportion: $\sqrt{0.50^{2} + 0.17^{2}} = 0.53$.
+\item After 10 years, $t(\alpha) \approx 0.17\times\sqrt{10} = 0.5$. To reach $t = 2$ you would need $(2/0.17)^{2} = 144$ years.
+\item A risk budget of \$6 million of yearly volatility buys $6/0.24 = \$25$ million of the fund unhedged. Hedged, it buys
+$6/0.144 = \$41.7$ million, with $1.2\times 41.7 = \$50$ million of the market sold short. Expected dollars: $25\times 12\% =
+\$3.0$ million unhedged, $41.7\times 2.4\% = \$1.0$ million hedged.
+\end{itemize}
+The hedged book earns less and has a lower Sharpe ratio (0.17 against 0.50). It can still be the right book for an
+investor who already owns the market elsewhere: for them the 0.50 is nothing new, and the 0.17 is.
+
+\head{Traps}
+\begin{itemize}
+\item Total returns on the left and excess returns on the right: $\alpha$ swallows the T-bill rate.
+\item No intercept in the regression: $\alpha$ is forced to zero and $\beta$ is biased.
+\item Annualizing a monthly $\alpha$ with $\sqrt{12}$. It is a mean: multiply by 12.
+\item Reading $R^{2}$ as a grade. It says how much of the variance the factor explains, nothing about skill.
+\end{itemize}
+
+\head{Exercises}
+
+\begin{ex}\label{ex:3.1}
+A strategy has an average excess return of 9\%, a volatility of 15\% and a market beta of 0.5. The market has an average
+excess return of 6\% and a volatility of 18\%. Compute (a) $\alpha$, (b) $\sigma_{\varepsilon}$ and $R^{2}$, (c) the Sharpe ratio
+and the appraisal ratio, (d) the best Sharpe ratio from mixing the strategy with the market, (e) the $t$-statistic of
+$\alpha$ after 9 years, and how many years it takes to reach $t = 2$.
+\end{ex}
+
+\begin{ex}\label{ex:3.2}
+The market has an expected excess return of 8\% and a volatility of 16\%. Fund X has a beta of 1.2, a volatility of 20\%
+and an expected excess return of 11\%. Fund Y has a beta of $-0.375$, a volatility of 10\% and an expected excess return
+of 1\%. (a) Compute each fund's Sharpe ratio. (b) Compute each fund's alpha, its own volatility $\sigma_{\varepsilon}$ and
+its appraisal ratio. (c) An investor holds the market and may add one fund. Which one, and what Sharpe ratio do they
+reach? (d) Explain in words how a fund with a Sharpe ratio of 0.1 can be the better addition.
+\end{ex}
+
+\begin{ex}\label{ex:3.3}
+Take the strategy of exercise \ref{ex:3.1}. Your risk budget is \$3 million of yearly volatility. (a) How many dollars of
+the strategy can you hold unhedged? (b) Hedged, what do you trade per dollar of the strategy, and how many dollars can
+you hold? (c) Expected dollars a year in each case. (d) In this example the hedged book earns fewer dollars. Give the
+condition on $\alpha$, $\beta$ and the market premium under which hedging lowers expected dollars for a given risk budget.
+You may leave it as an inequality.
+\end{ex}
+
+\begin{ex}[concept]\label{ex:3.4}
+For each, \tfd
+(a) ``A fund with an $R^{2}$ of 0.20 against the market is poorly described by the model, so its alpha cannot be trusted.''
+(b) ``A value manager with an information ratio of 0.6 against the S\&P 500 has shown skill.''
+(c) ``If two funds have the same alpha, an investor who holds the market should be indifferent between them.''
+\end{ex}
+
+\begin{ex}[concept]\label{ex:3.5}
+A regression gives $\beta = 0.59$ and $\alpha = 6.5\%$ a year for Berkshire Hathaway, with a $t$-statistic of 1.8 over 23
+years. (a) What appraisal ratio does that $t$ imply? (b) Berkshire was \emph{more} volatile than the market with a beta
+well below one. Where did its risk come from? (c) Give two reasons, beyond the $t$-statistic, to be careful before
+concluding that this is skill.
+\end{ex}
+
+\begin{ex}[code]\label{ex:3.6}
+\texttt{r} is a fund's monthly return, \texttt{mkt} the market's monthly excess return and \texttt{rf} the monthly T-bill
+rate. An AI wrote:
+\begin{verbatim}
+1  fit   = sm.OLS(r, mkt).fit()
+2  alpha = fit.params['const'] * np.sqrt(12)
+\end{verbatim}
+Find three mistakes. For each, say what it does to the alpha you report.
+\end{ex}
+
+% =====================================================================================================
+\section{Where factors come from}
+{\small\emph{From: Where Factors Come From, and the Factor Zoo}}
+
+\head{The ideas}
+\begin{itemize}
+\item Three kinds of factor model, by what you have to supply. \textbf{Time-series}: you supply the factor returns and
+estimate the betas (Fama--French). \textbf{Characteristic}: you supply the exposures, the characteristics, and
+estimate what each one paid (BARRA, Fama--MacBeth). \textbf{Statistical}: you supply nothing (PCA).
+\item A sort makes a factor. A regression uses one.
+\item Hundreds of published signals fall into a few families: value, momentum, profitability, investment, low risk,
+issuance, liquidity, lead-lag. Each has two stories. \textbf{Risk}: the premium is pay for something unpleasant, so it
+should last. \textbf{Mispricing}: investors make a mistake, so it should shrink once it is known and traded.
+\item A price ratio has to forecast something: a high return or low growth. That is what a price is.
+\item Momentum is built from returns alone: the return from month $t-12$ to month $t-2$. The signal is lagged twice, for
+two reasons. The first lag makes it tradable. The second skips the month in which stocks tend to reverse.
+\item A spread in average returns is not yet a new factor. It adds something only if its alpha against what you already
+hold is not zero.
+\item Count bets, not papers. Correlate the \emph{strategies}, not the signals. Inside a family strategies are highly
+correlated; three volatility papers are one trade.
+\end{itemize}
+
+\begin{keybox}
+\[ \text{Gordon: } P = \frac{D}{r - g} \quad\Longrightarrow\quad \frac{D}{P} = r - g \]
+\[ \text{momentum signal for the portfolio held in month } t:\quad
+   (1+r_{t-12})(1+r_{t-11})\cdots(1+r_{t-2}) - 1 \]
+\[ \alpha_{\text{long-short}} = E[r_{LS}] - \beta\,E[\re_{m}]
+   \qquad \SR_{\max}^{2} = \SR_{m}^{2} + \left(\frac{\alpha}{\sigma_{\varepsilon}}\right)^{2} \]
+\end{keybox}
+
+\head{Worked example}
+High-signal stocks have higher betas, so a long-short has $\beta = 0.5$. The market premium is 8\%. The long-short earns
+4\% a year. Its alpha is $4 - 0.5\times 8 = 0$. The signal does sort stocks by expected return, but only through market
+exposure. Half a unit of the market earns the same 4\% with less risk.
+
+It cuts both ways. A value long-short that earns 5.2\% with $\beta = -0.20$ has an alpha of
+$5.2 + 0.20\times 8 \approx 6.8\%$, larger than its average return.\footnote{In class the number was 7.1\%, because the
+market premium over 1980--2000 was above 8\%.}
+
+\head{Exercises}
+
+\begin{ex}\label{ex:4.1}
+Stock A has a dividend yield of 5\%. Stock B has a dividend yield of 1\%. (a) If investors require a return of 8\% on
+both, what dividend growth is priced into each? (b) If instead both are expected to grow at 3\% forever, what return
+does each offer? (c) Which of the two readings is the ``value earns more'' story, and which is the ``value is cheap for
+a reason'' story?
+\end{ex}
+
+\begin{ex}\label{ex:4.2}
+You form a momentum portfolio on the last trading day of June 2025 and hold it through July 2025. (a) Which months of
+returns go into the signal? (b) Which month is skipped, and why? (c) What happens to the backtest if you include July
+2025 in the signal? (d) What would you expect if you sorted on June 2025 alone?
+\end{ex}
+
+\begin{ex}\label{ex:4.3}
+The market premium is 8\%. Strategy P earns 6\% a year with a market beta of 0.75. Strategy Q earns 5\% a year with a
+market beta of $-0.25$. (a) Compute each alpha. (b) An investor holds the market. What does each strategy add? (c) Which
+strategy would look better in a table of average returns?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:4.4}
+A paper documents that a signal earned 8\% a year. After publication more investors trade it. Say what you expect to
+happen to (a) the \emph{realized} return of the strategy while the money is flowing in and (b) its \emph{expected}
+return afterwards, under the mispricing story. (c) How does your answer to (b) change if the premium is pay for risk?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:4.5}
+Two signals, illiquidity and size, have a correlation of 0.07 across stocks. The two long-short strategies built from
+them have a correlation of 0.89. (a) How is that possible? (b) Which number matters for a portfolio that holds both?
+(c) A report says the average correlation among 30 strategies is 0.05, so they are 30 independent bets. What is
+missing?
+\end{ex}
+
+% =====================================================================================================
+\section{Multi-factor models}
+{\small\emph{From: Multi-Factor Models}}
+
+\head{The ideas}
+\begin{itemize}
+\item Every factor in the model is a long-short portfolio that someone already sells cheaply. Alpha is the average
+return that \emph{none} of the factors in the model explains.
+\item Alpha belongs to a strategy \emph{and a model}. Momentum's alpha was 18\% a year against the market and 3.5\% once
+UMD was in the model. Never report an alpha without naming the model.
+\item Adding a factor does not always lower alpha. A negative loading on a factor that paid raises it.
+\item Fix the model before you look, and justify it by what an investor can buy cheaply. Running four models and
+reporting the best is not analysis.
+\item Read the loadings before the alpha: a loading times the factor's premium is the part of the return that exposure
+accounts for. ARKK earned 26.7\% a year over T-bills, and 21.4 points of it were a beta of 1.49 on a market that paid
+14.4\%.
+\item A loading says the fund \emph{co-moves} with the factor. It does not say what the fund holds.
+\item Daily data sharpens the betas. It does almost nothing for the $t$-statistic of alpha, which depends on the span in
+years.
+\item There are two ways to estimate the same thing. \textbf{Time-series}: one regression per strategy, through time.
+You supply factor returns and get betas and alpha. \textbf{Cross-sectional} (Fama--MacBeth): one regression per month,
+across stocks. You supply characteristics and get what each characteristic paid that month.
+\item A Fama--MacBeth slope \emph{is} a portfolio return: one unit of its own characteristic, zero of the others, zero
+cost. A sort cannot do that. The intercept is not alpha; it is the return of the average stock.
+\item A \textbf{characteristic-adjusted return} subtracts what the portfolio's characteristics earned. It hedges without
+estimating a single beta. It needs holdings, not a track record. Its weakness: it ignores covariances.
+\end{itemize}
+
+\begin{keybox}
+\[ \re_{t} = \alpha + \sum_{k}\beta_{k} f_{k,t} + \varepsilon_{t}
+   \qquad E[\re] = \alpha + \sum_{k}\beta_{k}\,E[f_{k}]
+   \qquad \SR_{\max} = \sqrt{\SR_{F}^{2} + \AR^{2}} \]
+\[ \text{other factors uncorrelated with the market:}\qquad
+   \alpha_{\text{CAPM}} = \alpha_{\text{multi}} + \sum_{k \neq m}\beta_{k}\,E[f_{k}] \]
+\[ \text{hedge: per dollar of the fund, sell } \beta_{k} \text{ dollars of factor } k
+   \qquad \underbrace{\beta' f_{t}}_{\text{tracking piece}} + \underbrace{\alpha + \varepsilon_{t}}_{\text{hedged piece}} \]
+\[ \text{Fama--MacBeth, each month: } r_{i,t+1} = Z_{0,t} + \sum_{k} Z_{k,t}\,x_{k,i,t} + e_{i,t+1} \]
+\[ \text{premium}_{k} = \text{average of } Z_{k,t} \text{ over the months}
+   \qquad t = \frac{\text{mean}(Z_{k})}{\text{sd}(Z_{k})/\sqrt{\text{months}}} \]
+\[ \text{one characteristic: } Z_{t} = \sum_{i} w_{i}\,r_{i}, \quad
+   w_{i} = \frac{x_{i} - \bar x}{\sum_{j}(x_{j} - \bar x)^{2}}, \qquad \sum_{i} w_{i} = 0, \quad \sum_{i} w_{i}x_{i} = 1 \]
+\[ \text{characteristic-adjusted return: } r_{p,t} - X_{p}'Z_{t}, \qquad X_{p} = \sum_{i} w_{i}\,x_{i} \]
+\end{keybox}
+
+\head{Worked example 1: the same fund, two alphas}
+A fund earns 9.5\% a year over T-bills. Its loadings are 1.1 on the market, 0.5 on HML and $-0.4$ on UMD. The premiums
+are 8\%, 4\% and 7\%.
+
+The factors account for $1.1\times 8 + 0.5\times 4 - 0.4\times 7 = 8.8 + 2.0 - 2.8 = 8.0\%$. So the three-factor alpha is
+$9.5 - 8.0 = 1.5\%$. If HML and UMD are uncorrelated with the market, the CAPM alpha is $9.5 - 8.8 = 0.7\%$. The alpha
+\emph{rose} when factors were added: the fund is short momentum, a factor that paid, and still earned 9.5\%.
+
+\head{Worked example 2: a slope is a portfolio}
+One month, four stocks. The characteristic is $x = (2, 1, -1, -2)$, already centered at zero. Returns are
+$(5\%, 1\%, 0\%, -2\%)$.
+
+$\sum x^{2} = 10$, so the weights are $w = x/10 = (0.2, 0.1, -0.1, -0.2)$. The slope is
+$0.2(5) + 0.1(1) - 0.1(0) - 0.2(-2) = 1.5\%$. Check: the weights add to zero, and
+$\sum w_{i}x_{i} = 0.4 + 0.1 + 0.1 + 0.4 = 1$. The intercept is the equal-weighted return, 1\%.
+
+\head{Exercises}
+
+\begin{ex}\label{ex:5.1}
+A fund earns 10\% a year over T-bills. Against a four-factor model its loadings are 0.9 on the market, 0.5 on SMB,
+$-0.5$ on HML and 0.5 on RMW. The factor premiums are 8\%, 2\%, 4\% and 3\%. Assume SMB, HML and RMW are uncorrelated
+with the market. (a) How much of the 10\% does each factor account for? (b) What is the four-factor alpha? (c) What
+is the CAPM alpha? (d) For each dollar in the fund, what do you trade to hedge all four factors, and what do you expect
+to earn on the hedged position?
+\end{ex}
+
+\begin{ex}\label{ex:5.2}
+One month, four stocks. The characteristic is $x = (3, 1, -1, -3)$ and the returns are $(4\%, 2\%, -1\%, -1\%)$.
+(a) Compute the weights of the slope portfolio. (b) Compute the slope. (c) Verify the two properties of the weights.
+(d) What is the intercept, and which portfolio is it?
+\end{ex}
+
+\begin{ex}\label{ex:5.3}
+A Fama--MacBeth regression on 240 months and about 4{,}000 stocks a month gives slopes on book-to-market with an average
+of 0.4\% a month and a standard deviation of 2\% a month. (a) Compute the $t$-statistic. (b) Where do the 4{,}000 stocks
+enter your calculation?
+\end{ex}
+
+\begin{ex}\label{ex:5.4}
+A portfolio holds two stocks, half in each. Their size scores are $2$ and $1$; their value scores are $-1$ and $-2$
+(in standard deviations from the average stock). This month one standard deviation of size paid $-0.5\%$ and one of
+value paid $+1.0\%$. The portfolio returned 1\% and the equal-weighted market 2\%. (a) Compute the portfolio's size and
+value scores. (b) What return did its characteristics imply, relative to the average stock? (c) What is its
+characteristic-adjusted return? (d) What did you need to know about the portfolio to do this, and what did you not
+need?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:5.5}
+For each, \tfd
+(a) ``Our strategy has an alpha of 6\% a year, so it beats the market.''
+(b) ``A model with more factors is a tougher test, so alpha can only fall as factors are added.''
+(c) ``A loading of 1.2 on HML means the fund holds value stocks.''
+(d) ``With daily instead of monthly data over the same five years, the $t$-statistic on alpha will be about
+$\sqrt{21}$ times larger.''
+\end{ex}
+
+\begin{ex}[concept]\label{ex:5.6}
+Fill in the table, then say in one sentence why a decile sort on book-to-market is not a pure play on value.
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+ & time-series & cross-sectional \\
+\midrule
+one regression per & & \\
+you must supply & & \\
+you estimate & & \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{ex}
+
+\begin{ex}[concept]\label{ex:5.7}
+A fund is long-only, with a beta of 1.5, a loading of $-1$ on HML and an alpha of 5\% against a six-factor model. You must
+sell it to an investor who judges funds by their CAPM alpha, in a period when value did well. (a) What problem do you
+face? (b) Describe a package that holds this fund \emph{and other things} and would look better to that investor.
+\end{ex}
+
+% =====================================================================================================
+\section{Decomposing a portfolio}
+{\small\emph{From: Decomposing a Portfolio}}
+
+\head{The ideas}
+\begin{itemize}
+\item A portfolio's exposure to a factor is the weighted average of the exposures of what it holds.
+\item Its variance splits in two: factor risk, which you share with everyone, and specific risk, which belongs to the
+names you own. Specific risk diversifies only if the weights are spread: the formula has $w_{i}^{2}$ in it. Berkshire's
+Coca-Cola position, 41\% of the book, supplied 67\% of its specific variance.
+\item Three ways to measure exposure, for three questions:
+\begin{center}
+{\small\begin{tabular}{@{}llll@{}}
+\toprule
+ & top-down & bottom-up & characteristics \\
+\midrule
+you need & the fund's returns & holdings, a beta per name & holdings, characteristics \\
+tells you about & the past, averaged & today's portfolio & today's portfolio \\
+reacts to a trade & eventually & at once & at once \\
+main weakness & the portfolio changed & only what is disclosed & ignores covariances \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\item A time-series regression measures an average over a portfolio that changed. It is today's exposure only if the
+positions and their betas were stable.
+\item Print the standard errors. Six factors on 60 months gives six numbers, and most of them are not different from
+zero.
+\item After every merge, check what the weights add to. If names drop out and you do not rescale, every score is scaled
+down and nothing tells you.
+\item Characteristics describe what you own, not what you paid. In 1999 the great value investor's book scored as giant
+and expensive, because he bought cheap in 1988 and held.
+\end{itemize}
+
+\begin{keybox}
+\[ r_{t} = \alpha + B f_{t} + \varepsilon_{t} \qquad b = B'w = \sum_{i} w_{i}\beta_{i}
+   \qquad \Omega = B\,\Omega_{f}B' + \Omega_{\varepsilon} \]
+\[ \underbrace{w'\Omega w}_{\text{total variance}} = \underbrace{b'\Omega_{f}\,b}_{\text{factor risk}} +
+   \underbrace{\sum_{i} w_{i}^{2}\sigma_{\varepsilon,i}^{2}}_{\text{specific risk}}
+   \qquad\text{one factor: } \sigma_{p}^{2} = b^{2}\sigma_{m}^{2} + \sum_{i} w_{i}^{2}\sigma_{\varepsilon,i}^{2} \]
+\[ \text{equal weights, same } \sigma_{\varepsilon}:\quad \text{specific volatility} = \frac{\sigma_{\varepsilon}}{\sqrt{N}} \]
+\end{keybox}
+
+\head{Worked example}
+Two stocks, weights 0.6 and 0.4. Betas 0.5 and 1.5. Specific volatilities 20\% and 30\%. Market volatility 16\%.
+
+Portfolio beta: $b = 0.6(0.5) + 0.4(1.5) = 0.9$. Factor variance: $0.9^{2}\times 16^{2} = 207$. Specific variance:
+$0.6^{2}\times 20^{2} + 0.4^{2}\times 30^{2} = 144 + 144 = 288$. Total: $495$, so the volatility is $\sqrt{495} = 22.3\%$.
+Factor risk is $207/495 = 42\%$ of the variance. Each stock supplies half of the specific variance: the larger weight
+on the quieter stock exactly offsets.
+
+\head{Exercises}
+
+\begin{ex}\label{ex:6.1}
+Three stocks with weights 0.5, 0.3 and 0.2. Betas 0.8, 1.0 and 1.5. Specific volatilities 20\%, 30\% and 40\%. Market
+volatility 15\%. Compute (a) the portfolio beta, (b) the factor variance and the specific variance, (c) the portfolio
+volatility, (d) the share of variance that is factor risk, (e) the share of specific variance that comes from the
+largest position.
+\end{ex}
+
+\begin{ex}\label{ex:6.2}
+Every stock has a specific volatility of 30\%. (a) What is the specific volatility of an equal-weighted portfolio of
+4, 25 and 100 stocks? (b) A 100-stock portfolio puts 40\% in one name and spreads the rest equally. Roughly, what is
+its specific volatility? (c) What does this say about counting positions as a measure of diversification?
+\end{ex}
+
+\begin{ex}\label{ex:6.3}
+A fund holds 16 stocks. You find characteristics for 8 of them, which carry 65\% of the book. Using the original weights
+of those 8, you compute a size score of 1.64. (a) What is the size score of the matched part of the book? (b) What
+single check would have caught the problem? (c) After fixing it, what are you still not measuring?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:6.4}
+Which of the three approaches would you use, and why? (a) You are evaluating a hedge fund that reports monthly
+returns and discloses nothing else. (b) You are the risk manager of a fund that trades every day, and the CIO asks what
+happens to market exposure if the largest position is sold. (c) You want to know whether a pension fund's stock
+portfolio is tilted toward cheap or expensive stocks, as of today.
+\end{ex}
+
+\begin{ex}[concept]\label{ex:6.5}
+A regression of Berkshire's returns on the market gives a beta of 0.78 (standard error 0.22). Adding up the betas of
+its disclosed holdings gives 1.08. (a) Are the two statistically different? (b) Give two economic reasons they could
+differ even with perfect estimates.
+\end{ex}
+
+% =====================================================================================================
+\section{What data can teach you, and backtesting}
+{\small\emph{From: Why We Backtest (slides), and Backtesting: Estimate, Tune, Test}}
+
+\head{The ideas}
+\begin{itemize}
+\item Rank 49 industries on their alpha over the last three years, buy the top fifth, short the bottom fifth, hold a
+year. The alphas you ranked on promised about 20\% a year. The trade delivered about 2\%. The same regressions gave
+betas that carried over almost perfectly. \textbf{Beta carries over; alpha does not.}
+\item The reason is how fast each thing is learned. Betas and volatilities are about how returns \emph{move}: sample
+more often and months are enough. A mean, or an alpha, uses only where the price started and where it ended: only
+more years help.
+\item You need decades to measure an alpha that may last only years. So the data cannot be where the idea comes from.
+The reason comes first; then the data tests it.
+\item Everything you choose from data inflates your result. So use three samples with three jobs:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+sample & what you do with it & may you look? \\
+\midrule
+\textbf{Estimate} & fit: the alphas, the betas, the ranking & yes \\
+\textbf{Tune} & choose among your rules & yes \\
+\textbf{Test} & report & once, at the end \\
+\bottomrule
+\end{tabular}
+\end{center}
+\item Out of sample means out of \emph{time}. A random split trains on 1997 and tests on 1985.
+\item The in-sample winner is the worst choice. Of 29 strategies, the single best in the estimate sample had a Sharpe
+ratio of $-0.08$ in the test sample. Holding all 29 equally: 0.85.
+\item Walk-forward repeats the idea every year: every month's return is earned on choices made before that month began.
+\item Never compare strategies on return alone. Compare at the same risk.
+\item \textbf{Leakage} is using data on a date that you could not have had that day: a signal that is not lagged; a
+universe of survivors; accounting numbers dated to the quarter they describe and not to the day they were released;
+prices adjusted for later splits; a universe changed after seeing a result.
+\item You tried more than one thing. Twenty tries give one $|t| > 2$ for free. A higher cutoff flags less noise and
+finds fewer real signals; only a longer sample improves both.
+\end{itemize}
+
+\begin{keybox}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+ & standard error & shrinks with \\
+\midrule
+mean & $\sigma/\sqrt{T}$ & years, $T$ \\
+alpha & $\sigma_{\varepsilon}/\sqrt{T}$ & years, $T$ \\
+Sharpe or appraisal ratio & $\approx 1/\sqrt{T}$; more exactly $\sqrt{(1 + \SR^{2}/2)/T}$ & years, $T$ \\
+beta & $(\sigma_{\varepsilon}/\sigma_{f})/\sqrt{N}$ & observations, $N$ \\
+volatility & $\approx \sigma/\sqrt{2N}$ & observations, $N$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\[ t = \text{ratio}\times\sqrt{T} \qquad\qquad
+   \text{years needed: } T = \left(\frac{z}{\text{ratio} - \text{hurdle}}\right)^{2} \]
+{\small $z$: 1.64 to be 95\% sure (one-sided), 1.96 for the usual two-sided 5\%. With $N$ tries (Bonferroni), test at
+$5\%/N$: about 2.8 for 10 tries, 3.0 for 20, 3.1 for 29.}
+\end{keybox}
+
+\head{Worked example}
+The market over 100 years: mean 8.3\%, volatility 18.4\%, Sharpe ratio 0.45.
+\begin{itemize}
+\item After ten years the standard error of the mean is still $18.4/\sqrt{10} = 5.8\%$.
+\item To be 95\% sure the premium is above zero you need $(1.64/0.45)^{2} = 13$ years.
+\item A strategy with a true ratio of 1 needs $(1.64/1)^{2} = 2.7$ years to be distinguished from zero, and
+$(1.64/(1 - 0.5))^{2} = 11$ years to be distinguished from 0.5. Only the gap to the hurdle counts.
+\item With three samples you need that in \emph{each} one: about 8 years in all for a ratio of 1.
+\end{itemize}
+
+\head{Exercises}
+
+\begin{ex}\label{ex:7.1}
+A strategy has a true appraisal ratio of 0.8. How many years of data do you need to be 95\% sure that its appraisal
+ratio is (a) above zero, (b) above 0.5? (c) Explain why (b) is so much longer.
+\end{ex}
+
+\begin{ex}\label{ex:7.2}
+A fund shows you three years of returns with a Sharpe ratio of 1.2. (a) Compute the $t$-statistic. (b) Compute the
+standard error of the Sharpe ratio with both formulas in the box. (c) Is the fund's volatility needed for either
+calculation? Why not? (d) What else would you ask about how this fund came to be in front of you?
+\end{ex}
+
+\begin{ex}\label{ex:7.3}
+You regress an industry on the market using three years of data. The industry's own volatility is $\sigma_{\varepsilon} = 12\%$
+a year and the market's is 16\%. (a) What is the standard error of alpha? (b) What is the standard error of beta with
+monthly data? With daily data (756 days)? (c) Which of the two answers changed, and why?
+\end{ex}
+
+\begin{ex}\label{ex:7.4}
+You tested 20 signals and the best one has a $t$-statistic of 2.6. (a) If none of the 20 were real, how many would you
+expect to see with $|t| > 2$? (b) What $t$ does Bonferroni ask for? (c) The 20 signals include six versions of
+volatility that correlate 0.9 with each other. Is the Bonferroni cutoff too strict or too lenient, and why?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:7.5}
+For each, \tfd
+(a) ``I held out a random 30\% of the months as a test set and the Sharpe ratio there is close to the training Sharpe
+ratio, so the strategy works out of sample.''
+(b) ``A strategy with 5\% volatility has a more precisely measured Sharpe ratio than one with 20\% volatility over the
+same years.''
+(c) ``The strategy that did best in the estimate sample is the one most likely to do best in the test sample.''
+\end{ex}
+
+\begin{ex}[concept]\label{ex:7.6}
+In the industry experiment, ranking on alphas from three years of data promised 20\% and delivered about 2\%. (a) The
+alphas were estimated without bias. Why did the top fifth still disappoint? (b) Why did the betas not disappoint?
+(c) Ranking on a single year of data gives a noisier alpha, yet the trade earns more than twice as much the next year.
+Is alpha better measured with one year than with three? What else could be going on?
+\end{ex}
+
+\begin{ex}[code]\label{ex:7.7}
+You have monthly returns for 1980--2000 and want to choose the look-back window of a momentum strategy (3, 6, 9 or 12
+months) and report how well it works. Give the AI instructions: which years do what, what it should compute on each,
+and what it should report. Then say what you must \emph{not} do after you see the final number.
+\end{ex}
+
+\begin{ex}[concept]\label{ex:7.8}
+A backtest sorts stocks on their split-adjusted price in 1985 and finds that low-priced stocks did very well afterwards.
+(a) Where is the leak? (b) State the rule that covers this and every other leak. (c) Which prices should you use for
+the signal, and which for the returns?
+\end{ex}
+
+% =====================================================================================================
+\section{Hiring and firing}
+{\small\emph{From: Hiring and Firing}}
+
+\head{The ideas}
+\begin{itemize}
+\item Putting money into a strategy and hiring a manager are the same decision. So are stopping and firing. Both are
+statistical: you never see the true ratio, only an estimate with a standard error of about $1/\sqrt{T}$.
+\item Three ingredients: a \textbf{goal} $a^{*}$, how \textbf{sure} you want to be, and \textbf{time}. Between the hire
+line and the walk-away line you do not know yet. Time is the only lever that closes the gap, and it never closes
+completely.
+\item The record that got a manager hired is the estimate sample. Of 100 managers with no skill, 5 clear a 95\% bar, and
+those are the ones who come to see you. \textbf{The test starts the day you hire.}
+\item A rule that only looks at returns does not know how the manager got there. Buffett after 1999: the rule fires him
+within about a year, just before one of his best stretches.
+\item How far bad news should move you depends on what you believed before. That prior is your \emph{hit rate}: the share
+of the people your process hires who turn out to be good. Same returns, different priors, opposite decisions: Citadel
+and Point72 put money into Melvin in its worst week.
+\item One outcome does not grade a decision.
+\item A manager with no skill is not free: you gave them risk, and they added nothing to the return.
+\end{itemize}
+
+\begin{keybox}
+\[ \text{go in when } \widehat{\AR}_{T} \ge a^{*} + \frac{z_{p}}{\sqrt{T}}
+   \qquad\qquad \text{walk away when } \widehat{\AR}_{T} \le a^{*} - \frac{z_{p}}{\sqrt{T}} \]
+{\small $z_{p}$: 0.84 for 80\%, 1.28 for 90\%, 1.64 for 95\%, 2.33 for 99\%. $T$ in years since you started the clock.}
+\[ \underbrace{\frac{\pi_{T}}{1-\pi_{T}}}_{\text{odds he is good, after}} =
+   \underbrace{\frac{\pi}{1-\pi}}_{\text{odds at hire}} \times \exp\!\big(T\,a\,(\widehat{\AR}_{T} - a/2)\big)
+   \qquad \text{fire when } \widehat{\AR}_{T} < \frac{a}{2} - \frac{1}{a\,T}\ln\frac{\pi}{1-\pi} \]
+Your book has Sharpe ratio $S$; the manager is hired to deliver $a$. Your Sharpe ratio with the manager:
+\[ \text{if good: } \sqrt{S^{2} + a^{2}} \qquad\qquad \text{if no skill: } \frac{S^{2}}{\sqrt{S^{2} + a^{2}}} \]
+\[ \text{hire if}\quad \pi \times \text{gain} \times \text{years the edge lasts} \;>\;
+   (1-\pi) \times \text{loss} \times \text{years until you fire} \]
+{\small $\pi$: the share of your hires who are good. Gain and loss: the change in your Sharpe ratio in each case. Years
+until you fire an unskilled manager: about $(z_{p}/a)^{2}$.}
+\end{keybox}
+
+\head{Worked example}
+Your goal is an appraisal ratio of 0.5 and you want to be 80\% sure ($z = 0.84$).
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+years of record & 1 & 4 & 16 \\
+\midrule
+go in if the record is above & 1.34 & 0.92 & 0.71 \\
+walk away if it is below & $-0.34$ & 0.08 & 0.29 \\
+\bottomrule
+\end{tabular}
+\end{center}
+After one year the bar is nearly three times the goal, and a bad first year is not grounds for firing anyone. Four times
+the record halves the gap.
+
+Now with a prior. You hired a manager to deliver $a = 1$. Two years in, the record is zero. The record is
+$\exp\big(2\times 1\times(0 - 0.5)\big) = 0.37$ times as likely from a good manager as from an unskilled one. If 80\% of
+your hires are good, the odds go from 4 to $4\times 0.37 = 1.47$: a 60\% chance he is still good. If half are good, the
+odds go from 1 to 0.37: a 27\% chance.
+
+\head{Exercises}
+
+\begin{ex}\label{ex:8.1}
+Your goal is an appraisal ratio of 0.5 and you want to be 95\% sure. (a) Compute the go-in line and the walk-away line
+after 4 years and after 16 years. (b) A strategy's true ratio is exactly 0.5. What will the rule tell you, most of the
+time, at any horizon? (c) After 1 year a strategy shows a ratio of $-0.8$. Do you walk away?
+\end{ex}
+
+\begin{ex}\label{ex:8.2}
+You hired a manager to deliver an appraisal ratio of 1. After three years the record is 0.2. (a) How much likelier is
+this record from a good manager than from an unskilled one? (b) Two out of three of your hires turn out good. What are
+the odds, and the probability, that this one is good? (c) Redo (b) for a process where four out of five are good.
+(d) Do you fire in (b)? In (c)?
+\end{ex}
+
+\begin{ex}\label{ex:8.3}
+A fund loses 53\% in a month. Suppose such a month is three times likelier from an unskilled manager than from a skilled
+one. Before the month you believed the manager was skilled with probability 80\%. (a) What do you believe now? (b) An
+investor with no inside view started at 50\%. What do they believe now? (c) Both investors saw the same return. Is one
+of them making a mistake?
+\end{ex}
+
+\begin{ex}\label{ex:8.4}
+Your book has a Sharpe ratio of 0.6. You consider a manager who claims an appraisal ratio of 0.8, uncorrelated with your
+book. (a) What is your Sharpe ratio if the claim is true? If the manager has no skill? (b) How long until you would
+fire an unskilled manager, at 95\%? (c) A real edge lasts five years. What share of your hires must be good for hiring
+to pay? You may leave the last step as a fraction.
+\end{ex}
+
+\begin{ex}[concept]\label{ex:8.5}
+\tfd ``A manager shows a ten-year record with an appraisal ratio of 0.6, a $t$-statistic of 1.9. Since this clears the
+95\% one-sided bar, there is only a 5\% chance that she has no skill.''
+\end{ex}
+
+\begin{ex}[concept]\label{ex:8.6}
+\emph{Capital Allocation I} says a pod shop might close a team after a 7.5\% loss. \emph{Hiring and Firing} fires on the
+appraisal ratio. (a) Which of the two rules can a manager influence by taking less risk? (b) Why would the principal
+want a rule in percent anyway? (c) What does each rule ignore?
+\end{ex}
+
+
+% =====================================================================================================
+\section{Why should this work?}
+{\small\emph{From: Why Should This Work?}}
+
+\head{The ideas}
+\begin{itemize}
+\item Re-run 27 published signals on our sample: 6 clear the Bonferroni bar and 6 come out with the opposite sign.
+There are three explanations. \textbf{Selection}: journals print what worked. \textbf{Overfitting}: the authors
+searched too. \textbf{Decay}: it was real, and publication traded it away. Two say the effect never existed. One says you
+are late. No amount of data separates them.
+\item Count ideas, not papers. Three volatility strategies correlate 0.94 to 0.97: one trade, three citations.
+\item Risk is a property of an asset \emph{for an investor}. An asset earns a premium because it pays off badly in bad
+times. The CAPM is the special case where ``bad times'' means the market falling. Your bad times may be different: your
+job, your house, your credit line.
+\item So deviate from the market only if you differ from the average investor. Someone who works in the auto industry
+should hold the market minus autos.
+\item As you scale up, you become the investor who bears the risk. ``Risky for them, not for me'' is a statement about a
+small position.
+\item A high expected return is a low price. Somebody is selling to you at that price. The price can be low because the
+business is expected to do badly (no premium there) or because the payoff is bad in states investors care about (a
+premium). A backtest cannot tell you which.
+\item Ask who is on the other side and what makes them willing. A \textbf{constraint} persists. An \textbf{error} gets
+arbitraged away. A \textbf{preference} depends on who shows up. If you cannot name them, you are the counterparty.
+\item Low volatility: investors who cannot borrow reach for return by buying risky, lottery-like stocks. That leaves
+quiet stocks cheap. The counterparty's reason is a constraint. The risk is a bubble: in 1999 the strategy gave back 60\%
+in twelve months. That is the story arriving, not the strategy breaking, and only a story written down beforehand lets
+you say so.
+\item A long-short has no capital in it, so its drawdown is undefined until you say what capital you posted. Leverage
+turns a bad year into a forced exit.
+\end{itemize}
+
+\begin{keybox}
+\[ \text{CAPM: } E[\re] = \beta\,E[\re_{m}] \qquad \text{so a negative beta should earn \emph{less} than T-bills} \]
+A long-short at leverage $L$ (\$$L$ long and \$$L$ short per \$1 of capital):
+\[ \text{capital}_{t} = \text{capital}_{t-1}\times(1 + L\,r_{t}) \]
+\[ \text{drawdown} = \frac{\text{lowest capital after the peak}}{\text{capital at the peak}} - 1
+   \qquad \text{wiped out as soon as } L \times \text{loss} \ge 100\% \]
+\end{keybox}
+
+\head{Worked example}
+A long-short loses 20\% and then 25\%, measured per dollar of the long leg.
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+leverage $L$ & 1 & 2 & 3 & 4 \\
+\midrule
+capital left & $0.80\times 0.75 = 0.60$ & $0.60\times 0.50 = 0.30$ & $0.40\times 0.25 = 0.10$ & $0.20\times 0 = 0$ \\
+drawdown & $-40\%$ & $-70\%$ & $-90\%$ & wiped out \\
+\bottomrule
+\end{tabular}
+\end{center}
+One return series, four answers. Adding the two returns gives a fifth, $-45\%$. Code that returns
+\texttt{(1 + r).cumprod()} has assumed $L = 1$ without saying so.
+
+\head{Five questions before you trade a signal}
+\begin{enumerate}[itemsep=1pt]
+\item Who is on the other side, and what makes them willing?
+\item Is their reason a constraint, a preference or an error?
+\item Is the risk one \emph{you} can bear, at the size you intend to trade?
+\item What would you have to see to stop believing? Name it now.
+\item If the answer to 1 is ``I don't know'', you are the counterparty.
+\end{enumerate}
+
+\head{Exercises}
+
+\begin{ex}\label{ex:9.1}
+A long-short returns $+10\%$, $-30\%$, $-20\%$ and $+25\%$ in four periods. The peak is at the end of the first period.
+(a) With \$1 long and \$1 short per dollar of capital, what is the drawdown at the trough? (b) Redo it at leverage 2, 3
+and 4. (c) At leverage 1, how far below the peak are you after the fourth period? (d) You ask an AI for ``the worst
+drawdown of this strategy''. Name three things the instruction must say.
+\end{ex}
+
+\begin{ex}[concept]\label{ex:9.2}
+A published strategy had a $t$-statistic of 6 in the paper and has earned nothing since. For each of the three
+explanations of the gap, say (a) whether the effect ever existed and (b) what you should do now. (c) Which one piece
+of information, not in the returns, would help you choose among them?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:9.3}
+Take the low-volatility strategy. (a) Who is on the other side, and is their reason a constraint, a preference or an
+error? (b) Does that make the premium more or less likely to last than momentum's, if momentum comes from slow reaction
+to news? (c) What do you need to be able to do to harvest it? (d) What would an investor who ran it at three times
+leverage have learned in 1999?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:9.4}
+For each, \tfd
+(a) ``A stock with a volatility of 80\% is risky for every investor, so it must have a high expected return.''
+(b) ``A strategy has a market beta of $-0.3$ and earns 5\% a year. The CAPM explains this: it is pay for being a hedge.''
+(c) ``These stocks have high expected returns, so they are good businesses.''
+(d) ``I cannot tell who is on the other side of my trade. That is fine as long as the backtest is honest.''
+\end{ex}
+
+\begin{ex}[concept]\label{ex:9.5}
+Two investors look at the same signal and agree on every statistic. One trades it and the other does not, and both are
+right. Give two concrete ways this can happen.
+\end{ex}
+
+\begin{ex}[concept]\label{ex:9.6}
+A strategy had a Sharpe ratio of 1.4 in your estimate sample and 0.2 in the ten years after. Its worst year was a
+bubble year in which it lost 60\%. (a) Give the reading under which you drop the strategy. (b) Give the reading under
+which you keep it, and say what you change. (c) What would you have needed to write down, and when, to tell the two
+apart?
+\end{ex}
+
+% =====================================================================================================
+\section{Momentum}
+{\small\emph{From: Momentum}}
+
+\head{The ideas}
+\begin{itemize}
+\item Every month, rank stocks on their return from $t-12$ to $t-2$. Buy the top tenth, short the bottom tenth. UMD is
+Ken French's version (top 30\% minus bottom 30\%).
+\item The pattern in past returns: last month reverses, the past year continues, the past five years reverse. That is
+why the signal skips month $t-1$.
+\item UMD, 1927--2026: 7.4\% a year with a market beta of $-0.30$. So its alpha, 9.9\%, is \emph{larger} than its average
+return. The losers are stocks that fell with the market; short them and you are short the market.
+\item It is not a risk premium in the usual sense. A premium is pay for losing in bad times, and UMD earns $+1.3\%$ a
+month in the worst third of market months. The likely story is slow reaction to news.
+\item Since Carhart (1997) a new strategy has to beat momentum too. Regress it on the market \emph{and} UMD. A loading
+near 1 with an alpha near 0 means it is momentum under another name. Six-month momentum is UMD again. Earnings
+momentum is a different trade. Industry momentum is mostly the stock trade: its alpha falls from 13.2\% to 2.9\% once
+UMD is in.
+\item Why has it not been traded away? It crashes: $-65\%$ in 1932, $-53\%$ in 2009. After a bear market the losers are
+the high-beta stocks, so momentum's beta is about $-0.7$, and it is short the rebound.
+\item The crashes come when volatility is high, and volatility is predictable. Hold less after a volatile month. Sharpe
+ratio 0.45 to 0.94; worst drawdown $-78\%$ to $-33\%$. No return forecast is needed.
+\item The price of the managed version: leverage (above 2 in a quarter of months), trading, and a constant chosen with
+hindsight.
+\end{itemize}
+
+\begin{keybox}
+\[ UMD_{t} = \alpha + \beta\,\re_{m,t} + \varepsilon_{t} \qquad \alpha = E[UMD] - \beta\,E[\re_{m}] \]
+\[ \text{is it more than UMD?}\qquad r_{t} = \alpha + \beta_{m}\,\re_{m,t} + \beta_{u}\,UMD_{t} + \varepsilon_{t} \]
+\[ \text{volatility-managed:}\qquad UMD^{\sigma}_{t} = \frac{c}{\RV_{t-1}}\,UMD_{t}
+   \qquad \RV_{t-1} = \sum_{d\,\in\,t-1}(r_{d} - \bar r)^{2} \]
+{\small $c$: one constant, chosen so the managed series is as volatile as UMD. It sets the size, not the Sharpe ratio.}
+\end{keybox}
+
+\head{Worked example}
+UMD earns 7.4\% a year with $\beta = -0.30$. The market premium is 8.3\%. So $\alpha = 7.4 - (-0.30)(8.3) = 9.9\%$.
+
+After a two-year bear market UMD's beta is $-0.68$. If the market then rebounds 20\% in a month, the beta alone costs
+$0.68\times 20 = 13.6\%$ in that month.
+
+If momentum's daily volatility doubles from one month to the next, its variance is four times higher, and the managed
+position for the following month is a quarter of what it was.
+
+\head{Exercises}
+
+\begin{ex}\label{ex:10.1}
+The market premium is 8\% and UMD's is 7\%. (a) A ``new'' strategy earns 12\% a year, with loadings of 0.1 on the market
+and 1.2 on UMD. What is its alpha against the two? What do you conclude? (b) Another strategy earns 10\% a year with
+loadings of 0 and 0.2. Same questions. (c) Both strategies have large CAPM alphas. Why is the CAPM alpha the wrong
+number for an investor who can buy a momentum fund?
+\end{ex}
+
+\begin{ex}\label{ex:10.2}
+You run volatility-managed momentum with $c$ set so that the weight is 1 when momentum's daily volatility last month
+was 1\%. (a) What is the weight after a month with a daily volatility of 0.5\%? After a month with 2\%? (b) By what
+factor does the weight differ between those two months? (c) You double $c$. What happens to the average return, the
+volatility and the Sharpe ratio of the managed strategy?
+\end{ex}
+
+\begin{ex}\label{ex:10.3}
+After a two-year bear market UMD has a market beta of $-0.68$. After a bull market it is about zero. (a) The market
+rises 15\% in a month after a bear market. What does UMD's beta contribute to its return that month? (b) Why is the beta
+negative after a bear market? Think about which stocks are the losers. (c) Daniel and Moskowitz call momentum ``short a
+call option on the market''. Explain the phrase using (a) and (b).
+\end{ex}
+
+\begin{ex}[concept]\label{ex:10.4}
+(a) Why is momentum's alpha larger than its average return? (b) Give two reasons momentum does not look like pay for
+bearing risk. (c) If it is a mistake, why has it not been traded away?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:10.5}
+For each, \tfd
+(a) ``Industry momentum has a CAPM alpha of 13\% a year over a century, so it is a second source of alpha next to stock
+momentum.''
+(b) ``To run volatility-managed momentum you need a forecast of momentum's return next month.''
+(c) ``The constant $c$ uses the whole sample, so the managed strategy's Sharpe ratio is overstated.''
+\end{ex}
+
+\begin{ex}[code]\label{ex:10.6}
+An AI built a momentum signal with this line, where \texttt{cumret11} is each stock's cumulative return over the eleven
+months ending in the current row:
+\begin{verbatim}
+df['signal'] = df.groupby('permno')['cumret11'].shift(1)
+\end{verbatim}
+(a) Is the resulting strategy valid, in the sense of having no look-ahead? (b) How does it differ from the standard
+construction, and what do you expect that to do to the average return? (c) What would happen with \texttt{shift(0)}?
+\end{ex}
+
+% =====================================================================================================
+\section{Capital allocation I: the frontier, and whose money it is}
+{\small\emph{From: Capital Allocation I}}
+
+\head{The ideas}
+\begin{itemize}
+\item Everyone wants the steepest line from T-bills: the tangency portfolio, the one with the highest Sharpe ratio.
+\item Two decisions, and they separate. \emph{How to spread the money}: the tangency portfolio, the same for everyone.
+\emph{How much risk}: where you sit on the line, different for everyone. A cautious investor does not hold safer assets.
+They hold less of the same portfolio.
+\item One asset: $x^{\star} = \mu/(\gamma\sigma^{2})$. More return, hold more; more variance, hold less. Multiply by
+$\sigma$: the volatility you run is your Sharpe ratio over your risk aversion.
+\item Many assets: the same formula with a matrix, $W^{\star} = \frac{1}{\gamma}\Sigma^{-1}\mu$. The minimum-variance
+portfolio is $\Sigma^{-1}\mathbf{1}$; it never looks at $\mu$. Every portfolio on the frontier is a mix of the two.
+\item A goal only sets the size. A risk aversion, a volatility target and a return target all give a multiple of the same
+mix, with the same Sharpe ratio.
+\item A new asset moves the frontier only through its \textbf{alpha} against what you already hold. A positive Sharpe
+ratio is not enough: HML has a Sharpe ratio of 0.26 and an alpha of 0.2\% against the other five factors, so in sample
+it adds nothing. If alpha is zero the asset is \emph{spanned}. This is the test you have run all semester.
+\item The clean split rests on three assumptions. All your wealth is in financial markets. You choose for yourself.
+You know $\mu$ and $\Sigma$. Each one fails.
+\item \textbf{The principal.} Nobody knows their $\gamma$. Everybody can answer: the market fell 50\% in 2007--09; how much
+could you stand to lose?
+\item \textbf{Your job is a position.} Human capital is an asset you cannot sell, and it has betas. Hold the tangency
+portfolio sized for your \emph{total} wealth, minus what looks like your job. A safe job is like owning bonds: same mix,
+more risk in the account. The engineer whose pay rises with AI should hold \emph{less} Tech; the translator whom AI may
+replace should hold more. People do the opposite.
+\item \textbf{The delegate.} It is someone else's money, so the risk is set by a mandate: a volatility target, a
+stop-loss, a tracking-error budget, limits on what you can hold. A stop in percent is a limit on volatility: at a Sharpe
+ratio of 1, run a volatility about equal to your stop.
+\item Every mandate has a price: the slope you lose. No borrowing costs more than no shorting. An exclusion costs
+nothing or a lot, depending on what the optimizer wanted. Market-neutral gives up the market premium, on purpose: the
+principal already owns the market.
+\end{itemize}
+
+\begin{keybox}
+\[ \max_{x}\; x\mu - \frac{\gamma}{2}x^{2}\sigma^{2} \quad\Longrightarrow\quad
+   x^{\star} = \frac{1}{\gamma}\frac{\mu}{\sigma^{2}} \qquad\qquad x^{\star}\sigma = \frac{\SR}{\gamma} \]
+\[ W^{\star} = \frac{1}{\gamma}\Sigma^{-1}\mu \qquad \text{tangency} \propto \Sigma^{-1}\mu \qquad
+   \text{minimum variance} \propto \Sigma^{-1}\mathbf{1} \qquad \SR_{T} = \sqrt{\mu'\Sigma^{-1}\mu} \]
+\[ \text{uncorrelated assets:}\qquad w_{i} \propto \frac{\mu_{i}}{\sigma_{i}^{2}} \qquad
+   \SR_{\text{tangency}} = \sqrt{\SR_{1}^{2} + \SR_{2}^{2} + \cdots} \]
+\[ x \text{ times the tangency portfolio } T:\quad \text{mean} = x\,\mu_{T}, \quad
+   \text{volatility} = x\,\sigma_{T}, \quad \text{same Sharpe ratio} \]
+\[ \text{the alpha test:}\quad R_{\text{new}} = \alpha + \beta R_{T} + \varepsilon \qquad
+   \SR^{2}_{\text{with}} = \SR^{2}_{\text{without}} + \left(\frac{\alpha}{\sigma_{\varepsilon}}\right)^{2} \]
+\[ \text{with a job:}\quad w = (1+h)\,\frac{1}{\gamma}\Sigma^{-1}\mu \;-\; h\,b \qquad h = \frac{\text{human capital}}{\text{financial wealth}} \]
+\[ \text{the price of a mandate, a year, at volatility } \sigma:\quad (\SR_{\text{free}} - \SR_{\text{mandate}})\times\sigma \]
+{\small $w$: weights in the account. $b$: the job's betas on the assets (slopes from regressing its return on theirs).}
+\end{keybox}
+
+\head{Worked example 1: two uncorrelated assets}
+Asset A has $\mu = 8\%$ and $\sigma = 20\%$. Asset B has $\mu = 3\%$ and $\sigma = 10\%$. They are uncorrelated.
+\begin{itemize}
+\item $\mu/\sigma^{2}$ is $0.08/0.04 = 2$ for A and $0.03/0.01 = 3$ for B. Scaled to add to one: 40\% in A, 60\% in B.
+\item Mean: $0.4(8) + 0.6(3) = 5\%$. Variance: $0.4^{2}(20^{2}) + 0.6^{2}(10^{2}) = 64 + 36 = 100$, so the volatility is 10\%.
+\item Sharpe ratio: $5/10 = 0.5$. The shortcut gives the same: $\sqrt{0.4^{2} + 0.3^{2}} = 0.5$.
+\item B has the lower Sharpe ratio (0.3 against 0.4) and the larger weight, because it is quieter. In volatility the split
+follows the Sharpe ratios: A gets $0.4\times 20 = 8$ and B gets $0.6\times 10 = 6$, a ratio of 4 to 3.
+\item Sizes. With $\gamma = 2.5$: $W = (2, 3)/2.5 = (0.8, 1.2)$, twice the tangency portfolio, volatility 20\%, which is
+$\SR/\gamma = 0.5/2.5$. A 15\% volatility target is 1.5 times the tangency portfolio. A return target of 8\% is 1.6 times,
+with a volatility of 16\%. The Sharpe ratio is 0.5 every time.
+\end{itemize}
+
+\head{Worked example 2: a job}
+Ignoring the job, the best portfolio puts 19.5\% of total wealth in Tech. Human capital equals financial wealth, so
+$h = 1$. A software engineer's pay moves like $+0.5$ of Tech; a translator's like $-0.5$.
+\begin{itemize}
+\item Safe job ($b = 0$): the account holds $(1+1)\times 19.5 = 39\%$ in Tech.
+\item Engineer: $39 - 1\times 50 = -11\%$. The job already holds more Tech than she wants.
+\item Translator: $39 + 50 = 89\%$. The account is insurance: if AI wins, the job loses and the account pays.
+\end{itemize}
+
+\head{Exercises}
+
+\begin{ex}\label{ex:11.1}
+The market has an expected excess return of 6\% and a volatility of 15\%. (a) How much of your wealth do you put in the
+market if $\gamma = 2$? If $\gamma = 4$? (b) What volatility do you run in each case? Check it against $\SR/\gamma$.
+(c) A client cannot tell you a $\gamma$, but says that if the market fell 50\% they could stand to lose 20\% of their
+wealth. How much should they hold, what volatility is that, and what $\gamma$ does it imply?
+\end{ex}
+
+\begin{ex}\label{ex:11.2}
+Asset A has $\mu = 7.2\%$ and $\sigma = 12\%$. Asset B has $\mu = 6.4\%$ and $\sigma = 8\%$. They are uncorrelated.
+(a) Compute the tangency weights, scaled to add to one. (b) Compute the tangency portfolio's mean, volatility and
+Sharpe ratio, and check the Sharpe ratio with the shortcut. (c) A client wants 10\% volatility. What do they hold in A,
+in B and in T-bills, and what return do they expect? (d) Another client wants an expected return of 8\%. What
+volatility must they accept? (e) Compare the Sharpe ratios in (c) and (d), and say in one sentence why. (f) What does a
+client with $\gamma = 5$ hold?
+\end{ex}
+
+\begin{ex}\label{ex:11.3}
+The best portfolio of the assets you hold has a Sharpe ratio of 0.9. (a) A new asset has an alpha of 3\% against that
+portfolio and a residual volatility of 10\%. What is the best Sharpe ratio once you add it? (b) Another new asset has a
+Sharpe ratio of 0.5 on its own and an alpha of zero. Same question. (c) HML's alpha against the other five factors is
+$0.2\%$ a year with a standard error of 1.2\%. A colleague concludes that value is dead and should be dropped. Give two
+reasons to be careful.
+\end{ex}
+
+\begin{ex}\label{ex:11.4}
+Ignoring your job, you would put 30\% of your total wealth in the market. Your human capital is three times your
+financial wealth. How much of your \emph{account} goes into the market if (a) you are a tenured professor, with a job
+that does not move with the market; (b) you are a banker, and each dollar of your human capital moves like 20 cents of
+the market; (c) you have just retired? (d) What practical limit does (a) run into, and for whom does it bind the most?
+\end{ex}
+
+\begin{ex}\label{ex:11.5}
+Without restrictions a client's best portfolio has a Sharpe ratio of 0.80 and a volatility of 10\%. (a) An exclusion
+list lowers the best Sharpe ratio to 0.65. The client runs 12\% volatility. What does the list cost in expected return a
+year? (b) The client wants 18\% volatility. With borrowing, what do they hold and what do they expect to earn? (c) The
+mandate forbids borrowing. What must they do to reach 18\% volatility, and why is the result worse?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:11.6}
+For each, \tfd
+(a) ``A cautious investor should hold safer assets than an aggressive one.''
+(b) ``If every expected return doubles, the minimum-variance portfolio changes.''
+(c) ``A software engineer understands technology firms, so she should hold more of them than the average investor.''
+(d) ``An account whose Sharpe ratio is below that of the tangency portfolio is a mistake.''
+\end{ex}
+
+\begin{ex}[concept]\label{ex:11.7}
+(a) You hand the formula $\gamma = 1$ and it tells you to hold 3.7 times your wealth in the market. Is the formula
+wrong? (b) A pod shop halves a team's capital after a 5\% loss. Why does the principal impose a rule in percent
+instead of telling the manager their $\gamma$? (c) Two managers have the same 5\% stop. One has a Sharpe ratio of 1,
+the other of 2. Which can run more volatility, and why?
+\end{ex}
+
+% =====================================================================================================
+\section{Capital allocation II: factor bets and alpha bets}
+{\small\emph{From: Capital Allocation II}}
+
+\head{The ideas}
+\begin{itemize}
+\item A \textbf{factor bet} is exposure anyone can buy: the market, value, Tech. It interacts with your job, your house
+and your mandate, so you follow the formula loosely and tilt. An \textbf{alpha bet} is what is left after you hedge the
+factors. If it is truly alpha it interacts with nothing you own, so you maximize the Sharpe ratio. The catch is the
+word \emph{true}.
+\item The two are estimated differently. A factor's mean is pay for risk: slow-moving, use all the history you have,
+and the prior is positive. An alpha is mispricing or an edge: it decays, the prior is zero, and the evidence is often
+not returns at all. Across 49 industries, alpha over five years has a correlation of $-0.12$ with alpha over the next
+five. For beta it is $+0.61$; for volatility $+0.75$.
+\item Hedge the factor out of each strategy and treat the hedged pieces as the assets: their means are the alphas and
+their covariance is $\Sigma_{\varepsilon}$. It is the same formula.
+\item If the hedged pieces are uncorrelated, the weight is $\alpha_{i}/\sigma_{\varepsilon,i}^{2}$, so \textbf{the volatility
+you give a strategy is proportional to its appraisal ratio}. A bigger alpha does not mean a bigger position.
+\item Correlation is an angle. Uncorrelated bets are at right angles, and squared Sharpe ratios add (Pythagoras).
+Positive correlation adds less; negative correlation adds more. Judge a strategy by what it adds to what you hold.
+\item Breadth: $N$ uncorrelated pods, each with a Sharpe ratio too low to be a fund, make a very good fund. Correlation
+sets the limit. Our 29 strategies: 0.40 apart, 1.38 together, not $\sqrt{29}\times 0.40 = 2.13$. The scarce thing is an
+\emph{uncorrelated} strategy.
+\item The formula needs two inputs and you treat them differently. \textbf{Estimate the risk. Supply the alpha.} The
+alpha comes from a track record, a signal or a view.
+\item A hunch is not an input until it is a number: compared to what, by how much, by when, and how sure. Leaving it out
+is also a number: zero. Write it down before the event, so it can be scored.
+\item Your alpha is an estimate, so shrink it. The less sure you are, the smaller the bet (Black--Litterman).
+\end{itemize}
+
+\begin{keybox}
+\[ r_{i} = \alpha_{i} + \beta_{i}f + \varepsilon_{i} \qquad \text{hedged: } h_{i} = r_{i} - \beta_{i}f, \quad
+   \text{mean } \alpha_{i}, \quad \text{volatility } \sigma_{\varepsilon,i} \]
+\[ W^{\star} \propto \Sigma_{\varepsilon}^{-1}\alpha \qquad \text{uncorrelated: } w_{i} \propto \frac{\alpha_{i}}{\sigma_{\varepsilon,i}^{2}}
+   \ \Longrightarrow\ w_{i}\,\sigma_{\varepsilon,i} \propto \AR_{i}
+   \qquad \SR_{\text{book}} = \sqrt{\textstyle\sum_{i}\AR_{i}^{2}} \]
+Two bets with Sharpe ratios $s_{1}$, $s_{2}$ and correlation $\rho$:
+\[ \SR^{2} = \frac{s_{1}^{2} + s_{2}^{2} - 2\rho\,s_{1}s_{2}}{1 - \rho^{2}} \qquad\qquad
+   \text{if } s_{1} = s_{2} = s:\quad \SR = s\sqrt{\frac{2}{1+\rho}} \]
+$N$ pods with average Sharpe ratio $\bar s$ and average correlation $\bar\rho$:
+\[ \SR_{\text{pool}} = \bar s\sqrt{\frac{N}{1 + (N-1)\bar\rho}} \;\longrightarrow\; \frac{\bar s}{\sqrt{\bar\rho}} \text{ as } N \text{ grows}
+   \qquad\qquad \bar\rho = 0:\quad \SR_{\text{pool}} = \sqrt{N}\,\bar s \]
+\[ \text{Fundamental Law:}\quad \IR = IC \times \sqrt{\text{breadth}} \]
+A view, as a number:
+\[ \alpha = (p - (1-p)) \times \text{move} \qquad IC = \frac{\alpha}{\sigma} \text{ over the horizon}
+   \qquad \AR \text{ a year} = IC\times\sqrt{\text{horizons in a year}} \]
+\[ \text{volatility given} = \frac{\AR}{\SR_{\text{book}}}\times\text{book volatility}
+   \qquad\qquad \text{shrink it:}\quad \alpha_{\text{act}} = \frac{\tau^{2}}{\tau^{2} + \omega^{2}}\,\alpha_{\text{view}} \]
+{\small $IC$: the correlation of your forecasts with what happened. Breadth: independent bets a year. $p$: the chance
+you are right. $\tau$: how big alphas tend to be. $\omega$: the standard error of your view.}
+\end{keybox}
+
+\head{Worked example 1: bigger alpha, smaller position}
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+ & $\alpha$ & $\sigma_{\varepsilon}$ & appraisal ratio & weight $\alpha/\sigma_{\varepsilon}^{2}$ & volatility given \\
+\midrule
+Strategy A & 4\% & 4\% & 1.0 & $0.04/0.0016 = 25$ & $25\times 4\% = 1.0$ \\
+Strategy B & 8\% & 16\% & 0.5 & $0.08/0.0256 = 3.1$ & $3.1\times 16\% = 0.5$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+B has twice the alpha. It gets half the risk and an eighth of the weight. Together, if uncorrelated, the book has a
+Sharpe ratio of $\sqrt{1.0^{2} + 0.5^{2}} = 1.12$. The formula divides by a variance, so it loves whatever looks quiet.
+
+\head{Worked example 2: from a hunch to a position}
+You think Apple's earnings will beat the consensus. Past beats of this size moved the stock about 4\%. You expect to be
+right 60\% of the time, and being wrong means a miss. The report is in 30 trading days. Apple's stock-specific volatility
+is 25\% a year.
+\begin{itemize}
+\item $\alpha = (0.6 - 0.4)\times 4\% = 0.8\%$ over six weeks, on Apple hedged for the market and its industry.
+\item Risk over the horizon: $25\%\times\sqrt{30/252} = 8.6\%$. So the IC you are claiming is $0.8/8.6 = 0.09$. Good
+managers run 0.02 to 0.05.
+\item Appraisal ratio a year: $0.09\times\sqrt{252/30} = 0.27$.
+\item In a book that runs 10\% volatility with a Sharpe ratio of 1, this bet gets $(0.27/1)\times 10\% = 2.7\%$ of
+volatility, which is a position of $2.7/25 = 11\%$.
+\item At 55\% instead of 60\%, alpha halves and so does the position. Being honest about your confidence is the formula
+working.
+\end{itemize}
+
+\head{Exercises}
+
+\begin{ex}\label{ex:12.1}
+Three hedged strategies have alphas of 2\%, 6\% and 3\% and residual volatilities of 4\%, 12\% and 12\%. Their residuals
+are uncorrelated. (a) Compute the three appraisal ratios. (b) Which strategy gets the largest weight? Which get the most
+volatility? (c) What is the Sharpe ratio of the book? (d) The book runs 10\% volatility. How much volatility does each
+strategy get, and what is each position? (e) The market has a Sharpe ratio of 0.5. What is the Sharpe ratio of the book
+and the market together, and why is the formula exact here?
+\end{ex}
+
+\begin{ex}\label{ex:12.2}
+Two strategies each have a Sharpe ratio of 0.6. Compute the Sharpe ratio of the best combination when their correlation
+is (a) 0, (b) 0.5, (c) $-0.5$. (d) Which of the three second strategies would you pay the most for, and what does that
+say about judging a strategy by its own Sharpe ratio?
+\end{ex}
+
+\begin{ex}\label{ex:12.3}
+A firm runs 16 pods, each hedged, each with a Sharpe ratio of 0.5. (a) What is the firm's Sharpe ratio if the pods are
+uncorrelated? (b) If their average correlation is 0.1? (c) With an average correlation of 0.1, what is the most the firm
+could reach with any number of pods? (d) What should the firm look for in its next hire?
+\end{ex}
+
+\begin{ex}\label{ex:12.4}
+You expect a firm to beat earnings in one month (21 trading days). A beat or a miss moves the stock about 6\%. You think
+you are right 55\% of the time. The stock's specific volatility is 32\% a year. (a) What is your alpha over the month?
+(b) What is the risk over the month, and what IC are you claiming? (c) What appraisal ratio a year is that? (d) Your
+book runs 10\% volatility with a Sharpe ratio of 1. How large is the position? (e) Why is the alpha not ``7.2\% a
+year''?
+\end{ex}
+
+\begin{ex}\label{ex:12.5}
+Alphas of hedged strategies tend to be about 2\% in size ($\tau = 2\%$). You hold the view that a strategy's alpha is
+5\%. What alpha do you act on if the standard error of your view is (a) 4\%, (b) 2\%? (c) What happens to the alpha you
+act on, and to your position, as you become very unsure? As you become certain?
+\end{ex}
+
+\begin{ex}\label{ex:12.6}
+(a) A stock-picker has an IC of 0.05 and makes 400 independent bets a year. What information ratio does the
+Fundamental Law give? (b) A macro trader has an IC of 0.10 and makes 4 independent calls a year. Same question.
+(c) The stock-picker's 400 bets are all on technology stocks that move together. What happens to the calculation?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:12.7}
+For each, \tfd
+(a) ``Of two hedged strategies, the one with the larger alpha should get the larger position.''
+(b) ``A strategy with a Sharpe ratio of 0.3 is not worth adding to a book with a Sharpe ratio of 1.5.''
+(c) ``The average correlation among our strategies' residuals is 0.03, so they are independent bets.''
+(d) ``I have no view on this stock, so my analysis makes no assumption about its alpha.''
+\end{ex}
+
+\begin{ex}[concept]\label{ex:12.8}
+The same engineer considers two trades: buying a Tech fund, and buying one chipmaker against another, hedged. (a) Which
+is a factor bet and which an alpha bet? (b) Which one should she size by the formula, and which one less than the
+formula says? Why? (c) What does she have to believe for each trade to make sense? (d) For which input would you use 40
+years of data, and for which the last year only?
+\end{ex}
+
+% =====================================================================================================
+\section{Capital allocation III: estimation error}
+{\small\emph{From: Capital Allocation III}}
+
+\head{The ideas}
+\begin{itemize}
+\item In sample the optimizer always wins. $\Sigma^{-1}\mu$ \emph{is} the maximum in the sample it was computed on. That
+is algebra, not evidence. Optimization is in-sample fitting, and everything from \emph{Backtesting} applies.
+\item The formula multiplies errors in the means by $\Sigma^{-1}$. With two correlated assets the amplifier is
+$(1+\rho)/(1-\rho)$: 1 at $\rho = 0$, 19 at $\rho = 0.9$. A gap of one percentage point in expected returns, which
+nobody can measure, turns 50/50 into 109/$-9$.
+\item Why: any pair is two bets, a level (both) and a spread (one against the other). With high correlation the spread
+has a tiny variance, and the optimizer sizes by mean over variance, so a tiny gap earns a huge position.
+\item Three inputs, three standard errors. Means are the worst by far: HML's mean is $2.8\% \pm 1.6\%$, while its
+volatility is $10.9\% \pm 0.3\%$. Daily data helps volatilities and correlations. It does nothing for a mean.
+\item Which input does the damage depends on what you hold. In a small book, the means. In a large book (29 strategies
+have 406 correlations) the correlations can take over. Volatilities never do.
+\item Each simple rule replaces an estimate with a constant, and is exposed only to what it still estimates:
+\begin{center}
+{\small\begin{tabular}{@{}llll@{}}
+\toprule
+rule & weights & the constant & still estimates \\
+\midrule
+mean-variance & $\Sigma^{-1}\mu$ & none & means, vols, correlations \\
+no correlations & $\mu_{i}/\sigma_{i}^{2}$ & every correlation is zero & means, vols \\
+same Sharpe & $\Sigma^{-1}\sigma$ & every Sharpe ratio is equal & vols, correlations \\
+same mean (min.\ variance) & $\Sigma^{-1}\mathbf{1}$ & every mean is equal & vols, correlations \\
+risk parity & $1/\sigma_{i}$ & same Sharpe, no correlations & vols \\
+$1/N$ & $1/N$ & all of that, and the same vol & nothing \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\item None is simply better. Each is a claim about your assets. Whether a constant helps is a race between how
+different the assets really are ($\SR^{2}$) and how noisy the estimates are ($N/Y$: assets over years of data).
+\item So ``$1/N$ beats the optimizer'' is a result about particular assets. Out of sample, $1/N$ wins on six factors
+(0.92 against 0.83), on sectors and on asset classes. On the 29 long-shorts, which really are different, the optimizer
+wins by a wide margin.
+\item The race in class had one more lesson: written with the month it earns inside the estimate, mean-variance
+``wins'' (1.03). One index flips the conclusion.
+\item Shrinkage makes the choice continuous: stand between the estimate and the constant. Similar assets: near the
+constant. Very different assets: near the estimates. A constraint (long-only, a position cap) is a prior too. The dial
+is a parameter: tune it without the future, test it, report once.
+\end{itemize}
+
+\begin{keybox}
+\[ \Delta W = \frac{1}{\gamma}\Sigma^{-1}\Delta\mu \qquad\qquad
+   \text{two assets, same volatility:}\quad w_{1} = \frac{1}{2} + \frac{\text{gap}}{4\times\text{average mean}}\times\frac{1+\rho}{1-\rho} \]
+\[ \frac{\operatorname{Var}(\text{level})}{\operatorname{Var}(\text{spread})} = \frac{1+\rho}{1-\rho}
+   \qquad\qquad \text{asset 2 is shorted when } \SR_{2}/\SR_{1} < \rho \]
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+input & standard error & more data means \\
+\midrule
+expected return & $\sigma/\sqrt{T}$ & more years \\
+volatility & $\sigma/\sqrt{2N}$ & more observations (daily helps) \\
+correlation & $(1-\rho^{2})/\sqrt{N}$ & more observations (daily helps) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\[ \underbrace{\SR^{2}_{\text{in sample}}}_{\text{what you see}} \approx \underbrace{\SR^{2}}_{\text{real}} +
+   \underbrace{N/Y}_{\text{estimation error}}
+   \qquad\qquad \frac{\SR_{\text{you earn}}}{\SR} \approx \frac{1}{\sqrt{1 + \dfrac{N}{Y\,\SR^{2}}}} \]
+\[ \text{shrinkage:}\quad s_{i}(d) = (1-d)\,\hat s_{i} + d\,\bar s \qquad d \approx \frac{\text{noise}}{\text{dispersion you see}} \]
+{\small $N$ assets, $Y$ years of data, Sharpe ratios a year. With $N$ assets there are $N$ means, $N$ volatilities and
+$N(N-1)/2$ correlations.}
+\end{keybox}
+
+\head{Worked example}
+Two assets with the same volatility. The average of their expected returns is 8\%, and you estimate that asset 1 earns
+one percentage point more than asset 2.
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+correlation & 0 & 0.5 & 0.8 & 0.9 & 0.95 \\
+\midrule
+amplifier $(1+\rho)/(1-\rho)$ & 1 & 3 & 9 & 19 & 39 \\
+weight on asset 1 & 53\% & 59\% & 78\% & 109\% & 172\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+At $\rho = 0.9$: $w_{1} = 0.5 + \dfrac{0.01}{4\times 0.08}\times 19 = 0.5 + 0.59 = 1.09$. Two good assets, and the formula shorts
+one of them.
+
+The race, for the six factors over 46 years: the best in-sample Sharpe ratio is 1.17 and $1/N$ has 1.03, so the extra
+$\SR^{2}$ you see is $1.17^{2} - 1.03^{2} = 0.31$. Noise alone would produce about $(N-1)/Y = 5/46 = 0.11$ of it.
+
+\head{Exercises}
+
+\begin{ex}\label{ex:13.1}
+Two assets have the same volatility. The average of their expected returns is 6\%, and you estimate that asset 1 earns
+one percentage point more than asset 2. Compute the weight on asset 1 when the correlation is (a) 0, (b) 0.5, (c) 0.8,
+(d) 0.9. (e) At which correlation is asset 2 first sold short? (f) The standard error of the gap is 2 percentage
+points. What do you make of the portfolio in (d)?
+\end{ex}
+
+\begin{ex}\label{ex:13.2}
+An asset has a volatility of 20\% a year. You have 25 years of monthly data (300 months). Compute the standard error
+of (a) its expected return, (b) its volatility, (c) its correlation with another asset, if that correlation is 0.5.
+(d) You switch to daily data. Which of the three answers change?
+\end{ex}
+
+\begin{ex}\label{ex:13.3}
+You optimize over 10 assets using 20 years of data. (a) If the true best Sharpe ratio is 1.0, what Sharpe ratio do you
+expect to see in sample, and what do you expect to earn? (b) Redo (a) if the true best Sharpe ratio is 0.5. (c) In which
+of the two worlds would you rather use $1/N$, and what do you need to know about $1/N$ to decide?
+\end{ex}
+
+\begin{ex}\label{ex:13.4}
+Three assets have volatilities of 10\%, 20\% and 40\%. They are uncorrelated. Compute the weights, scaled to add to one,
+under (a) risk parity, (b) minimum variance, (c) $1/N$. (d) For each rule, say what it assumes about the three expected
+returns. (e) The three assets are a government bond fund, a stock index and an emerging-market fund. Which assumption
+would you be least willing to make?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:13.5}
+For each, \tfd
+(a) ``Over 1980--2026 the mean-variance portfolio of the six factors has a higher Sharpe ratio than $1/N$, so it is the
+better rule.''
+(b) ``$1/N$ beats mean-variance out of sample.''
+(c) ``The main reason optimized weights are unstable is that volatilities are hard to estimate.''
+(d) ``A long-only constraint can only hurt, since it removes portfolios the optimizer wanted.''
+\end{ex}
+
+\begin{ex}[code]\label{ex:13.6}
+\texttt{F} has one row per month of factor returns. An AI wrote this loop to test mean-variance out of sample:
+\begin{verbatim}
+for t in range(120, len(F)):
+    past = F.iloc[:t+1]
+    w = np.linalg.inv(past.cov()) @ past.mean()
+    oos.append(F.iloc[t] @ w)
+\end{verbatim}
+(a) Which months go into the estimate that earns month \texttt{t}? (b) Fix it. (c) It is one month out of hundreds. Why
+does it matter so much? (d) In class the correct version had a Sharpe ratio of 0.83 and $1/N$ had 0.92. What did the
+wrong version give, and what would you have concluded?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:13.7}
+You try five shrinkage intensities on the out-of-sample race and report the best one, which beats plain mean-variance
+by 0.3 of Sharpe ratio. (a) What is wrong with the 0.3? (b) Describe how to choose the intensity without the future.
+(c) Which lecture's lesson is this?
+\end{ex}
+
+% =====================================================================================================
+\section{Conditional strategies I: timing risk}
+{\small\emph{From: Conditional Strategies I}}
+
+\head{The ideas}
+\begin{itemize}
+\item The formula $x_{t} = \mu_{t}/(\gamma\sigma_{t}^{2})$ has two parts that can move. Forecasting $\sigma$ is easy;
+forecasting $\mu$ is hard. Here $\sigma_{t}$ moves and $\mu$ is held fixed.
+\item Volatility comes in waves. The market's volatility is about 11\% a year in a typical month and was 93\% in March
+2020. Last month's volatility explains half of this month's (in logs). It explains none of this month's return.
+\item Realized variance, from daily returns within the month, is a crude forecast of next month's variance and hard to
+beat by much.
+\item Holding less after a volatile month pays only if the expected return does not rise with the risk. Sort the months by
+last month's volatility: for the market, volatility goes from 11\% to 30\% and the average return only from 7\% to 11\%, so
+the Sharpe ratio falls from 0.62 to 0.37.
+\item It is a tool, not a law. It pays a lot for momentum (0.51 to 0.91) and for the best mix of the six factors, some
+for profitability, nothing for the market since 1963, and it hurts for CMA, whose return does rise with its risk.
+\item The worst case is a fast round trip: a crash out of calm (October 1987, still half invested) or a rebound after a
+storm (April 2020, out of the market, missed $+13.6\%$).
+\item The price is leverage and trading. The weight is above 2 in 16\% of months. Capping it costs little, and scaling by
+$1/\sigma$ instead of $1/\sigma^{2}$ does about as well.
+\end{itemize}
+
+\begin{keybox}
+\[ x_{t} = \frac{1}{\gamma}\frac{\mu_{t}}{\sigma_{t}^{2}} \qquad
+   \RV_{t} = \sum_{d=1}^{N_{t}}(r_{d} - \bar r_{t})^{2} \qquad \hat\sigma_{t} = \sqrt{12\times\RV_{t}} \ \text{ a year} \]
+\[ \text{if } \mu_{t} = a + b\,\sigma_{t}^{2}:\qquad x_{t} = \frac{1}{\gamma}\left(\frac{a}{\sigma_{t}^{2}} + b\right)
+   \qquad b = 0:\ x_{t} \propto 1/\sigma_{t}^{2} \qquad a = 0:\ x_{t} \text{ constant} \]
+\[ \text{the managed strategy:}\quad r^{\sigma}_{t} = \frac{c}{\RV_{t-1}}\,r_{t}, \qquad c \text{ such that }
+   \operatorname{sd}(r^{\sigma}) = \operatorname{sd}(r) \]
+\[ \text{the test:}\quad r^{\sigma}_{t} = \alpha + \beta r_{t} + \varepsilon_{t} \qquad \text{(does managing add alpha to the factor itself?)} \]
+\end{keybox}
+
+\head{Worked example}
+A month has 21 trading days. If the daily returns have a standard deviation of 1\%, then
+$\RV \approx 21\times 0.01^{2} = 0.0021$, and the volatility a year is $\sqrt{12\times 0.0021} = 15.9\%$. If the daily standard
+deviation is 3\%, $\RV$ is nine times larger and the volatility is 47.6\%. The managed weight after the second month is
+one ninth of the weight after the first.
+
+Does that make sense? After the calmest months the market earned about 7\% with a volatility of 11\%:
+$\mu/\sigma^{2} = 0.07/0.0121 = 5.8$. After the most volatile, 11\% with 30\%: $0.11/0.09 = 1.2$. The formula says to
+hold almost five times as much after a calm month. Not nine times, because the return did rise a little.
+
+\head{Exercises}
+
+\begin{ex}\label{ex:14.1}
+Suppose $\mu_{t} = a + b\,\sigma_{t}^{2}$ with $a = 4\%$ and $b = 2$, and $\gamma = 2$. (a) Compute the expected return and
+the weight $x_{t}$ when volatility is 10\% and when it is 30\%. (b) Redo the two weights with $b = 0$ and $a = 4\%$.
+(c) Redo them with $a = 0$ and $b = 2$. (d) In which of the three worlds does volatility timing help the most? In which
+is it pointless?
+\end{ex}
+
+\begin{ex}\label{ex:14.2}
+A factor is sorted into months that follow calm months and months that follow volatile months.
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+ & after calm months & after volatile months \\
+\midrule
+average return a year & 10\% & 12\% \\
+volatility a year & 8\% & 24\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+(a) Compute the Sharpe ratio in each group. (b) Compute $\mu/\sigma^{2}$ in each group. How many times larger should
+the position be after a calm month? (c) Is this factor closer to $b = 0$ or to $a = 0$? (d) A second factor has a
+Sharpe ratio of 0.3 after calm months and 0.6 after volatile ones. What does volatility management do to it?
+\end{ex}
+
+\begin{ex}\label{ex:14.3}
+In one month the market's 21 daily returns have a standard deviation of 2\%. (a) Compute that month's realized variance
+(approximately) and the volatility a year. (b) The month before, the daily standard deviation was 1\%. By what factor
+does the managed weight change? (c) The managed strategy's weight averages 1. Its weight was 0.01 in April 2020, when
+the market rose 13.6\%. What did the managed strategy earn that month, and what general weakness does it show?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:14.4}
+For each, \tfd
+(a) ``Volatility management works because high volatility predicts low returns.''
+(b) ``The constant $c$ is computed from the whole sample, so the comparison of Sharpe ratios looks ahead.''
+(c) ``Since the volatility-managed market had an alpha with $t = 3.1$ over 1926--2026, it will raise the Sharpe ratio of
+any factor.''
+(d) ``Rebalancing the managed position every day on the last five days of data should do better than monthly, because
+the forecast is fresher.''
+\end{ex}
+
+\begin{ex}[code]\label{ex:14.5}
+\texttt{M} has one row per month with the market's return \texttt{r} and its realized variance \texttt{rv}. An AI wrote:
+\begin{verbatim}
+1  w = 1 / M['rv']
+2  c = M['r'].std() / (w * M['r']).std()
+3  managed = c * w * M['r']
+\end{verbatim}
+(a) One line makes this a strategy nobody could have run. Which one, and how do you fix it? (b) In which direction do
+you expect the mistake to move the Sharpe ratio? Explain using the fact that the most volatile months tend to be the
+months of the largest losses. (c) Line 2 uses the whole sample. Is that a problem?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:14.6}
+(a) Name the two costs of running the managed strategy that the Sharpe ratio does not show. (b) Give two changes that
+reduce them and say what they cost in the data. (c) Which practices from \emph{Capital Allocation I} are versions of
+the same idea?
+\end{ex}
+
+% =====================================================================================================
+\section{Conditional strategies II: timing expected returns}
+{\small\emph{From: Conditional Strategies II}}
+
+\head{The ideas}
+\begin{itemize}
+\item Now the other half of the formula: let $\mu_{t}$ move. The natural signals are prices against fundamentals. From
+Gordon, $D/P = r - g$: a low price against dividends means high returns ahead or low growth.
+\item The dividend yield looks strong at long horizons. Over 1927--2024 the usual $t$-statistic goes from 1.8 for next
+month to 12.3 for the next five years, with an $R^{2}$ of 12\%. The reason is overlap: two five-year returns a month
+apart share 59 of their 60 months. A century is about 20 independent five-year returns. Allow for the overlap and
+the $t$ is 2.8; use only periods that do not overlap and it is 1.5.
+\item A small $R^{2}$ is not the problem. If it were real, a monthly $R^{2}$ of 1\% would raise a Sharpe ratio of 0.40 to
+0.53. Whether it is real is the problem.
+\item The check: each month, fit on the past only, forecast next month, and compare with the \emph{historical average},
+not with zero. For D/P the out-of-sample $R^{2}$ is negative ($-0.5\%$), and timing on it earned a Sharpe ratio of 0.46
+against 0.52 for buy and hold. It was short the market in 36\% of months.
+\item Why it failed: the signal's average moved. Buybacks replaced dividends and D/P fell from 4\% to 1\%; the regression
+read every year of that as \emph{sell}, through two of the best decades for stocks. A price ratio is a good signal only
+if what is in the denominator means the same thing over time.
+\item Run the same test on the other famous signals (E/P, CAPE, book-to-market, the short rate, the term spread, the
+default spread, VIX, realized variance, net issuance): in sample 2 of 10 clear $|t| > 1.64$; out of sample 2 beat the
+historical average, by less than 0.2\% of $R^{2}$ (Goyal and Welch).
+\item For factors the same idea is the value spread: how cheap is what the factor buys against what it sells. It does
+a little better out of sample, and it depends on which price is in the ratio.
+\item Search finds things. Try 24 signals and about one will have $|t| > 2$ by luck. In class 5 of 24 did in the first
+half of the sample, and 2 of those 5 still worked in the second half. What a real signal looks like: one signal,
+several factors, both halves (factor momentum).
+\item Averaging the forecasts of many weak signals did better than any one of them: the errors of the single forecasts
+partly cancel, and the average stays close to the historical average.
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+ & timing risk & timing returns \\
+\midrule
+what you forecast & next month's volatility & next month's return \\
+how well, $R^{2}$ & 50\% & 0.3\%, in sample \\
+what must be true & the return does not rise with risk & the signal's average stays put \\
+how often it broke & by factor & by decade \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{keybox}
+\[ r_{t\to t+h} = a + b\,\frac{D}{P}\Big|_{t} + u_{t+h} \qquad
+   \text{independent observations} \approx \frac{\text{years of data}}{\text{horizon in years}} \]
+\[ \text{Campbell and Thompson, monthly units:}\qquad \SR^{2}_{\text{timed}} \approx \frac{\SR^{2} + R^{2}}{1 - R^{2}} \]
+\[ R^{2}_{\text{OOS}} = 1 - \frac{\sum(r - \text{forecast})^{2}}{\sum(r - \text{historical average})^{2}}
+   \qquad\qquad x_{t} = \frac{\text{forecast}_{t}}{\gamma\,\sigma^{2}} \]
+\[ \text{value spread:}\quad VS_{t} = \log\frac{B}{M}\Big|_{\text{long},\,t} - \log\frac{B}{M}\Big|_{\text{short},\,t}
+   \qquad \text{lucky signals} \approx 5\%\times\text{signals tried} \]
+\end{keybox}
+
+\head{Worked example}
+A monthly $R^{2}$ of 1\%, for a market with a Sharpe ratio of 0.40 a year. In monthly units the Sharpe ratio is
+$0.40/\sqrt{12} = 0.115$, so $\SR^{2} = 0.0133$. Then $(0.0133 + 0.01)/0.99 = 0.0236$ a month, and a year
+$\sqrt{12\times 0.0236} = 0.53$.
+
+The overlap. With 98 years of monthly data there are about 1{,}110 five-year returns, and $98/5 \approx 19$ that do not
+overlap. A $t$-statistic that treats the 1{,}110 as separate observations is far too large.
+
+\head{What to check before you trade a timing signal}
+\begin{enumerate}[itemsep=1pt]
+\item \textbf{The signal is known at $t$.} Last year's dividends, last December's book value, last month's volatility.
+\item \textbf{Out of sample, month by month.} Fit on the past only. Compare with the historical average.
+\item \textbf{Count the overlap.} For long-horizon returns, count the independent periods.
+\item \textbf{Count your tries, and prefer a reason.}
+\item \textbf{Same risk, then compare.} Against buy and hold at the same average risk, after costs.
+\end{enumerate}
+
+\head{Exercises}
+
+\begin{ex}\label{ex:15.1}
+A regression of next year's market excess return on the dividend yield gives $a = -1\%$ and $b = 2.4$. The market's
+volatility is 16\% and $\gamma = 3$. (a) What return do you forecast when D/P is 4\%? When it is 1.6\%? (b) What weight do
+you hold in the market in each case? (c) Over twenty years D/P drifts from 4\% to 1.6\% because firms switch from
+dividends to buybacks. What does your strategy do over those years, and why is that a mistake?
+\end{ex}
+
+\begin{ex}\label{ex:15.2}
+You have 60 years of monthly data and regress five-year returns on a signal. (a) How many five-year returns can you
+form? (b) How many of them do not overlap? (c) The regression reports a $t$-statistic of 9. Roughly, how much evidence
+do you really have? (d) Name two honest ways to report the result.
+\end{ex}
+
+\begin{ex}\label{ex:15.3}
+The market has a Sharpe ratio of 0.50 a year. Use the Campbell--Thompson formula to compute the Sharpe ratio of a
+timing strategy if the monthly $R^{2}$ of your signal is (a) 0.5\%, (b) 2\%. (c) Why is this an upper bound on what you
+would earn?
+\end{ex}
+
+\begin{ex}\label{ex:15.4}
+Four months of returns, a signal's forecast for each, and the historical average known at the time:
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+month & 1 & 2 & 3 & 4 \\
+\midrule
+return & 2\% & $-1\%$ & 3\% & 0\% \\
+forecast & 1\% & 1\% & 2\% & $-1\%$ \\
+historical average & 1\% & 1\% & 1\% & 1\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+(a) Compute the out-of-sample $R^{2}$. (b) Did the signal beat the historical average? (c) How can an out-of-sample
+$R^{2}$ be negative, when an in-sample $R^{2}$ never is?
+\end{ex}
+
+\begin{ex}\label{ex:15.5}
+You test 40 timing signals on the first half of your sample. Seven have $|t| > 2$. (a) How many would you expect by luck
+alone? (b) You follow the seven into the second half and three still have $|t| > 2$. What do you conclude about the
+other four? (c) Which is more convincing: a signal that works for one factor with $t = 3.5$ in the first half, or one
+that works for four factors with $t$ near 2 in both halves? Why?
+\end{ex}
+
+\begin{ex}[concept]\label{ex:15.6}
+For each, \tfd
+(a) ``A signal that explains 0.5\% of next month's return is too weak to be worth trading.''
+(b) ``The dividend yield has a $t$-statistic of 12 for five-year returns, so the evidence is stronger at long horizons.''
+(c) ``To test a forecast out of sample, check that its out-of-sample $R^{2}$ is above zero, where zero means forecasting
+a return of zero every month.''
+(d) ``Book-to-market means the same thing for a software firm today as for a steel firm in 1960.''
+\end{ex}
+
+\begin{ex}[concept]\label{ex:15.7}
+Volatility timing and return timing use the same formula. (a) Which input does each one forecast? (b) Why is one so
+much easier than the other? Use what you know about standard errors. (c) What assumption does each need, and how did
+each fail in the data?
+\end{ex}
+
+\begin{ex}[code]\label{ex:15.8}
+You want to test, out of sample, whether the term spread forecasts next month's market return over 1950--2024. Give the
+AI instructions. Say what goes into each month's fit, what the forecast is compared with, what number it reports, and
+what would make you say the signal works. Then name one thing you must check in the code it returns.
+\end{ex}
+
+\begin{ex}[concept]\label{ex:15.9}
+Nine signals each forecast next month's market return. Out of sample, most do worse than the historical average. The
+average of the nine forecasts does better than every single one, and better than the historical average. (a) Explain
+why, using the idea of diversification. (b) The average forecast barely moves from month to month. Why is that part of
+the reason it works? (c) Connect this to shrinkage in \emph{Capital Allocation III}.
+\end{ex}
+
+% =====================================================================================================
+\newpage
+\section*{Formula sheet}\label{sec:sheet}
+\addcontentsline{toc}{section}{Formula sheet}
+{\small
+\head{Returns and portfolios}
+\[ r_{p,t} = \sum_{i} w_{i,t-1}r_{i,t} \quad\ w^{VW}_{i} = \frac{ME_{i,t-1}}{\sum_{j}ME_{j,t-1}} \quad\
+   1 + r_{1\to T} = \prod_{t}(1+r_{t}) \quad\ \text{yearly: mean}\times 12,\ \text{vol}\times\sqrt{12} \]
+\[ \text{equal weights:}\quad \sigma_{p}^{2} = \frac{\sigma^{2}}{N}\big(1 + (N-1)\bar\rho\big) \to \sigma^{2}\bar\rho
+   \qquad \text{Gordon:}\quad \frac{D}{P} = r - g \]
+
+\head{One factor}
+\[ \re = \alpha + \beta\,\re_{m} + \varepsilon \qquad E[\re] = \alpha + \beta E[\re_{m}] \qquad
+   \sigma^{2} = \beta^{2}\sigma_{m}^{2} + \sigma_{\varepsilon}^{2} \qquad R^{2} = \frac{\beta^{2}\sigma_{m}^{2}}{\sigma^{2}} \]
+\[ \SR = \frac{E[\re]}{\sigma} \qquad \IR = \frac{E[r_{p} - r_{b}]}{\sigma(r_{p} - r_{b})} \qquad \AR = \frac{\alpha}{\sigma_{\varepsilon}}
+   \qquad \SR_{\max}^{2} = \SR_{m}^{2} + \AR^{2} \qquad \text{hedged: } \re - \beta\re_{m} = \alpha + \varepsilon \]
+
+\head{Many factors, and the cross-section}
+\[ E[\re] = \alpha + \sum_{k}\beta_{k}E[f_{k}] \quad\
+   \text{slope: } Z = \sum_{i}w_{i}r_{i},\ \ w_{i} = \frac{x_{i} - \bar x}{\sum_{j}(x_{j} - \bar x)^{2}},\ \
+   \sum w_{i} = 0,\ \ \sum w_{i}x_{i} = 1 \]
+\[ \text{characteristic-adjusted: } r_{p} - X_{p}'Z \qquad
+   b = \sum_{i}w_{i}\beta_{i} \qquad \sigma_{p}^{2} = b'\Omega_{f}\,b + \sum_{i}w_{i}^{2}\sigma_{\varepsilon,i}^{2} \]
+
+\head{What data can teach you}
+\[ SE(\text{mean}) = \frac{\sigma}{\sqrt{T}} \quad SE(\alpha) = \frac{\sigma_{\varepsilon}}{\sqrt{T}} \quad
+   SE(\SR) \approx \frac{1}{\sqrt{T}} \quad SE(\beta) = \frac{\sigma_{\varepsilon}/\sigma_{f}}{\sqrt{N}} \quad
+   SE(\sigma) \approx \frac{\sigma}{\sqrt{2N}} \quad SE(\rho) \approx \frac{1 - \rho^{2}}{\sqrt{N}} \]
+\[ t = \text{ratio}\times\sqrt{T} \qquad T = \left(\frac{z}{\text{ratio} - \text{hurdle}}\right)^{2}
+   \qquad z:\ 1.28\ (90\%),\ 1.64\ (95\%),\ 1.96\ (\text{two-sided}),\ 3\ (20 \text{ tries}) \]
+{\centering $T$: years. $N$: observations.\par}
+
+\head{Hiring and firing}
+\[ \text{in: } \widehat{\AR}_{T} \ge a^{*} + \frac{z_{p}}{\sqrt{T}} \qquad \text{out: } \widehat{\AR}_{T} \le a^{*} - \frac{z_{p}}{\sqrt{T}}
+   \qquad \frac{\pi_{T}}{1 - \pi_{T}} = \frac{\pi}{1 - \pi}\exp\!\big(T a(\widehat{\AR}_{T} - a/2)\big) \]
+\[ \text{a good hire: } \sqrt{S^{2} + a^{2}} \qquad \text{an unskilled one: } \frac{S^{2}}{\sqrt{S^{2} + a^{2}}}
+   \qquad \text{leverage } L:\ \text{capital}_{t} = \text{capital}_{t-1}(1 + L r_{t}) \]
+
+\head{Capital allocation}
+\[ x^{\star} = \frac{\mu}{\gamma\sigma^{2}} \qquad x^{\star}\sigma = \frac{\SR}{\gamma} \qquad W^{\star} = \frac{1}{\gamma}\Sigma^{-1}\mu
+   \qquad \text{minimum variance} \propto \Sigma^{-1}\mathbf{1} \qquad \SR_{T} = \sqrt{\mu'\Sigma^{-1}\mu} \]
+\[ \SR^{2}_{\text{with}} = \SR^{2}_{\text{without}} + \Big(\frac{\alpha}{\sigma_{\varepsilon}}\Big)^{2} \qquad
+   w = (1+h)\frac{1}{\gamma}\Sigma^{-1}\mu - h\,b \qquad \text{price of a mandate} = \Delta\SR\times\sigma \]
+\[ w_{i} \propto \frac{\alpha_{i}}{\sigma_{\varepsilon,i}^{2}} \qquad w_{i}\sigma_{\varepsilon,i} \propto \AR_{i} \qquad
+   \SR^{2} = \frac{s_{1}^{2} + s_{2}^{2} - 2\rho s_{1}s_{2}}{1 - \rho^{2}} \qquad
+   \SR_{\text{pool}} = \bar s\sqrt{\frac{N}{1 + (N-1)\bar\rho}} \]
+\[ \IR = IC\sqrt{\text{breadth}} \qquad \alpha = (2p - 1)\times\text{move} \qquad
+   \alpha_{\text{act}} = \frac{\tau^{2}}{\tau^{2} + \omega^{2}}\alpha_{\text{view}} \]
+\[ w_{1} = \frac{1}{2} + \frac{\text{gap}}{4\bar\mu}\cdot\frac{1+\rho}{1-\rho} \qquad
+   \SR^{2}_{\text{in sample}} \approx \SR^{2} + \frac{N}{Y} \qquad
+   \frac{\SR_{\text{you earn}}}{\SR} \approx \frac{1}{\sqrt{1 + N/(Y\,\SR^{2})}} \]
+
+\head{Timing}
+\[ x_{t} = \frac{\mu_{t}}{\gamma\sigma_{t}^{2}} \quad\ \RV_{t} = \sum_{d}(r_{d} - \bar r_{t})^{2} \quad\
+   \hat\sigma_{t} = \sqrt{12\,\RV_{t}} \quad\ r^{\sigma}_{t} = \frac{c}{\RV_{t-1}}r_{t} \quad\
+   \mu_{t} = a + b\sigma_{t}^{2}\ \Rightarrow\ x_{t} = \frac{1}{\gamma}\Big(\frac{a}{\sigma_{t}^{2}} + b\Big) \]
+\[ R^{2}_{\text{OOS}} = 1 - \frac{\sum(r - \text{forecast})^{2}}{\sum(r - \text{average})^{2}} \qquad
+   \SR^{2}_{\text{timed}} \approx \frac{\SR^{2} + R^{2}}{1 - R^{2}}\ \ (\text{monthly}) \qquad
+   \text{independent observations} \approx \frac{\text{years}}{\text{horizon}} \]
+}\label{sec:sheetend}
+
+% =====================================================================================================
+\ifsolutions
+\newpage
+\section*{Solutions}
+\addcontentsline{toc}{section}{Solutions}
+{\small
+Short answers. For the concept questions there is more than one good answer; these give the point that earns the marks.
+
+\head{1. Returns, portfolios and weights}
+
+\sol{ex:1.1} (a) Value-weighted: $(600\times 2 + 250\times(-4) + 100\times 10 + 50\times 20)/1000 = 2.2\%$. Equal-weighted:
+$(2 - 4 + 10 + 20)/4 = 7\%$. (b) The two smallest stocks had the largest returns. Equal weights give them half the
+portfolio; value weights give them 15\%. (c) The holdings are now worth 612, 240, 110 and 60, so the weights are 59.9\%,
+23.5\%, 10.8\% and 5.9\%. These are the new value weights: nothing to trade. The equal-weighted investor must sell the
+two winners and buy the two that lagged to get back to 25\% each.
+
+\sol{ex:1.2} (a) $1.5\times 0.5 = 0.75$: you lost 25\%. Adding says zero. (b) Mean $12\%$, volatility $5\times\sqrt{12} =
+17.3\%$. The excess return is 0.75\% a month, so the Sharpe ratio is $(0.75/5)\times\sqrt{12} = 0.52$.
+
+\sol{ex:1.3} (a) $52/\sqrt{5000} = 0.74\%$. (b) With many stocks $\sigma_{p}^{2} \approx \sigma^{2}\bar\rho$, so
+$\bar\rho = (15.5/52)^{2} = 0.09$. (c) Almost none. With 5{,}000 stocks the $\sigma^{2}/N$ part is already gone. What is left
+is the part stocks share, and more stocks do not remove it.
+
+\sol{ex:1.4} False. In our data 89\% of stocks are skewed to the right and the market is skewed to the left ($-0.83$).
+Averaging washes out each stock's own large gains. What is left is what stocks do together, and what they do together
+is crash.
+
+\sol{ex:1.5} It is the only portfolio every investor can hold at the same time: add up all holdings and you get
+market-value weights. And it needs no trading when prices move, and never forces a large position in a tiny stock. The
+equal-weighted return ignores the cost of trading thousands of small, illiquid stocks back to equal weights every month.
+
+\sol{ex:1.6} (a) The panel is stacked, so \texttt{shift(1)} takes the first row of each stock from the last row of the
+previous stock. It needs \texttt{df.groupby('permno')['me'].shift(1)}. (b) It weights by \texttt{me} at the end of the
+month in which the return is earned (and never uses \texttt{w}). Stocks that rose this month get more weight after the
+fact, so the return is biased up: in class 25.5\% a year instead of 15.7\%. (c) Line 1: the first month of every stock
+should be missing; check one stock by hand. Line 2: compare the \emph{mean} with a published market return. The
+correlation looks fine (0.99); only the mean shows it.
+
+\head{2. Sorts and long-short portfolios}
+
+\sol{ex:2.1} Bottom (A, B): $-1.4\%$. Middle (C, D): $(200\times 0 + 100\times 1)/300 = 0.33\%$. Top (E, F): $2.5\%$.
+(a) Yes, each group beats the one below. (b) The long-short trades stocks worth 250 out of 550. Most of the market's
+value sits in the middle, where the signal says nothing.
+
+\sol{ex:2.2} The whole spread comes from portfolio 1, the short leg, and the pattern is not monotone. Check what is
+in portfolio 1: how many stocks, how large, and whether they can be sold short at a reasonable cost. Then redo the sort
+with NYSE breakpoints and value weights, or on large stocks only, and report the two legs separately.
+
+\sol{ex:2.3} Finer buckets hold more extreme values of the signal, so the gap in average returns widens. But each
+bucket holds fewer stocks and is more volatile. The $t$-statistic is the mean over its standard error; past 20 buckets
+the noise grows faster than the mean. That noise is also risk you would bear.
+
+\sol{ex:2.4} False. The weights add to zero: the short leg pays for the long leg, and the T-bill rate cancels. The Sharpe
+ratio is the mean of the long-short return over its standard deviation.
+
+\sol{ex:2.5} Any five of: the signal must be last month's (lagged within each stock); rank within each month, not over
+the whole sample; breakpoints from all stocks or from NYSE stocks; equal or value weights inside each decile, and if
+value, last month's market value; drop missing values before ranking; which stocks are in the universe; which return
+(the month after the signal); the sample period; whether ``high'' is decile 10.
+
+\head{3. Performance evaluation with one factor}
+
+\sol{ex:3.1} (a) $9 - 0.5\times 6 = 6\%$. (b) Systematic volatility $0.5\times 18 = 9\%$; $\sigma_{\varepsilon} =
+\sqrt{15^{2} - 9^{2}} = 12\%$; $R^{2} = 81/225 = 0.36$. (c) $\SR = 9/15 = 0.60$; $\AR = 6/12 = 0.50$. (d) The market's
+Sharpe ratio is $6/18 = 0.33$, so $\sqrt{0.33^{2} + 0.50^{2}} = 0.60$. (e) $t = 0.5\times\sqrt{9} = 1.5$; $(2/0.5)^{2} = 16$
+years.
+
+\sol{ex:3.2} (a) X: $11/20 = 0.55$. Y: $1/10 = 0.10$. (b) X: $\alpha = 11 - 1.2\times 8 = 1.4\%$, $\sigma_{\varepsilon} =
+\sqrt{20^{2} - 19.2^{2}} = 5.6\%$, $\AR = 0.25$. Y: $\alpha = 1 + 0.375\times 8 = 4\%$, $\sigma_{\varepsilon} = \sqrt{10^{2} - 6^{2}} = 8\%$,
+$\AR = 0.50$. (c) Y. The market's Sharpe ratio is 0.5, so with Y: $\sqrt{0.25 + 0.25} = 0.71$. With X: $\sqrt{0.25 + 0.0625}
+= 0.56$. (d) Y's raw return is low because its negative beta costs it $0.375\times 8 = 3\%$. The investor can undo that
+exposure by holding a little more of the market. What is left is 4\% of alpha on 8\% of risk, which the market cannot give
+them. Most of X's return is market exposure they already have.
+
+\sol{ex:3.3} (a) $3/0.15 = \$20$ million. (b) Sell \$0.50 of the market per dollar. $3/0.12 = \$25$ million, with \$12.5
+million of the market sold. (c) Unhedged $20\times 9\% = \$1.8$ million; hedged $25\times 6\% = \$1.5$ million. (d) Dollars per
+dollar of budget are $(\alpha + \beta E[\re_{m}])/\sigma$ unhedged and $\alpha/\sigma_{\varepsilon}$ hedged. Hedging lowers
+expected dollars when $(\alpha + \beta E[\re_{m}])/\sigma > \alpha/\sigma_{\varepsilon}$: when the Sharpe ratio is above the
+appraisal ratio. Here $0.60 > 0.50$.
+
+\sol{ex:3.4} (a) False. $R^{2}$ is the share of the fund's variance that is market movement. A low $R^{2}$ says most of
+its risk is its own. Whether to trust the alpha is a question for its $t$-statistic. (b) False, or Depends. Against the
+broad market she is paid for the value tilt itself. Measure her against a value index, or against a model with a value
+factor. (c) False. What a fund adds is $\alpha/\sigma_{\varepsilon}$. The same alpha with half the residual risk adds much more.
+
+\sol{ex:3.5} (a) $1.8/\sqrt{23} = 0.38$. (b) From its own picks: about 17\% of its 19.5\% volatility was not the market,
+four fifths of the variance. (c) We chose Berkshire because it is famous, so one good record out of thousands of
+managers is expected by chance. And alpha against the market alone may be exposure to a factor missing from the model.
+
+\sol{ex:3.6} (1) \texttt{r} is a total return: subtract \texttt{rf} first, or alpha absorbs the T-bill rate and is too
+high. (2) No constant: without \texttt{sm.add\_constant(mkt)} there is no intercept at all, so alpha is forced to zero
+(line 2 fails) and beta is biased. (3) Alpha is a mean: multiply by 12. $\sqrt{12}$ understates it by a factor of 3.5.
+
+\head{4. Where factors come from}
+
+\sol{ex:4.1} (a) $g = r - D/P$: 3\% for A, 7\% for B. (b) $r = D/P + g$: 8\% for A, 4\% for B. (c) Reading (b) is ``value
+earns more'': same growth, and the cheap stock offers the higher return. Reading (a) is ``cheap for a reason'': same
+return, and the cheap stock is the one expected to grow slowly.
+
+\sol{ex:4.2} (a) July 2024 through May 2025: eleven months, $t-12$ to $t-2$. (b) June 2025, because last month's winners
+tend to reverse. (c) The signal would contain the return you are trying to earn: look-ahead, and enormous fake profits.
+(d) A negative spread: short-term reversal.
+
+\sol{ex:4.3} (a) P: $6 - 0.75\times 8 = 0$. Q: $5 + 0.25\times 8 = 7\%$. (b) P adds nothing: three quarters of a unit of
+the market earns the same 6\% with less risk. Q raises the investor's squared Sharpe ratio by $(7\%/\sigma_{\varepsilon})^{2}$.
+(c) P, which is why average returns are not the test.
+
+\sol{ex:4.4} (a) High. The inflow pushes up the prices of the stocks the strategy buys and pushes down the ones it
+sells. (b) Lower, possibly zero: the prices are now closer to right. (c) If it is pay for risk it should persist, since
+whoever holds it still bears the risk. It can shrink if more investors are willing to bear it.
+
+\sol{ex:4.5} (a) A portfolio is what you own. Both signals put the same kind of stocks, small and thinly traded, in the
+extreme deciles, even though the two numbers are not related one for one across all stocks. (b) 0.89. (c) An average
+near zero hides blocks. Inside a family the average absolute correlation is about 0.6, and positive and negative
+correlations cancel in the average. Count families, not strategies.
+
+\head{5. Multi-factor models}
+
+\sol{ex:5.1} (a) Market $0.9\times 8 = 7.2$; SMB $0.5\times 2 = 1.0$; HML $-0.5\times 4 = -2.0$; RMW $0.5\times 3 = 1.5$.
+Total 7.7\%. (b) $10 - 7.7 = 2.3\%$. (c) $10 - 7.2 = 2.8\%$, which is $2.3 + 1.0 - 2.0 + 1.5$. (d) Per dollar: sell \$0.90
+of the market, sell \$0.50 of SMB, \emph{buy} \$0.50 of HML, sell \$0.50 of RMW. You expect 2.3\%, with only the fund's
+own risk left.
+
+\sol{ex:5.2} (a) $\sum x^{2} = 20$, so $w = (0.15, 0.05, -0.05, -0.15)$. (b) $0.15(4) + 0.05(2) - 0.05(-1) - 0.15(-1) = 0.9\%$.
+(c) The weights add to zero; $\sum w_{i}x_{i} = 0.45 + 0.05 + 0.05 + 0.45 = 1$. (d) 1\%, the average return: the
+equal-weighted portfolio of the four stocks.
+
+\sol{ex:5.3} (a) $0.4/(2/\sqrt{240}) = 0.4/0.129 = 3.1$. (b) Nowhere directly. The 4{,}000 stocks make each month's slope
+a well-diversified portfolio return. The $t$-statistic comes from how that return varies across the 240 months.
+
+\sol{ex:5.4} (a) Size $0.5(2) + 0.5(1) = 1.5$; value $0.5(-1) + 0.5(-2) = -1.5$. (b) $1.5\times(-0.5) + (-1.5)\times 1.0 =
+-2.25\%$. (c) Relative to the average stock the portfolio earned $1 - 2 = -1\%$. Adjusted: $-1 - (-2.25) = +1.25\%$. Large
+expensive stocks had a bad month, and this portfolio did better than its characteristics implied. (d) Its holdings and
+their characteristics. Not its return history, and no betas.
+
+\sol{ex:5.5} (a) False as stated. Alpha against which model? And alpha is what the factors do not explain, not the
+return above the market. (b) False. A negative loading on a factor that paid raises alpha when the factor is added.
+(c) False. It says the fund's returns move with HML. (d) False. $t(\alpha) \approx \AR\times\sqrt{\text{years}}$: the span is
+what counts. It can improve a little if better betas shrink the residual.
+
+\sol{ex:5.6} Time-series: one per strategy; factor returns; betas and alpha. Cross-sectional: one per month;
+characteristics; what each characteristic paid (the factor return). A sort on book-to-market also sorts, partly, on
+size, profitability and whatever else comes with cheap stocks; the regression slope holds those at zero.
+
+\sol{ex:5.7} (a) The CAPM alpha is roughly $5\% + (-1)\times E[\text{HML}] + \ldots$ When value did well the negative loading
+eats the alpha, so the fund looks ordinary or bad. (b) For each dollar of the fund, add a dollar of the value factor
+(long cheap stocks, short expensive ones) to cancel the $-1$, and sell half a dollar of the market if they want a beta of
+one. The package's CAPM alpha then shows the 5\%.
+
+\head{6. Decomposing a portfolio}
+
+\sol{ex:6.1} (a) $0.5(0.8) + 0.3(1.0) + 0.2(1.5) = 1.0$. (b) Factor: $1.0^{2}\times 15^{2} = 225$. Specific:
+$0.25(400) + 0.09(900) + 0.04(1600) = 100 + 81 + 64 = 245$. (c) $\sqrt{470} = 21.7\%$. (d) $225/470 = 48\%$. (e) $100/245 = 41\%$.
+
+\sol{ex:6.2} (a) $30/\sqrt{N}$: 15\%, 6\%, 3\%. (b) The one name alone gives $0.4\times 30 = 12\%$; the other 99 add almost
+nothing (12.1\% in all). (c) What matters is $\sum w_{i}^{2}$, not the number of names. This 100-stock portfolio has the
+specific risk of about six equal positions.
+
+\sol{ex:6.3} (a) $1.64/0.65 = 2.52$. (b) Print what the weights add to after the merge. (c) The 35\% of the book with no
+characteristics, the smaller and stranger names. It is now a decomposition of the large holdings only.
+
+\sol{ex:6.4} (a) Top-down: it is the only one that works without holdings. (b) Bottom-up: it reacts to a trade at once.
+(c) Characteristics: no betas needed, and it describes the portfolio as it is today.
+
+\sol{ex:6.5} (a) No: $(1.08 - 0.78)/0.22 = 1.4$ standard errors. (b) The filing shows only US-listed stocks, which is one
+part of Berkshire (not the insurance operations or the private businesses). And the regression averages over five
+years in which the holdings, and the holdings' own betas, changed.
+
+\head{7. What data can teach you, and backtesting}
+
+\sol{ex:7.1} (a) $(1.64/0.8)^{2} = 4.2$ years. (b) $(1.64/0.3)^{2} = 30$ years. (c) Only the gap between the truth and the
+hurdle counts, and it fell from 0.8 to 0.3. Years go with one over the gap squared.
+
+\sol{ex:7.2} (a) $1.2\times\sqrt{3} = 2.1$. (b) $1/\sqrt{3} = 0.58$, and $\sqrt{(1 + 1.2^{2}/2)/3} = 0.76$. (c) No. The Sharpe
+ratio is a ratio: volatility is in the numerator and the denominator and cancels. Only the length of the record
+matters. (d) How many funds or strategies were there to pick from, and was this one shown because of these three
+years?
+
+\sol{ex:7.3} (a) $12/\sqrt{3} = 6.9\%$. (b) $(12/16)/\sqrt{36} = 0.125$ monthly; $(12/16)/\sqrt{756} = 0.027$ daily. (c) Only
+beta. Beta is about how returns move together, and more observations show more of that. Alpha is an average, and only
+more years help.
+
+\sol{ex:7.4} (a) One: $20\times 5\%$. (b) About 3.0, so 2.6 does not pass. (c) Too strict. Six signals that correlate 0.9
+are close to one test, so you ran about 15 independent tests, not 20.
+
+\sol{ex:7.5} (a) False. A random split puts test months between training months. Out of sample means out of time.
+(b) False. The standard error of a Sharpe ratio is about $1/\sqrt{T}$ whatever the volatility. (c) False. The winner of
+many is partly the luckiest. In class the estimate-sample winner had a Sharpe ratio of $-0.08$ in the test sample.
+
+\sol{ex:7.6} (a) Each alpha has a standard error of about 7\%, five times the typical alpha. Sort on noisy numbers and
+the top group is mostly the industries with the luckiest noise, and luck does not repeat. (b) A beta's standard error
+is 0.03, small against how much betas differ across industries, so the ranking is real. (c) No, it is noisier. A recent
+year picks up something that lasts about a year, such as momentum. That is an edge that moves: a long window averages
+it away.
+
+\sol{ex:7.7} Split by date. Tune on the early years, say 1980--1992: compute the Sharpe ratio of each look-back and
+choose one. Test on 1993--2000: run only the chosen look-back, once, and report its Sharpe ratio with its standard
+error, its alpha and its worst drawdown. There is nothing to fit here, so two samples are enough. After you see the
+test number you must not go back and change the look-back, the universe or the dates.
+
+\sol{ex:7.8} (a) A low adjusted price in 1985 means the stock split later, and stocks split because they went up. The
+sort used future returns. (b) Never use data on a date that you could not have had on that date. (c) Prices as they were
+on the day for the signal; adjusted prices for computing returns.
+
+\head{8. Hiring and firing}
+
+\sol{ex:8.1} (a) Four years: $0.5 \pm 1.64/2$, so 1.32 and $-0.32$. Sixteen years: $0.5 \pm 1.64/4$, so 0.91 and 0.09.
+(b) ``Keep watching.'' The record will sit between the two lines most of the time, however long you wait. (c) No. The
+walk-away line after one year is $0.5 - 1.64 = -1.14$.
+
+\sol{ex:8.2} (a) $\exp(3\times 1\times(0.2 - 0.5)) = \exp(-0.9) = 0.41$ times as likely. (b) Odds $2\times 0.41 = 0.81$, a
+probability of 45\%. (c) Odds $4\times 0.41 = 1.63$, a probability of 62\%. (d) Fire in (b): the odds are below one. Keep in
+(c).
+
+\sol{ex:8.3} (a) Odds 4 become $4/3$: 57\%. (b) Odds 1 become $1/3$: 25\%. (c) No. The news divided both odds by three.
+Where each ends up depends on where they started, and the first investor may know things about the manager's process
+that the second does not.
+
+\sol{ex:8.4} (a) $\sqrt{0.6^{2} + 0.8^{2}} = 1.0$ if true. $0.36/1.0 = 0.36$ if not. (b) $(1.64/0.8)^{2} = 4.2$ years. (c) Gain
+$0.4\times 5 = 2.0$. Loss $0.24\times 4.2 = 1.0$. Hire if $2.0\,\pi > 1.0\,(1 - \pi)$: $\pi > 1/3$.
+
+\sol{ex:8.5} False. The 5\% is the chance that a manager with no skill produces a record this good. It is not the chance
+that this manager has no skill. Of 100 unskilled managers, five clear the bar, and those are the ones who come to see
+you. The answer depends on how many were looked at and on your hit rate.
+
+\sol{ex:8.6} (a) The stop in percent: run less risk and you hit it less often. Leverage does not change the appraisal
+ratio. (b) The principal cannot hand over their $\gamma$, and a manager who shares the gains and not the losses is
+rewarded for volatility. The stop limits the damage. (c) The stop ignores skill: it can close a good team after bad
+luck. The appraisal-ratio rule ignores the size of the loss and everything you knew about the manager before the
+returns.
+
+\head{9. Why should this work?}
+
+\sol{ex:9.1} (a) $0.7\times 0.8 = 0.56$: $-44\%$. (b) $L = 2$: $0.4\times 0.6 = 0.24$, $-76\%$. $L = 3$: $0.1\times 0.4 = 0.04$,
+$-96\%$. $L = 4$: the first loss is $4\times 30\% = 120\%$ of capital: wiped out, and never sees the recovery. (c)
+$0.56\times 1.25 = 0.70$: still 30\% below. (d) What capital is posted against the positions (the leverage); whether
+returns are compounded or added; and the window, from peak to trough and not by calendar year.
+
+\sol{ex:9.2} Selection and overfitting: it never existed, so do not trade it. Decay: it existed and is gone, so you are
+late; do not trade it either, unless there is a reason it should persist. (c) Who is on the other side and why. A
+constraint that is still in place is a reason to expect the premium to come back; an error that everyone has read
+about is not.
+
+\sol{ex:9.3} (a) Investors who want high returns and cannot or may not borrow, so they buy risky, lottery-like stocks.
+A constraint. (b) More likely to last: pointing out a constraint does not remove it, while a mistake can be traded
+away. (c) Borrow, since the quiet stocks must be levered to matter, and hold through the bad stretch. (d) That the risk
+is real: at three times leverage the 1999 loss wipes you out before the recovery.
+
+\sol{ex:9.4} (a) False. Risk is about when an asset pays badly, and for whom. Volatility that diversifies away earns
+nothing. (b) False. The CAPM says a negative beta should earn \emph{less} than T-bills. A positive return on top of a
+negative beta is alpha, a puzzle for the model. (c) False. A high expected return is a low price. The business may be
+poor, or risky in a way investors dislike. (d) False. An honest backtest tells you what happened. It does not tell you
+why someone sold to you, and if you cannot say, you may be the one who knows less.
+
+\sol{ex:9.5} They differ in what they already own or in what binds them. One has a job or a business exposed to the
+same risk, and the other does not. One can borrow and hold through a drawdown, and the other faces a stop or a
+leverage limit. One trades small, and the other at a size where they become the investor who bears the risk.
+
+\sol{ex:9.6} (a) Overfitting: it was the best of many in the estimate sample, so 1.4 was mostly luck. Drop it. (b) A risk
+premium: the strategy is short the stocks that run in a bubble, and it lost in a bubble. Keep it, at a size and
+leverage that survive the next one. (c) The economic story, and what would make you stop believing it, written
+\emph{before} looking at the later data.
+
+\head{10. Momentum}
+
+\sol{ex:10.1} (a) $12 - 0.1\times 8 - 1.2\times 7 = 2.8\%$. It is mostly momentum under another name; check whether the 2.8\%
+is statistically different from zero. (b) $10 - 0.2\times 7 = 8.6\%$: a different trade. (c) The CAPM alpha counts the
+momentum premium as skill. An investor who can buy momentum cheaply should pay only for what is left after it.
+
+\sol{ex:10.2} (a) The weight goes with one over the variance: $(1/0.5)^{2} = 4$ and $(1/2)^{2} = 0.25$. (b) Sixteen. (c) The
+average return and the volatility both double. The Sharpe ratio does not change.
+
+\sol{ex:10.3} (a) $-0.68\times 15 = -10.2\%$. (b) In a bear market the stocks that fell the most are high-beta stocks.
+They are the losers, so momentum is short high beta and long low beta. (c) When the market keeps falling, the negative
+beta helps a little. When it rebounds sharply, momentum loses a lot. A small gain on one side and a large loss on the
+other is what the seller of a call option has.
+
+\sol{ex:10.4} (a) Its beta is $-0.30$, so $\alpha = 7.4 + 0.30\times 8.3 = 9.9\%$. (b) It pays \emph{well} in the worst
+market months ($+1.3\%$ a month in the worst third), and the winners have just gone up, which if anything makes them
+safer. (c) It crashes: $-65\%$ in 1932 and $-53\%$ in 2009, in rebounds. An investor with leverage or a stop cannot hold
+through that.
+
+\sol{ex:10.5} (a) False. Against the market and UMD its alpha is 2.9\% ($t = 1.8$) with a loading of about one. It is
+mostly the same trade. (b) False. Only a forecast of its volatility, and last month's realized variance will do.
+(c) False for the Sharpe ratio: $c$ scales every month by the same number. It does set the leverage, which you could not
+have known in advance; in real time you would target a volatility.
+
+\sol{ex:10.6} (a) Yes. The signal ends in month $t-1$ and the return is earned in month $t$. (b) The standard signal is
+lagged twice, so it ends at $t-2$ and skips the reversal month. With one lag the average return is lower: 21\% against
+28\% a year in class. (c) Look-ahead: the signal would contain the return you are trying to earn.
+
+\head{11. Capital allocation I}
+
+\sol{ex:11.1} (a) $\mu/\sigma^{2} = 0.06/0.0225 = 2.67$. So $x = 1.33$ for $\gamma = 2$ and $0.67$ for $\gamma = 4$. (b) 20\% and
+10\%, which is $0.4/2$ and $0.4/4$. (c) $20/50 = 40\%$ in the market; volatility $0.4\times 15 = 6\%$; $\gamma = \SR/\text{vol} =
+0.4/0.06 = 6.7$.
+
+\sol{ex:11.2} (a) $\mu/\sigma^{2}$: $0.072/0.0144 = 5$ and $0.064/0.0064 = 10$. Weights $1/3$ and $2/3$. (b) Mean
+$7.2/3 + 2(6.4)/3 = 6.67\%$. Variance $(1/9)(144) + (4/9)(64) = 44.4$, volatility $6.67\%$. Sharpe ratio $1.0 =
+\sqrt{0.6^{2} + 0.8^{2}}$. (c) $10/6.67 = 1.5$ times the tangency portfolio: 50\% in A, 100\% in B, $-50\%$ in T-bills
+(borrowed). Expected return 10\%. (d) $8/6.67 = 1.2$ times: volatility 8\%. (e) Both 1.0. Scaling multiplies the mean and
+the volatility by the same number. (f) $W = (5, 10)/5 = (1, 2)$: three times the tangency portfolio, volatility 20\%,
+which is $\SR/\gamma = 1/5$.
+
+\sol{ex:11.3} (a) $\sqrt{0.9^{2} + 0.3^{2}} = 0.95$. (b) 0.9. It is spanned: what you hold already reproduces its return.
+(c) $0.2 \pm 1.2$ is as consistent with $+2.6\%$ as with zero. And it is one sample, in sample, before costs. ``Adds
+nothing here'' is not ``drop it forever''.
+
+\sol{ex:11.4} (a) $(1 + 3)\times 0.30 = 120\%$: all of the account and 20\% borrowed. (b) $1.20 - 3\times 0.20 = 60\%$.
+(c) $h = 0$: 30\%. (d) You cannot borrow against your future wages. It binds most for the young, whose human capital
+is many times their savings.
+
+\sol{ex:11.5} (a) $(0.80 - 0.65)\times 12\% = 1.8\%$ a year. (b) 1.8 times the best portfolio, with 80\% of their wealth
+borrowed. Expected return $0.80\times 18\% = 14.4\%$. (c) Hold riskier assets instead of more of the best mix: move along
+the curve, away from the tangency portfolio. The Sharpe ratio falls, so they earn less than 14.4\% for the same 18\%.
+
+\sol{ex:11.6} (a) False. They hold less of the same portfolio, and more T-bills. (b) False. It never looks at $\mu$.
+(c) False. Her pay already moves with technology, so her account should hold less of it. Knowing a sector is not a
+reason to own more of a risk you already carry. (d) Depends. Judged with the job it comes with, an account below the
+line can be exactly right. Judged alone, it looks like a mistake.
+
+\sol{ex:11.7} (a) No. It answered the question you asked. $\gamma = 1$ says you barely mind variance: a volatility of
+$\SR/\gamma = 57\%$. Nobody means that; ask what loss they could stand. (b) The principal cannot observe or hand over a
+$\gamma$. A stop is observable, and it limits a manager who shares the gains and not the losses. (c) The one with the
+Sharpe ratio of 2. With a higher return per unit of risk, the same volatility hits the stop less often.
+
+\head{12. Capital allocation II}
+
+\sol{ex:12.1} (a) 0.50, 0.50, 0.25. (b) $\alpha/\sigma_{\varepsilon}^{2}$: 12.5, 4.2, 2.1, so the first has the largest
+weight. In volatility the first two are equal and the third gets half as much. (c) $\sqrt{0.25 + 0.25 + 0.0625} = 0.75$.
+(d) Volatility: $10\%\times\AR_{i}/0.75$, so 6.67\%, 6.67\%, 3.33\%. Positions: divide by $\sigma_{\varepsilon}$: 1.67, 0.56
+and 0.28 dollars per dollar of capital. (e) $\sqrt{0.75^{2} + 0.5^{2}} = 0.90$. Exact because the book is hedged, so it is
+uncorrelated with the market.
+
+\sol{ex:12.2} (a) $0.6\sqrt{2} = 0.85$. (b) $0.6\sqrt{2/1.5} = 0.69$. (c) $0.6\sqrt{2/0.5} = 1.2$. (d) The negatively
+correlated one. All three have the same Sharpe ratio, and they are worth very different amounts.
+
+\sol{ex:12.3} (a) $\sqrt{16}\times 0.5 = 2.0$. (b) $0.5\sqrt{16/(1 + 15\times 0.1)} = 1.26$. (c) $0.5/\sqrt{0.1} = 1.58$. (d) A
+pod that is uncorrelated with the others, more than one with a high Sharpe ratio of its own.
+
+\sol{ex:12.4} (a) $(0.55 - 0.45)\times 6\% = 0.6\%$. (b) $32\%\times\sqrt{21/252} = 9.2\%$; $IC = 0.6/9.2 = 0.065$. (c)
+$0.065\times\sqrt{12} = 0.23$. (d) Volatility given: $0.23\times 10\% = 2.3\%$. Position: $2.3/32 = 7\%$. (e) You earn that
+only if you have another idea like it every month.
+
+\sol{ex:12.5} (a) $4/(4 + 16) = 0.2$, so 1\%. (b) $4/(4 + 4) = 0.5$, so 2.5\%. (c) Very unsure: the alpha you act on goes
+to zero and so does the position. Certain: you act on the full 5\%.
+
+\sol{ex:12.6} (a) $0.05\times\sqrt{400} = 1.0$. (b) $0.10\times\sqrt{4} = 0.2$. (c) The bets are not independent, so the
+breadth is far below 400 and the information ratio is far below 1.
+
+\sol{ex:12.7} (a) False. The volatility you give goes with $\alpha/\sigma_{\varepsilon}$, and the weight with
+$\alpha/\sigma_{\varepsilon}^{2}$. (b) Depends on the correlation. Uncorrelated it adds a little ($\sqrt{1.5^{2} + 0.3^{2}} =
+1.53$); negatively correlated it can add a lot; positively correlated enough, you would short it. (c) False. An average
+near zero can hide pairs that are one trade under two names; the average absolute correlation was 0.20. (d) False. No
+view is $\alpha = 0$, and the formula acts on it.
+
+\sol{ex:12.8} (a) The Tech fund is a factor bet. The hedged pair is an alpha bet. (b) The pair by the formula, by its
+appraisal ratio. The Tech fund less than the formula says, because her job already holds Tech. (c) Tech fund: that
+Tech earns a premium for bearing risk. The pair: that the market is wrong about these two firms, and she knows why.
+(d) Long history for the factor's premium. Recent data for the risk of both. For the alpha, the recent past and her own
+judgment, since an edge decays.
+
+\head{13. Capital allocation III}
+
+\sol{ex:13.1} $w_{1} = 0.5 + \frac{0.01}{0.24}\times\frac{1+\rho}{1-\rho}$. (a) 54\%. (b) 62.5\%. (c) 87.5\%. (d) 129\%.
+(e) Asset 2 is shorted when the ratio of the two means, $5.5/6.5 = 0.85$, is below $\rho$. So at 0.9, not at 0.8.
+(f) The gap is half a standard error from zero. The portfolio is 129\% in one asset and short the other on the strength
+of a number you cannot tell from zero.
+
+\sol{ex:13.2} (a) $20/\sqrt{25} = 4\%$. (b) $20/\sqrt{600} = 0.8\%$. (c) $(1 - 0.25)/\sqrt{300} = 0.04$. (d) (b) and (c) shrink
+by about $\sqrt{21}$. (a) does not change.
+
+\sol{ex:13.3} $N/Y = 0.5$. (a) See $\sqrt{1 + 0.5} = 1.22$. Earn $1/\sqrt{1.5} = 0.82$. (b) See $\sqrt{0.25 + 0.5} = 0.87$.
+Earn $0.5/\sqrt{1 + 0.5/0.25} = 0.29$. (c) In (b): the noise is twice the signal and the optimizer keeps under 60\% of a
+small number. You need the Sharpe ratio $1/N$ gets from the same assets; if it is above 0.29, use $1/N$.
+
+\sol{ex:13.4} (a) $1/\sigma$: $(4, 2, 1)/7$, so 57\%, 29\%, 14\%. (b) $1/\sigma^{2}$: $(16, 4, 1)/21$, so 76\%, 19\%, 5\%.
+(c) A third each. (d) Risk parity: the same Sharpe ratio, so the mean rises with the volatility. Minimum variance: the
+same mean. $1/N$: the same Sharpe ratio and the same volatility, which is false here. (e) The same mean. Bonds and
+emerging markets do not earn the same return. They may earn about the same Sharpe ratio.
+
+\sol{ex:13.5} (a) False. In sample the optimizer wins by construction. (b) Depends on the assets. It wins on similar
+assets and loses badly on very different ones. (c) False. Volatilities are the best-measured input. The damage comes
+from the means, and in large books from the correlations. (d) False. With estimated inputs a constraint acts as a
+prior and can help out of sample.
+
+\sol{ex:13.6} (a) Rows 0 to \texttt{t}, including month \texttt{t} itself. (b) \texttt{past = F.iloc[:t]}. (c) The weights
+are tilted toward whatever did well in month \texttt{t}, every single month, and the optimizer magnifies small
+differences in means. (d) 1.03, above $1/N$: the opposite conclusion.
+
+\sol{ex:13.7} (a) The best of five was chosen after seeing the test results, so the 0.3 includes the search. It is
+in-sample fitting again. (b) Each month, pick the intensity that did best on the months before, use it for the next
+month, and report the track record of that procedure. (c) \emph{Backtesting}: estimate, tune, test.
+
+\head{14. Conditional strategies I}
+
+\sol{ex:14.1} (a) At 10\%: $\mu = 4\% + 2(0.01) = 6\%$, $x = 0.06/(2\times 0.01) = 3$. At 30\%: $\mu = 4\% + 2(0.09) = 22\%$,
+$x = 0.22/(2\times 0.09) = 1.22$. (b) $0.04/0.02 = 2$ and $0.04/0.18 = 0.22$. (c) $b/\gamma = 1$ in both. (d) Most in (b),
+where the return does not rise with risk at all. Pointless in (c), where it rises one for one.
+
+\sol{ex:14.2} (a) $10/8 = 1.25$ and $12/24 = 0.50$. (b) $0.10/0.0064 = 15.6$ and $0.12/0.0576 = 2.1$: about 7.5 times.
+(c) Close to $b = 0$: the variance is nine times higher and the return is only 1.2 times higher. (d) It hurts. The
+strategy cuts the position exactly when the factor's Sharpe ratio is highest.
+
+\sol{ex:14.3} (a) $\RV \approx 21\times 0.02^{2} = 0.0084$; volatility $\sqrt{12\times 0.0084} = 31.7\%$. (b) A quarter. (c)
+$0.01\times 13.6\% \approx 0.1\%$. It bets that volatility persists, so a fast rebound after a storm is its worst case.
+
+\sol{ex:14.4} (a) False. It works when high volatility does not predict \emph{higher} returns. The return can be
+unchanged; it only has to rise less than the variance. (b) False. $c$ multiplies every month by the same number, so no
+Sharpe ratio or $t$-statistic changes. (c) False. It helps momentum and profitability, does nothing for several
+factors, and hurts CMA. For the market it depends on the period. (d) False. Five days is too little history: you react
+to a few wild days that often reverse. In class the Sharpe ratio for the market fell to 0.05.
+
+\sol{ex:14.5} (a) Line 1 uses this month's realized variance, which you only know at the end of the month. Use last
+month's: \texttt{1 / M['rv'].shift(1)}. (b) Up. With this month's variance you hold almost nothing in exactly the
+months of the largest losses, after the fact. (c) No. It is one constant; it sets the size, not the Sharpe ratio.
+
+\sol{ex:14.6} (a) Leverage, with borrowing at more than the T-bill rate, and trading: the weight moves by about three
+quarters of the position a month. (b) Cap the weight (at 1 or 2 it cost nothing in the data), and scale by $1/\sigma$
+instead of $1/\sigma^{2}$ (0.56 against 0.52). (c) Volatility targets, risk budgets and the stop-loss.
+
+\head{15. Conditional strategies II}
+
+\sol{ex:15.1} (a) $-1 + 2.4\times 4 = 8.6\%$ and $-1 + 2.4\times 1.6 = 2.8\%$. (b) $0.086/(3\times 0.0256) = 1.12$ and
+$0.028/0.0768 = 0.37$. (c) It sells the market year after year, from 112\% to 37\%. The yield fell because of how firms
+pay out, not because expected returns fell. The signal's average moved, and the regression assumes it does not.
+
+\sol{ex:15.2} (a) $720 - 59 = 661$. (b) $60/5 = 12$. (c) About twelve observations' worth, not 661. A $t$ of 9 is far too
+large. (d) Standard errors that allow for the overlap (HAC), or the regression on the twelve periods that do not
+overlap.
+
+\sol{ex:15.3} Monthly $\SR^{2} = 0.25/12 = 0.0208$. (a) $(0.0208 + 0.005)/0.995 = 0.0260$; a year $\sqrt{12\times 0.0260} =
+0.56$. (b) $(0.0208 + 0.02)/0.98 = 0.0417$; a year $0.71$. (c) It assumes the forecast is right on average and ignores
+the error in estimating it. Out of sample that error is the whole problem.
+
+\sol{ex:15.4} (a) Forecast errors: $1, -2, 1, 1$, squares add to 7. Errors of the average: $1, -2, 2, -1$, squares add to
+10. $R^{2}_{\text{OOS}} = 1 - 7/10 = 0.30$. (b) Yes. (c) In sample the regression is fitted to minimize the same errors
+it is scored on, so it cannot do worse than the mean. Out of sample the coefficients come from the past, and a noisy
+forecast can do worse than a constant.
+
+\sol{ex:15.5} (a) $40\times 5\% = 2$. (b) They were most likely the first half's luck. (c) The second. It was found once
+and confirmed on data it was not found in, across several assets. A single $t$ of 3.5 out of 40 tries does not clear
+a Bonferroni bar of about 3.2 by much, and has no second sample behind it.
+
+\sol{ex:15.6} (a) False. If it is real, 0.5\% a month takes a Sharpe ratio of 0.50 to 0.56. The question is whether it
+is real. (b) False. The observations overlap; a century holds about 20 independent five-year returns. Allowing for
+that, the $t$ is 2.8, and 1.5 on periods that do not overlap. (c) False. The benchmark is the historical average
+return, not zero. (d) False. Software firms expense what they build (research, software, brands), so their book value
+understates what they own. The denominator has not meant the same thing over time.
+
+\sol{ex:15.7} (a) Volatility timing forecasts $\sigma_{t}$. Return timing forecasts $\mu_{t}$. (b) The standard error of a
+volatility shrinks with the number of observations, so a month of daily data is enough. The standard error of a mean
+shrinks only with years. (c) Volatility timing needs the return not to rise with risk; it failed for CMA, and in some
+periods for the market. Return timing needs the signal's average to stay put; D/P's did not.
+
+\sol{ex:15.8} For each month from 1950: fit the regression of next month's return on the term spread using only pairs
+that were complete before that month; forecast the month; store the forecast, the return, and the average return up
+to then. Report $R^{2}_{\text{OOS}}$ against the historical average, by sub-period too, and the Sharpe ratio of a
+strategy that holds forecast$/(\gamma\sigma^{2})$ against buy and hold at the same risk. It works if
+$R^{2}_{\text{OOS}}$ is positive in most sub-periods. Check that the month being forecast is not inside the data used
+for its own fit.
+
+\sol{ex:15.9} (a) Each forecast is the truth plus its own estimation error. The errors are not perfectly correlated, so
+averaging cancels part of them, as a portfolio does with specific risk. (b) Each regression overreacts to its own
+signal. The average of nine moves less, so it stays near the historical average, which was hard to beat in the first
+place. (c) It is shrinkage toward a constant: you keep a little of what the data say and lean on the prior for the
+rest.
+}
+\fi
+
+\end{document}
