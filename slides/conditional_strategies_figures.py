@@ -309,15 +309,6 @@ P = out_of_sample("1950")
 print(f"out of sample, forecasts from 1950: R2 {r2_oos(P):.2%}")
 for a_, b_ in [("1950", "1979"), ("1980", "1999"), ("2000", "2024")]:
     print(f"  {a_}-{b_}: R2 {r2_oos(P.loc[a_:b_]):.2%}")
-cum = ((P.r - P.average) ** 2 - (P.r - P.forecast) ** 2).cumsum()
-fig, ax = plt.subplots(figsize=(10, 3.6))
-ax.plot(cum.index, cum, color=RED, lw=1.5)
-ax.axhline(0, color="k", lw=0.6)
-ax.set_ylabel("cumulative gain from D/P\nover the historical average")
-ax.text(pd.Timestamp("1952"), cum.max() * 0.85, "rising: D/P forecasts better", color=GREY, fontsize=11)
-ax.text(pd.Timestamp("2003"), cum.max() * 0.85, "falling: worse", color=GREY, fontsize=11)
-fig.savefig(OUT / "cs_gw.pdf"); plt.close(fig)
-print(f"  cumulative gain peaks in {cum.idxmax():%Y-%m}")
 
 sig2 = c.ex.loc[:"1949"].var()
 w_ = P.forecast / (3 * sig2)
@@ -326,6 +317,36 @@ print(f"timing strategy from 1950 (gamma 3): Sharpe {sharpe(tim):.2f} vs buy and
       f"share of months short {np.mean(w_ < 0):.0%}")
 for a_, b_ in [("1950", "1979"), ("1980", "1999"), ("2000", "2024")]:
     print(f"  {a_}-{b_}: timing {sharpe(tim.loc[a_:b_]):.2f}, buy and hold {sharpe(P.r.loc[a_:b_]):.2f}, average weight {w_.loc[a_:b_].mean():.2f}")
+
+# against what? Buy and hold with the same average position, and buy and hold with the same beta.
+# Timing minus the second averages the alpha of timing on the market, so the by-period gaps add up to it.
+fit = sm.OLS(tim, sm.add_constant(P.r.rename("mkt"))).fit()
+alpha_, beta_ = fit.params.const, fit.params.mkt
+B = pd.DataFrame({"timing": tim, "same average position": w_.mean() * P.r, "same beta": beta_ * P.r})
+grow = (1 + B).cumprod()
+print(f"timing against buy and hold: average position {w_.mean():.3f}, beta {beta_:.3f}; alpha {alpha_ * 12:.2%} a year, t {fit.tvalues.const:.2f}, "
+      f"appraisal ratio {alpha_ * 12 / (fit.resid.std() * np.sqrt(12)):.2f}, correlation with the market {tim.corr(P.r):.2f}")
+print(f"  $1 in 1950 becomes: " + ", ".join(f"{k} {v:.2f}" for k, v in grow.iloc[-1].items())
+      + "; volatility a year: " + ", ".join(f"{k} {v:.1%}" for k, v in (B.std() * np.sqrt(12)).items()))
+print(f"  timing over buy and hold, same average position: {(B.timing - B['same average position']).mean() * 12:.2%} a year")
+for a_, b_ in [("1950", "1979"), ("1980", "1999"), ("2000", "2024")]:
+    print(f"  {a_}-{b_}: timing over buy and hold with the same beta {(B.timing - B['same beta']).loc[a_:b_].mean() * 12:.2%} a year")
+print(f"  why R2 < 0 and alpha > 0: average forecast {P.forecast.mean() * 12:.1%} a year, historical average {P.average.mean() * 12:.1%}, "
+      f"realized {P.r.mean() * 12:.1%}; correlation of the forecast with the return {P.forecast.corr(P.r):.3f}")
+gap = B.timing - B["same beta"]
+late = sm.OLS(tim.loc["1956":], sm.add_constant(P.r.loc["1956":].rename("mkt"))).fit()
+print(f"  one episode: {gap.loc[:'1955'].sum() / gap.sum():.0%} of the gap over same-beta buy and hold was earned in 1950-1955, when the position averaged "
+      f"{w_.loc[:'1955'].mean():.2f} and the market made {P.r.loc[:'1955'].mean() * 12:.0%} a year over T-bills; "
+      f"from 1956: alpha {late.params.const * 12:.2%} a year, t {late.tvalues.const:.2f}, average position {w_.loc['1956':].mean():.2f}")
+print(f"  with the market: Sharpe {sharpe(P.r):.2f} becomes {np.sqrt(sharpe(P.r) ** 2 + (alpha_ * 12 / (fit.resid.std() * np.sqrt(12))) ** 2):.2f}")
+fig, ax = plt.subplots(figsize=(10, 3.6))
+ax.plot(grow.timing, color=RED, lw=1.6, label="timing on D/P")
+ax.plot(grow["same average position"], color=BLUE, lw=1.5, label=f"buy and hold, same average position ({w_.mean():.2f})")
+ax.plot(grow["same beta"], color=GREY, lw=1.5, ls="--", label=f"buy and hold, same beta ({beta_:.2f})")
+ax.set_yscale("log"); ax.set_yticks([1, 2, 3, 4]); ax.yaxis.set_major_formatter(lambda v, _: f"\\${v:.0f}"); ax.minorticks_off()
+ax.set_ylabel("growth of \\$1, over T-bills")
+ax.legend(frameon=False, loc="center right", bbox_to_anchor=(1.0, 0.58), fontsize=11)
+fig.savefig(OUT / "cs_timing.pdf"); plt.close(fig)
 print(f"CHALLENGE II, forecasts from 1980: R2 {r2_oos(out_of_sample('1980')):.4%}")
 print(f"the hook: D/P at the end of {c.index[-1]:%Y} {c.dp.iloc[-1]:.1%}, lower than in {np.mean(c.dp > c.dp.iloc[-1]):.0%} of months")
 

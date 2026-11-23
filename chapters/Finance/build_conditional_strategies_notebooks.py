@@ -587,8 +587,8 @@ sections below use them.
 The formula from *Capital Allocation I* with a forecast in it: weight $= \text{forecast} / (\gamma \sigma^{2})$. We hold
 $\sigma$ fixed at its value before 1950, so all the timing comes from the forecast.
 
-What do you compare it with? Buy and hold **with the same average weight**. Then the two strategies hold the same amount
-of the market on average, and the only difference is *when*.
+What do you compare it with? First, buy and hold **with the same average weight**. Then the two strategies hold the
+same amount of the market on average, and the only difference is *when*. Then the alpha of timing on the market.
 """),
 ('code', r"""
 forecasts = out_of_sample(market, 'dp', '1950')           # section 2's forecasts
@@ -612,11 +612,25 @@ plt.show()
 forecasts['weight'].plot(title='weight on the market'); plt.axhline(0, color='k', lw=0.5); plt.show()
 """),
 ('markdown', r"""
+In the end it is the question you have asked of every strategy in this course: does timing have **alpha** against buy
+and hold? Regress the timing return on the market's. The beta is the constant weight on the market that moves like the
+timing strategy, and the alpha is what timing earned beyond it.
+"""),
+('code', r"""
+fit = sm.OLS(forecasts['timing'], sm.add_constant(forecasts['ret'])).fit()        # the timing return on the market's
+print(f"from 1950: alpha {fit.params['const'] * 12:.1%} a year, t = {fit.tvalues['const']:.1f}, beta {fit.params['ret']:.2f}")
+
+late = forecasts.loc['1956':]                                                      # the same regression without 1950-1955
+fit  = sm.OLS(late['timing'], sm.add_constant(late['ret'])).fit()
+print(f"from 1956: alpha {fit.params['const'] * 12:.1%} a year, t = {fit.tvalues['const']:.1f}, beta {fit.params['ret']:.2f}")
+"""),
+('markdown', r"""
 - When does timing lose ground to buy and hold? What was D/P doing then?
 - Timing ends above buy and hold, yet its Sharpe ratio is lower. How can both be true? Look at the two volatilities.
 - In which period did timing win, and in which did it lose badly?
 - Would changing `gamma` change the Sharpe ratio? Try it.
 - Why compare with buy and hold at the same average weight, and not with one dollar in the market?
+- Look at the plot, and at the weight before 1956. Why does leaving out six years cut the alpha by more than half?
 """),
 ('markdown', r"""
 ---
