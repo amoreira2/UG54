@@ -794,8 +794,8 @@ sections below use them.</p>
 </div></blockquote>
 <p>The formula from <em>Capital Allocation I</em> with a forecast in it: weight <span class="math notranslate nohighlight">\(= \text{forecast} / (\gamma \sigma^{2})\)</span>. We hold
 <span class="math notranslate nohighlight">\(\sigma\)</span> fixed at its value before 1950, so all the timing comes from the forecast.</p>
-<p>What do you compare it with? Buy and hold <strong>with the same average weight</strong>. Then the two strategies hold the same amount
-of the market on average, and the only difference is <em>when</em>.</p>
+<p>What do you compare it with? First, buy and hold <strong>with the same average weight</strong>. Then the two strategies hold the
+same amount of the market on average, and the only difference is <em>when</em>. Then the alpha of timing on the market.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">forecasts</span> <span class="o">=</span> <span class="n">out_of_sample</span><span class="p">(</span><span class="n">market</span><span class="p">,</span> <span class="s1">'dp'</span><span class="p">,</span> <span class="s1">'1950'</span><span class="p">)</span>           <span class="c1"># section 2's forecasts</span>
@@ -821,12 +821,28 @@ of the market on average, and the only difference is <em>when</em>.</p>
 </div>
 </div>
 </div>
+<p>In the end it is the question you have asked of every strategy in this course: does timing have <strong>alpha</strong> against buy
+and hold? Regress the timing return on the market’s. The beta is the constant weight on the market that moves like the
+timing strategy, and the alpha is what timing earned beyond it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fit</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">forecasts</span><span class="p">[</span><span class="s1">'timing'</span><span class="p">],</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">forecasts</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>        <span class="c1"># the timing return on the market's</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"from 1950: alpha </span><span class="si">{</span><span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">12</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> a year, t = </span><span class="si">{</span><span class="n">fit</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, beta </span><span class="si">{</span><span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">late</span> <span class="o">=</span> <span class="n">forecasts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'1956'</span><span class="p">:]</span>                                                      <span class="c1"># the same regression without 1950-1955</span>
+<span class="n">fit</span>  <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">late</span><span class="p">[</span><span class="s1">'timing'</span><span class="p">],</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">late</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"from 1956: alpha </span><span class="si">{</span><span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">12</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> a year, t = </span><span class="si">{</span><span class="n">fit</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="s1">'const'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, beta </span><span class="si">{</span><span class="n">fit</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'ret'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 <ul class="simple">
 <li><p>When does timing lose ground to buy and hold? What was D/P doing then?</p></li>
 <li><p>Timing ends above buy and hold, yet its Sharpe ratio is lower. How can both be true? Look at the two volatilities.</p></li>
 <li><p>In which period did timing win, and in which did it lose badly?</p></li>
 <li><p>Would changing <code class="docutils literal notranslate"><span class="pre">gamma</span></code> change the Sharpe ratio? Try it.</p></li>
 <li><p>Why compare with buy and hold at the same average weight, and not with one dollar in the market?</p></li>
+<li><p>Look at the plot, and at the weight before 1956. Why does leaving out six years cut the alpha by more than half?</p></li>
 </ul>
 </section>
 <hr class="docutils" />
